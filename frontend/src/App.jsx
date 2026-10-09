@@ -78,7 +78,7 @@ const AuthPage = () => {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route path='/login' element={<AuthPage/>}></Route>
         <Route path='/' element={<Layout/>}>

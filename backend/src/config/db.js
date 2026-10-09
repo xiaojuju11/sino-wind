@@ -3,7 +3,7 @@ const mysql = require('mysql2/promise')
 // 创建连接池，设置连接池的参数
 const pool = mysql.createPool({
   host: 'localhost',
-  user: 'parent_kid_education',
+  user: 'root',
   password: '123456',
   database: 'parent_kid_education',
   waitForConnections: true,
