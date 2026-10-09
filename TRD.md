@@ -300,6 +300,44 @@ classDiagram
 2. **军规二：静态资源命名空间隔离**。所有切图严禁放在 `public/` 根目录下，必须存放在对应模块子目录中。
 3. **军规三：样式隔离规约**。每个页面的 `.less` 文件必须最外层由独占类名包裹（如 `.auth-page-root`、`.home-root`、`.guancang-root`、`.mine-page-root`），杜绝类名污染。
 
+### 6.3 Git 分支生命周期与提交规约 (Branch & Commit Workflow)
+
+#### 6.3.1 3 人专属分支对照表
+所有人必须基于已包含基建的最新 `main` 分支拉取开发分支，严禁在 `main` 直接开发：
+
+| 角色 | 负责模块 | 本地与远端开发分支名 | 派生自 | 拉取与初始化命令 |
+| :--- | :--- | :--- | :--- | :--- |
+| **成员 A** | 登录【入席】+ 注册【缔约】 | `feat/phase1-auth` | `origin/main` | `git checkout main && git pull`<br>`git checkout -b feat/phase1-auth` |
+| **成员 B** | 首页【雅集】+ 导航【底栏】 | `feat/phase1-home` | `origin/main` | `git checkout main && git pull`<br>`git checkout -b feat/phase1-home` |
+| **成员 C** | 观藏【知己】+ 书斋【个人】 | `feat/phase1-literati` | `origin/main` | `git checkout main && git pull`<br>`git checkout -b feat/phase1-literati` |
+
+#### 6.3.2 提交信息规范 (Commit Convention)
+遵循 Angular 提交规范，统一格式为：`<type>(<scope>): <subject>`：
+- **成员 A 提交范例**：
+  ```bash
+  git add frontend/src/pages/Login.jsx frontend/src/styles/login.less
+  git commit -m "feat(auth): 完成古风入席登录页水墨卡片与密押输入UI"
+  git push origin feat/phase1-auth
+  ```
+- **成员 B 提交范例**：
+  ```bash
+  git add frontend/src/pages/Home.jsx frontend/src/styles/home.less
+  git commit -m "feat(home): 实现首页云山竹简诗签展开卷轴与节气物候卡"
+  git push origin feat/phase1-home
+  ```
+- **成员 C 提交范例**：
+  ```bash
+  git add frontend/src/pages/AIPage.jsx frontend/src/styles/aiPage.less
+  git commit -m "feat(guancang): 实现古风古友先贤画廊横滑卡片与论道唱和卷轴"
+  git push origin feat/phase1-literati
+  ```
+
+#### 6.3.3 PR 合并与零冲突保证机制
+1. **免冲突原理**：由于成员 A、B、C 的工作区文件物理路径无交集，任何成员开发完毕后，均可直接向 `main` 发起 Pull Request (PR)。
+2. **合并顺序无关**：无需排队等待，先完工者先合并，后完工者在合并前建议执行 `git pull origin main` 同步主干，Git 将自动通过三方合并，实现 0 冲突无缝合入。
+3. **主分支保护**：`main` 分支仅由技术组长执行 Squash Merge 或 Merge PR，确保主干提交记录清晰规整。
+
+
 ---
 
 ## 七、 非功能性需求与性能指标 (NFR)
