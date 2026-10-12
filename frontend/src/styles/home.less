@@ -1163,3 +1163,111 @@
   border-color: color-mix(in srgb, var(--yayan-gold) 38%, transparent);
   box-shadow: 0 0.06rem 0.18rem rgba(58, 47, 29, 0.07);
 }
+
+// ════════════════════════════════════════════════════
+//  四区块底图（素材：public/assets/home/bg-*.jpg）
+//  效果依据：proof/f4003de2…png（左铺满淡墨 / 右局部装饰 / 识物右下陈设 / 诗词右下书卷）
+//  暗色模式自动降亮降透，保证文字可读
+// ════════════════════════════════════════════════════
+.bg-layer(@url; @size; @pos; @op) {
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: url(@url);
+    background-repeat: no-repeat;
+    background-size: @size;
+    background-position: @pos;
+    opacity: @op;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// ① 时令 · 左「现代 · 今日」：淡青灰水墨山水铺满
+.home-almanac__col:nth-child(1) {
+  position: relative;
+  overflow: hidden;
+  .bg-layer('/assets/home/bg-almanac-modern.jpg'; cover; center; 0.2);
+}
+
+// ② 时令 · 右「古代 · 时令」：右下局部写意装饰
+.home-almanac__col:nth-child(2) {
+  position: relative;
+  overflow: hidden;
+  .bg-layer('/assets/home/bg-almanac-ancient.jpg'; 78% auto; right bottom; 0.55);
+}
+
+// ③ 古今识物 · 右侧示例体验区：右下角青釉瓶/线装书陈设
+.home-shiwu-demo {
+  position: relative;
+  overflow: hidden;
+  .bg-layer('/assets/home/bg-shiwu.jpg'; 76% auto; right bottom; 0.8);
+}
+
+// ④ 古诗词赏析：右下书卷笔砚 + 红梅（压右半及底部）
+.home-poem-body {
+  position: relative;
+  overflow: hidden;
+  .bg-layer('/assets/home/bg-poem.jpg'; cover; right bottom; 0.55);
+}
+
+// 暗色模式下底图降亮降透，避免刺眼
+[data-theme='dark'] {
+  .home-almanac__col:nth-child(1)::after { opacity: 0.1; filter: brightness(0.7) saturate(0.85); }
+  .home-almanac__col:nth-child(2)::after { opacity: 0.32; filter: brightness(0.7) saturate(0.85); }
+  .home-shiwu-demo::after { opacity: 0.45; filter: brightness(0.7) saturate(0.85); }
+  .home-poem-body::after { opacity: 0.32; filter: brightness(0.7) saturate(0.85); }
+}
+
+// ── 底图微调（对齐 proof 的朦胧通透感 + 修复识物底图被卡片遮挡）──
+.home-almanac__col:nth-child(1)::after { opacity: 0.13; }
+.home-almanac__col:nth-child(2)::after { opacity: 0.36; }
+
+// 识物：底图改铺整块（右下），并让示例卡片透出底图
+.home-shiwu-demo::after { opacity: 0; }
+.home-shiwu-body {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: url('/assets/home/bg-shiwu.jpg');
+    background-repeat: no-repeat;
+    background-size: 72% auto;
+    background-position: right bottom;
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.home-shiwu-upload { background: color-mix(in srgb, var(--gf-bg-paper) 52%, transparent); }
+.home-shiwu-demo__item { background: color-mix(in srgb, var(--gf-bg-paper) 46%, transparent); }
+.home-shiwu-demo__title { position: relative; z-index: 1; text-shadow: 0 1px 2px color-mix(in srgb, var(--gf-bg-paper) 70%, transparent); }
+
+.home-poem-body::after { opacity: 0.42; }
+
+[data-theme='dark'] {
+  .home-shiwu-body::after { opacity: 0.3; filter: brightness(0.7) saturate(0.85); }
+  .home-shiwu-upload { background: color-mix(in srgb, var(--gf-bg-card) 55%, transparent); }
+  .home-shiwu-demo__item { background: color-mix(in srgb, var(--gf-bg-card) 50%, transparent); }
+}
