@@ -282,6 +282,20 @@
           font-size: 14px;
           color: lighten(@color-text-sub, 20%);
         }
+
+        // 墨色雅意：日月主题快捷切换行（TRD §3.5 / AC-D4；控件由成员 A 的共享 ThemeToggle 提供）
+        &--theme {
+          cursor: default;
+
+          &:active {
+            background-color: transparent;
+          }
+
+          .shuzhai-theme-toggle {
+            margin-left: 10px;
+            flex-shrink: 0;
+          }
+        }
       }
     }
   }

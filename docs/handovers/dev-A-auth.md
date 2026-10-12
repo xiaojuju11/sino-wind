@@ -252,6 +252,11 @@
 - `frontend/src/main.jsx`（改 2 行：挂载 `ThemeProvider`，边界见待确认项 3）
 - 未修改：`App.jsx`、`Layout.jsx`、`global.css`、`variables.less`、`app.less`、`layout.less`、`http/index.js`、`vite.config.js`、`index.html`、`package.json`、后端主入口与 `db.js`
 
+**经本人授权的成员 D 文件改动（同一分支后续提交）**：
+
+- `frontend/src/styles/poem.less`、`poemCollection.less`、`minePage.less`（改：颜色接入 `--gf-*` 主题令牌）
+- `frontend/src/pages/MinePage.jsx`（改：书斋清规新增「墨色雅意 · 晓色晨宣 / 月下墨境切换」行，引用共享 `ThemeToggle`；TRD §3.5 与 AC-D4 要求该入口存在）
+
 ### 三、接口与数据依赖
 
 - 已对接：`POST /api/deepseek/yayan`、`POST /api/deepseek/soul`、`POST /api/deepseek/chat`、`POST /api/coze/recognition`（均按 TRD §4 契约）。
@@ -282,6 +287,11 @@
 - [x] **浅色保真机械证明**：构建产物去掉 `:root[data-theme=dark]` 规则、把 `var()` 还原为回退值、颜色记法归一（8 位 hex ↔ rgba、hex 大小写、alpha 1/255 精度）后，与改动前产物**逐字节一致 → PASS**。即浅色稿零变化，只有深色才取新令牌。
 - [x] **新增 `--gf-accent-text` 令牌（深色可读性的必要修正）**：朱砂 `#8A2B2B` 与竹青 `#2D5A3F` 作**文字**落在深色卡片 `#171E23` 上对比度仅 **1.97:1 / 2.12:1（不可读）**；phase3 深色定稿本身也把强调色换成了泥金（激活态为琥珀金）。故强调文字浅色保持朱砂（逐像素不变）、深色取定稿实测泥金 `#CEA559`（对卡片底 **7.34:1**）。朱砂仍作按钮/印章的填充色。
 - [x] 共享布局面深色覆盖：`layout.less` 属 §2.6 红线文件，故**不改其源码**，由 `theme.less` 以 `[data-theme='dark']` 作用域覆盖 `.layout`（透明，让夜色山水透出）与 `.bottom-nav`（底色、未激活/激活文字色，激活态走 `--gf-accent-text`）。
+- [x] 书斋「墨色雅意」入口已落地（`MinePage.jsx` 引用共享 `ThemeToggle`）：点击月亮即切月下墨境，与 TRD §3.5 / AC-D4 的「书斋清规日月开关」对齐；`minePage.less` 补该行样式（嵌套在根类名内）。
+- [x] 本机实机运行验证（三个受管后台服务，验证后已全部停止、端口 3000 / 5173 / 5174 均已释放）：
+  - 本地 Koa（读 `.env.local` 的真实 Key）与 Vite dev 均正常启动；dev 管线对 `main.jsx` / `MinePage.jsx` / `Recognition.jsx` / `ThemeToggle.jsx` / `theme.less` / `minePage.less` / `poem.less` 全部编译正常（HTTP 200，无 pre-transform error）。
+  - 经 dev 服务链路实测：`/api/poem/random` 返回真实诗词（《重游天台华顶峰 其二》）；`POST /api/deepseek/yayan` 返回 `code:1` 非兜底真实雅句「今朝放衙身倦甚，欲赴围炉共啜乳茶。」。
+  - **环境发现（给全队）**：云端 `120.26.186.48:3000` 尚未部署 `/api/poem/random`（404）与本次新增的 `/api/deepseek/yayan|soul`（404），而公共 Axios 的 baseURL 正是写死指向云端、且该文件属 §2.6 红线。因此本地演示**未改动 `http/index.js`**，而是用一份**仓库外**的临时 Vite 配置在 dev 转译阶段把该字符串替换为 `http://localhost:3000`（磁盘文件零改动、仓库零新增文件）。
 
 ### 五、遗留问题与待确认项（Blocker）
 

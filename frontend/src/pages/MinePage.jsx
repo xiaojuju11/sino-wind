@@ -3,6 +3,7 @@ import '../styles/minePage.less'
 import { ActionSheet, Toast, ImageViewer } from 'antd-mobile'
 import { RightOutline } from 'antd-mobile-icons'
 import { useNavigate } from 'react-router-dom'
+import ThemeToggle from '../context/ThemeToggle.jsx'
 import axios from '../http'
 
 export default function MinePage() {
@@ -164,6 +165,16 @@ export default function MinePage() {
               <span className='shuzhai-list-item__desc'>个人资料与账号管理</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
+          </div>
+
+          {/* 墨色雅意：日月主题快捷切换（TRD §3.5 书斋清规 / AC-D4 双向同步；控件为成员 A 提供的共享 ThemeToggle） */}
+          <div className='shuzhai-list-item shuzhai-list-item--theme'>
+            <i className='iconfont icon-shezhi'></i>
+            <div className='shuzhai-list-item__content'>
+              <span className='shuzhai-list-item__title'>墨色雅意</span>
+              <span className='shuzhai-list-item__desc'>晓色晨宣 / 月下墨境切换</span>
+            </div>
+            <ThemeToggle className='shuzhai-theme-toggle' />
           </div>
 
           <div className='shuzhai-list-item' onClick={() => Toast.show('印章保护安全生效中')}>
