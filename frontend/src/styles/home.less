@@ -858,3 +858,46 @@
 .home-poem-verses { margin-top: 0.08rem; }
 .home-poem-verses p { font-size: 0.36rem; line-height: 1.6; }
 .home-poem-more { right: 0.18rem; bottom: 0.18rem; width: 0.64rem; height: 0.64rem; font-size: 0.28rem; }
+
+// ════════════════════════════════════════════════════
+//  白话雅译详情稿对齐（d0dba46c…jpg 853×459 → 块高≈210 CSS px）
+//  1) 两端木轴：深色红木（原浅金褐不符）2) 竖排红签：烫金字+泥金边
+//  3) 中缝：金色镂空箭头（去掉圆底）4) 输入/结果卡：双层装裱描边
+// ════════════════════════════════════════════════════
+.home-root {
+  --home-wood: #5D4037;                       // 深色红木轴身
+  --home-wood-hi: #8A6A52;                    // 木纹高光
+  --home-wood-line: rgba(0, 0, 0, 0.42);
+}
+
+[data-theme='dark'] .home-root {
+  --home-wood: #3E2E27;
+  --home-wood-hi: #5A443A;
+}
+
+.home-yayan-roller { width: 0.26rem; border-radius: 0.1rem; }
+
+.home-yayan-tag {
+  color: var(--gf-gold);
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 85%, transparent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--gf-gold) 22%, transparent),
+    0 0.04rem 0.12rem color-mix(in srgb, var(--gf-cinnabar) 35%, transparent);
+}
+
+.home-yayan-divider__arrow {
+  width: 0.5rem;
+  height: 0.5rem;
+  font-size: 0.4rem;
+  color: var(--gf-gold);
+  background: transparent;
+}
+
+// 输入区/结果区：内层实线 + 外层浅虚线（装裱感）
+.home-yayan-input-box,
+.home-yayan-result-card {
+  border: 1px solid color-mix(in srgb, var(--gf-border-card) 100%, transparent);
+  outline: 1px dashed color-mix(in srgb, var(--gf-gold) 38%, transparent);
+  outline-offset: 2px;
+  background: var(--home-mat);
+}
