@@ -1526,3 +1526,11 @@
 .home-yayan-result-card { border-radius: 0.24rem; }
 
 .home-yayan-divider { padding: 0.1rem 0; }
+
+// ── 白话雅译：去掉箭头外圈祥云纹；输入框宽度收窄并居中 ──
+.home-yayan-divider::before { display: none; }
+
+.home-yayan-input-box {
+  width: calc(100% - 0.9rem);
+  margin: 0 auto;
+}
