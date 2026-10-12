@@ -1287,3 +1287,56 @@
 [data-theme='dark'] .home-almanac__col:nth-child(2)::after {
   opacity: 0.1;
 }
+
+// ── 古今识物：底图铺满 + 上传区/示例区改为两块不透明卡片（盖住底图）──
+.home-shiwu-body::after {
+  background-size: cover;
+  background-position: center;
+  opacity: 0.2;
+}
+
+// 左：上传/拍摄 卡片（不透明，盖住底图）
+.home-shiwu-upload {
+  background: var(--gf-bg-card);
+  border: 1px dashed color-mix(in srgb, var(--gf-gold) 62%, transparent);
+  box-shadow: 0 0.03rem 0.1rem rgba(58, 47, 29, 0.06);
+}
+
+// 右：示例体验 面板（不透明，盖住底图）
+.home-shiwu-demo {
+  padding: 0.14rem 0.16rem 0.16rem;
+  background: var(--gf-bg-card);
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 45%, transparent);
+  border-radius: 0.24rem;
+  box-shadow: 0 0.03rem 0.1rem rgba(58, 47, 29, 0.06);
+}
+
+// 面板内的示例行改为分隔线式，不再各自成卡
+.home-shiwu-demo__item {
+  margin-top: 0.06rem;
+  padding: 0.1rem 0.06rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed color-mix(in srgb, var(--gf-border-card) 85%, transparent);
+  border-radius: 0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:active {
+    background: color-mix(in srgb, var(--gf-gold) 10%, transparent);
+  }
+}
+
+[data-theme='dark'] {
+  .home-shiwu-body::after {
+    opacity: 0.1;
+  }
+
+  .home-shiwu-upload,
+  .home-shiwu-demo {
+    background: var(--gf-bg-card);
+    box-shadow: 0 0.03rem 0.12rem rgba(0, 0, 0, 0.4);
+  }
+}
