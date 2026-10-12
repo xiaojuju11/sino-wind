@@ -901,3 +901,186 @@
   outline-offset: 2px;
   background: var(--home-mat);
 }
+
+// ════════════════════════════════════════════════════
+//  白话雅译 · 按用户详细规范落地（保留纹理/印章/描边；纯 CSS，无图片素材）
+//  配色：卷轴底#F5E9D3 卡底#FAF6EE 主文字#2B2218 次要#6B635A 朱红#A82626 墨绿#2E5D3A 浅金#D4AF6A
+// ════════════════════════════════════════════════════
+.home-yayan-scroll {
+  --yayan-paper: #F5E9D3;
+  --yayan-card: #FAF6EE;
+  --yayan-ink: #2B2218;
+  --yayan-sub: #6B635A;
+  --yayan-red: #A82626;
+  --yayan-green: #2E5D3A;
+  --yayan-gold: #D4AF6A;
+
+  background:
+    // 右侧写意墨竹枝叶（极淡）
+    radial-gradient(ellipse 30% 70% at 96% 78%, rgba(90, 110, 90, 0.10) 0%, transparent 70%),
+    // 底层淡墨远山剪影
+    radial-gradient(ellipse 60% 22% at 30% 96%, rgba(120, 120, 118, 0.10) 0%, transparent 72%),
+    radial-gradient(ellipse 45% 18% at 78% 100%, rgba(120, 120, 118, 0.08) 0%, transparent 72%),
+    // 做旧宣纸底色
+    var(--yayan-paper);
+  border: 1px solid rgba(212, 175, 106, 0.55);
+}
+
+[data-theme='dark'] .home-yayan-scroll {
+  --yayan-paper: #1A2129;
+  --yayan-card: #232A31;
+  --yayan-ink: #E6E1D3;
+  --yayan-sub: #9B988F;
+  --yayan-red: #B83B32;
+  --yayan-green: #4A7C59;
+  --yayan-gold: #D4AF37;
+}
+
+// ① 两端木轴 + 圆形轴头封盖
+.home-yayan-roller {
+  background: linear-gradient(90deg, #4A332A 0%, #6B4A3A 42%, #8A6A52 55%, #4A332A 100%);
+  border-radius: 0.06rem;
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.45), inset 1px 0 0 rgba(255, 255, 255, 0.08);
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: 0.36rem;
+    height: 0.36rem;
+    margin-left: -0.18rem;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 32%, #8A6A52 0%, #5D4037 58%, #3A2A22 100%);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  }
+
+  &::before { top: -0.14rem; }
+  &::after { bottom: -0.14rem; }
+}
+
+// ② 左侧竖排朱红牌匾：圆角 + 回纹金边 + 白色书法字
+.home-yayan-tag {
+  width: 0.54rem;
+  height: 72%;
+  color: #FFFFFF;
+  font-weight: 700;
+  border-radius: 0.08rem;
+  border: 1px solid var(--yayan-gold);
+  box-shadow:
+    inset 0 0 0 1px rgba(168, 38, 38, 0.9),
+    inset 0 0 0 2px rgba(212, 175, 106, 0.45),
+    0 0.04rem 0.1rem rgba(0, 0, 0, 0.22);
+}
+
+// ③ 输入卡：浅米白 + 细金描边 + 轻微内凹
+.home-yayan-input-box {
+  background: var(--yayan-card);
+  border: 1px solid rgba(212, 175, 106, 0.6);
+  outline: none;
+  box-shadow: inset 0 1px 3px rgba(90, 70, 40, 0.12), 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.home-yayan-pencil { color: #5D4037; opacity: 1; }
+
+// ④ 中缝：祥云纹轮廓 + 中心朱红向下箭头
+.home-yayan-divider {
+  position: relative;
+  padding: 0.12rem 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1.5rem;
+    height: 0.56rem;
+    transform: translate(-50%, -50%);
+    border: 1px solid rgba(212, 175, 106, 0.75);
+    border-radius: 50% 50% 46% 46% / 62% 62% 38% 38%;
+    background: rgba(250, 246, 238, 0.72);
+    box-shadow: inset 0 0 0 1px rgba(212, 175, 106, 0.25);
+  }
+}
+
+.home-yayan-divider__arrow {
+  position: relative;
+  z-index: 1;
+  color: var(--yayan-red);
+  background: transparent;
+  font-size: 0.36rem;
+  width: 0.44rem;
+  height: 0.44rem;
+}
+
+// ⑤ 结果卡：白卡 + 金边 + 底层极淡水墨远山；译文与释义居中
+.home-yayan-result-card {
+  background:
+    radial-gradient(ellipse 70% 26% at 26% 100%, rgba(120, 120, 118, 0.10) 0%, transparent 74%),
+    radial-gradient(ellipse 50% 20% at 80% 100%, rgba(120, 120, 118, 0.08) 0%, transparent 74%),
+    var(--yayan-card);
+  border: 1px solid rgba(212, 175, 106, 0.6);
+  outline: none;
+  box-shadow: inset 0 1px 3px rgba(90, 70, 40, 0.1);
+  text-align: center;
+}
+
+.home-yayan-ancient-text {
+  padding-right: 0;
+  font-size: 0.42rem;
+  color: var(--yayan-ink);
+  text-align: center;
+}
+
+// 方形朱红篆刻印章（白字 + 残破肌理）
+.home-yayan-seal {
+  position: static;
+  display: inline-flex;
+  width: 0.34rem;
+  height: 0.34rem;
+  margin-left: 0.08rem;
+  vertical-align: 0.02rem;
+  background: var(--yayan-red);
+  color: #FFFFFF;
+  font-size: 0.2rem;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.18), inset 0 0 0.06rem rgba(0, 0, 0, 0.3);
+}
+
+.home-yayan-explain {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.28rem;
+  color: var(--yayan-sub);
+  text-align: center;
+}
+
+.home-yayan-author {
+  display: block;
+  margin: 0.04rem 0 0;
+  font-size: 0.28rem;
+  color: var(--yayan-sub);
+  text-align: center;
+}
+
+// ⑥ 双按钮：中式金边 + 悬浮上浮/底色加深
+.home-yayan-submit-btn,
+.home-yayan-collect-btn {
+  border: 1px solid var(--yayan-gold);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 0.04rem 0.12rem rgba(0, 0, 0, 0.16);
+  transition: transform 0.16s ease, filter 0.16s ease, box-shadow 0.16s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: brightness(1.08);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+      0 0.06rem 0.16rem rgba(0, 0, 0, 0.22);
+  }
+}
+
+.home-yayan-submit-btn { background: var(--yayan-green); }
+.home-yayan-collect-btn { background: var(--yayan-red); }
