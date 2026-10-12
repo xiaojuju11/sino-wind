@@ -1564,3 +1564,14 @@
   .home-yayan-input-box,
   .home-yayan-result-card { background: rgba(35, 42, 49, 0.96); }
 }
+
+// ── 输入框与译文框底色：与下方「时令」区块统一（都用全局卡片底色 var(--gf-bg-card)）──
+.home-yayan-input-box,
+.home-yayan-result-card {
+  background: var(--gf-bg-card);
+}
+
+[data-theme='dark'] {
+  .home-yayan-input-box,
+  .home-yayan-result-card { background: var(--gf-bg-card); }
+}
