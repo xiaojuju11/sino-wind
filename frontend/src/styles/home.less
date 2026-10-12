@@ -1400,3 +1400,45 @@
 .home-almanac__temp { font-size: 0.77rem; }   // 23.4px → 30.0px（设计稿约 32px，取 30 防溢出）
 .home-yayan-submit-btn,
 .home-yayan-collect-btn { font-size: 0.36rem; } // 10.9px → 14.0px（设计稿约 16px，取 14 折中）
+
+// ── 现代·今日：文字左对齐 + 底图铺满（与古代·时令镜像一致）──
+.home-almanac__col:nth-child(1) {
+  align-items: flex-start;
+  text-align: left;
+
+  &::after {
+    background-size: cover;
+    background-position: center;
+    opacity: 0.2;
+  }
+}
+
+// ── 两栏之间加金色分割线（中段菱形点缀，两端渐隐）──
+.home-almanac__col:nth-child(2) {
+  border-left: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10%;
+    bottom: 10%;
+    width: 1px;
+    background-image:
+      radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--gf-gold) 85%, transparent) 0 1.5px, transparent 1.5px),
+      linear-gradient(
+        to bottom,
+        transparent 0%,
+        color-mix(in srgb, var(--gf-gold) 62%, transparent) 20%,
+        color-mix(in srgb, var(--gf-gold) 62%, transparent) 80%,
+        transparent 100%
+      );
+    background-repeat: no-repeat;
+    background-size: 7px 7px, 1px 100%;
+    background-position: center center, center center;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+[data-theme='dark'] .home-almanac__col:nth-child(1)::after { opacity: 0.1; }
