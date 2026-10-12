@@ -1370,3 +1370,28 @@
 .home-poem-title { font-size: 0.32rem; }
 .home-poem-meta { font-size: 0.22rem; }
 .home-poem-verses p { font-size: 0.36rem; }
+
+// ── 古今识物：底图铺满【整块 section】（之前错放在内层 body，被两块卡片完全遮住）──
+.home-shiwu-section {
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--gf-bg-card) 76%, transparent),
+      color-mix(in srgb, var(--gf-bg-card) 76%, transparent)
+    ),
+    url('/assets/home/bg-shiwu.jpg');
+  background-repeat: no-repeat, no-repeat;
+  background-size: cover, cover;
+  background-position: center center, center center;
+}
+
+// 关掉内层那张（避免两块卡片之间的缝隙出现重影）
+.home-shiwu-body::after { opacity: 0; }
+
+[data-theme='dark'] .home-shiwu-section {
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--gf-bg-card) 78%, transparent),
+      color-mix(in srgb, var(--gf-bg-card) 78%, transparent)
+    ),
+    url('/assets/home/bg-shiwu.jpg');
+}
