@@ -6,6 +6,23 @@ const fallback = [
 ]
 const cache = new Map(), pending = new Map()
 const ttl = 60000
+
+// ── 随机诗词预取池（消除「进页面等上游」造成的空屏）────────────────────────────
+// 背景：上游诗泉单次取数约 2.6~4 秒，而 /api/poem/random 原来的缓存只有 2 秒，
+// 于是每次进页面（间隔超过 2 秒）都要同步等一次上游，页面 loading 期间没有内容。
+// 方案：后台预取若干首真实诗词放进池子，请求时**即时出池**并触发后台补池；
+// 池空但有上一首真实诗时先返上一首（stale-while-revalidate）；
+// 冷启动才等待，且最多等 RANDOM_WAIT_MS，超时立刻给内置兜底诗，绝不让页面干等。
+const RANDOM_POOL_SIZE = 4
+const RANDOM_WAIT_MS = 1500
+const RANDOM_MAX_ATTEMPTS = 6
+const randomPool = []
+let lastRandom = null
+let refilling = false
+let inflightRandom = null
+
+function sleep(ms) { return new Promise((resolve) => setTimeout(resolve, ms)) }
+
 function normalize(poem) {
   const result = { id: String(poem.id ?? ''), title: poem.title, author: typeof poem.author === 'string' ? poem.author : poem.author?.name,
     dynasty: typeof poem.dynasty === 'string' ? poem.dynasty : poem.dynasty?.name,
@@ -14,6 +31,24 @@ function normalize(poem) {
   if (!result.id || result.id.length > 64 || typeof result.title !== 'string' || !result.title.trim() || typeof result.author !== 'string' || !result.author.trim() || !result.content.length || result.content.some(line => typeof line !== 'string' || !line.trim())) throw Error('Invalid upstream poem')
   return result
 }
+
+/** 真正打上游；上游异常不抛出，返回内置兜底（degraded:true） */
+async function fetchUpstream(kind, keyword = '') {
+  try {
+    const response = await axios.get('https://poetry.palemoky.com' + (kind === 'random' ? '/api/poems/random' : '/api/search'), {
+      params: { lang: 'zh-Hans', ...(kind === 'search' ? { q: keyword } : {}) }, timeout: 4000, signal: AbortSignal.timeout(4000), maxContentLength: 2 * 1024 * 1024
+    })
+    const data = response.data.data
+    if (kind === 'random') return { data: normalize(data), source: 'shiquan', degraded: false }
+    const list = Array.isArray(data) ? data : data?.poems ?? data?.results ?? data?.items
+    if (!Array.isArray(list)) throw Error('Invalid upstream search')
+    return { data: list.slice(0, 50).map(normalize), source: 'shiquan', degraded: false }
+  } catch {
+    return { data: kind === 'random' ? fallback[Math.floor(Math.random() * fallback.length)] : fallback.filter(p => [p.title, p.author, ...p.content].join('').includes(keyword)), source: 'local-fallback', degraded: true }
+  }
+}
+
+/** 带缓存与并发合并的取数（搜索仍走这里；随机走下面的池子） */
 async function query(kind, keyword = '') {
   const key = kind + ':' + keyword
   const saved = cache.get(key)
@@ -22,21 +57,7 @@ async function query(kind, keyword = '') {
   // 不同关键词也受并发上限保护，避免绕过同键缓存压垮上游。
   if (pending.size >= 10) { const error = new Error('Poem service busy'); error.code = 'POEM_BUSY'; throw error }
   const request = (async () => {
-    let value
-    try {
-      const response = await axios.get('https://poetry.palemoky.com' + (kind === 'random' ? '/api/poems/random' : '/api/search'), {
-        params: { lang: 'zh-Hans', ...(kind === 'search' ? { q: keyword } : {}) }, timeout: 4000, signal: AbortSignal.timeout(4000), maxContentLength: 2 * 1024 * 1024
-      })
-      const data = response.data.data
-      if (kind === 'random') value = { data: normalize(data), source: 'shiquan', degraded: false }
-      else {
-        const list = Array.isArray(data) ? data : data?.poems ?? data?.results ?? data?.items
-        if (!Array.isArray(list)) throw Error('Invalid upstream search')
-        value = { data: list.slice(0, 50).map(normalize), source: 'shiquan', degraded: false }
-      }
-    } catch {
-      value = { data: kind === 'random' ? fallback[Math.floor(Math.random() * fallback.length)] : fallback.filter(p => [p.title, p.author, ...p.content].join('').includes(keyword)), source: 'local-fallback', degraded: true }
-    }
+    const value = await fetchUpstream(kind, keyword)
     if (cache.size >= 100) cache.delete(cache.keys().next().value)
     cache.set(key, { expires: Date.now() + (value.degraded ? 10000 : kind === 'random' ? 2000 : ttl), value })
     return value
@@ -44,6 +65,71 @@ async function query(kind, keyword = '') {
   pending.set(key, request)
   try { return await request } finally { pending.delete(key) }
 }
+
+/** 取一首真实诗（并发去重：同一时刻只打一次上游） */
+function prefetchOne() {
+  if (!inflightRandom) {
+    inflightRandom = fetchUpstream('random').finally(() => { inflightRandom = null })
+  }
+  return inflightRandom
+}
+
+function pushToPool(poem) {
+  if (!poem || !poem.id) return false
+  if (lastRandom && lastRandom.id === poem.id) return false
+  if (randomPool.some((item) => item.id === poem.id)) return false
+  randomPool.push(poem)
+  return true
+}
+
+/** 后台把池子补到目标大小；上游不可用就停手，交给内置兜底 */
+async function ensurePool() {
+  if (refilling || randomPool.length >= RANDOM_POOL_SIZE) return
+  refilling = true
+  try {
+    let attempts = 0
+    while (randomPool.length < RANDOM_POOL_SIZE && attempts < RANDOM_MAX_ATTEMPTS) {
+      attempts += 1
+      const value = await prefetchOne()
+      if (value.degraded) break
+      pushToPool(value.data)
+    }
+  } catch {
+    // 预取失败不影响任何请求路径
+  } finally {
+    refilling = false
+  }
+}
+
+/**
+ * 随机取诗：优先即时出池 → 其次是上一首真实诗 → 冷启动才短暂等待（≤1.5s）→ 兜底诗。
+ * 返回值在契约字段之外附加 prefetched / stale，便于前端与日志区分「预热返回」。
+ */
+async function queryRandom() {
+  if (randomPool.length) {
+    const poem = randomPool.shift()
+    lastRandom = poem
+    ensurePool()
+    return { data: poem, source: 'shiquan', degraded: false, prefetched: true }
+  }
+  if (lastRandom) {
+    ensurePool()
+    return { data: lastRandom, source: 'shiquan', degraded: false, prefetched: true, stale: true }
+  }
+  // 冷启动（进程刚起、池子还没预热完）：最多等 RANDOM_WAIT_MS
+  const first = await Promise.race([prefetchOne(), sleep(RANDOM_WAIT_MS).then(() => null)])
+  if (first && !first.degraded) {
+    lastRandom = first.data
+    ensurePool()
+    return { data: first.data, source: 'shiquan', degraded: false, prefetched: true }
+  }
+  ensurePool()
+  return { data: fallback[Math.floor(Math.random() * fallback.length)], source: 'local-fallback', degraded: true }
+}
+
+// 进程启动即预热，让第一位访客也走即时出池（失败不影响启动）
+ensurePool()
+
 const dataNotice = '第三方朝代字段存在已知错误，文化信息尚未经逐条核验；缺少赏析时请展示暂无赏析'
 function present(poem) {
   const paragraphs = Array.isArray(poem.content) ? poem.content : []
@@ -51,7 +137,7 @@ function present(poem) {
 }
 async function random(ctx) {
   try {
-    const value = await query('random')
+    const value = await queryRandom()
     ctx.body = { code: 1, message: '获取成功', ...value, data: present(value.data), dataNotice }
   } catch { ctx.status = 429; ctx.body = { code: 0, message: '诗泉请求繁忙，请稍后再试' } }
 }

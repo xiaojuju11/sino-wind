@@ -238,6 +238,13 @@
    - `--gf-bg-paper` / `--gf-bg-card` / `--gf-bg-sunk` / `--gf-seal` / `--gf-bamboo` / `--gf-gold` / `--gf-text-main` / `--gf-text-sub` / `--gf-veil` 双主题令牌；深色底色用 AC-B2 指定的 `#0D1117`，其余深色值由 phase3 唯一深色定稿取样取证。
    - 识物页颜色改为 `var(--gf-*, Less令牌回退值)`，因此该页已随主题切换；其他成员页面仍是 Less 编译期令牌，需各自消费 `var(--gf-*)` 才会整体变暗（见待确认项 4）。
    - 另交付**共享药丸开关** `context/ThemeToggle.jsx` + `themeToggle.less`，供成员 B 的首页题头与成员 D 的书斋清规直接引用（`<ThemeToggle className='...' />`），免去各自重写一套；本文件未在任何页面实例化。
+6. **随机诗预取池 · 消除诗词页「进页面等上游」造成的空屏**（`backend/src/controllers/poemController.js`，本文件由成员 A 在第二阶段编写并维护）
+   - **问题定位（归属先说清）**：页面侧那一下空白属**成员 D**（`PoemPage.jsx` 在 §2.6「队友 1 严禁触碰」名单内，本次一行未改）；但等待本身出在后端——`/api/poem/random` 的 random 缓存 TTL 只有 **2 秒**、上游 `poetry.palemoky.com` 超时 **4 秒**，于是每次进页面（间隔 >2s）都要同步等一次上游。实测改前：**2588ms**（真上游）/403ms（转兜底）。
+   - **方案**：后台预取池（`RANDOM_POOL_SIZE=4`）+ 请求即时出池并触发后台补池 + 池空时先返上一首真实诗（stale-while-revalidate）+ 冷启动才等待且上限 `RANDOM_WAIT_MS=1500ms`，超时立刻给内置兜底诗；`prefetchOne()` 做同刻上游去重，`ensurePool()` 在上游返回 degraded 时立即停手，避免打爆第三方。
+   - **实测改后**（间隔 2.2s 逐次请求，模拟每次进页面）：**111ms / 3ms / 3ms / 1ms / 2ms / 2ms**，`source=shiquan`、`degraded=false`，且**每次返回不同真实作品**（《寄宋州田中丞》《题新竹示韦德卿》《陈索郎滩》《颂古一百则 其八三》《更漏子 三》《望晼山马上作》）。
+   - **最坏情况验证（axios 替身，8/8 通过）**：冷启动且上游全坏 → ≤1.7s 返回内置兜底诗、`source=local-fallback`；上游由好转坏 → 即时（<300ms）返回上一首真实诗而非降级空白。
+   - **契约兼容**：响应保留 `code/message/data/source/degraded/dataNotice` 与 `data.paragraphs/bgArt/snippet/…` 全部既有字段，仅**新增**附加字段 `prefetched`（出池）/`stale`（返上一首）；搜索接口 `query()` 路径未改。
+   - **已知取舍**：池子被连点抽空、上游还没补齐（约 2.6s/首）时，会返回上一首（可能重复），此时仍为真实作品、不空白；如需连点也不重复，可加大池子或换更快的诗源。
 
 ### 二、本次修改与新增的文件清单（对照 §2.6 白名单）
 
@@ -292,6 +299,10 @@
   - 本地 Koa（读 `.env.local` 的真实 Key）与 Vite dev 均正常启动；dev 管线对 `main.jsx` / `MinePage.jsx` / `Recognition.jsx` / `ThemeToggle.jsx` / `theme.less` / `minePage.less` / `poem.less` 全部编译正常（HTTP 200，无 pre-transform error）。
   - 经 dev 服务链路实测：`/api/poem/random` 返回真实诗词（《重游天台华顶峰 其二》）；`POST /api/deepseek/yayan` 返回 `code:1` 非兜底真实雅句「今朝放衙身倦甚，欲赴围炉共啜乳茶。」。
   - **环境发现（给全队）**：云端 `120.26.186.48:3000` 尚未部署 `/api/poem/random`（404）与本次新增的 `/api/deepseek/yayan|soul`（404），而公共 Axios 的 baseURL 正是写死指向云端、且该文件属 §2.6 红线。因此本地演示**未改动 `http/index.js`**，而是用一份**仓库外**的临时 Vite 配置在 dev 转译阶段把该字符串替换为 `http://localhost:3000`（磁盘文件零改动、仓库零新增文件）。
+- [x] 随机诗预取池（`backend/src/controllers/poemController.js`）：
+  - 语法 `node --check` exit 0；契约字段与 `data.paragraphs/bgArt/snippet`、`dataNotice` 逐项核对仍在；搜索接口路径未改（本次实测上游搜索失败时按既有逻辑降级 1 条本地兜底，与改动前一致）。
+  - 时延实测：改前 **2588ms / 403ms**（间隔 2.2s 逐次请求）；改后 **111ms / 3ms / 3ms / 1ms / 2ms / 2ms**，全部 `source=shiquan`、`degraded=false`、每首不同。
+  - 最坏情况（axios 替身、外网 0 次调用）**8/8 通过**：冷启动+上游全坏 ≤1.7s 给内置兜底诗；上游由好转坏即时（<300ms）返回上一首真实诗。
 
 ### 五、遗留问题与待确认项（Blocker）
 
@@ -320,7 +331,8 @@ node --check backend/src/controllers/deepseekController.js
 # 后端起服（无 .env 即无 Key，可直接验证兜底分支）
 cd backend && npm ci && node src/index.js
 # 控制器级 23 项用例：见本次 AI 输出目录的 a-fallback-verify.js（未加入仓库）
-# 渲染层 31 项断言 + 令牌对比度实测：见本次 AI 输出目录的 run-ssr.mjs（未加入仓库）
+# 渲染层 36 项断言 + 令牌对比度实测：见本次 AI 输出目录的 run-ssr.mjs（未加入仓库）
+# 随机诗预取池最坏情况 8 项断言（axios 替身）：见本次 AI 输出目录的 a-poem-pool-verify.js（未加入仓库）
 ```
 
 结论：成员 A 本阶段授权范围的实现与本地验证完成，可提交评审；真实模型 / 真实 Coze 工作流、B/C/D 页面主题适配与团队全链路联调仍未验收，不以本轮兜底测试冒充真实 AI 落地。
