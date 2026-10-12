@@ -1,5 +1,7 @@
 # 开发交接记录：刘霞 / 成员 A
 
+> 🔗 **跨成员变更通报见 [`docs/PHASE3_CHANGES_AND_TEAM_ACTIONS.md`](../PHASE3_CHANGES_AND_TEAM_ACTIONS.md)**：谁的文件被改了、新增了哪些接口、失败语义怎么变了、B/C/D/队长各自要做什么。本文件是 A 自己的详细交接与验证记录。
+
 > 最新记录：2026-10-12，刘霞 / 成员 A，feat/phase2-backend，基线 main 657172e。第二阶段新增接口契约适配与 Coze 超时处理已完成本地验证，待本人审阅提交；真实 Coze/DeepSeek 与 B/C 全流程联调未验收。下方旧日期记录为历史。
 
 - 填报日期：2026-10-10

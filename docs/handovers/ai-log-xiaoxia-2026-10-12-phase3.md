@@ -82,6 +82,7 @@
 | §2.2 第 1 项、§3.2 第 1 项、§5 | 日月主题底座：`data-theme` 驱动、`gufeng_theme` 本地持久化、`--gf-*` 令牌层（浅色沿用 v3 令牌，深色取自 phase3 定稿取样 + AC-B2 的 `#0D1117`） | `frontend/src/context/ThemeContext.jsx`、`theme.less`、`useTheme.js` |
 | §3.2 第 1 项（队长裁定共享组件） | 日 / 月药丸开关组件，供成员 B 首页题头与成员 D 书斋清规直接引用（`<ThemeToggle />`），无障碍名称与激活态齐备 | `frontend/src/context/ThemeToggle.jsx`、`themeToggle.less` |
 | §1.2 图标铁律 | 全量改用项目内置 Iconfont 真实类名，禁用位图 / emoji / 字符箭头 | 上述 JSX / Less |
+| 团队协作文档 | 应本人要求新增**跨成员**变更通报：改了什么（按文件+归属）、接口变更（含失败语义变化）、B/C/D/队长各自待办、环境坑绕法、验证证据、已知限制 | `docs/PHASE3_CHANGES_AND_TEAM_ACTIONS.md` |
 
 ### 2. 解决的关键工程问题
 
