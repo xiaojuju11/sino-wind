@@ -746,3 +746,33 @@
     transform: translateY(1px);
   }
 }
+
+// ════════════════════════════════════════════════════
+//  图标规范（队长图标铁律）
+//  1) iconfont 库图标：<i className="iconfont icon-xxx" /> 用 font-size 定尺寸、color 着色
+//  2) antd-mobile-icons：1em 机制，父级 font-size 或 width/height 定尺寸，颜色走 currentColor
+// ════════════════════════════════════════════════════
+.home-hero__icon-btn .iconfont {
+  font-size: 0.36rem;
+  line-height: 1;
+  color: var(--gf-cinnabar);
+}
+
+.home-almanac__roam-icon {
+  width: 0.28rem;
+  height: 0.28rem;
+  margin-right: 0.04rem;
+  vertical-align: -0.03rem;
+  color: var(--gf-cinnabar);
+}
+
+.home-yayan-btn-icon {
+  margin-right: 0.06rem;
+  font-size: 0.34rem;
+  vertical-align: -0.04rem;
+  color: currentColor;
+}
+
+.home-shiwu-upload__icon {
+  color: var(--gf-cinnabar);
+}

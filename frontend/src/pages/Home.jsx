@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import '../styles/home.less'
 import { Toast } from 'antd-mobile'
-import { DownOutline, RightOutline } from 'antd-mobile-icons'
+import { DownOutline, RightOutline, CompassOutline, EditSOutline, CheckCircleOutline, DownCircleOutline } from 'antd-mobile-icons'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext'
 import axios from '../http'
@@ -145,7 +145,8 @@ export default function Home() {
             aria-label="设置"
             onClick={() => navigate('/accountSetting')}
           >
-            <span className="home-hero__icon-emoji">⚙️</span>
+            {/* 图标铁律：iconfont 基础库矢量图标 */}
+            <i className="iconfont icon-shezhi" aria-hidden="true"></i>
           </button>
         </div>
 
@@ -171,7 +172,9 @@ export default function Home() {
 
           <div className="home-yayan-inner">
             <div className="home-yayan-input-box">
-              <span className="home-yayan-pencil" aria-hidden="true">✏️</span>
+              <span className="home-yayan-pencil" aria-hidden="true">
+                <EditSOutline />
+              </span>
               <textarea
                 className="home-yayan-textarea"
                 rows={2}
@@ -184,7 +187,7 @@ export default function Home() {
             </div>
 
             <div className="home-yayan-divider" aria-hidden="true">
-              <span className="home-yayan-divider__arrow">↓</span>
+              <DownCircleOutline className="home-yayan-divider__arrow" />
             </div>
 
             {yayanResult && (
@@ -205,7 +208,14 @@ export default function Home() {
                 disabled={translating}
                 onClick={() => handleTranslate()}
               >
-                {translating ? '先贤研墨中…' : '☑ 译为雅言'}
+                {translating ? (
+                  '先贤研墨中…'
+                ) : (
+                  <>
+                    <CheckCircleOutline className="home-yayan-btn-icon" />
+                    译为雅言
+                  </>
+                )}
               </button>
               <button
                 type="button"
@@ -213,7 +223,9 @@ export default function Home() {
                 disabled={!yayanResult}
                 onClick={handleCollectYayan}
               >
-                📖 摘录入卷
+                {/* 图标铁律：iconfont 基础库「书本」图标 */}
+                <i className="iconfont icon-shuben home-yayan-btn-icon" aria-hidden="true"></i>
+                摘录入卷
               </button>
             </div>
 
@@ -249,7 +261,8 @@ export default function Home() {
             className="home-almanac__roam"
             onClick={() => Toast.show({ content: '漫游古今：换城易时，静候雅聚' })}
           >
-            🧭 漫游
+            <CompassOutline className="home-almanac__roam-icon" />
+            漫游
           </button>
         </div>
         <p className="home-section-sub">观天时，知物候，品古今生活之美。</p>
@@ -298,7 +311,8 @@ export default function Home() {
             className="home-shiwu-upload"
             onClick={() => navigate('/recognition')}
           >
-            <span className="home-shiwu-upload__icon" aria-hidden="true">📷</span>
+            {/* 图标铁律：iconfont 基础库「相机」图标 */}
+            <i className="iconfont icon-xiangji home-shiwu-upload__icon" aria-hidden="true"></i>
             <span className="home-shiwu-upload__title">上传/拍摄现代物品</span>
             <span className="home-shiwu-upload__desc">探索现代物品古代雅称</span>
           </button>
