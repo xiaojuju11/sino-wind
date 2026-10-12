@@ -1,17 +1,23 @@
-// 🏮《云山竹简 · 华风雅集》设计规范核心变量 (DESIGN.md)
+// 🏮《云山竹简 · 华风雅集》设计规范核心变量（对齐 DESIGN.md v3 色板）
 
 // 1. 中国传统色谱 (Color Palette)
-@color-bg: #F5F0E6;          // 宣纸原色 (温润护眼、手作生宣微黄质感)
-@color-card: #FAF7F0;        // 绢帛玉白 (卡片底色，温润如羊脂玉或素绢)
-@color-text-main: #22252A;   // 远山黛墨 (正文与主标题，松烟浓墨质感)
-@color-text-sub: #5C6068;    // 淡墨焦墨 (辅助副标题与时间戳)
-@color-seal: #9E2A2B;        // 朱砂印泥红 (印章 Logo、主要行动按钮、激活态高亮)
-@color-bamboo: #3A5A40;      // 苍竹墨绿 (鉴宝标签、生机、点缀标记)
-@color-indigo: #203A4C;      // 霁蓝 / 黛青 (夜间模式、雅集沉浸背景)
-@color-gold: #C59B27;        // 沉香古金 (称号徽章、诗签边框、VIP 雅士标识)
-@color-border: #E2D9C8;      // 古纸线界 (浅淡纸张折痕与竹简分隔线)
+@color-bg: #F7F4EB;          // 暖宣纸底色（全局页面背景）
+@color-bg-sunk: #EFEBE1;     // 宣纸压深色（输入框底、标签底、次级按钮底）
+@color-card: #FAF7F0;        // 绢帛卡片白（卡片、先贤方气泡、列表底）
+@color-text-main: #2B2B2B;   // 水墨浓黑（主标题、正文）
+@color-text-sub: #6B675B;    // 水墨淡灰（次要说明、时间戳、标签）
+@color-seal: #8A2B2B;        // 朱砂印泥红（印章、主按钮、未读角标、激活态；全站唯一强调色）
+@color-bamboo: #2D5A3F;      // 竹青雅色（用户方气泡、选中标签、次级操作）
+@color-gold: #C59B27;        // 泥金描边（徽章、卷轴描金细边；仅描边不做大面积填充）
+@color-border: rgba(138, 43, 43, 0.12);  // 宣纸微边框（卡片描边、分割线）
+@color-divider: #E9DEDB;     // 派生色：宣纸微边框的实色等价（用于实色分隔线，或需要按比例减淡的场合）
+@color-indigo: #203A4C;      // 霁蓝黛青（本轮未引用，保留给夜间/沉浸场景）
 
 // 2. 边框与圆角规范 (Borders & Radius)
 @border-classic: 1px solid @color-border;
-@radius-card: 10px;          // 古风方正温润圆角 (8px ~ 12px)
-@radius-seal: 6px;           // 印章小圆角
+@radius-card: 12px;          // 卡片圆角
+@radius-sheet: 16px;         // 大卡 / 半屏抽屉圆角
+@radius-seal: 6px;           // 印章 / 印章式按钮圆角
+
+// 3. 阴影规范
+@shadow-card: 0 4px 16px rgba(0, 0, 0, 0.04);  // 卡片微浮雕（禁止外发光）

@@ -23,14 +23,14 @@
 
 .footerButton {
   font-size: var(--adm-font-size-4);
-  color: #fff;
+  color: @color-card;
   line-height: 1;
   padding: 10px 20px;
   background-color: @color-seal;
   border-radius: 100px;
   display: inline-block;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(158, 42, 43, 0.4);
+  box-shadow: 0 2px 8px fade(@color-seal, 40%);
 }
 
 .image-render {
@@ -42,7 +42,7 @@
 
 .custom-render {
   color: @color-seal;
-  background: #fff;
+  background: @color-card;
   width: 200px;
   height: 100px;
   border-radius: 4px;
@@ -69,7 +69,7 @@
 
     input {
       margin-top: 16px;
-      background-color: #fff;
+      background-color: @color-card;
       border: 1px solid @color-border;
       border-radius: 6px;
       padding: 8px 12px;
@@ -90,5 +90,5 @@
   color: white;
   padding: 10px 20px;
   border-radius: 22px;
-  box-shadow: 0 2px 10px rgba(158, 42, 43, 0.3);
+  box-shadow: 0 2px 10px fade(@color-seal, 30%);
 }

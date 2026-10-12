@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&amp;family=Noto+Sans+SC:wght@400;500;600&amp;family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "on-tertiary-container": "#e4b743", "on-error-container": "#93000a", "on-background": "#1b1c1c", "surface": "#fcf9f8", "background": "#fcf9f8", "surface-container-low": "#f6f3f2", "on-tertiary-fixed": "#251a00", "secondary": "#3a684c", "tertiary-container": "#614900", "surface-variant": "#e4e2e1", "surface-tint": "#a23d3b", "primary-fixed-dim": "#ffb3af", "surface-container-high": "#eae7e7", "outline-variant": "#ddc0be", "surface-container-lowest": "#ffffff", "on-secondary-fixed-variant": "#224f35", "on-secondary": "#ffffff", "error": "#ba1a1a", "primary-fixed": "#ffdad7", "inverse-on-surface": "#f3f0f0", "on-surface": "#1b1c1c", "secondary-fixed-dim": "#a1d2af", "on-surface-variant": "#564240", "on-primary-container": "#ffa6a1", "tertiary-fixed-dim": "#eec14b", "secondary-fixed": "#bceecb", "on-primary": "#ffffff", "tertiary": "#453300", "surface-container": "#f0eded", "on-tertiary": "#ffffff", "primary": "#6b1417", "outline": "#897170", "on-primary-fixed": "#410005", "error-container": "#ffdad6", "primary-container": "#8a2b2b", "surface-container-highest": "#e4e2e1", "tertiary-fixed": "#ffdf98", "inverse-primary": "#ffb3af", "surface-dim": "#dcd9d9", "on-tertiary-fixed-variant": "#5a4300", "on-secondary-container": "#3f6c50", "secondary-container": "#b9ebc8", "on-primary-fixed-variant": "#822526", "on-secondary-fixed": "#002110", "surface-bright": "#fcf9f8", "on-error": "#ffffff", "inverse-surface": "#303030" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "margin": "1.25rem", "space-sm": "0.5rem", "gutter": "1rem", "space-xl": "2rem", "space-md": "0.75rem", "space-lg": "1.25rem", "space-xs": "0.25rem" }, fontFamily: { "label-lg": ["Noto Sans SC", "sans-serif"], "label-seal": ["Noto Serif SC", "serif"], "label-md": ["Noto Sans SC", "sans-serif"], "body-md": ["Noto Sans SC", "sans-serif"], "body-sm": ["Noto Sans SC", "sans-serif"], "body-lg": ["Noto Sans SC", "sans-serif"], "headline-md": ["Noto Serif SC", "serif"], "display-hero": ["Noto Serif SC", "serif"], "headline-sm": ["Noto Serif SC", "serif"], "headline-lg": ["Noto Serif SC", "serif"] }, fontSize: { "label-lg": ["14px", { lineHeight: "20px", letterSpacing: "0.02em", fontWeight: "500" }], "label-seal": ["11px", { lineHeight: "14px", letterSpacing: "0.08em", fontWeight: "600" }], "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.03em", fontWeight: "500" }], "body-md": ["14px", { lineHeight: "22px", fontWeight: "400" }], "body-sm": ["12px", { lineHeight: "18px", fontWeight: "400" }], "body-lg": ["16px", { lineHeight: "26px", fontWeight: "400" }], "headline-md": ["20px", { lineHeight: "30px", letterSpacing: "0.01em", fontWeight: "500" }], "display-hero": ["36px", { lineHeight: "48px", letterSpacing: "0.04em", fontWeight: "600" }], "headline-sm": ["17px", { lineHeight: "24px", fontWeight: "500" }], "headline-lg": ["26px", { lineHeight: "36px", letterSpacing: "0.02em", fontWeight: "600" }] } } } };</script></head><body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.03)]"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm"><span class="w-2 h-2 rounded-full bg-primary-container inline-block"></span><h1 class="font-headline-md text-headline-md text-on-surface tracking-wider font-medium">Study</h1></div><div class="flex items-center gap-space-md"><button aria-label="搜索与筛选" class="w-11 h-11 flex items-center justify-center text-outline transition-colors hover:text-on-surface" type="button"><span class="material-symbols-outlined text-[20px]">filter_vintage</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full px-margin pb-12">
+<!-- 顶部题头 (Top Header Area) -->
+<section class="flex flex-col pt-4 pb-5">
+<div class="flex items-center gap-space-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface tracking-wider font-semibold">墨隐书斋</h2>
+<span class="inline-flex items-center justify-center w-6 h-6 rounded bg-primary text-on-primary font-label-seal text-label-seal shadow-[0_2px_6px_rgba(107,20,23,0.25)] select-none">华风</span>
+</div>
+<p class="font-body-sm text-body-sm text-outline tracking-widest mt-1">一卷诗书藏风雅 半窗山水养心性</p>
+</section>
+<!-- 雅士身份与四维修持大卡 (Scholar Identity & Cultivation Grand Card) -->
+<section class="w-full bg-surface-container-lowest rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.04)] p-space-lg relative overflow-hidden">
+<!-- Subtle ink atmosphere water ripple texture -->
+<div class="absolute -right-12 -top-12 w-44 h-44 rounded-full bg-primary/5 pointer-events-none blur-2xl"></div>
+<!-- Upper Section: Avatar & Persona -->
+<div class="flex items-center gap-space-md relative z-10">
+<div class="relative w-12 h-12 rounded-full p-0.5 bg-surface-container-high shrink-0 overflow-hidden shadow-inner">
+<img class="w-full h-full object-cover rounded-full" data-alt="Classical Song Dynasty literati portrait painted in subtle washed monochrome Chinese ink on warm aged Xuan paper, gentle expression, wearing traditional scholar silk robes and soft cap, minimalist composition, quiet scholarly aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIbAirBcy7YTN2wDribZ2CPMOsw7l0_8Z-pgjkBS3M9j6COIPFnYe6nF3eNbpYc5bHN-mqmXh2JjZUG1EBH-U5xRcFVD7TACDRlTSuRUBatbHTjp-G88O6a-HQn6cEf28-ht7BhEXhgqNf7QQDdk5twM3NGvEwmyKbk45QkBGzBZ3g0sVCD7tMA-u3vyCiqMKm5W0ChC4h7JzySXtFBkRLH6N4Hc7nr-GHM7cJLAu3Z4Lb9EFfdiRKUQ"/>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-wide">云山居士</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-tertiary-container/10 text-on-tertiary-container font-label-md text-[11px] leading-tight select-none">翰林待诏</span>
+</div>
+<p class="font-body-sm text-body-sm text-outline mt-0.5 truncate tracking-normal">读千年风雅 与君共此山河</p>
+</div>
+</div>
+<!-- Subtle Hairline Division -->
+<div class="w-full h-[1px] bg-outline-variant/30 my-4"></div>
+<!-- Lower Section: 4-Dimension Cultivation Metrics -->
+<div class="grid grid-cols-4 w-full text-center relative z-10">
+<div class="flex flex-col items-center justify-center px-1">
+<span class="font-headline-md text-headline-md text-on-surface font-semibold">12</span>
+<span class="font-body-sm text-body-sm text-outline mt-1 tracking-tight">鉴宝藏器</span>
+</div>
+<div class="flex flex-col items-center justify-center px-1">
+<span class="font-headline-md text-headline-md text-on-surface font-semibold">36</span>
+<span class="font-body-sm text-body-sm text-outline mt-1 tracking-tight">论道问策</span>
+</div>
+<div class="flex flex-col items-center justify-center px-1">
+<span class="font-headline-md text-headline-md text-on-surface font-semibold">48</span>
+<span class="font-body-sm text-body-sm text-outline mt-1 tracking-tight">诗签摘录</span>
+</div>
+<div class="flex flex-col items-center justify-center px-1">
+<span class="font-headline-md text-headline-md text-on-surface font-semibold">8</span>
+<span class="font-body-sm text-body-sm text-outline mt-1 tracking-tight">自定知友</span>
+</div>
+</div>
+</section>
+<!-- 今日煮茶雅兴交互条 (Scholar Moment of Delight) -->
+<section class="mt-4 px-space-md py-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-7 h-7 rounded-full bg-secondary-container/50 flex items-center justify-center shrink-0">
+<svg class="w-4 h-4 text-secondary" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M17 8h1a4 4 0 1 1 0 8h-1"></path>
+<path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path>
+<line x1="6" x2="6" y1="2" y2="4"></line>
+<line x1="10" x2="10" y1="2" y2="4"></line>
+<line x1="14" x2="14" y1="2" y2="4"></line>
+</svg>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface truncate">今日谷雨 · 宜烹顾渚紫笋，清吟对案</span>
+</div>
+<button class="font-label-seal text-label-seal text-primary px-2 py-1 rounded bg-primary-container/10 active:scale-95 transition-transform shrink-0" id="tea-whisk-btn" type="button">点茶记</button>
+</section>
+<!-- 文人资产列表 (Literati Asset List) -->
+<section class="mt-4 bg-surface-container-lowest rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col">
+<!-- Row 1: 我的诗笺 -->
+<a class="group flex items-center justify-between px-space-lg py-4 hover:bg-surface-container-low transition-colors duration-150" href="#">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center shrink-0 text-on-surface group-hover:text-primary transition-colors">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+<line x1="8" x2="16" y1="7" y2="7"></line>
+<line x1="8" x2="13" y1="11" y2="11"></line>
+</svg>
+</div>
+<div class="flex flex-col min-w-0">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-medium group-hover:text-primary transition-colors">我的诗笺</h3>
+<p class="font-body-sm text-body-sm text-outline truncate mt-0.5">收录的名篇与自题摘录</p>
+</div>
+</div>
+<div class="flex items-center gap-space-xs text-outline shrink-0 ml-2">
+<span class="font-label-md text-label-md text-outline/80">48卷</span>
+<svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</div>
+</a>
+<div class="w-full h-[1px] bg-outline-variant/20 mx-space-lg"></div>
+<!-- Row 2: 雅言锦囊 -->
+<a class="group flex items-center justify-between px-space-lg py-4 hover:bg-surface-container-low transition-colors duration-150" href="#">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center shrink-0 text-on-surface group-hover:text-primary transition-colors">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2z"></path>
+<circle cx="12" cy="12" r="3"></circle>
+<path d="m3 3 6.5 6.5"></path>
+<path d="m21 3-6.5 6.5"></path>
+</svg>
+</div>
+<div class="flex flex-col min-w-0">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-medium group-hover:text-primary transition-colors">雅言锦囊</h3>
+<p class="font-body-sm text-body-sm text-outline truncate mt-0.5">白话雅译收藏的高雅名句</p>
+</div>
+</div>
+<div class="flex items-center gap-space-xs text-outline shrink-0 ml-2">
+<span class="font-label-md text-label-md text-outline/80">19锦</span>
+<svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</div>
+</a>
+<div class="w-full h-[1px] bg-outline-variant/20 mx-space-lg"></div>
+<!-- Row 3: 知己名录 -->
+<a class="group flex items-center justify-between px-space-lg py-4 hover:bg-surface-container-low transition-colors duration-150" href="#">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center shrink-0 text-on-surface group-hover:text-primary transition-colors">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+<circle cx="9" cy="7" r="4"></circle>
+<path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+<path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+</svg>
+</div>
+<div class="flex flex-col min-w-0">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-medium group-hover:text-primary transition-colors">知己名录</h3>
+<p class="font-body-sm text-body-sm text-outline truncate mt-0.5">迎请的自定义诗人与档案库</p>
+</div>
+</div>
+<div class="flex items-center gap-space-xs text-outline shrink-0 ml-2">
+<span class="font-label-seal text-label-seal text-secondary px-1.5 py-0.5 rounded bg-secondary-container/40">东坡在列</span>
+<svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</div>
+</a>
+<div class="w-full h-[1px] bg-outline-variant/20 mx-space-lg"></div>
+<!-- Row 4: 鉴物图谱 -->
+<a class="group flex items-center justify-between px-space-lg py-4 hover:bg-surface-container-low transition-colors duration-150" href="#">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center shrink-0 text-on-surface group-hover:text-primary transition-colors">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M5 9h14l-2 9H7L5 9z"></path>
+<path d="M9 9V5a3 3 0 0 1 6 0v4"></path>
+<line x1="4" x2="20" y1="9" y2="9"></line>
+<circle cx="12" cy="14" r="1.5"></circle>
+</svg>
+</div>
+<div class="flex flex-col min-w-0">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-medium group-hover:text-primary transition-colors">鉴物图谱</h3>
+<p class="font-body-sm text-body-sm text-outline truncate mt-0.5">古今器物考释记录</p>
+</div>
+</div>
+<div class="flex items-center gap-space-xs text-outline shrink-0 ml-2">
+<span class="font-label-md text-label-md text-outline/80">汝窑等12件</span>
+<svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</div>
+</a>
+<div class="w-full h-[1px] bg-outline-variant/20 mx-space-lg"></div>
+<!-- Row 5: 论道札记 -->
+<a class="group flex items-center justify-between px-space-lg py-4 hover:bg-surface-container-low transition-colors duration-150" href="#">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center shrink-0 text-on-surface group-hover:text-primary transition-colors">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="m18 2 4 4-12 12H6v-4L18 2z"></path>
+<path d="m15 5 3 3"></path>
+<path d="M2 22h20"></path>
+</svg>
+</div>
+<div class="flex flex-col min-w-0">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-medium group-hover:text-primary transition-colors">论道札记</h3>
+<p class="font-body-sm text-body-sm text-outline truncate mt-0.5">与先贤单聊或群聊的精选对谈</p>
+</div>
+</div>
+<div class="flex items-center gap-space-xs text-outline shrink-0 ml-2">
+<span class="font-label-md text-label-md text-outline/80">36则</span>
+<svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<polyline points="9 18 15 12 9 6"></polyline>
+</svg>
+</div>
+</a>
+</section>
+<!-- 砚池水痕静心交互 (Mindful Ink Pool Micro-Interaction) -->
+<section class="mt-5 p-space-md rounded-xl bg-surface-container-low flex items-center justify-between relative overflow-hidden">
+<div class="flex items-center gap-space-sm z-10">
+<div class="w-2.5 h-2.5 rounded-full bg-primary/40 animate-pulse"></div>
+<span class="font-label-md text-label-md text-on-surface-variant">砚中墨尚温，已静心研读四十五候</span>
+</div>
+<span class="font-label-seal text-label-seal text-outline select-none z-10">洗砚涤尘</span>
+</section>
+<!-- Bottom Aesthetic Touch: Literati Sign-off -->
+<footer class="mt-8 mb-4 text-center">
+<p class="font-label-seal text-label-seal text-outline/70 tracking-[0.25em] select-none">
+      —— 澄怀味象 · 坐对幽室 ——
+    </p>
+</footer>
+</div>
+<script>
+  // Subtle tactile toast on clicking literati actions
+  document.getElementById('tea-whisk-btn')?.addEventListener('click', function() {
+    const originalText = this.innerText;
+    this.innerText = '已烹新茶';
+    this.classList.add('bg-secondary-container/60', 'text-secondary');
+    setTimeout(() => {
+      this.innerText = originalText;
+      this.classList.remove('bg-secondary-container/60', 'text-secondary');
+    }, 1800);
+  });
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-4px_16px_rgba(0,0,0,0.03)]" data-active-classes="text-primary-container relative after:content-[''] after:absolute after:bottom-1.5 after:w-5 after:h-0.5 after:bg-primary-container after:rounded-full"><div class="h-16 px-margin flex items-center justify-around"><a class="flex flex-col items-center justify-center min-w-[56px] h-12 text-outline transition-colors hover:text-on-surface" data-path="gathering" href="#"><span class="material-symbols-outlined text-[22px]">local_florist</span><span class="font-label-seal text-label-seal mt-0.5">雅集</span></a><a class="flex flex-col items-center justify-center min-w-[56px] h-12 text-outline transition-colors hover:text-on-surface" data-path="soulmates" href="#"><span class="material-symbols-outlined text-[22px]">mark_chat_unread</span><span class="font-label-seal text-label-seal mt-0.5">知音</span></a><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] h-12 transition-colors text-primary-container relative after:content-[''] after:absolute after:bottom-1.5 after:w-5 after:h-0.5 after:bg-primary-container after:rounded-full" data-path="study" href="#"><span class="material-symbols-outlined text-[22px]">menu_book</span><span class="font-label-seal text-label-seal mt-0.5">书斋</span></a></div></nav></body></html>

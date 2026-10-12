@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=390, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>迎请故友 · 自定知己</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'rice-paper': '#F7F4EB',
+            'silk-white': '#FAF7F0',
+            'rice-deep': '#EFEBE1',
+            'ink-deep': '#2B2B2B',
+            'ink-gray': '#6B675B',
+            'cinnabar': '#8A2B2B',
+            'bamboo': '#2D5A3F',
+            'mud-gold': '#C59B27',
+          },
+          fontFamily: {
+            serif: ['"Noto Serif SC"', 'SimSun', 'Songti SC', 'serif'],
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"PingFang SC"', '"Helvetica Neue"', 'sans-serif'],
+          },
+          boxShadow: {
+            'drawer': '0 -8px 24px rgba(43, 43, 43, 0.12)',
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #2B2B2B;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    .custom-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .paper-texture {
+      background-color: #F7F4EB;
+      background-image: radial-gradient(rgba(138, 43, 43, 0.035) 1px, transparent 0);
+      background-size: 20px 20px;
+    }
+  </style>
+</head>
+<body class="w-[390px] h-[844px] max-w-[390px] max-h-[844px] mx-auto overflow-hidden relative select-none">
+<!-- Underlying Layer: Previous Screen Context (知己信札) With Warm Ink Scrim -->
+<div class="absolute inset-0 paper-texture opacity-90 filter blur-[1.5px] pointer-events-none">
+<!-- Header simulation -->
+<div class="px-4 pt-12 pb-3 flex items-center justify-between border-b border-[rgba(138,43,43,0.12)] bg-[#FAF7F0]/80">
+<div class="flex items-center space-x-2">
+<span class="font-serif text-lg font-bold text-ink-deep">知己信札</span>
+<span class="text-[10px] px-1.5 py-0.5 border border-cinnabar/40 text-cinnabar rounded">尺素</span>
+</div>
+</div>
+<!-- Simulated Contacts strip -->
+<div class="px-4 py-3 flex space-x-3 opacity-60">
+<div class="w-12 h-12 rounded-full border border-cinnabar bg-rice-deep"></div>
+<div class="w-12 h-12 rounded-full border border-ink-deep/10 bg-rice-deep"></div>
+<div class="w-12 h-12 rounded-full border border-ink-deep/10 bg-rice-deep"></div>
+<div class="w-12 h-12 rounded-full border border-ink-deep/10 bg-rice-deep"></div>
+</div>
+<!-- Simulated list cards -->
+<div class="px-4 space-y-3 mt-2 opacity-40">
+<div class="h-16 rounded-xl bg-silk-white"></div>
+<div class="h-16 rounded-xl bg-silk-white"></div>
+<div class="h-16 rounded-xl bg-silk-white"></div>
+</div>
+</div>
+<!-- Warm Ink Scrim Overlay rgba(43,43,43,0.45) -->
+<div class="absolute inset-0 bg-[#2B2B2B]/45"></div>
+<!-- Bottom Drawer Component (占据屏幕下方约 80% 高度: 675px) -->
+<div class="absolute bottom-0 left-0 right-0 h-[675px] bg-silk-white rounded-t-[16px] shadow-drawer border-t border-[rgba(138,43,43,0.15)] flex flex-col z-20 overflow-hidden">
+<!-- Drag Handle Indicator (40 x 4px) -->
+<div class="pt-2.5 pb-1 flex justify-center items-center">
+<div class="w-10 h-1 rounded-full bg-[#D8D2C4]"></div>
+</div>
+<!-- Drawer Top Bar -->
+<div class="px-4 py-2 flex items-center justify-between border-b border-[rgba(138,43,43,0.1)]">
+<button class="flex items-center space-x-1 text-ink-gray active:opacity-70 transition-opacity">
+<!-- 1.5px Linear Close/Leave Icon -->
+<svg class="w-3.5 h-3.5 text-ink-gray" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<line x1="18" x2="6" y1="6" y2="18"></line>
+<line x1="6" x2="18" y1="6" y2="18"></line>
+</svg>
+<span class="text-xs font-serif text-ink-gray">离席</span>
+</button>
+<!-- Center Title -->
+<h2 class="font-serif text-[17px] font-semibold text-ink-deep tracking-wide">迎请故友 · 自定知己</h2>
+<!-- Right Balance Spacer -->
+<div class="w-10"></div>
+</div>
+<!-- Scrollable Drawer Body with smooth scrolling and complete visibility -->
+<div class="flex-1 overflow-y-auto custom-scroll px-4 pt-3.5 pb-24 space-y-4">
+<!-- Section 1: 基础表单 (诗人名号 & 所属朝代) -->
+<div class="space-y-3">
+<!-- Row 1: 诗人名号 -->
+<div>
+<label class="block text-sm font-serif text-ink-gray mb-1.5 font-medium">诗人名号</label>
+<div class="w-full h-11 px-3.5 bg-rice-deep rounded-[12px] flex items-center">
+<input class="w-full bg-transparent text-sm text-ink-deep placeholder:text-ink-gray/60 focus:outline-none font-sans font-medium" placeholder="辛弃疾" type="text" value="辛弃疾"/>
+</div>
+</div>
+<!-- Row 2: 所属朝代 -->
+<div>
+<label class="block text-sm font-serif text-ink-gray mb-1.5 font-medium">所属朝代</label>
+<div class="w-full h-11 px-3.5 bg-rice-deep rounded-[12px] flex items-center justify-between cursor-pointer">
+<div class="flex items-center space-x-1.5">
+<span class="text-sm font-serif font-bold text-ink-deep">宋</span>
+</div>
+<!-- Linear Chevron Down & Option Hint -->
+<div class="flex items-center space-x-1 text-ink-gray">
+<span class="text-xs text-ink-gray/80">唐 / 宋 / 明 / 清 / 自定义</span>
+<svg class="w-3.5 h-3.5 text-ink-gray" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<polyline points="6 9 12 15 18 9"></polyline>
+</svg>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 2: AI 一键考释赋魂卡片 (1px 泥金描边，删除考据经历标签) -->
+<div class="p-3 rounded-[12px] bg-silk-white border border-mud-gold flex items-start space-x-2.5">
+<!-- 1.5px Linear Starburst / Sparkle Icon in Mud Gold -->
+<div class="w-6 h-6 flex items-center justify-center shrink-0 text-mud-gold mt-0.5">
+<svg class="w-5 h-5 text-mud-gold" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M12 2l2.4 6.6L21 11l-5.6 4.4L17 22l-5-4-5 4 1.6-6.6L3 11l6.6-2.4L12 2z"></path>
+</svg>
+</div>
+<div class="flex-1 flex flex-col space-y-1">
+<h3 class="font-serif text-[15px] font-bold text-ink-deep leading-tight">AI 一键考释赋魂</h3>
+<p class="text-xs text-ink-gray leading-normal font-sans">
+            只需输入诗人名，AI 自动搜集生平、存诗量与朋友圈！
+          </p>
+</div>
+</div>
+<!-- Section 3: 生涯纪略 (纯净三行，无多余操作/标签) -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="text-xs font-serif text-ink-gray font-medium">生涯纪略</label>
+<span class="text-xs text-ink-gray">AI 自动填充，用户可编辑</span>
+</div>
+<div class="p-3 bg-silk-white rounded-[12px] border border-[rgba(138,43,43,0.12)]">
+<p class="text-sm text-ink-deep leading-[1.6] font-sans">
+            字幼安，号稼轩，南宋豪放派词人。存词六百余首，文武双全，金戈铁马，报国之志终身不渝。
+          </p>
+</div>
+</div>
+<!-- Section 4: 知己朋友圈 (泥金小圆点清雅分隔) -->
+<div class="space-y-1.5">
+<label class="text-xs font-serif text-ink-gray font-medium">知己朋友圈</label>
+<div class="p-3 bg-silk-white rounded-[12px] border border-[rgba(138,43,43,0.12)] flex items-center">
+<div class="flex items-center flex-wrap gap-y-1 text-sm font-sans text-ink-deep leading-relaxed">
+<span class="text-ink-deep font-serif mr-1 shrink-0">挚友：</span>
+<span>陈亮（鹅湖同盟）</span>
+<span class="mx-1.5 text-mud-gold font-bold">·</span>
+<span>朱熹</span>
+<span class="mx-1.5 text-mud-gold font-bold">·</span>
+<span>刘过</span>
+</div>
+</div>
+</div>
+<!-- Section 5: 文风性格标签 (全部 4 枚胶囊标签完整显示，不截断) -->
+<div class="space-y-1.5">
+<label class="text-xs font-serif text-ink-gray font-medium">文风性格标签</label>
+<div class="flex items-center flex-wrap gap-2 pt-0.5">
+<!-- Tag 1: Selected (竹青雅色实心底加象牙白字) -->
+<div class="px-3 py-1.5 rounded-full bg-bamboo text-silk-white text-xs font-serif font-medium flex items-center">
+<span>豪迈悲壮</span>
+</div>
+<!-- Tag 2: Unselected -->
+<div class="px-3 py-1.5 rounded-full bg-rice-deep border border-[rgba(138,43,43,0.12)] text-ink-deep text-xs font-serif">
+<span>气吞万里</span>
+</div>
+<!-- Tag 3: Unselected -->
+<div class="px-3 py-1.5 rounded-full bg-rice-deep border border-[rgba(138,43,43,0.12)] text-ink-deep text-xs font-serif">
+<span>沉郁雄奇</span>
+</div>
+<!-- Tag 4: Unselected -->
+<div class="px-3 py-1.5 rounded-full bg-rice-deep border border-[rgba(138,43,43,0.12)] text-ink-deep text-xs font-serif">
+<span>醉里挑灯</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Fixed Bottom Sticky Area with Cinnabar Confirmation Button -->
+<div class="absolute bottom-0 left-0 right-0 p-4 bg-silk-white/95 border-t border-[rgba(138,43,43,0.1)] z-30">
+<button class="w-full h-12 bg-cinnabar hover:bg-cinnabar/95 active:opacity-90 text-silk-white font-serif text-[17px] font-semibold tracking-wider rounded-[12px] flex items-center justify-center space-x-2 transition-all">
+<!-- 1.5px Linear Scroll/Seal Icon -->
+<svg class="w-4 h-4 text-silk-white" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+</svg>
+<span>结为知己 · 迎入先贤席</span>
+</button>
+<!-- Safe Bottom Spacing -->
+<div class="h-2"></div>
+</div>
+</div>
+</body></html>

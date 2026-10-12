@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600&amp;family=Noto+Serif:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: 'class', theme: { extend: { colors: { 'on-tertiary-container': '#e4b743', 'surface-dim': '#dcd9d9', 'outline-variant': '#ddc0be', 'surface-container': '#f0eded', 'surface-container-lowest': '#ffffff', 'error': '#ba1a1a', 'surface-bright': '#fcf9f8', 'on-primary-container': '#ffa6a1', 'tertiary-fixed': '#ffdf98', 'outline': '#897170', 'on-surface': '#1b1c1c', 'tertiary-container': '#614900', 'on-tertiary': '#ffffff', 'on-error-container': '#93000a', 'secondary-container': '#b9ebc8', 'on-surface-variant': '#564240', 'error-container': '#ffdad6', 'secondary': '#3a684c', 'on-secondary-fixed-variant': '#224f35', 'surface-variant': '#e4e2e1', 'secondary-fixed-dim': '#a1d2af', 'on-tertiary-fixed-variant': '#5a4300', 'surface-container-high': '#eae7e7', 'surface-container-low': '#f6f3f2', 'on-tertiary-fixed': '#251a00', 'primary-fixed': '#ffdad7', 'background': '#fcf9f8', 'inverse-primary': '#ffb3af', 'surface-tint': '#a23d3b', 'inverse-on-surface': '#f3f0f0', 'inverse-surface': '#303030', 'on-secondary-fixed': '#002110', 'primary-fixed-dim': '#ffb3af', 'on-primary-fixed-variant': '#822526', 'primary': '#6b1417', 'on-error': '#ffffff', 'tertiary': '#453300', 'surface-container-highest': '#e4e2e1', 'on-primary-fixed': '#410005', 'on-background': '#1b1c1c', 'tertiary-fixed-dim': '#eec14b', 'on-secondary-container': '#3f6c50', 'on-primary': '#ffffff', 'on-secondary': '#ffffff', 'secondary-fixed': '#bceecb', 'surface': '#fcf9f8', 'primary-container': '#8a2b2b' }, borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }, spacing: { 'space-lg': '1.25rem', 'space-xl': '2rem', 'margin': '1.25rem', 'space-sm': '0.5rem', 'space-xs': '0.25rem', 'space-md': '0.75rem', 'gutter': '1rem' }, fontFamily: { 'body-lg': ['Noto Sans'], 'headline-lg': ['Noto Serif'], 'label-md': ['Noto Sans'], 'display-hero': ['Noto Serif'], 'body-sm': ['Noto Sans'], 'label-seal': ['Noto Serif'], 'headline-md': ['Noto Serif'], 'headline-sm': ['Noto Serif'], 'label-lg': ['Noto Sans'], 'body-md': ['Noto Sans'] }, fontSize: { 'body-lg': ['16px', { lineHeight: '26px', fontWeight: '400' }], 'headline-lg': ['26px', { lineHeight: '36px', letterSpacing: '0.02em', fontWeight: '600' }], 'label-md': ['12px', { lineHeight: '16px', letterSpacing: '0.03em', fontWeight: '500' }], 'display-hero': ['36px', { lineHeight: '48px', letterSpacing: '0.04em', fontWeight: '600' }], 'body-sm': ['12px', { lineHeight: '18px', fontWeight: '400' }], 'label-seal': ['11px', { lineHeight: '14px', letterSpacing: '0.08em', fontWeight: '600' }], 'headline-md': ['20px', { lineHeight: '30px', letterSpacing: '0.01em', fontWeight: '500' }], 'headline-sm': ['17px', { lineHeight: '24px', fontWeight: '500' }], 'label-lg': ['14px', { lineHeight: '20px', letterSpacing: '0.02em', fontWeight: '500' }], 'body-md': ['14px', { lineHeight: '22px', fontWeight: '400' }] } } } }</script><style>@layer base { html, body { width: 100%; margin: 0; padding: 0; } body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; } .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); } .pt-safe { padding-top: env(safe-area-inset-top, 0px); } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; } .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; display: inline-block; vertical-align: middle; line-height: 1; }</style></head><body class="bg-surface text-on-surface font-body-md text-body-md antialiased min-h-screen flex flex-col selection:bg-primary/10"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl pt-safe shadow-[0_1px_12px_rgba(43,43,43,0.03)]"><div class="h-16 px-space-md flex items-center justify-between"><div class="flex items-center min-w-[44px]"><button aria-label="返回" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface hover:text-primary transition-colors" onclick="history.back()"><span class="material-symbols-outlined text-[22px]">arrow_back_ios_new</span></button></div><div class="flex flex-col items-center justify-center text-center px-space-xs"><div class="flex items-center gap-space-xs"><h1 class="font-headline-sm text-headline-sm text-on-surface tracking-wide select-none">李白 · 青莲居士</h1></div><div class="flex items-center gap-1.5 mt-0.5"><span class="w-1.5 h-1.5 rounded-full bg-secondary inline-block animate-pulse"></span><span class="px-1.5 py-0.5 rounded-full bg-secondary-container/30 text-secondary text-[10px] leading-none font-medium tracking-wider">对席中</span></div></div><div class="flex items-center gap-space-xs min-w-[44px] justify-end"><button aria-label="更多选项" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface hover:text-primary transition-colors"><span class="material-symbols-outlined text-[22px]">more_horiz</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-[0_2px_6px_rgba(107,20,23,0.2)]"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-safe bg-surface"><div class="flex flex-col w-full relative pb-28">
+<!-- 顶部首屏立绘欢迎卡 -->
+<section class="relative w-full pt-4 pb-6 flex flex-col items-center justify-center overflow-hidden">
+<!-- 泥金极淡微光晕背景 -->
+<div class="relative w-full max-w-[320px] flex items-center justify-center">
+<div class="absolute w-56 h-56 rounded-full pointer-events-none" style="background: radial-gradient(circle, rgba(197, 155, 39, 0.12) 0%, rgba(247, 244, 235, 0) 70%);"></div>
+<!-- 写意水墨李白立绘 -->
+<div class="relative z-10 w-[240px] h-[240px] flex items-center justify-center">
+<img alt="李白举杯对月写意水墨立绘" class="w-full h-full object-contain mix-blend-multiply transition-transform duration-700 ease-out hover:scale-105 select-none pointer-events-none" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNpfS3zQn4v7E4Lp_cTCqaiM67q4yh8Visi6Hu7Y88hmO5tc4vQ_FpaAL5IKH0timHFc9L_cCLGdd-rva2HQkZ7mpKXDHUfMtBk2jbRdECK1Uhb6DCDP7qgLR16GB9kDOtWPzhtnSy4zddpkocPwCDJ5JCBFIV98wtpfGN-CZtmnwL6w7GxsTFfBk-u7wBc2uwd-PBAY8Lgr1tN2QDbcCohyIPEA3FeejCl5W7ugQvjJy6yvaZ1cvUhQ"/>
+</div>
+</div>
+<!-- 诗意欢迎语 -->
+<div class="mt-2 text-center px-space-md z-10">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-wider">
+        嗨，阁下！今日有何雅怀？
+      </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1 tracking-wide">
+        天生我材必有用，且随吾尽兴！
+      </p>
+</div>
+</section>
+<!-- 灵感话题胶囊卡片 -->
+<section class="px-space-margin mb-space-lg">
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_4px_16px_rgba(0,0,0,0.04)] px-space-md py-2" style="border: 1px solid rgba(138,43,43,0.12);">
+<!-- 话题 1 -->
+<button class="topic-chip w-full flex items-center justify-between py-3 text-left group active:opacity-70 transition-all border-b border-dashed border-outline-variant/40" data-prompt="太白兄，请帮我拆解一下这首诗的深意与风骨。" type="button">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">帮我拆解一下这首诗</span>
+<svg class="w-5 h-5 text-outline group-hover:text-primary group-hover:translate-x-0.5 transition-all flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M8.25 4.5l7.5 7.5-7.5 7.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- 话题 2 -->
+<button class="topic-chip w-full flex items-center justify-between py-3 text-left group active:opacity-70 transition-all border-b border-dashed border-outline-variant/40" data-prompt="太白兄，秋风起兮，可否同作一首七言绝句？" type="button">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">与我同作一首七绝</span>
+<svg class="w-5 h-5 text-outline group-hover:text-primary group-hover:translate-x-0.5 transition-all flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M8.25 4.5l7.5 7.5-7.5 7.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- 话题 3 -->
+<button class="topic-chip w-full flex items-center justify-between py-3 text-left group active:opacity-70 transition-all border-b border-dashed border-outline-variant/40" data-prompt="困顿于世，诸多烦扰缠身，求先生开解。" type="button">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">困顿于世，求先生开解</span>
+<svg class="w-5 h-5 text-outline group-hover:text-primary group-hover:translate-x-0.5 transition-all flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M8.25 4.5l7.5 7.5-7.5 7.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- 话题 4 -->
+<button class="topic-chip w-full flex items-center justify-between py-3 text-left group active:opacity-70 transition-all" data-prompt="太白兄，且帮我把这句俗白言语化为高雅诗行。" type="button">
+<span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">把我的大白话译成高雅诗句</span>
+<svg class="w-5 h-5 text-outline group-hover:text-primary group-hover:translate-x-0.5 transition-all flex-shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M8.25 4.5l7.5 7.5-7.5 7.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</section>
+<!-- 对话流互动区域 -->
+<section class="px-space-margin flex flex-col gap-space-lg" id="chatFlow">
+<!-- 用户提问气泡 -->
+<div class="flex justify-end w-full">
+<div class="max-w-[78%] bg-secondary text-on-secondary rounded-xl px-4 py-3 shadow-[0_2px_8px_rgba(58,104,76,0.15)] leading-[1.6] text-[15px] tracking-wide select-none">
+        太白兄，面对世俗烦扰，如何守住本心？
+      </div>
+</div>
+<!-- 先贤李白回复气泡 -->
+<div class="flex items-start gap-3 w-full">
+<!-- 李白水墨肖像头像 -->
+<div class="w-9 h-9 rounded-full flex-shrink-0 overflow-hidden shadow-[0_2px_6px_rgba(0,0,0,0.06)] bg-surface-container flex items-center justify-center p-0.5" style="border: 1px solid rgba(138,43,43,0.15);">
+<img alt="李白水墨头像" class="w-full h-full object-cover object-top mix-blend-multiply" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNpfS3zQn4v7E4Lp_cTCqaiM67q4yh8Visi6Hu7Y88hmO5tc4vQ_FpaAL5IKH0timHFc9L_cCLGdd-rva2HQkZ7mpKXDHUfMtBk2jbRdECK1Uhb6DCDP7qgLR16GB9kDOtWPzhtnSy4zddpkocPwCDJ5JCBFIV98wtpfGN-CZtmnwL6w7GxsTFfBk-u7wBc2uwd-PBAY8Lgr1tN2QDbcCohyIPEA3FeejCl5W7ugQvjJy6yvaZ1cvUhQ"/>
+</div>
+<!-- 回复内容 -->
+<div class="max-w-[78%] bg-surface-container-lowest text-on-surface rounded-xl px-4 py-3 shadow-[0_4px_16px_rgba(0,0,0,0.04)] leading-[1.6] text-[15px] font-headline-sm font-normal" style="border: 1px solid rgba(138,43,43,0.12);">
+<p class="tracking-wide">浮生如寄，何拘泥于毫芒之失？且放白鹿青崖间，须行即骑访名山！今日且尽金樽一杯！</p>
+<div class="mt-2.5 flex items-center justify-between text-outline-variant text-[11px] font-label-seal">
+<span class="inline-flex items-center gap-1 text-primary/70">
+<span class="material-symbols-outlined text-[13px]">local_bar</span> 金樽对月
+          </span>
+<span class="text-on-surface-variant/60 font-body-sm">青莲书肆·答问</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 底部贴底输入区 -->
+<footer class="fixed bottom-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur-md pb-safe" style="border-top: 1px solid rgba(138,43,43,0.08);">
+<div class="px-4 py-3 flex items-center gap-2.5">
+<!-- 胶囊形输入框容器 -->
+<div class="flex-1 flex items-center bg-[#EFEBE1] rounded-full px-4 py-2 transition-all focus-within:shadow-[0_0_0_1px_rgba(138,43,43,0.3)]">
+<input class="w-full bg-transparent text-on-surface placeholder:text-on-surface-variant/60 text-body-md font-body-md focus:outline-none" id="verseInput" placeholder="与李白畅论……" type="text"/>
+<!-- 线性矢量麦克风图标 -->
+<button aria-label="语音倾谈" class="ml-2 text-on-surface-variant/70 hover:text-primary transition-colors flex items-center justify-center flex-shrink-0 active:scale-95" id="micBtn" type="button">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24">
+<path d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15a3 3 0 003-3V6a3 3 0 00-6 0v6a3 3 0 003 3z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+<!-- 朱砂印章式方形发送按钮 -->
+<button aria-label="畅论" class="h-10 px-3.5 bg-primary-container text-on-primary rounded-lg flex items-center justify-center font-label-seal text-[13px] font-medium tracking-widest shadow-[0_2px_8px_rgba(138,43,43,0.25)] hover:bg-[#742323] active:scale-95 transition-all flex-shrink-0" id="sendBtn" type="button">
+        畅论
+      </button>
+</div>
+</footer>
+</div>
+<script>
+  (function() {
+    const input = document.getElementById('verseInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const micBtn = document.getElementById('micBtn');
+    const chatFlow = document.getElementById('chatFlow');
+    const topicChips = document.querySelectorAll('.topic-chip');
+
+    const poetResponses = [
+      "古来圣贤皆寂寞，唯有饮者留其名！且共倾一盏，尘世之事，不过过眼烟云。",
+      "长风破浪会有时，直挂云帆济沧海！足下胸中有丘壑，何愁关山难越？",
+      "妙哉！此句大有魏晋风流。若添上一抹残阳孤雁，更显萧疏高绝。",
+      "呼儿将出换美酒，与尔同销万古愁！且放宽怀，且吟清啸。"
+    ];
+
+    function appendMessage(text, isUser = true) {
+      if (!text.trim()) return;
+      
+      const row = document.createElement('div');
+      row.className = isUser ? 'flex justify-end w-full' : 'flex items-start gap-3 w-full';
+      
+      if (isUser) {
+        row.innerHTML = `
+          <div class="max-w-[78%] bg-secondary text-on-secondary rounded-xl px-4 py-3 shadow-[0_2px_8px_rgba(58,104,76,0.15)] leading-[1.6] text-[15px] tracking-wide animate-fadeIn">
+            ${escapeHtml(text)}
+          </div>
+        `;
+      } else {
+        row.innerHTML = `
+          <div class="w-9 h-9 rounded-full flex-shrink-0 overflow-hidden shadow-[0_2px_6px_rgba(0,0,0,0.06)] bg-surface-container flex items-center justify-center p-0.5" style="border: 1px solid rgba(138,43,43,0.15);">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNpfS3zQn4v7E4Lp_cTCqaiM67q4yh8Visi6Hu7Y88hmO5tc4vQ_FpaAL5IKH0timHFc9L_cCLGdd-rva2HQkZ7mpKXDHUfMtBk2jbRdECK1Uhb6DCDP7qgLR16GB9kDOtWPzhtnSy4zddpkocPwCDJ5JCBFIV98wtpfGN-CZtmnwL6w7GxsTFfBk-u7wBc2uwd-PBAY8Lgr1tN2QDbcCohyIPEA3FeejCl5W7ugQvjJy6yvaZ1cvUhQ" alt="李白头像" class="w-full h-full object-cover object-top mix-blend-multiply" />
+          </div>
+          <div class="max-w-[78%] bg-surface-container-lowest text-on-surface rounded-xl px-4 py-3 shadow-[0_4px_16px_rgba(0,0,0,0.04)] leading-[1.6] text-[15px] font-headline-sm font-normal animate-fadeIn" style="border: 1px solid rgba(138,43,43,0.12);">
+            <p class="tracking-wide">${escapeHtml(text)}</p>
+            <div class="mt-2.5 flex items-center justify-between text-outline-variant text-[11px] font-label-seal">
+              <span class="inline-flex items-center gap-1 text-primary/70">
+                <span class="material-symbols-outlined text-[13px]">history_edu</span> 太白挥毫
+              </span>
+              <span class="text-on-surface-variant/60 font-body-sm">刚刚</span>
+            </div>
+          </div>
+        `;
+      }
+      
+      chatFlow.appendChild(row);
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag));
+    }
+
+    function handleSend() {
+      const val = input.value.trim();
+      if (!val) return;
+      appendMessage(val, true);
+      input.value = '';
+
+      setTimeout(() => {
+        const randomAnswer = poetResponses[Math.floor(Math.random() * poetResponses.length)];
+        appendMessage(randomAnswer, false);
+      }, 700);
+    }
+
+    sendBtn.addEventListener('click', handleSend);
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleSend();
+      }
+    });
+
+    topicChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const prompt = chip.getAttribute('data-prompt');
+        if (prompt) {
+          appendMessage(prompt, true);
+          setTimeout(() => {
+            const randomAnswer = poetResponses[Math.floor(Math.random() * poetResponses.length)];
+            appendMessage(randomAnswer, false);
+          }, 800);
+        }
+      });
+    });
+
+    micBtn.addEventListener('click', () => {
+      input.placeholder = '太白侧耳倾听中……';
+      setTimeout(() => {
+        input.placeholder = '与李白畅论……';
+        input.value = '太白先生，且饮一杯否？';
+        input.focus();
+      }, 1400);
+    });
+  })();
+</script></main></body></html>

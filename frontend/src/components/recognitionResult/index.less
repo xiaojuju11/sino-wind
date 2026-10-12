@@ -1,39 +1,41 @@
-// 🏺 博古识器 · 识别结果样式（国风配色：朱砂 #9E2A2B / 古金 #C59B27 / 竹绿 #3A5A40 / 墨 #22252A）
+@import '../../styles/variables.less';
+
+// 🏺 博古识器 · 识别结果样式（改用 variables.less 令牌，取代逐处硬编码色值）
 .object-recognition-result__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
-  
+
   h2 {
     font-size: 22px;
     font-weight: 700;
-    color: #22252a;
+    color: @color-text-main;
     margin: 0;
     letter-spacing: 1px;
   }
-  
+
   &__voice {
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background-color: rgba(197, 155, 39, 0.16); // 沉香古金淡底
-    border: 1px solid rgba(197, 155, 39, 0.45);
+    background-color: fade(@color-gold, 16%); // 泥金淡底
+    border: 1px solid fade(@color-gold, 45%);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     font-size: 20px;
-    color: #9e2a2b;
+    color: @color-seal;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(158, 42, 43, 0.12);
-    
+    box-shadow: 0 2px 8px fade(@color-seal, 12%);
+
     &:hover {
-      background-color: rgba(197, 155, 39, 0.3);
+      background-color: fade(@color-gold, 30%);
       transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(158, 42, 43, 0.18);
+      box-shadow: 0 4px 12px fade(@color-seal, 18%);
     }
-    
+
     &:active {
       transform: scale(0.95);
     }
@@ -51,17 +53,17 @@
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-  
+
   h3 {
     font-size: 28px;
     font-weight: 700;
-    color: #9e2a2b; // 朱砂印泥红
+    color: @color-seal; // 朱砂印泥红
     margin: 0;
   }
-  
+
   &__category {
-    background-color: rgba(58, 90, 64, 0.12); // 苍竹墨绿淡底
-    color: #3a5a40;
+    background-color: fade(@color-bamboo, 12%); // 竹青淡底
+    color: @color-bamboo;
     padding: 6px 12px;
     border-radius: 4px;
     font-size: 14px;
@@ -74,63 +76,63 @@
   align-items: center;
   gap: 8px;
   padding: 12px 16px;
-  background-color: #faf7f0; // 绢帛玉白
+  background-color: @color-card; // 绢帛卡片白
   border-radius: 8px;
-  
+
   i {
-    color: #5c6068;
+    color: @color-text-sub;
     font-size: 18px;
   }
-  
+
   span {
     font-size: 16px;
-    color: #5c6068;
+    color: @color-text-sub;
     font-weight: 500;
   }
 }
 
 .object-recognition-result__description,
 .object-recognition-result__safety {
-  
+
   h4 {
     font-size: 18px;
     font-weight: 600;
-    color: #22252a;
+    color: @color-text-main;
     margin: 0 0 12px 0;
     display: flex;
     align-items: center;
     gap: 8px;
-    
+
     &::before {
       content: '';
       width: 4px;
       height: 20px;
-      background-color: #9e2a2b; // 朱砂竖条
+      background-color: @color-seal; // 朱砂竖条
       border-radius: 2px;
     }
   }
-  
+
   p {
     font-size: 16px;
     line-height: 1.6;
-    color: #424242;
+    color: @color-text-main;
     margin: 0;
   }
 }
 
-// 文人品鉴心得：改用苍竹墨绿，去除旧版橙色安全提示感
+// 文人品鉴心得：苍竹墨绿，去除旧版橙色安全提示感
 .object-recognition-result__safety {
-  
+
   h4 {
-    color: #3a5a40;
-    
+    color: @color-bamboo;
+
     &::before {
-      background-color: #3a5a40;
+      background-color: @color-bamboo;
     }
   }
-  
+
   p {
-    color: #5c6068;
+    color: @color-text-sub;
   }
 }
 
@@ -139,7 +141,7 @@
   .object-recognition-result__name h3 {
     font-size: 24px;
   }
-  
+
   .object-recognition-result {
     padding: 20px;
   }
