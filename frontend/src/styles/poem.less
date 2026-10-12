@@ -43,9 +43,9 @@
   padding: 0.34rem 0.42rem 0.5rem;
   box-sizing: border-box;
   overflow-x: hidden;
-  color: @color-text-main;
+  color: var(--gf-text-main, @color-text-main);
   font-family: 'Songti SC', 'STSong', 'SimSun', 'Noto Serif SC', serif;
-  background-color: @color-bg;
+  background-color: var(--gf-bg-paper, @color-bg);
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 100% 100%;
@@ -58,7 +58,7 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background: fade(@color-bg, 16%);
+    background: var(--gf-veil, fade(@color-bg, 16%));
     pointer-events: none;
     z-index: 0;
   }
@@ -87,7 +87,7 @@
     align-items: center;
     justify-content: center;
     font-size: 0.36rem;
-    color: @color-seal;
+    color: var(--gf-accent-text, @color-seal);
     background: fade(@color-card, 92%);
     border: 1px solid fade(@color-gold, 55%);
     border-radius: 50%;
@@ -103,7 +103,7 @@
     letter-spacing: 0.12rem;
     text-align: center;
     text-indent: 0.12rem;
-    color: #1b1c1f;
+    color: var(--gf-text-main, #1b1c1f);
     text-shadow: 0 0.02rem 0.08rem fade(#fdfaf3, 85%);
   }
 }
@@ -132,7 +132,7 @@
 
   .adm-search-bar-suffix {
     font-size: 0.3rem;
-    color: @color-seal;
+    color: var(--gf-accent-text, @color-seal);
   }
 }
 
@@ -169,7 +169,7 @@
   &__title {
     font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
     font-size: 0.34rem;
-    color: @color-seal;
+    color: var(--gf-accent-text, @color-seal);
   }
 
   &__meta {
@@ -182,7 +182,7 @@
     margin-top: 0.08rem;
     font-size: 0.26rem;
     line-height: 1.5;
-    color: @color-text-sub;
+    color: var(--gf-text-sub, @color-text-sub);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -209,7 +209,7 @@
   .gu-frame(0.2rem);
   margin-top: 0.24rem;
   padding: 0.46rem 0.4rem 0.4rem;
-  background: @color-card;
+  background: var(--gf-bg-card, @color-card);
   border-radius: @radius-card;
   box-shadow: 0 0.1rem 0.28rem fade(#3a2f1d, 10%);
   text-align: center;
@@ -237,7 +237,7 @@
     font-size: 0.56rem;
     font-weight: 700;
     letter-spacing: 0.04rem;
-    color: @color-seal;
+    color: var(--gf-accent-text, @color-seal);
   }
 
   // 朝代 · 作者方印
@@ -254,7 +254,7 @@
     font-size: 0.24rem;
     letter-spacing: 0.04rem;
     color: #fff;
-    background: @color-bamboo;
+    background: var(--gf-bamboo, @color-bamboo);
     border-radius: 3px;
   }
 
@@ -262,7 +262,7 @@
     font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
     font-size: 0.3rem;
     letter-spacing: 0.06rem;
-    color: #3d3a35;
+    color: var(--gf-text-main, #3d3a35);
   }
 
   // 分割金线
@@ -285,7 +285,7 @@
     font-size: 0.4rem;
     line-height: 1.75;
     letter-spacing: 0.03rem;
-    color: #1b1c1f;
+    color: var(--gf-text-main, #1b1c1f);
   }
 
   &__source {
@@ -311,14 +311,14 @@
     padding: 0.24rem 0.26rem;
     font-size: 0.32rem;
     letter-spacing: 0.04rem;
-    color: @color-bamboo;
+    color: var(--gf-accent-text, @color-bamboo);
     cursor: pointer;
   }
 
   &__icon {
     flex: none;
     font-size: 0.34rem;
-    color: @color-bamboo;
+    color: var(--gf-accent-text, @color-bamboo);
   }
 
   &__toggle {
@@ -338,7 +338,7 @@
     overflow: hidden;
     font-size: 0.3rem;
     line-height: 1.85;
-    color: @color-text-sub;
+    color: var(--gf-text-sub, @color-text-sub);
     transition: max-height 0.28s ease, padding 0.28s ease;
   }
 
@@ -381,14 +381,14 @@
   // 主操作：朱砂实心
   &--primary {
     color: #fff;
-    background: @color-seal;
+    background: var(--gf-seal, @color-seal);
     border: 1px solid fade(#7d1f20, 60%);
     box-shadow: 0 0.06rem 0.18rem fade(@color-seal, 28%);
   }
 
   // 次操作：绢帛底描金边
   &--ghost {
-    color: @color-seal;
+    color: var(--gf-accent-text, @color-seal);
     background: fade(@color-card, 96%);
     border: 1px solid fade(@color-gold, 60%);
   }
@@ -417,7 +417,7 @@
   line-height: 1.15;
   color: #fff;
   text-align: center;
-  background: @color-seal;
+  background: var(--gf-seal, @color-seal);
   border: 3px solid fade(#7d1f20, 80%);
   border-radius: 8px;
   box-shadow: 0 0.1rem 0.4rem fade(@color-seal, 45%);

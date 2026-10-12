@@ -2,11 +2,11 @@
 
 .poem-collection-root {
   min-height: 100vh;
-  background-color: @color-bg;
+  background-color: var(--gf-bg-paper, @color-bg);
   padding-bottom: 2rem;
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-  color: @color-text-main;
+  color: var(--gf-text-main, @color-text-main);
 }
 
 // 顶部题头
@@ -31,7 +31,7 @@
     background: transparent;
     border: none;
     font-size: 0.52rem;
-    color: @color-seal;
+    color: var(--gf-accent-text, @color-seal);
     cursor: pointer;
     padding: 0;
 
@@ -51,13 +51,13 @@
     font-weight: 700;
     margin: 0;
     font-family: 'STKaiti', 'KaiTi', 'Songti SC', serif;
-    color: @color-text-main;
+    color: var(--gf-text-main, @color-text-main);
     letter-spacing: 0.04rem;
   }
 
   &__seal {
     font-size: 0.26rem;
-    color: @color-seal;
+    color: var(--gf-accent-text, @color-seal);
     border: 1px solid @color-seal;
     padding: 0.02rem 0.08rem;
     border-radius: 0.04rem;
@@ -66,7 +66,7 @@
 
   &__count {
     font-size: 0.32rem;
-    color: @color-text-sub;
+    color: var(--gf-text-sub, @color-text-sub);
     font-family: 'STKaiti', 'KaiTi', serif;
   }
 }
@@ -79,7 +79,7 @@
 .collection-search-box {
   display: flex;
   align-items: center;
-  background: @color-card;
+  background: var(--gf-bg-card, @color-card);
   border: 1px solid fade(@color-gold, 45%);
   border-radius: 0.2rem;
   padding: 0.18rem 0.3rem;
@@ -87,7 +87,7 @@
 
   .collection-search-icon {
     font-size: 0.42rem;
-    color: @color-seal;
+    color: var(--gf-accent-text, @color-seal);
     margin-right: 0.2rem;
     flex-shrink: 0;
   }
@@ -97,7 +97,7 @@
     border: none;
     background: transparent;
     font-size: 0.36rem;
-    color: @color-text-main;
+    color: var(--gf-text-main, @color-text-main);
     outline: none;
 
     &::placeholder {
@@ -110,7 +110,7 @@
     border: none;
     background: transparent;
     font-size: 0.42rem;
-    color: @color-text-sub;
+    color: var(--gf-text-sub, @color-text-sub);
     cursor: pointer;
     padding: 0 0.1rem;
   }
@@ -127,7 +127,7 @@
 // 单张诗卷卡片
 .poem-card {
   position: relative;
-  background: @color-card;
+  background: var(--gf-bg-card, @color-card);
   border: 1px solid fade(@color-gold, 45%);
   border-radius: 0.22rem;
   padding: 0.4rem;
@@ -158,14 +158,14 @@
   &__title {
     font-size: 0.44rem;
     font-weight: 700;
-    color: @color-text-main;
+    color: var(--gf-text-main, @color-text-main);
     font-family: 'STKaiti', 'KaiTi', 'Songti SC', serif;
     margin: 0;
   }
 
   &__seal {
     font-size: 0.24rem;
-    color: @color-seal;
+    color: var(--gf-accent-text, @color-seal);
     border: 1px solid @color-seal;
     padding: 0 0.08rem;
     border-radius: 0.04rem;
@@ -174,14 +174,14 @@
 
   &__author {
     font-size: 0.32rem;
-    color: @color-text-sub;
+    color: var(--gf-text-sub, @color-text-sub);
     font-family: 'STKaiti', 'KaiTi', serif;
   }
 
   &__excerpt {
     font-size: 0.38rem;
     line-height: 1.6;
-    color: @color-text-main;
+    color: var(--gf-text-main, @color-text-main);
     font-family: 'Songti SC', 'STSong', serif;
     margin: 0 0 0.3rem;
     display: -webkit-box;
@@ -195,7 +195,7 @@
     justify-content: space-between;
     align-items: center;
     font-size: 0.3rem;
-    color: @color-text-sub;
+    color: var(--gf-text-sub, @color-text-sub);
   }
 
   &__date {
@@ -217,7 +217,7 @@
     padding: 0;
 
     &:active {
-      color: @color-seal;
+      color: var(--gf-accent-text, @color-seal);
     }
   }
 
@@ -225,7 +225,7 @@
     display: inline-flex;
     align-items: center;
     gap: 0.06rem;
-    color: @color-seal;
+    color: var(--gf-accent-text, @color-seal);
     font-size: 0.32rem;
     font-weight: 600;
 
@@ -252,14 +252,14 @@
 
   &__text {
     font-size: 0.4rem;
-    color: @color-text-sub;
+    color: var(--gf-text-sub, @color-text-sub);
     margin: 0 0 0.5rem;
     font-family: 'STKaiti', 'KaiTi', serif;
   }
 
   &__btn {
     padding: 0.24rem 0.6rem;
-    background: @color-seal;
+    background: var(--gf-seal, @color-seal);
     color: #fff;
     border: none;
     border-radius: 0.4rem;
@@ -296,7 +296,7 @@
   width: 100%;
   max-width: 420px;
   max-height: 85vh;
-  background: #FAF7F0;
+  background: var(--gf-bg-card, #FAF7F0);
   border-radius: 0.16rem;
   box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.35);
   padding: 0.7rem 0.5rem;
@@ -333,7 +333,7 @@
     .poem-modal-seal {
       display: inline-block;
       font-size: 0.28rem;
-      color: @color-seal;
+      color: var(--gf-accent-text, @color-seal);
       border: 1px solid @color-seal;
       padding: 0.04rem 0.14rem;
       border-radius: 0.04rem;
@@ -344,14 +344,14 @@
     .poem-modal-title {
       font-size: 0.56rem;
       font-weight: 700;
-      color: @color-text-main;
+      color: var(--gf-text-main, @color-text-main);
       margin: 0.1rem 0;
       font-family: 'STKaiti', 'KaiTi', 'Songti SC', serif;
     }
 
     .poem-modal-author {
       font-size: 0.34rem;
-      color: @color-text-sub;
+      color: var(--gf-text-sub, @color-text-sub);
       margin: 0;
       font-family: 'STKaiti', 'KaiTi', serif;
     }
@@ -363,7 +363,7 @@
     .poem-modal-verse {
       font-size: 0.44rem;
       line-height: 1.8;
-      color: @color-text-main;
+      color: var(--gf-text-main, @color-text-main);
       font-family: 'Songti SC', 'STSong', serif;
       text-align: center;
       margin: 0;
@@ -384,7 +384,7 @@
       gap: 0.1rem;
       font-size: 0.32rem;
       font-weight: 600;
-      color: @color-seal;
+      color: var(--gf-accent-text, @color-seal);
       margin-bottom: 0.15rem;
 
       svg {
@@ -395,7 +395,7 @@
     .appreciation-text {
       font-size: 0.34rem;
       line-height: 1.6;
-      color: @color-text-sub;
+      color: var(--gf-text-sub, @color-text-sub);
       margin: 0;
     }
   }
@@ -404,7 +404,7 @@
     display: block;
     width: 100%;
     padding: 0.24rem 0;
-    background: @color-seal;
+    background: var(--gf-seal, @color-seal);
     color: #FAF7F0;
     border: none;
     border-radius: 0.4rem;

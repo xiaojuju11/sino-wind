@@ -22,6 +22,7 @@
   --gf-gold: #C59B27;
   --gf-text-main: #2B2B2B;
   --gf-text-sub: #6B675B;
+  --gf-accent-text: #8A2B2B; // 强调文字：浅色沿用朱砂，逐像素不变
   --gf-veil: rgba(247, 244, 235, 0.16);
 }
 
@@ -35,6 +36,10 @@
   --gf-gold: #CEA559; // 深色定稿描金线实测
   --gf-text-main: #E8D0B0; // 深色定稿象牙白文字实测（玉帛象牙白）
   --gf-text-sub: rgba(232, 208, 176, 0.62); // 次要文字：主文字同色降透明度，不另造色相
+  // 强调文字：深色下不能再用朱砂（#8A2B2B 落在 #171E23 上对比度仅 1.84:1，不可读），
+  // 改用深色定稿实测的泥金 #CEA559（定稿在深色下的激活态/强调也确实用泥金而非朱砂）。
+  // 朱砂仍保留为按钮/印章的**填充色**（--gf-seal），其上的象牙白文字对比度达标。
+  --gf-accent-text: #CEA559;
   --gf-veil: rgba(13, 17, 23, 0.86); // 压暗全站水墨背景层，使底色主导为 #0D1117
 }
 
@@ -56,4 +61,33 @@
   background: var(--gf-veil);
   pointer-events: none;
   z-index: -1;
+}
+
+// ── 共享布局面的深色覆盖 ─────────────────────────────
+// frontend/src/styles/layout.less 属 §2.6 红线文件，故不在其源码内改动，
+// 改由主题层以 [data-theme='dark'] 作用域覆盖；浅色下这些规则完全不生效。
+:root[data-theme='dark'] {
+  // 让全站水墨背景层与夜色罩层透出（layout.less 默认铺了一层不透明宣纸色）
+  .layout {
+    background-color: transparent;
+  }
+
+  .bottom-nav {
+    background: var(--gf-bg-card);
+    border-top-color: fade(#CEA559, 45%);
+    box-shadow: 0 -0.06rem 0.24rem rgba(0, 0, 0, 0.28);
+  }
+
+  // 底栏未激活文字原为 #6a655c（深色下不可读），激活态统一走强调文字令牌
+  .bottom-nav__item {
+    color: var(--gf-text-sub);
+
+    &.is-active {
+      color: var(--gf-accent-text);
+    }
+  }
+
+  .bottom-nav__underline {
+    background: var(--gf-accent-text);
+  }
 }
