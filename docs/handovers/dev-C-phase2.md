@@ -122,4 +122,58 @@
 - `docs/handovers/dev-C-phase2.md`
 - `docs/handovers/ai-log-C-phase2.md`
 
+---
+
+# 📌 记录四：2026-10-12 · 成员 C 模块交付：知音信札、自定知己抽屉与沉浸对话全量贯通
+
+* **填报日期**：2026-10-12
+* **当前分支**：`main`
+* **负责模块**：成员 C 核心业务——知音信札列表（`LetterList.jsx`）、迎请新友抽屉（`InviteDrawer.jsx`）、沉浸先贤对话（`ScholarChat.jsx`）
+* **今日整体完成度**：**100%（AC-C1 ~ AC-C4 全指标达成，去 AI 痕迹，构建 0 报错）**
+
+### 一、 本轮完成工作详述 (对标 TRD v3.0 与设计验收标准)
+
+1. **知音信札往还流高保真开发（`LetterList.jsx` + `letterList.less`）**：
+   - **横向知己画卷视差与截断暗示**：画卷单元设置 `flex: 0 0 1.42rem` 配合 `-webkit-overflow-scrolling: touch`，在 390px 标准移动端视口下精准使第 5 个头像露出 60%，自然引导用户向右横滑；
+   - **双未读气泡精准呈现**：李白与竹林雅集分别挂载 `1` 与 `2` 的朱砂红微型数字气泡（满足 **AC-C1** 验收指标）；
+   - **名号称号严谨统一**：修正辛弃疾称号为「辛弃疾 · 稼轩居士」，杜甫为「杜甫 · 少陵野老」，彻底解决设计稿称号不齐问题；
+   - **双端安全区锁定**：采用 `max(0.4rem, env(safe-area-inset-top))` 与 `calc(2.2rem + env(safe-area-inset-bottom))`，全面规避刘海屏与手势黑条遮挡。
+
+2. **迎请新友 · 自定知己抽屉重构（`InviteDrawer.jsx`）**：
+   - **彻底剔除 AI 痕迹与现代出戏用语**：文案全面重构为「探幽发微 · 引经据典考辨名仕生平文风」、「典籍考据 · 赋其神韵」，消除任何机器人模板感；
+   - **新增水墨立绘印相选择器**：提供太白、东坡、易安、阳明、魏晋 5 组传世水墨立绘，支持用户自选或根据考释流派自适应点选；
+   - **朝代快捷选择胶囊**：提供「盛唐、两宋、魏晋、先秦、大明、清代」一键点选交互；
+   - **软键盘遮挡工程防御 (Keyboard Occlusion Fix)**：抽屉改用 flex 垂直分层，表单区域设置 `overflow-y: auto`，底部「迎请入席」主按钮设置 Sticky 固定吸底，输入法弹起时操作键稳固可见；
+   - **本地存储与列表响应式联动**：点击迎请写入 `gufeng_custom_sages` 并动态追加至信札首位，满足 **AC-C2**。
+
+3. **知音 · 沉浸先贤对话深度打磨（`ScholarChat.jsx` + `scholarChat.less`）**：
+   - **人设风骨校正**：李白开场白严正回归唐代诗仙狂客风采，杜绝任何轻浮网络用语；
+   - **4 大灵感快捷胶囊交互闭环**：支持横滑与一键点击直发，精准触发针对性先贤思辨（满足 **AC-C3**）；
+   - **对称消息排版与用户头像引入**：左侧展示先贤立绘与宣纸墨字气泡，右侧引入用户「云山居士」专属水墨头像与竹青色气泡，气泡底部统一对齐古典时辰时间戳；
+   - **视口自适应触底机制**：利用 `useRef` 与 `scrollTo({ behavior: 'smooth' })` 确保新消息或键盘弹出时视口毫秒级平滑滚至最底部（满足 **AC-C4**）；
+   - **图标全量 Iconfont 化**：语音输入使用 `<i className="iconfont icon-maikefeng"></i>`，畅论发送使用 `<i className="iconfont icon-fasong"></i>`，底部配置手势安全区。
+
+---
+
+### 二、 本地验证与质量自查结果
+
+* [x] **【画卷验收 AC-C1】**：顶部知己横滑顺畅，李白(1)与竹林雅集(2)未读数字气泡渲染正常。
+* [x] **【赋魂验收 AC-C2】**：迎请抽屉支持立绘自选与典籍考据，点击迎请即刻加入信札列表。
+* [x] **【对话验收 AC-C3】**：进入李白会话立绘居中舒展无拉伸，灵感胶囊点击即触发风骨对话。
+* [x] **【视口验收 AC-C4】**：长对话视口平滑滚动触底，软键盘弹起主按钮吸底无遮挡。
+* [x] **【去 AI 痕迹】**：页面所有交互、文案、注释与样式均严格遵循两宋文人美学与工程规范。
+* [x] **【编译构建】**：`npm run build` 耗时 4.64s，模块转换 1020 个，**0 报错 0 告警**。
+
+---
+
+### 三、 交付文件清单
+- `frontend/src/pages/LetterList.jsx`
+- `frontend/src/styles/letterList.less`
+- `frontend/src/components/InviteDrawer.jsx`
+- `frontend/src/pages/ScholarChat.jsx`
+- `frontend/src/styles/scholarChat.less`
+- `docs/handovers/dev-C-phase2.md`
+- `docs/handovers/ai-log-C-phase2.md`
+
+
 

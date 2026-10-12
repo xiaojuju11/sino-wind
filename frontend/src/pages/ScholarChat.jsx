@@ -177,7 +177,7 @@ export default function ScholarChat() {
         <div className="scholar-hero-banner__content">
           <div className="scholar-hero-banner__info">
             <p className="scholar-hero-banner__motto">“{sageInfo.motto}”</p>
-            <div className="scholar-hero-banner__seal">太白墨宝</div>
+            <div className="scholar-hero-banner__seal">{sageInfo.name.slice(0, 2)}墨宝</div>
           </div>
           <div className="scholar-hero-banner__portrait-box">
             <img
@@ -223,6 +223,12 @@ export default function ScholarChat() {
               <div className={`scholar-msg-bubble scholar-msg-bubble--${item.role}`}>
                 <div className="scholar-msg-content">{item.content}</div>
               </div>
+
+              {item.role === 'user' && (
+                <div className="scholar-msg-avatar scholar-msg-avatar--user">
+                  <img src={`${BASE}assets/guancang/sage_wangyangming.png`} alt="云山居士" />
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -256,6 +262,15 @@ export default function ScholarChat() {
         </div>
 
         <div className="scholar-input-bar">
+          <button
+            type="button"
+            className="scholar-mic-btn"
+            onClick={() => Toast.show({ content: '且慢，语音抚弦功能研墨中…' })}
+            title="语音畅论"
+          >
+            <i className="iconfont icon-maikefeng" />
+          </button>
+
           <textarea
             className="scholar-textarea"
             rows={1}
@@ -276,7 +291,7 @@ export default function ScholarChat() {
             disabled={loading || !inputText.trim()}
             onClick={() => handleSend()}
           >
-            <SendOutline className="scholar-send-icon" />
+            <i className="iconfont icon-fasong" />
             <span>畅论</span>
           </button>
         </div>

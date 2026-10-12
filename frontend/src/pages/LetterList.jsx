@@ -88,8 +88,8 @@ export default function LetterList() {
       if (customList.length > 0) {
         const mapped = customList.map((item) => ({
           ...item,
-          avatar: `${BASE}assets/guancang/sage_wangyangming.png`,
-          status: '神游相候'
+          avatar: item.avatar || `${BASE}assets/guancang/sage_wangyangming.png`,
+          status: item.status || '神游相候'
         }))
         setConversations([...mapped, ...PRESET_CONVERSATIONS])
       }
@@ -102,7 +102,7 @@ export default function LetterList() {
   const handleInviteSuccess = (newSage) => {
     const formatted = {
       ...newSage,
-      avatar: `${BASE}assets/guancang/sage_wangyangming.png`,
+      avatar: newSage.avatar || `${BASE}assets/guancang/sage_wangyangming.png`,
       status: '新交对席'
     }
     setConversations((prev) => [formatted, ...prev])
@@ -136,7 +136,7 @@ export default function LetterList() {
               <div className="letter-gallery-avatar-box">
                 <img src={item.avatar} alt={item.name} className="letter-gallery-avatar" />
                 {item.unread > 0 && (
-                  <span className="letter-unread-dot" />
+                  <span className="letter-unread-badge">{item.unread}</span>
                 )}
               </div>
               <span className="letter-gallery-name">{item.name.split('·')[0]}</span>
