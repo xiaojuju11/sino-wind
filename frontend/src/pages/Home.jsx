@@ -1,17 +1,38 @@
 import '../styles/home.less'
 import HomeCard from '../components/HomeCard'
+import { useEffect, useState } from 'react'
 import { Toast } from 'antd-mobile'
 import { DownOutline } from 'antd-mobile-icons'
+import axios from '../http'
 
 const BASE = import.meta.env.BASE_URL
 const asset = (name) => `${BASE}assets/home/${name}`
 
-// 🏮 首页【雅集】数据（阶段一为静态 Mock，阶段二接入后端真实数据）
-const poem = {
+// 🪶 每日诗签降级数据（接口不可用时保证首页永不空白）
+const FALLBACK_POEM = {
   verse: ['山水之乐，', '在乎山水之间也。'],
   from: '—— 欧阳修《醉翁亭记》',
   seal: '醉翁',
   art: asset('poem-art.jpg'),
+}
+
+// 兼容后端两种字段口径：contract 的 paragraphs[] 与实现里的 content[] / content 字符串
+function toParagraphs(source) {
+  if (!source) return []
+  if (Array.isArray(source)) return source.filter((line) => typeof line === 'string' && line.trim())
+  if (typeof source === 'string') {
+    return source
+      .split(/(?<=[。！？；])/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+  }
+  return []
+}
+
+// 卷轴版面容纳两行，超长句做省略（完整诗篇见【古诗词天地】）
+function clip(text, max = 16) {
+  const value = String(text || '')
+  return value.length > max ? `${value.slice(0, max)}…` : value
 }
 
 const almanac = {
@@ -40,6 +61,34 @@ const yajiEntries = [
 ]
 
 export default function Home() {
+  const [poem, setPoem] = useState(FALLBACK_POEM)
+
+  // 每日诗签：挂载请求真实接口（静默降级，不打扰用户）
+  useEffect(() => {
+    let alive = true
+    const api = axios.defaults.baseURL || ''
+    fetch(`${api}/api/poem/random`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        const data = json?.data
+        if (!alive || json?.code !== 1 || !data?.title) return
+        const lines = toParagraphs(data.paragraphs || data.content)
+        if (!lines.length) return
+        setPoem({
+          verse: lines.slice(0, 2).map((line) => clip(line)),
+          from: `—— ${data.dynasty ? `${data.dynasty} · ` : ''}${data.author}《${data.title}》`,
+          seal: String(data.author || '诗签').slice(0, 3),
+          art: data.bgArt || asset('poem-art.jpg'),
+        })
+      })
+      .catch(() => {
+        /* 静默降级：保留 FALLBACK_POEM */
+      })
+    return () => {
+      alive = false
+    }
+  }, [])
+
   return (
     <div className="home-root" style={{ backgroundImage: `url(${asset('bg-paper.jpg')})` }}>
       {/* 顶部题头 */}
@@ -58,8 +107,8 @@ export default function Home() {
 
         <div className="home-poem__body">
           <p className="home-poem__verse">
-            {poem.verse.map((line) => (
-              <span key={line}>{line}</span>
+            {poem.verse.map((line, index) => (
+              <span key={`${line}-${index}`}>{line}</span>
             ))}
             <i className="home-poem__seal">{poem.seal}</i>
           </p>
@@ -75,7 +124,7 @@ export default function Home() {
         <div className="home-almanac__col home-almanac__col--weather">
           <p className="home-almanac__city">
             {almanac.city}
-            {/* 图标铁律：统一使用 antd-mobile-icons 矢量图标，禁用原生字符 ⌄ */}
+            {/* 图标铁律：统一使用 antd-mobile-icons 矢量图标，禁用原生下拉字符 */}
             <DownOutline className="home-almanac__caret" />
           </p>
           <div className="home-almanac__weather">

@@ -151,3 +151,47 @@
 4. **【联调实测·需 A / C 对齐】收藏列表路由不一致（会 404）**：契约与成员 C 的 `PoemCollection.jsx` 都用 `GET /api/poem/my-list`，而成员 A 的 `poemRoutes.js` 实际实现的是 `GET /api/poem/collection` → **C 的「我的诗笺」列表将取不到数据**。建议 A 改路由名（契约 + C 两票一致），或 C 改一行调用地址。
 5. **【联调实测·字段口径差异，本人已兼容】** 成员 A 的 `poemController` 返回 `content: [...]`（**数组**）而非契约写的 `paragraphs`，搜索项**无 `snippet`**，`collect` 返回**无 `newPoemCount`** → 本人已在 `PoemPage.jsx` 增加 `toParagraphs()` / `snippetOf()` 双向兼容（两种口径均能正常渲染），**无需 A 改动**。
 6. 诗卷暂无「朝代/作者」筛选与分页，仅按契约实现随机与关键词搜索。
+
+---
+
+# 📌 记录四：2026-10-12 · 第二阶段 Day 2（首页诗签接真实接口 + 全链路联调）
+
+* **工作分支**：`feat/phase2-home-poem-api`（基于 `main@fe7e9cd`）
+* **任务来源**：`TRD_PHASE2.md` 成员 B 任务 4 ——「联动首页：首页『每日诗签』挂载请求真实接口」
+* **完成度**：100%，且**已完成前后端真实数据闭环联调**
+
+### 一、 本次开发内容
+
+1. **首页「每日诗签」接真实接口**（`Home.jsx`）
+   * 挂载时静默请求 `GET /api/poem/random`，成功则用真实诗句替换静态文案；
+   * 版式为两行卷轴：取诗篇前两句并做 16 字省略（完整诗篇仍在【古诗词天地】查看）；
+   * 闲章自动改为**作者名**（如「周端臣」），落款自动拼为 `—— 朝代 · 作者《诗题》`；
+   * **静默降级**：接口异常 / 结构不符时保留原《醉翁亭记》诗签，**不弹错误 Toast、首页永不空白**；
+   * 兼容后端 `paragraphs[]` 与 `content[]` 两种字段口径。
+2. **未改动任何共享文件**：联调期间临时把 `http/index.js` 的 baseURL 指向本地代理，**验证后已 100% 还原**（该文件不在本人白名单，不在提交内）。
+
+### 二、 全链路联调实测结果（本地 MySQL 8.0 + 成员 A 的真实后端）
+
+| 环节 | 结果 |
+| :--- | :--- |
+| `GET /api/poem/random` | ✅ `{code:1, message:'获取成功', data:{title,author,dynasty,paragraphs[],content[],bgArt,snippet}, source:'shiquan'}` —— 真实诗泉数据 |
+| `GET /api/poem/search?q=明月` | ✅ 返回 `静夜思`（上游不可用时本地降级） |
+| 未携带 token 收藏 | ✅ `416 {code:0, message:'请重新登录'}` 正确拒绝 |
+| `POST /api/poem/collect` | ✅ `{code:1, message:'已成功摘录入卷', newPoemCount:49, id:1, collected:true}` |
+| 重复收藏（幂等性） | ✅ `{message:'已在诗笺中', collected:false}`，**不重复插入** |
+| `GET /api/poem/my-list` | ✅ 列表返回已收藏诗篇；`Bearer ` 前缀与裸 token **均兼容** |
+| 数据库落库 | ✅ `users.poem_count` 48 → **50**；`user_poems` 0 → **2 行** |
+| **前端端到端（真机 390 视口）** | ✅ `/poem` 展示真实诗（元·郑光祖《醉思乡王粲登楼・石榴花》）；点「摘录入卷」提示「已摘录入卷 · 诗笺共 50 篇」；首页诗签自动变为「周端臣《落叶》」；**Console 报错 0** |
+
+> 复现命令（本地）：先 `npm install`（backend）→ `node scripts/init-day1.js` → `node src/index.js`（需 `DB_PASSWORD` 等环境变量），再启动前端即可跑通。
+
+### 三、 ⚠️ 顺带发现的安全问题（建议全队处理）
+
+1. **JWT 密钥硬编码**：`backend/src/utils/jwt.js` 与 `authController.js` 均硬编码 `jwt.sign(..., '666')` / `jwt.verify(token, '666')` —— 密钥入库意味着**任何人可离线伪造任意用户 token**。建议改为 `process.env.JWT_SECRET`（并同步更新两处），**这是竞赛「数据安全意识」评审点的加分项**。
+2. `backend/.gitignore` 已正确忽略 `/node_modules/` 与 `.env.local` ✅（本人联调全程使用环境变量注入数据库口令，**未落地任何密钥文件**）。
+3. 仓库根目录**没有 `.gitignore`**（仅各子目录有）；建议补一份根级 `.gitignore`，避免后续误提交构建产物与临时文件。
+
+### 四、 遗留
+
+1. 首页诗签目前**只展示两行**（版式限制）；若产品需要展开阅读，可点击卷轴跳转 `/poem`（本次未加，避免扩大改动面）。
+2. 线上后端 `120.26.186.48:3000` 是否已部署成员 A 的新接口**需与队长确认**；未部署时首页与诗词页会自动走降级数据（功能不受影响）。
