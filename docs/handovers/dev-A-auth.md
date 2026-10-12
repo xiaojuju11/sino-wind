@@ -263,6 +263,7 @@
 
 - `frontend/src/styles/poem.less`、`poemCollection.less`、`minePage.less`（改：颜色接入 `--gf-*` 主题令牌）
 - `frontend/src/pages/MinePage.jsx`（改：书斋清规新增「墨色雅意 · 晓色晨宣 / 月下墨境切换」行，引用共享 `ThemeToggle`；TRD §3.5 与 AC-D4 要求该入口存在）
+- `frontend/src/pages/PoemPage.jsx`、`frontend/src/styles/poem.less`（改：加载态由「研墨中 / 静候诗泉」文字占位改为与主卡同尺寸的宣纸灰骨架占位，消除进页面的空屏观感；同时清理该文件 3 处既有的未使用 `catch (err)`，ESLint 由 3 error 转 0）
 
 ### 三、接口与数据依赖
 
@@ -303,6 +304,7 @@
   - 语法 `node --check` exit 0；契约字段与 `data.paragraphs/bgArt/snippet`、`dataNotice` 逐项核对仍在；搜索接口路径未改（本次实测上游搜索失败时按既有逻辑降级 1 条本地兜底，与改动前一致）。
   - 时延实测：改前 **2588ms / 403ms**（间隔 2.2s 逐次请求）；改后 **111ms / 3ms / 3ms / 1ms / 2ms / 2ms**，全部 `source=shiquan`、`degraded=false`、每首不同。
   - 最坏情况（axios 替身、外网 0 次调用）**8/8 通过**：冷启动+上游全坏 ≤1.7s 给内置兜底诗；上游由好转坏即时（<300ms）返回上一首真实诗。
+- [x] 诗词页加载态骨架（经本人授权的成员 D 文件 `PoemPage.jsx` / `poem.less`）：与主卡同尺寸的宣纸灰骨架 + 「墨迹研开中……」引导语，禁用圆形转圈；渲染层断言 **40/40 通过**（新增 4 项：骨架存在、含引导语且无 spinner、复用 `.poem-scroll` 容器不跳版、不再出现「研墨中」空文案）。
 
 ### 五、遗留问题与待确认项（Blocker）
 

@@ -230,6 +230,57 @@
     pointer-events: none;
   }
 
+  // 加载态骨架：与主卡同尺寸的宣纸灰占位（禁用圆形转圈，避免版式跳动）
+  &__skeleton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    width: 100%;
+    padding: 0.1rem 0 0.2rem;
+
+    .poem-skeleton__bar {
+      display: block;
+      height: 0.34rem;
+      border-radius: 0.08rem;
+      background: linear-gradient(
+        90deg,
+        var(--gf-bg-sunk, @color-bg-sunk) 0%,
+        var(--gf-bg-card, @color-card) 50%,
+        var(--gf-bg-sunk, @color-bg-sunk) 100%
+      );
+      background-size: 200% 100%;
+      animation: poem-skeleton-shimmer 1.4s linear infinite;
+
+      &--title {
+        width: 46%;
+        height: 0.5rem;
+      }
+
+      &--meta {
+        width: 28%;
+        height: 0.26rem;
+      }
+
+      &--verse {
+        width: 78%;
+        height: 0.42rem;
+      }
+
+      &--verse-short {
+        width: 58%;
+        height: 0.42rem;
+      }
+    }
+
+    .poem-skeleton__hint {
+      margin: 0.1rem 0 0;
+      font-size: 0.28rem;
+      letter-spacing: 0.04rem;
+      color: var(--gf-text-sub, @color-text-sub);
+    }
+  }
+
   // 诗名
   &__title {
     margin: 0;
@@ -441,5 +492,15 @@
   100% {
     opacity: 0;
     transform: scale(1.06) rotate(-6deg);
+  }
+}
+
+// 加载骨架的宣纸灰流光
+@keyframes poem-skeleton-shimmer {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -200% 0;
   }
 }
