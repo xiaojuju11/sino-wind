@@ -1534,3 +1534,33 @@
   width: calc(100% - 0.9rem);
   margin: 0 auto;
 }
+
+// ── 白话雅译：加底图铺满（暖宣纸蒙层压在图上，保证文字不被挡）──
+.home-yayan-section {
+  background-image:
+    linear-gradient(
+      rgba(245, 238, 228, 0.82),
+      rgba(245, 238, 228, 0.82)
+    ),
+    url('/assets/home/bg-yayan.jpg');
+  background-repeat: no-repeat, no-repeat;
+  background-size: cover, cover;
+  background-position: center center, center center;
+}
+
+// 内层两块卡片保持实底，文字绝对清晰
+.home-yayan-input-box,
+.home-yayan-result-card {
+  background: rgba(249, 245, 232, 0.96);
+}
+
+[data-theme='dark'] .home-yayan-section {
+  background-image:
+    linear-gradient(rgba(22, 29, 38, 0.84), rgba(22, 29, 38, 0.84)),
+    url('/assets/home/bg-yayan.jpg');
+}
+
+[data-theme='dark'] {
+  .home-yayan-input-box,
+  .home-yayan-result-card { background: rgba(35, 42, 49, 0.96); }
+}
