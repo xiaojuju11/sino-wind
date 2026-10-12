@@ -1,0 +1,347 @@
+@import '../styles/variables.less';
+
+// ════════════════════════════════════════════════════
+//  知音 · 沉浸先贤对话样式
+// ════════════════════════════════════════════════════
+
+.scholar-chat-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--gf-bg-paper, #F7F4EB);
+  color: var(--gf-ink-primary, #1b1c1f);
+  font-family: 'Songti SC', 'STSong', 'SimSun', serif;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+// 顶部导航栏
+.scholar-nav {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.2rem 0.3rem;
+  background: var(--gf-bg-card, #FAF7F0);
+  border-bottom: 1px solid fade(@color-gold, 50%);
+  box-shadow: 0 0.04rem 0.12rem fade(#3a2f1d, 5%);
+  z-index: 10;
+
+  &__back,
+  &__action {
+    background: transparent;
+    border: none;
+    font-size: 0.44rem;
+    color: var(--gf-ink-primary, #1b1c1f);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.06rem;
+  }
+
+  &__center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.04rem;
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.12rem;
+  }
+
+  &__name {
+    font-family: 'Kaiti SC', 'STKaiti', serif;
+    font-size: 0.38rem;
+    font-weight: 700;
+  }
+
+  &__tag {
+    padding: 0.02rem 0.1rem;
+    background: @color-seal;
+    color: #fff;
+    font-size: 0.2rem;
+    border-radius: 2px;
+  }
+
+  &__status {
+    font-size: 0.2rem;
+    color: @color-bamboo;
+  }
+}
+
+// 顶部知己水墨立绘横幅
+.scholar-hero-banner {
+  flex: none;
+  position: relative;
+  background: linear-gradient(180deg, #FAF7F0 0%, #EDE6D8 100%);
+  border-bottom: 1px solid fade(@color-gold, 60%);
+  padding: 0.18rem 0.32rem;
+  overflow: hidden;
+
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.08rem;
+  }
+
+  &__motto {
+    margin: 0;
+    font-family: 'Kaiti SC', 'STKaiti', serif;
+    font-size: 0.32rem;
+    line-height: 1.4;
+    color: var(--gf-ink-primary, #2A2421);
+    font-style: italic;
+  }
+
+  &__seal {
+    align-self: flex-start;
+    padding: 0.02rem 0.1rem;
+    border: 1px solid @color-seal;
+    color: @color-seal;
+    font-size: 0.2rem;
+    border-radius: 2px;
+  }
+
+  &__portrait-box {
+    flex: none;
+    width: 1.6rem;
+    height: 1.6rem;
+    margin-left: 0.2rem;
+    border-radius: 50%;
+    border: 2px solid fade(@color-gold, 80%);
+    box-shadow: 0 0.06rem 0.2rem fade(#3a2f1d, 15%);
+    background: #fff;
+    overflow: hidden;
+  }
+
+  &__portrait {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+// 4 大灵感胶囊横向栏
+.scholar-capsules-bar {
+  flex: none;
+  background: var(--gf-bg-paper, #F7F4EB);
+  border-bottom: 1px solid fade(@color-gold, 35%);
+  padding: 0.12rem 0.24rem;
+}
+
+.scholar-capsules-scroll {
+  display: flex;
+  align-items: center;
+  gap: 0.16rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.scholar-capsule {
+  flex: none;
+  padding: 0.08rem 0.22rem;
+  background: var(--gf-bg-card, #FAF7F0);
+  border: 1px solid fade(@color-gold, 70%);
+  border-radius: 0.26rem;
+  font-size: 0.23rem;
+  color: var(--gf-ink-primary, #2A2421);
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+
+  &:hover, &:active {
+    background: fade(@color-seal, 10%);
+    border-color: @color-seal;
+    color: @color-seal;
+  }
+}
+
+// 消息流容器
+.scholar-messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.3rem 0.3rem 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.scholar-msg-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.08rem;
+
+  &--user {
+    align-items: flex-end;
+  }
+
+  &--ai {
+    align-items: flex-start;
+  }
+}
+
+.scholar-msg-time {
+  font-size: 0.2rem;
+  color: var(--gf-ink-muted, #80776E);
+  padding: 0 0.06rem;
+}
+
+.scholar-msg-bubble-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.16rem;
+  max-width: 86%;
+}
+
+.scholar-msg-avatar {
+  flex: none;
+  width: 0.72rem;
+  height: 0.72rem;
+  border-radius: 50%;
+  border: 1px solid fade(@color-gold, 70%);
+  overflow: hidden;
+  background: #fff;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.scholar-msg-bubble {
+  padding: 0.22rem 0.28rem;
+  border-radius: 8px;
+  line-height: 1.55;
+  font-size: 0.29rem;
+  box-shadow: 0 0.06rem 0.16rem fade(#3a2f1d, 8%);
+
+  &--user {
+    background: linear-gradient(135deg, @color-bamboo 0%, #1f422e 100%);
+    color: #fff;
+    border-bottom-right-radius: 2px;
+  }
+
+  &--ai {
+    background: var(--gf-bg-card, #FAF7F0);
+    color: var(--gf-ink-primary, #1b1c1f);
+    border: 1px solid fade(@color-gold, 45%);
+    border-bottom-left-radius: 2px;
+    font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+  }
+}
+
+.scholar-loading-row {
+  padding: 0.1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.scholar-loading-text {
+  font-size: 0.24rem;
+  color: @color-seal;
+  display: flex;
+  align-items: center;
+  gap: 0.06rem;
+  font-family: 'Kaiti SC', 'STKaiti', serif;
+}
+
+// 底部工具与输入区
+.scholar-footer {
+  flex: none;
+  background: var(--gf-bg-card, #FAF7F0);
+  border-top: 1px solid fade(@color-gold, 50%);
+  padding: 0.16rem 0.24rem calc(env(safe-area-inset-bottom) + 0.16rem);
+  box-shadow: 0 -0.06rem 0.16rem fade(#3a2f1d, 6%);
+}
+
+.scholar-footer__quick-tools {
+  display: flex;
+  gap: 0.14rem;
+  margin-bottom: 0.14rem;
+}
+
+.scholar-tool-btn {
+  padding: 0.06rem 0.18rem;
+  background: var(--gf-bg-paper, #F7F4EB);
+  border: 1px solid fade(@color-gold, 50%);
+  border-radius: 0.2rem;
+  font-size: 0.22rem;
+  color: var(--gf-ink-secondary, #524B46);
+  font-family: inherit;
+  cursor: pointer;
+
+  &:active {
+    border-color: @color-seal;
+    color: @color-seal;
+  }
+}
+
+.scholar-input-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.18rem;
+}
+
+.scholar-textarea {
+  flex: 1;
+  padding: 0.16rem 0.2rem;
+  background: var(--gf-bg-paper, #F7F4EB);
+  border: 1px solid fade(@color-gold, 60%);
+  border-radius: 4px;
+  font-family: 'Songti SC', 'STSong', serif;
+  font-size: 0.28rem;
+  color: var(--gf-ink-primary, #1b1c1f);
+  outline: none;
+  resize: none;
+  line-height: 1.4;
+
+  &::placeholder {
+    color: fade(#726A62, 70%);
+  }
+}
+
+.scholar-send-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.08rem;
+  padding: 0.16rem 0.32rem;
+  background: @color-seal;
+  color: #fff;
+  border: none;
+  border-radius: @radius-seal;
+  font-family: 'Kaiti SC', 'STKaiti', serif;
+  font-size: 0.3rem;
+  font-weight: 700;
+  letter-spacing: 0.04rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &__icon {
+    font-size: 0.32rem;
+  }
+}

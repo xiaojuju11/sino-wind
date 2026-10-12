@@ -2,11 +2,14 @@ import { unstableSetRender } from 'antd-mobile'; // Support since version ^5.40.
 
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
+import { ThemeProvider } from './context/ThemeContext.jsx'
 import './utils/rem.js'
 import './styles/global.css'
 
 createRoot(document.getElementById('root')).render(
+  <ThemeProvider>
     <App />
+  </ThemeProvider>
 )
 
 unstableSetRender((node, container) => {

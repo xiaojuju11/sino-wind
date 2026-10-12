@@ -37,12 +37,12 @@ export default function Index({ recognitionResult }) {
           </div>
           <div className="object-recognition-result__content">
             <div className='object-recognition-result__description'>
-              <h4>器物考释</h4>
-              <p>{data?.image_description || '暂无考释'}</p>
+              <h4>器物考释 {data?.name ? `· ${data.name}` : ''} {data?.dynasty ? `（${data.dynasty}）` : ''}</h4>
+              <p>{data?.image_description || data?.description || '暂无考释'}</p>
             </div>
             <div className='object-recognition-result__safety'>
-              <h4>文人品鉴心得</h4>
-              <p>{data?.safety || '暂无品鉴心得'}</p>
+              <h4>文人品鉴心得 {data?.score ? `【品位鉴值：${data.score} 分】` : ''}</h4>
+              <p>{data?.safety || (data?.score ? `金石大家赞曰：此物形制典雅，颇具${data.dynasty || '唐宋'}风骨。` : '暂无品鉴心得')}</p>
             </div>
           </div>
           <audio src={data?.audio_url || null} ref={audioElement}></audio>

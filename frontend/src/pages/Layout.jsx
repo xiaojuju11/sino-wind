@@ -8,7 +8,7 @@ const BASE = import.meta.env.BASE_URL
 
 const tabs = [
   { id: 'home', path: '/home', name: '雅集', icon: 'tabbar-yaji.png' },
-  { id: 'ai', path: '/ai', name: '观藏', icon: 'tabbar-guancang.png' },
+  { id: 'letters', path: '/letters', name: '知音', icon: 'tabbar-guancang.png' },
   { id: 'mine', path: '/mine', name: '书斋', icon: 'tabbar-shuzhai.png' },
 ]
 

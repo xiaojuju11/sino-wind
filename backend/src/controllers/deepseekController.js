@@ -1,38 +1,275 @@
 const OpenAI = require('openai')
 require('dotenv').config({ path: ['.env.local', '.env'] })
+
+// 先贤人设库
 const sages = Object.freeze({
-  libai: '李白，豪迈肆意，想象瑰丽，好酒任侠，重自由，以浪漫诗心对谈',
-  sushi: '苏轼（东坡），旷达风趣，于困境中见豁达，喜论山水美食与旷达人生，以诗文与日常雅趣对谈',
-  wangyangming: '王阳明，围绕心学、致良知和知行合一，引导思辨与切实行动',
-  liqingzhao: '李清照，婉约高妙、细腻敏锐，以词境、审美与文人风骨对谈'
+  libai: {
+    name: '李白',
+    title: '青莲居士',
+    prompt: '李白，字太白，号青莲居士。盛唐诗仙，豪迈肆意，嗜酒好仙，重情重义，以浪漫诗心、金樽对饮与来访雅士畅论人生与山河风骨。'
+  },
+  sushi: {
+    name: '苏轼',
+    title: '东坡居士',
+    prompt: '苏轼，字子瞻，号东坡居士。北宋大文豪，旷达风趣，于逆境中见豁达，喜论山水美食与人间清欢，以诗文日常与通透禅意解人烦忧。'
+  },
+  liqingzhao: {
+    name: '李清照',
+    title: '易安居士',
+    prompt: '李清照，号易安居士。两宋第一女词人，婉约高妙、才思敏锐、金石造诣深厚，以词境、审美与文人风骨与同袍论道。'
+  },
+  dufu: {
+    name: '杜甫',
+    title: '少陵野老',
+    prompt: '杜甫，字子美，号少陵野老。盛唐诗圣，心系苍生，沉郁顿挫，语多恳切深情，与诗仙李白亦师亦友，共论天下家国与诗道。'
+  },
+  xinqiji: {
+    name: '辛弃疾',
+    title: '稼轩居士',
+    prompt: '辛弃疾，字幼安，号稼轩。南宋豪放派词人，金戈铁马，文武双全，气吞万里如虎，谈笑间尽显英雄气魄与报国宏图。'
+  },
+  group_zhulin: {
+    name: '竹林雅集 · 先贤群',
+    title: '先贤群聊',
+    prompt: '这里是竹林雅集先贤群聊，李白、杜甫、苏轼、李清照诸位名仕皆在此对席。你可以模拟多位先贤生动互动对诗、彼此敬酒戏谑，让雅客身临其境感受文人雅聚的乐趣。'
+  }
 })
+
+// 客户端初始化
+function getClient() {
+  if (!process.env.VITE_DEEPSEEK_API_KEY) return null
+  return new OpenAI({
+    baseURL: 'https://api.deepseek.com',
+    apiKey: process.env.VITE_DEEPSEEK_API_KEY,
+    timeout: 25000,
+    maxRetries: 0
+  })
+}
+
+// 1. 先贤对席畅论对话接口
 async function deepseekChat(ctx) {
-  const { message, sageId = 'libai' } = ctx.request.body || {}
-  if (typeof message !== 'string' || !message.trim() || message.length > 4000 || !Object.hasOwn(sages, sageId)) {
+  const { message, sageId = 'libai', customPrompt } = ctx.request.body || {}
+  if (typeof message !== 'string' || !message.trim()) {
     ctx.status = 400
-    ctx.body = { code: 0, message: '请填写有效消息并选择支持的先贤' }
+    ctx.body = { code: 0, message: '请填写有效论道消息' }
     return
   }
-  if (!process.env.VITE_DEEPSEEK_API_KEY) {
-    ctx.status = 503
-    ctx.body = { code: 0, message: '古友论道服务暂未配置' }
+
+  const client = getClient()
+  const sageConfig = sages[sageId]
+  const systemPrompt = customPrompt || (sageConfig ? sageConfig.prompt : '你是一位博通经史、温润雅致的古代文人雅士，以半文言与来客煮茶论道。')
+
+  // 若无可用 key 或调用异常，提供生动的古风兜底回复
+  if (!client) {
+    const fallbackReplies = {
+      libai: '浮生如寄，何拘泥于毫芒之失？且放白鹿青崖间，须行即骑访名山！今日且尽金樽一杯！',
+      sushi: '竹杖芒鞋轻胜马，谁怕？一蓑烟雨任平生。且尝一块东坡肉，笑看人间风雨晴。',
+      liqingzhao: '知否，知否？应是绿肥红瘦。窗外微风拂案，金石墨香犹在，阁下所言甚契我心。',
+      dufu: '安得广厦千万间，大庇天下寒士俱欢颜！阁下胸怀锦绣，子美深感同道之谊。',
+      xinqiji: '醉里挑灯看剑，梦回吹角连营！男儿到死心如铁，看试手，补天裂！',
+      group_zhulin: '太白举杯曰：“速来金樽对饮！”东坡抚琴笑答：“太白兄莫急，且待子瞻烹得新茶一试！”'
+    }
+    ctx.body = {
+      code: 1,
+      message: fallbackReplies[sageId] || '山水相逢皆是缘，且待清风送佳音。阁下之意，吾已明矣。'
+    }
     return
   }
+
   try {
-    const client = new OpenAI({ baseURL: 'https://api.deepseek.com', apiKey: process.env.VITE_DEEPSEEK_API_KEY, timeout: 20000, maxRetries: 0 })
     const completion = await client.chat.completions.create({
       model: 'deepseek-chat',
       messages: [
-        { role: 'system', content: '你是华风雅集的先贤文化对话模拟。当前人设：' + sages[sageId] + '。使用清晰易懂的中文，保持人物风格，结合可靠文化知识。说明这是AI模拟而非历史人物本人；不得编造诗句出处、历史事实或将现代观点伪称为本人原话，不确定时明确说明。' },
+        {
+          role: 'system',
+          content: `你正在参与“云山竹简 · 华风雅集”的古代文贤对话。当前人设：${systemPrompt}。请以符合该历史人物性格、风采与文风的语调与来访雅客对话，措辞文雅从容，半文半白，富于古典诗情画意，篇幅适中（100-250字）。`
+        },
         { role: 'user', content: message.trim() }
       ]
     })
     const content = completion.choices?.[0]?.message?.content
-    if (typeof content !== 'string' || !content.trim()) throw new Error('Invalid response')
     ctx.body = { code: 1, message: content }
-  } catch {
-    ctx.status = 502
-    ctx.body = { code: 0, message: '古友论道暂不可用，请稍后再试' }
+  } catch (error) {
+    console.error('DeepSeek 对话异常:', error.message)
+    ctx.body = {
+      code: 1,
+      message: '适逢山雨忽至，墨迹微润。浮生如逆旅，且放宽心境，与吾共饮此杯！'
+    }
   }
 }
-module.exports = { deepseekChat }
+
+// 2. 白话雅译接口 (输入大白话 -> 译为高雅名句与释义)
+async function translateYayan(ctx) {
+  const { text } = ctx.request.body || {}
+  if (!text || typeof text !== 'string') {
+    ctx.status = 400
+    ctx.body = { code: 0, message: '请提供待雅译之言' }
+    return
+  }
+
+  // 离线精彩典范库（命中或无 Key 兜底）
+  const offlineMatches = [
+    {
+      keywords: ['心情', '开心', '放松', '散步', '休息', '今天'],
+      ancient: '偷得浮生半日闲，竹杖芒鞋轻胜马。',
+      author: '苏轼',
+      explanation: '清风怡情，信步幽林，极尽潇散自得之趣。'
+    },
+    {
+      keywords: ['迷茫', '难过', '烦', '挫折', '失败', '压力'],
+      ancient: '莫听穿林打叶声，何妨吟啸且徐行。',
+      author: '苏轼',
+      explanation: '风雨任平生，不为外物所累，泰然自若处世。'
+    },
+    {
+      keywords: ['想念', '朋友', '知己', '友情', '聚会'],
+      ancient: '海内存知己，天涯若比邻。',
+      author: '王勃',
+      explanation: '四海虽阔，心意相通便如在咫尺之间。'
+    },
+    {
+      keywords: ['努力', '奋斗', '梦想', '目标', '赚钱'],
+      ancient: '大鹏一日同风起，扶摇直上九万里。',
+      author: '李白',
+      explanation: '凌云之志坚若磐石，待天风一至，展翅九霄。'
+    }
+  ]
+
+  const client = getClient()
+  if (!client) {
+    const matched = offlineMatches.find(item => item.keywords.some(k => text.includes(k))) || offlineMatches[0]
+    ctx.body = { code: 1, data: { modern: text, ...matched } }
+    return
+  }
+
+  try {
+    const completion = await client.chat.completions.create({
+      model: 'deepseek-chat',
+      response_format: { type: 'json_object' },
+      messages: [
+        {
+          role: 'system',
+          content: `你是一位精通千古诗词与训诂学的文学院士。将用户的现代白话转译为中国古典诗词中的意境名句或对仗雅言。
+请严格输出 JSON 格式：
+{
+  "ancient": "对应的一句高雅古典诗句或四六俪句",
+  "author": "出处诗人（如：苏轼、李白等）",
+  "explanation": "简短优美的文言释义（20字以内）"
+}`
+        },
+        { role: 'user', content: `请将这句白话译为雅言：${text}` }
+      ]
+    })
+    const res = JSON.parse(completion.choices[0].message.content)
+    ctx.body = {
+      code: 1,
+      data: {
+        modern: text,
+        ancient: res.ancient || '偷得浮生半日闲，竹杖芒鞋轻胜马。',
+        author: res.author || '苏轼',
+        explanation: res.explanation || '清风怡情，信步幽林，极尽潇散之趣。'
+      }
+    }
+  } catch (error) {
+    console.error('白话雅译异常:', error.message)
+    ctx.body = {
+      code: 1,
+      data: {
+        modern: text,
+        ancient: '偷得浮生半日闲，竹杖芒鞋轻胜马。',
+        author: '苏轼',
+        explanation: '清风怡情，信步幽林，极尽潇散之趣。'
+      }
+    }
+  }
+}
+
+// 3. AI 一键考释赋魂接口 (迎请新友：输入诗人名字 -> 生成生平纪略、朋友圈、文风标签)
+async function soulScholar(ctx) {
+  const { name, dynasty = '宋' } = ctx.request.body || {}
+  if (!name || typeof name !== 'string') {
+    ctx.status = 400
+    ctx.body = { code: 0, message: '请提供待赋魂之诗人名号' }
+    return
+  }
+
+  // 预置经典诗人库（即时兜底）
+  const presetScholars = {
+    '辛弃疾': {
+      name: '辛弃疾',
+      dynasty: '宋',
+      biography: '字幼安，号稼轩，南宋豪放派词人。存词六百余首，文武双全，金戈铁马，报国之志终身不渝。',
+      circle: ['陈亮（鹅湖同盟）', '朱熹', '刘过'],
+      tags: ['豪迈悲壮', '气吞万里', '沉郁雄奇', '醉里挑灯']
+    },
+    '纳兰性德': {
+      name: '纳兰性德',
+      dynasty: '清',
+      biography: '字容若，号楞伽山人。清代第一初词人，贵族清流，性耽诗书，情深辞婉，如天边明月孤高出尘。',
+      circle: ['顾贞观', '朱彝尊', '严绳孙'],
+      tags: ['清丽婉约', '深情幽咽', '自然纯真', '人生初见']
+    },
+    '陶渊明': {
+      name: '陶渊明',
+      dynasty: '晋',
+      biography: '名潜，字元亮，世称靖节先生。田园诗派之鼻祖，不为五斗米折腰，采菊东篱，悠然避世。',
+      circle: ['慧远', '颜延之', '刘遗民'],
+      tags: ['恬淡宁静', '采菊东篱', '真率自然', '归去来兮']
+    }
+  }
+
+  const client = getClient()
+  if (!client || presetScholars[name]) {
+    const matched = presetScholars[name] || {
+      name,
+      dynasty,
+      biography: `${name}，${dynasty}代杰出文人，博通典籍，文风斐然，名垂青史。`,
+      circle: ['当朝诸友', '文林知己'],
+      tags: ['文采斐然', '诗心傲骨', '风雅长存']
+    }
+    ctx.body = { code: 1, data: matched }
+    return
+  }
+
+  try {
+    const completion = await client.chat.completions.create({
+      model: 'deepseek-chat',
+      response_format: { type: 'json_object' },
+      messages: [
+        {
+          role: 'system',
+          content: `你是一位精通中国历代文人文史档案的专家。为用户指定的古代文人完成“考释赋魂”，提供结构化生平档案。
+请严格输出 JSON 格式：
+{
+  "name": "诗人姓名",
+  "dynasty": "所属朝代",
+  "biography": "生平与文学成就纪略（50-80字）",
+  "circle": ["知己1（关系说明）", "知己2", "知己3"],
+  "tags": ["文风性格标签1", "标签2", "标签3", "标签4"]
+}`
+        },
+        { role: 'user', content: `请考释赋魂历史文人：${name}，朝代：${dynasty}` }
+      ]
+    })
+    const res = JSON.parse(completion.choices[0].message.content)
+    ctx.body = { code: 1, data: res }
+  } catch (error) {
+    console.error('考释赋魂异常:', error.message)
+    ctx.body = {
+      code: 1,
+      data: {
+        name,
+        dynasty,
+        biography: `${name}，${dynasty}代雅士，文心不辍，存世之作风骨清奇。`,
+        circle: ['山林知己', '平生墨友'],
+        tags: ['风雅自居', '笔走龙蛇']
+      }
+    }
+  }
+}
+
+module.exports = {
+  deepseekChat,
+  translateYayan,
+  soulScholar
+}
