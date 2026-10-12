@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+﻿import React, { useState } from 'react'
 import '../styles/home.less'
 import { Toast } from 'antd-mobile'
 import { DownOutline, RightOutline, CompassOutline, EditSOutline, CheckCircleOutline, DownCircleOutline } from 'antd-mobile-icons'
@@ -188,7 +188,7 @@ export default function Home() {
                   {yayanResult.ancient}
                   <i className="home-yayan-seal">闲</i>
                 </p>
-                <p className="home-yayan-explain">文言释义：{yayanResult.explanation}</p>
+                <p className="home-yayan-explain"><span className="home-yayan-explain__label">文言释义：</span>{yayanResult.explanation}</p>
                 <p className="home-yayan-author">—— {yayanResult.author}</p>
               </div>
             )}
