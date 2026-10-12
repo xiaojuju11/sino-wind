@@ -57,14 +57,6 @@ function getDateText(date = new Date()) {
   return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日 ${hh}:${mm}`
 }
 
-// 白话灵感推荐词（保留既有行为）
-const YAYAN_PRESETS = [
-  '今天下班好累，想去吃火锅喝奶茶',
-  '春日微风不燥，想与好友踏青西湖',
-  '人生得一知己足矣，今夜当痛饮',
-  '工作虽忙，但心中依然有诗和远方',
-]
-
 // 古今识物 · 示例体验（对齐设计稿两条）
 const SHIWU_DEMOS = [
   { icon: '☕', modern: '拍奶茶', ancient: '酪饮 / 酥签' },
@@ -227,25 +219,6 @@ export default function Home() {
                 <i className="iconfont icon-shuben home-yayan-btn-icon" aria-hidden="true"></i>
                 摘录入卷
               </button>
-            </div>
-
-            <div className="home-yayan-presets">
-              <span className="home-yayan-presets-label">灵感拾遗：</span>
-              <div className="home-yayan-chips">
-                {YAYAN_PRESETS.map((preset, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    className="home-yayan-chip"
-                    onClick={() => {
-                      setInputText(preset)
-                      handleTranslate(preset)
-                    }}
-                  >
-                    {preset}
-                  </button>
-                ))}
-              </div>
             </div>
           </div>
         </div>
