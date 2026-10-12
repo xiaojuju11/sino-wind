@@ -157,11 +157,6 @@ export default function Home() {
         </div>
 
         <div className="home-yayan-scroll">
-          <span className="home-yayan-roller" />
-          <span className="home-yayan-roller home-yayan-roller--right" />
-
-          <div className="home-yayan-tag">白话雅译</div>
-
           <div className="home-yayan-inner">
             <div className="home-yayan-input-box">
               <span className="home-yayan-pencil" aria-hidden="true">

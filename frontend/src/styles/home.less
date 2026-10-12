@@ -1503,3 +1503,26 @@
   font-weight: 700;
   color: var(--yayan-sub);
 }
+
+// ════════════════════════════════════════════════════
+//  白话雅译：去掉卷轴样式，改常规分区卡片排版
+//  结构：标题+印 → 输入卡 → 金色箭头 → 结果卡 → 双按钮
+// ════════════════════════════════════════════════════
+.home-yayan-scroll {
+  margin-top: 0.18rem;
+  padding-left: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.home-yayan-inner { padding: 0; }
+
+.home-yayan-roller,
+.home-yayan-tag { display: none !important; }
+
+.home-yayan-input-box,
+.home-yayan-result-card { border-radius: 0.24rem; }
+
+.home-yayan-divider { padding: 0.1rem 0; }
