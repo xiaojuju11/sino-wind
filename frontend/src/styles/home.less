@@ -1,3 +1,17 @@
+// ── 本地主题变量（随 global.css 的 data-theme 平滑切换）──
+.home-root {
+  --home-shadow: rgba(58, 47, 29, 0.10);
+  --home-wood: #C9A878;
+  --home-wood-hi: #E6CFA6;
+  --home-wood-line: rgba(138, 106, 61, 0.45);
+}
+
+[data-theme='dark'] .home-root {
+  --home-shadow: rgba(0, 0, 0, 0.55);
+  --home-wood: #6B5638;
+  --home-wood-hi: #8A7148;
+  --home-wood-line: rgba(0, 0, 0, 0.5);
+}
 @import '../styles/variables.less';
 
 // ════════════════════════════════════════════════════
@@ -9,7 +23,7 @@
 // ── 回纹描金外框（诗签卷轴 / 时令栏 / 雅席卡 通用）──
 .gu-frame(@len: 0.22rem) {
   position: relative;
-  border: 1px solid fade(@color-gold, 48%);
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 48%, transparent);
 
   &::before,
   &::after {
@@ -17,7 +31,7 @@
     position: absolute;
     width: @len;
     height: @len;
-    border: 1px solid fade(@color-gold, 70%);
+    border: 1px solid color-mix(in srgb, var(--gf-gold) 70%, transparent);
     pointer-events: none;
   }
 
@@ -42,18 +56,20 @@
 .home-root {
   position: relative;
   min-height: 100vh;
-  padding: 0.5rem 0.42rem 0.3rem;
+  // 顶部 44px 状态栏安全区（组长审计 §十一：留出 9:41/灵动岛/电量空间）
+  padding: calc(env(safe-area-inset-top, 0px) + 1.13rem) 0.42rem 0.3rem;
   box-sizing: border-box;
   overflow-x: hidden;
-  color: @color-text-main;
+  color: var(--gf-ink-primary);
   font-family: 'Songti SC', 'STSong', 'SimSun', 'Noto Serif SC', serif;
-  background-color: @color-bg;
+  background-color: var(--gf-bg-paper);
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 100% 100%;
   background-attachment: fixed;
 
-  // 极淡宣纸罩层（保留山水质感，仅用于统一色调）
+  // 宣纸蒙层：卡片区 88% 不透明（彻底压掉背景乱石飞鸟），仅顶部/底部微透山水意境
+  // 组长审计 §十一：「卡片背后垫 88% 不透明度暖宣纸蒙层」
   &::before {
     content: '';
     position: fixed;
@@ -61,7 +77,13 @@
     right: 0;
     bottom: 0;
     left: 0;
-    background: fade(@color-bg, 14%);
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--gf-bg-paper) 26%, transparent) 0%,
+      color-mix(in srgb, var(--gf-bg-paper) 88%, transparent) 20%,
+      color-mix(in srgb, var(--gf-bg-paper) 88%, transparent) 80%,
+      color-mix(in srgb, var(--gf-bg-paper) 32%, transparent) 100%
+    );
     pointer-events: none;
     z-index: 0;
   }
@@ -90,8 +112,7 @@
     font-weight: 700;
     letter-spacing: 0.06rem;
     line-height: 1.1;
-    color: #1b1c1f;
-    text-shadow: 0 0.02rem 0.08rem fade(#fdfaf3, 85%);
+    color: var(--gf-ink-primary);
   }
 
   // 朱砂小印【华风】
@@ -102,8 +123,8 @@
     width: 0.36rem;
     height: 0.5rem;
     margin-top: 0.06rem;
-    background: @color-seal;
-    color: #fff;
+    background: var(--gf-cinnabar);
+    color: #FBF8F1;
     font-size: 0.19rem;
     line-height: 1.05;
     writing-mode: vertical-rl;
@@ -118,15 +139,14 @@
     margin-top: 0.18rem;
     font-size: 0.32rem;
     letter-spacing: 0.03rem;
-    color: #3d3a35;
-    text-shadow: 0 0.01rem 0.05rem fade(#fdfaf3, 90%);
+    color: var(--gf-ink-secondary);
 
     &::before,
     &::after {
       content: '';
       width: 0.86rem;
       height: 1px;
-      background: fade(@color-gold, 60%);
+      background: color-mix(in srgb, var(--gf-gold) 60%, transparent);
     }
   }
 }
@@ -137,21 +157,21 @@
   display: flex;
   align-items: stretch;
   height: 3.05rem;
-  background: @color-card;
+  background: var(--gf-bg-card);
   border-radius: @radius-card;
-  box-shadow: 0 0.1rem 0.26rem fade(#3a2f1d, 10%);
+  box-shadow: 0 0.1rem 0.26rem var(--home-shadow);
   overflow: hidden;
 
   // 两端木轴
   &__roller {
     flex: none;
     width: 0.42rem;
-    background: linear-gradient(90deg, #c9a878 0%, #e6cfa6 45%, #c9a878 100%);
-    box-shadow: inset -1px 0 0 fade(#8a6a3d, 45%);
+    background: linear-gradient(90deg, var(--home-wood) 0%, var(--home-wood-hi) 45%, var(--home-wood) 100%);
+    box-shadow: inset -1px 0 0 var(--home-wood-line);
 
     &--right {
-      background: linear-gradient(90deg, #c9a878 0%, #e6cfa6 55%, #c9a878 100%);
-      box-shadow: inset 1px 0 0 fade(#8a6a3d, 45%);
+      background: linear-gradient(90deg, var(--home-wood) 0%, var(--home-wood-hi) 55%, var(--home-wood) 100%);
+      box-shadow: inset 1px 0 0 var(--home-wood-line);
     }
   }
 
@@ -165,8 +185,8 @@
     width: 0.5rem;
     height: 82%;
     margin-left: 0.1rem;
-    background: @color-seal;
-    color: #fff;
+    background: var(--gf-cinnabar);
+    color: #FBF8F1;
     font-size: 0.29rem;
     letter-spacing: 0.06rem;
     writing-mode: vertical-rl;
@@ -191,7 +211,7 @@
     font-size: 0.48rem;
     line-height: 1.55;
     letter-spacing: 0.02rem;
-    color: #1b1c1f;
+    color: var(--gf-ink-primary);
 
     // 诗句旁的闲章
     .home-poem__seal {
@@ -202,9 +222,9 @@
       width: 0.34rem;
       height: 0.34rem;
       margin-top: -0.3rem;
-      border: 1px solid @color-seal;
+      border: 1px solid var(--gf-cinnabar);
       border-radius: 2px;
-      color: @color-seal;
+      color: var(--gf-cinnabar);
       font-size: 0.17rem;
       font-style: normal;
       line-height: 1.05;
@@ -216,7 +236,7 @@
     margin-top: 0.16rem;
     padding-left: 0.5rem;
     font-size: 0.28rem;
-    color: #4a463f;
+    color: var(--gf-ink-secondary);
   }
 
   // 右侧山水小景（柔和融入宣纸）
@@ -242,9 +262,9 @@
   margin-top: 0.24rem;
   padding: 0.16rem 0.12rem;
   box-sizing: border-box;
-  background: @color-card;
+  background: var(--gf-bg-card);
   border-radius: @radius-card;
-  box-shadow: 0 0.08rem 0.22rem fade(#3a2f1d, 8%);
+  box-shadow: 0 0.08rem 0.22rem var(--home-shadow);
 
   &__col {
     position: relative;
@@ -266,13 +286,13 @@
     top: 14%;
     bottom: 14%;
     width: 1px;
-    background: fade(@color-gold, 35%);
+    background: color-mix(in srgb, var(--gf-gold) 35%, transparent);
   }
 
   &__city {
     position: relative;
     font-size: 0.29rem;
-    color: #3d3a35;
+    color: var(--gf-ink-secondary);
   }
 
   &__caret {
@@ -280,7 +300,7 @@
     height: 0.28rem;
     margin-left: 0.04rem;
     vertical-align: -0.02rem;
-    color: fade(@color-text-sub, 80%);
+    color: color-mix(in srgb, var(--gf-ink-secondary) 80%, transparent);
   }
 
   &__weather {
@@ -293,7 +313,7 @@
     width: 0.62rem;
     height: 0.62rem;
     fill: none;
-    stroke: @color-gold;
+    stroke: var(--gf-gold);
     stroke-width: 1.6;
     stroke-linecap: round;
   }
@@ -302,23 +322,23 @@
     font-size: 0.6rem;
     font-weight: 600;
     line-height: 1;
-    color: #1b1c1f;
+    color: var(--gf-ink-primary);
   }
 
   &__desc {
     font-size: 0.25rem;
-    color: @color-text-sub;
+    color: var(--gf-ink-secondary);
   }
 
   &__lunar {
     font-size: 0.32rem;
-    color: #1b1c1f;
+    color: var(--gf-ink-primary);
   }
 
   &__ganzhi {
     margin-top: 0.06rem;
     font-size: 0.25rem;
-    color: @color-text-sub;
+    color: var(--gf-ink-secondary);
   }
 
   &__term {
@@ -327,7 +347,7 @@
     font-size: 0.46rem;
     font-weight: 600;
     line-height: 1.1;
-    color: #1b1c1f;
+    color: var(--gf-ink-primary);
   }
 
   &__seal {
@@ -339,8 +359,8 @@
     justify-content: center;
     width: 0.26rem;
     height: 0.36rem;
-    background: @color-seal;
-    color: #fff;
+    background: var(--gf-cinnabar);
+    color: #FBF8F1;
     font-size: 0.14rem;
     font-style: normal;
     line-height: 1.05;
@@ -355,7 +375,7 @@
     margin-top: 0.1rem;
     font-size: 0.25rem;
     line-height: 1.5;
-    color: @color-text-sub;
+    color: var(--gf-ink-secondary);
   }
 }
 
@@ -372,16 +392,16 @@
   display: flex;
   align-items: stretch;
   height: 2.87rem;
-  background: @color-card;
+  background: var(--gf-bg-card);
   border-radius: @radius-card;
-  box-shadow: 0 0.08rem 0.22rem fade(#3a2f1d, 8%);
+  box-shadow: 0 0.08rem 0.22rem var(--home-shadow);
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 
   &:active {
     transform: translateY(1px);
-    box-shadow: 0 0.04rem 0.12rem fade(#3a2f1d, 12%);
+    box-shadow: 0 0.04rem 0.12rem var(--home-shadow);
   }
 
   &__body {
@@ -399,7 +419,7 @@
     font-weight: 600;
     line-height: 1.15;
     letter-spacing: 0.02rem;
-    color: @color-seal;
+    color: var(--gf-cinnabar);
   }
 
   &__desc {
@@ -409,7 +429,7 @@
     margin-top: 0.16rem;
     font-size: 0.3rem;
     line-height: 1.4;
-    color: #3d3a35;
+    color: var(--gf-ink-secondary);
 
     span {
       display: block;
@@ -422,7 +442,7 @@
     height: 0.26rem;
     margin-left: 0.06rem;
     vertical-align: -0.03rem;
-    color: fade(@color-text-sub, 85%);
+    color: color-mix(in srgb, var(--gf-ink-secondary) 85%, transparent);
   }
 
   // 朱砂方角按钮
@@ -430,10 +450,10 @@
     align-self: flex-start;
     margin-top: auto;
     padding: 0.1rem 0.24rem;
-    background: @color-seal;
+    background: var(--gf-cinnabar);
     border: none;
     border-radius: @radius-seal;
-    color: #fff;
+    color: #FBF8F1;
     font-family: inherit;
     font-size: 0.29rem;
     letter-spacing: 0.04rem;
@@ -476,9 +496,9 @@
   gap: 0.1rem;
   padding: 0.1rem 0.24rem;
   background: var(--gf-bg-card, #FAF7F0);
-  border: 1px solid fade(@color-gold, 65%);
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 65%, transparent);
   border-radius: 0.36rem;
-  box-shadow: 0 0.04rem 0.14rem fade(#3a2f1d, 8%);
+  box-shadow: 0 0.04rem 0.14rem var(--home-shadow);
   font-family: inherit;
   font-size: 0.26rem;
   color: var(--gf-ink-primary, #2A2421);
@@ -507,7 +527,7 @@
   padding: 0.3rem 0.32rem;
   background: var(--gf-bg-card, #FAF7F0);
   border-radius: @radius-card;
-  box-shadow: 0 0.1rem 0.26rem fade(#3a2f1d, 8%);
+  box-shadow: 0 0.1rem 0.26rem var(--home-shadow);
   box-sizing: border-box;
 }
 
@@ -526,14 +546,14 @@
 .home-section-tag {
   display: inline-block;
   padding: 0.04rem 0.14rem;
-  background: @color-seal;
-  color: #fff;
+  background: var(--gf-cinnabar);
+  color: #FBF8F1;
   font-size: 0.22rem;
   border-radius: 2px;
   letter-spacing: 0.02rem;
 
   &--bamboo {
-    background: @color-bamboo;
+    background: var(--gf-bamboo);
   }
 }
 
@@ -542,14 +562,14 @@
   font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
   font-size: 0.44rem;
   font-weight: 600;
-  color: var(--gf-ink-primary, #1b1c1f);
+  color: var(--gf-ink-primary, var(--gf-ink-primary));
 }
 
 .home-section-seal {
   display: inline-block;
   padding: 0.04rem 0.1rem;
-  border: 1px solid @color-seal;
-  color: @color-seal;
+  border: 1px solid var(--gf-cinnabar);
+  color: var(--gf-cinnabar);
   font-size: 0.2rem;
   border-radius: 2px;
   font-family: 'Kaiti SC', 'STKaiti', serif;
@@ -559,7 +579,7 @@
 .home-yayan-sub {
   margin: 0.14rem 0 0.2rem;
   font-size: 0.26rem;
-  color: var(--gf-ink-muted, #726A62);
+  color: var(--gf-ink-secondary);
 }
 
 .home-yayan-input-box {
@@ -567,7 +587,7 @@
   display: flex;
   flex-direction: column;
   background: var(--gf-bg-paper, #F7F4EB);
-  border: 1px solid fade(@color-gold, 50%);
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 50%, transparent);
   border-radius: 4px;
   padding: 0.2rem;
 }
@@ -581,10 +601,10 @@
   font-family: 'Songti SC', 'STSong', serif;
   font-size: 0.32rem;
   line-height: 1.5;
-  color: var(--gf-ink-primary, #1b1c1f);
+  color: var(--gf-ink-primary, var(--gf-ink-primary));
 
   &::placeholder {
-    color: fade(#726A62, 70%);
+    color: color-mix(in srgb, var(--gf-ink-secondary) 70%, transparent);
   }
 }
 
@@ -596,8 +616,8 @@
 
 .home-yayan-submit-btn {
   padding: 0.12rem 0.36rem;
-  background: @color-seal;
-  color: #fff;
+  background: var(--gf-cinnabar);
+  color: #FBF8F1;
   border: none;
   border-radius: @radius-seal;
   font-family: inherit;
@@ -621,7 +641,7 @@
 
 .home-yayan-presets-label {
   font-size: 0.24rem;
-  color: var(--gf-ink-muted, #726A62);
+  color: var(--gf-ink-secondary);
 }
 
 .home-yayan-chips {
@@ -633,7 +653,7 @@
 .home-yayan-chip {
   padding: 0.08rem 0.2rem;
   background: var(--gf-bg-paper, #F7F4EB);
-  border: 1px dashed fade(@color-gold, 60%);
+  border: 1px dashed color-mix(in srgb, var(--gf-gold) 60%, transparent);
   border-radius: 0.24rem;
   font-size: 0.24rem;
   color: var(--gf-ink-secondary, #524B46);
@@ -642,9 +662,9 @@
   transition: all 0.15s ease;
 
   &:hover, &:active {
-    background: fade(@color-gold, 20%);
-    border-color: @color-seal;
-    color: @color-seal;
+    background: color-mix(in srgb, var(--gf-gold) 20%, transparent);
+    border-color: var(--gf-cinnabar);
+    color: var(--gf-cinnabar);
   }
 }
 
@@ -652,7 +672,7 @@
   margin-top: 0.24rem;
   padding: 0.24rem;
   background: var(--gf-bg-paper, #F7F4EB);
-  border-left: 4px solid @color-seal;
+  border-left: 4px solid var(--gf-cinnabar);
   border-radius: 2px;
 }
 
@@ -661,12 +681,12 @@
   font-size: 0.44rem;
   font-weight: 600;
   line-height: 1.5;
-  color: @color-seal;
+  color: var(--gf-cinnabar);
   letter-spacing: 0.03rem;
 }
 
 .home-yayan-quotes {
-  color: fade(@color-seal, 50%);
+  color: color-mix(in srgb, var(--gf-cinnabar) 50%, transparent);
   font-size: 0.5rem;
 }
 
@@ -683,7 +703,7 @@
   margin: 0.08rem 0 0;
   font-size: 0.25rem;
   line-height: 1.5;
-  color: var(--gf-ink-muted, #726A62);
+  color: var(--gf-ink-secondary);
 }
 
 .home-yayan-bottom-btns {
@@ -695,17 +715,17 @@
 .home-yayan-collect-btn {
   padding: 0.08rem 0.24rem;
   background: transparent;
-  border: 1px solid @color-seal;
+  border: 1px solid var(--gf-cinnabar);
   border-radius: 2px;
-  color: @color-seal;
+  color: var(--gf-cinnabar);
   font-family: inherit;
   font-size: 0.24rem;
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:active {
-    background: @color-seal;
-    color: #fff;
+    background: var(--gf-cinnabar);
+    color: #FBF8F1;
   }
 }
 
@@ -713,7 +733,7 @@
 .home-shiwu-sub {
   margin: 0.12rem 0 0.2rem;
   font-size: 0.26rem;
-  color: var(--gf-ink-muted, #726A62);
+  color: var(--gf-ink-secondary);
 }
 
 .home-shiwu-action-link {
@@ -722,7 +742,7 @@
   gap: 0.04rem;
   background: transparent;
   border: none;
-  color: @color-seal;
+  color: var(--gf-cinnabar);
   font-size: 0.26rem;
   font-family: inherit;
   cursor: pointer;
@@ -740,14 +760,14 @@
   gap: 0.14rem;
   padding: 0.18rem;
   background: var(--gf-bg-paper, #F7F4EB);
-  border: 1px solid fade(@color-gold, 40%);
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 40%, transparent);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.18s ease;
 
   &:active {
     transform: translateY(1px);
-    border-color: @color-bamboo;
+    border-color: var(--gf-bamboo);
   }
 
   &__icon {
@@ -770,24 +790,24 @@
 
   &__modern {
     font-size: 0.28rem;
-    color: var(--gf-ink-muted, #726A62);
+    color: var(--gf-ink-secondary);
   }
 
   &__arrow {
     font-size: 0.22rem;
-    color: @color-bamboo;
+    color: var(--gf-bamboo);
   }
 
   &__ancient {
     font-size: 0.29rem;
-    color: @color-bamboo;
+    color: var(--gf-bamboo);
   }
 
   &__desc {
     margin: 0.08rem 0 0;
     font-size: 0.22rem;
     line-height: 1.4;
-    color: var(--gf-ink-muted, #80776E);
+    color: var(--gf-ink-secondary);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -809,7 +829,7 @@
     font-size: 0.4rem;
     line-height: 1.6;
     letter-spacing: 0.04rem;
-    color: var(--gf-ink-primary, #1b1c1f);
+    color: var(--gf-ink-primary, var(--gf-ink-primary));
     text-align: center;
 
     p {
@@ -829,10 +849,53 @@
 
   .home-poem-seal {
     padding: 0.02rem 0.1rem;
-    border: 1px solid @color-seal;
-    color: @color-seal;
+    border: 1px solid var(--gf-cinnabar);
+    color: var(--gf-cinnabar);
     font-size: 0.2rem;
     border-radius: 2px;
   }
 }
 
+
+// ════════════════════════════════════════════════════
+//  组长设计审计（DESIGN_AUDIT.md §十一）整改补充
+//  1. 时令模块交互线索：杭州 ⌄ / 未时 ⌄ / 🧭 漫游微标
+//  2. 未生成雅言前【摘录入卷】置灰
+// ════════════════════════════════════════════════════
+.home-almanac {
+  position: relative;
+
+  &__roam {
+    position: absolute;
+    top: 0.08rem;
+    right: 0.1rem;
+    z-index: 2;
+    padding: 0.02rem 0.12rem;
+    font-family: inherit;
+    font-size: 0.22rem;
+    line-height: 1.6;
+    color: var(--gf-ink-secondary);
+    background: color-mix(in srgb, var(--gf-bg-card) 88%, transparent);
+    border: 1px solid color-mix(in srgb, var(--gf-gold) 55%, transparent);
+    border-radius: 999px;
+    cursor: pointer;
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  &__shichen {
+    display: flex;
+    align-items: center;
+    gap: 0.04rem;
+    font-size: 0.32rem;
+    color: var(--gf-ink-primary);
+  }
+}
+
+.home-yayan-collect-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.4);
+}

@@ -184,24 +184,35 @@ export default function Home() {
               <span className="home-yayan-author">—— {yayanResult.author}</span>
               <p className="home-yayan-explain">{yayanResult.explanation}</p>
             </div>
-            <div className="home-yayan-bottom-btns">
-              <button
-                type="button"
-                className="home-yayan-collect-btn"
-                onClick={handleCollectYayan}
-              >
-                摘录入卷
-              </button>
-            </div>
           </div>
         )}
+
+        {/* 摘录按钮常显：未生成雅言前置灰不可点（组长审计 §十一） */}
+        <div className="home-yayan-bottom-btns">
+          <button
+            type="button"
+            className="home-yayan-collect-btn"
+            disabled={!yayanResult}
+            onClick={handleCollectYayan}
+          >
+            摘录入卷
+          </button>
+        </div>
       </section>
 
       {/* 3. 岁时节气与干支天象 */}
       <section className="home-almanac">
+        <button
+          type="button"
+          className="home-almanac__roam"
+          onClick={() => Toast.show({ content: '漫游古今：换城易时，静候雅聚' })}
+        >
+          🧭 漫游
+        </button>
+
         <div className="home-almanac__col home-almanac__col--weather">
           <p className="home-almanac__city">
-            杭城 · {curShichen.name}
+            杭州
             <DownOutline className="home-almanac__caret" />
           </p>
           <div className="home-almanac__weather">
@@ -216,6 +227,10 @@ export default function Home() {
         </div>
 
         <div className="home-almanac__col home-almanac__col--lunar">
+          <p className="home-almanac__shichen">
+            {curShichen.name}
+            <DownOutline className="home-almanac__caret" />
+          </p>
           <p className="home-almanac__lunar">{curShichen.range}</p>
           <p className="home-almanac__ganzhi">白露三候 · 菊有黄华</p>
         </div>
@@ -276,7 +291,7 @@ export default function Home() {
         <div className="home-section-header">
           <div className="home-section-header__title-wrap">
             <span className="home-section-tag">飞花诗令</span>
-            <h2 className="home-section-title">今日一诗 · 饮湖上初晴后雨</h2>
+            <h2 className="home-section-title">今日一诗 · 定风波</h2>
           </div>
           <button
             type="button"
@@ -288,12 +303,12 @@ export default function Home() {
         </div>
         <div className="home-poem-body">
           <div className="home-poem-verses">
-            <p>水光潋滟晴方好，山色空濛雨亦奇。</p>
-            <p>欲把西湖比西子，淡妆浓抹总相宜。</p>
+            <p>莫听穿林打叶声，何妨吟啸且徐行。</p>
+            <p>一蓑烟雨任平生，也无风雨也无晴。</p>
           </div>
           <div className="home-poem-author-row">
-            <span className="home-poem-author">【宋】苏轼 · 杭州西湖</span>
-            <span className="home-poem-seal">苏子</span>
+            <span className="home-poem-author">【宋】苏轼 · 黄州沙湖道中</span>
+            <span className="home-poem-seal">东坡</span>
           </div>
         </div>
       </section>
