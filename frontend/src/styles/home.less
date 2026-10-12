@@ -1271,3 +1271,19 @@
   .home-shiwu-upload { background: color-mix(in srgb, var(--gf-bg-card) 55%, transparent); }
   .home-shiwu-demo__item { background: color-mix(in srgb, var(--gf-bg-card) 50%, transparent); }
 }
+
+// ── 古代·时令：文字左对齐 + 底图铺满（与现代·今日同款处理）──
+.home-almanac__col:nth-child(2) {
+  align-items: flex-start;
+  text-align: left;
+
+  &::after {
+    background-size: cover;
+    background-position: center;
+    opacity: 0.2;
+  }
+}
+
+[data-theme='dark'] .home-almanac__col:nth-child(2)::after {
+  opacity: 0.1;
+}
