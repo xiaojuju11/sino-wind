@@ -204,3 +204,108 @@
 4. 团队页面全链路、正式云端部署和鉴宝名录业务表尚未在本次完成；不自行编造表或声称第二阶段全队通过。
 
 结论：成员 A 授权范围的实现与本地验证可提交评审；“双 AI 实质落地”和三人闭环仍需团队真实联调，不以本轮测试冒充完成。
+
+
+## 第三阶段（TRD v3.0 收官版）交付：物溯识器 / Coze 对接 / 后端 AI 统一网关 / 日月主题底座（2026-10-12）
+
+- 填报人：刘霞 / 成员 A
+- 执行依据：`TRD.md` v3.0（队长收官版，§1.2 图标铁律、§2.1 / §2.2 / §2.6、§3.1、§4.1~§4.4、§5、§10）；视觉基准：`docs/design/phase3/` 八张最终定稿
+- 当前分支：工作区位于 `feat/design-phase3-tokens`；TRD §2.1 指定成员 A 分支为 `feat/phase2-recognition-core`
+- 状态：**代码落地 + 本地验证完成，未提交、未推送、未创建分支**（按本人要求留待本人验收后自行提交）
+
+### 一、本次完成内容
+
+1. **后端大模型统一网关**（`backend/src/controllers/deepseekController.js`）
+   - 新增 `translateYayan`（`POST /api/deepseek/yayan`，TRD §4.1）：校验 1~100 字（对齐 P1 定稿输入框「0/100」计数），输出 `{ modern, ancient, author, explanation }`；AI 路径要求 `response_format: json_object`，解析失败即降级。
+   - 新增 `soulScholar`（`POST /api/deepseek/soul`，TRD §4.2）：输出 `{ name, dynasty, title, prompt, welcome, biography, circle, tags }`；内置先贤档案库把 §4.2 的辛弃疾条目逐字收录，另收录李白 / 苏轼 / 李清照 / 王阳明的既有人设与史实雅号。
+   - `deepseekChat`（§4.3）新增可选 `customPrompt`（≤1000 字）支持自定先贤；未带自定人设时 `sageId` 仍限既有四位。
+   - **全接口离线兜底**：无 API Key、断网、上游超时、返回不可解析时统一返回 `code:1` + 内置库 + `degraded:true` + `source:'local-fallback'` + `notice`，页面不抛红、不白屏（TRD §10.1）。
+   - 反编造约束写进三条 system prompt；档案库外的名讳不编造生平与人际关系，字段留空并标注待补。
+2. **路由**（`backend/src/routes/deepseek-api.js`）：挂载 `/yayan`、`/soul`；契约未要求鉴权故不加 `verifyToken`，`/chat` 既有鉴权保持不变。
+3. **Coze 工作流对接**（`backend/src/controllers/cozeController.js`，TRD §3.1 / §4.4）
+   - 输出按 §3.1 ④ 补 `audio_url`（TTS 讲解音频）：只接受 http(s) 直链，缺失置空字符串，不伪造资源地址。
+   - 入参校验沿用既有严格口径（JPEG/PNG/WebP Base64、≤10MB）。
+   - 无 Token / 超时 / 网络异常 / 上游不可解析一律返回内置文博库兜底（TRD §4.4 的保温杯 ➔ 宋代执壶 / 汤瓶 + 流变路线原文），`degraded:true`。
+   - 识物计数仍只在真实识别成功时递增；计数失败不丢弃已拿到的识别结果。
+4. **拍照识器前端**（`frontend/src/pages/Recognition.jsx` + 两个子组件）
+   - `ImageCaptureAndProcess`：FileReader 转 Base64、超限/非支持格式经 canvas 重编码、摄像头授权失败给温和提示、加载态改骨架占位。
+   - 识物请求统一走公共 Axios（AC-A3），显式设 5 秒请求超时；**2 秒预算内必出结果**（先上屏内置文博库兜底并标注「仍在等待真实工作流」，真实响应回来再替换），请求序号防止旧响应覆盖新结果。
+   - `RecognitionResult`：金石鉴赏 / 器物考释 / 文人品鉴心得三卡片 + TTS 语音试听 + §3.1 答辩严谨声明；按 `【流变考略】` 标记拆分详释；兜底时品位鉴值显「待考」。
+   - `localFallback.js`：前端同构兜底库（TRD §10 第二级要求服务端与前端均置入）。
+   - 图标全量改用项目内置 Iconfont 真实类名（已抓取两个 CDN 库核对），两个 Less 文件收敛进根类名内嵌。
+5. **日月主题底座**（`frontend/src/context/ThemeContext.jsx`、`theme.less`、`useTheme.js`、`frontend/src/main.jsx`）
+   - 提供 `theme` / `isDark` / `toggleTheme()` / `setTheme()`，切换时写 `<html data-theme>`，并按 TRD §5 持久化到 `localStorage.gufeng_theme`。
+   - `--gf-bg-paper` / `--gf-bg-card` / `--gf-bg-sunk` / `--gf-seal` / `--gf-bamboo` / `--gf-gold` / `--gf-text-main` / `--gf-text-sub` / `--gf-veil` 双主题令牌；深色底色用 AC-B2 指定的 `#0D1117`，其余深色值由 phase3 唯一深色定稿取样取证。
+   - 识物页颜色改为 `var(--gf-*, Less令牌回退值)`，因此该页已随主题切换；其他成员页面仍是 Less 编译期令牌，需各自消费 `var(--gf-*)` 才会整体变暗（见待确认项 4）。
+   - 另交付**共享药丸开关** `context/ThemeToggle.jsx` + `themeToggle.less`，供成员 B 的首页题头与成员 D 的书斋清规直接引用（`<ThemeToggle className='...' />`），免去各自重写一套；本文件未在任何页面实例化。
+
+### 二、本次修改与新增的文件清单（对照 §2.6 白名单）
+
+- `backend/src/controllers/deepseekController.js`（改）
+- `backend/src/controllers/cozeController.js`（改）
+- `backend/src/routes/deepseek-api.js`（改，边界见待确认项 2）
+- `frontend/src/pages/Recognition.jsx`（改）
+- `frontend/src/components/imageCaptureAndProcess/index.jsx`、`index.less`（改）
+- `frontend/src/components/recognitionResult/Index.jsx`、`index.less`（改）
+- `frontend/src/components/recognitionResult/localFallback.js`（新增，位于 §2.6 允许新建目录内）
+- `frontend/src/context/ThemeContext.jsx`、`theme.less`、`useTheme.js`、`ThemeToggle.jsx`、`themeToggle.less`（新增，§2.2 指名文件 + 队长裁定的共享开关）
+- `frontend/src/main.jsx`（改 2 行：挂载 `ThemeProvider`，边界见待确认项 3）
+- 未修改：`App.jsx`、`Layout.jsx`、`global.css`、`variables.less`、`app.less`、`layout.less`、`http/index.js`、`vite.config.js`、`index.html`、`package.json`、后端主入口与 `db.js`
+
+### 三、接口与数据依赖
+
+- 已对接：`POST /api/deepseek/yayan`、`POST /api/deepseek/soul`、`POST /api/deepseek/chat`、`POST /api/coze/recognition`（均按 TRD §4 契约）。
+- 响应扩展（契约之外的附加字段，供前端标注降级）：`degraded` / `source` / `notice`。
+- 无新增 npm 依赖；`backend/node_modules` 为本地 `npm ci` 安装（已在 `.gitignore` 内）。
+- 本地存储：`gufeng_theme`（本次新增写入方）；未写 `gufeng_yayan_list`（属成员 B 的雅译摘录闭环）。
+
+### 四、本地验证结果
+
+- [x] `node --check` 三个后端文件全部 exit 0。
+- [x] 改动文件 ESLint（含 React Hooks 规则）exit 0。
+- [x] `npm run build` 通过：1019 模块，0 报错（仅有既有的 500KB 分块体积提示）。
+- [x] 真实 Koa 起服（`node src/index.js`，无 `.env`，即无 Key 状态）HTTP 实测：`/api/deepseek/yayan` 返回 TRD §4.1 示例雅句与出处；`/api/deepseek/soul` 返回 §4.2 辛弃疾档案全部字段；空文本 400、`/api/coze/recognition` 无 Token 为 416（既有鉴权行为）。
+- [x] 控制器级用例 **23/23 通过**（参数校验 + 三接口兜底分支 + 识物五字段齐备 + 未收录名讳不编造生平 + 兜底不编造评分）。
+- [x] AI 分支用例 **22/22 通过**（OpenAI SDK 替身拦截，真实调用 0 次）：`baseURL`/`model`/`timeout`（雅译 3000ms、赋魂 3000ms、对话 4500ms，均在公共 5 秒预算内）、`response_format: json_object`、反编造约束注入、用户原文回填、列表字段按上限截断、自定先贤人设替换既有先贤人设、非 JSON / 空字段 / 上游异常 / 空白回复一律降级、超长自定人设 400 且不发起请求。
+- [x] **真实 DeepSeek 联调 15/15 通过**（本人提供 API Key，**只写入被 `.gitignore` 忽略的 `backend/.env.local`；已用 `git check-ignore` 与 `git grep` 复核：密钥不在任何已跟踪文件中**）：
+  - `POST /api/deepseek/yayan` → 1165ms，真实 AI 返回「今朝罢事形神倦，欲向市中啖鼎烹、饮乳茗。」，`degraded` 非真，四字段齐备、原文回填正确；
+  - `POST /api/deepseek/soul`（纳兰性德 / 清，不在内置档案库）→ 2457ms，真实 AI 返回雅号「楞伽山人」、生平、《饮水词》书目、知己圈与文风标签，引用名句为真实存在句；
+  - `POST /api/deepseek/chat`（libai，带 Token）→ 866ms 真实人设回复；自定先贤 `customPrompt`（纳兰性德人设）→ 1408ms，人设切换生效；
+  - `POST /api/coze/recognition`（无 Coze Token）→ 3ms 秒级兜底，`degraded:true`，条目为 §4.4 示例（保温杯 ➔ 宋代执壶 / 汤瓶）。
+- [x] 安全复核：`backend/.env.local` 命中 `backend/.gitignore:2`；`git grep "sk-bf79…"` 在已跟踪文件中零命中；该文件不出现在 `git status` 待提交列表。
+- [x] 产物核对：构建后 CSS 含 `:root[data-theme=dark]` 深色令牌与 `var(--gf-*)` 回退值；JS 含 `gufeng_theme` / `data-theme` 接线。
+- [x] 渲染层断言 **36/36 通过**（esbuild + `react-dom/server`，**不依赖浏览器**，不新增依赖）：三大卡片标题、朝代印、兜底「待考」不编造分数、流变路线拆分、常驻答辩声明、无音频时播放器禁用态、骨架占位（且不含 spinner/圆形转圈）、`ThemeProvider` 渲染整页、默认 `light`、存储键 `gufeng_theme` 与 `light`/`dark` 取值；`ThemeToggle` 两侧可选、无障碍名称与模式名、浅色太阳侧激活、深色月亮侧激活、图标为线性矢量 SVG（svg=2 / stroke=currentColor / 无位图 / 无 emoji）。
+- [x] 令牌对比度实测（WCAG）：浅色主文字 13.23:1、浅色次文字 5.28:1、朱砂按钮字/朱砂底 7.98:1、深色主文字/#0D1117 12.69:1、深色主文字/卡片底 11.30:1、深色次文字 5.12:1，全部达标。
+- [x] 产物禁用配色排查：`#667eea` / `#764ba2` / `#4a90e2` / `#ff7a45` / `#e6f7ff` / `#f9fbff` 出现次数均为 0；产物中残留的 `#fff` 硬编码来自 `aiPage.less` / `home.less` / `minePage.less` / `poem.less` / `poemCollection.less`（既有技术债，非本次引入，属其他成员文件故未擅改）。
+- [x] 兼容性核对：`ImageCaptureAndProcess` 全仓仅 `Recognition.jsx` 一处调用，本次移除其未被使用的 `theme` 入参无兼容风险。
+
+### 五、遗留问题与待确认项（Blocker）
+
+1. **真实 DeepSeek 已联调，真实 Coze 工作流仍缺 Token**：三条 AI 接口的真实模型路径、输出质量与时延均已实测（见上，15/15）；`POST /api/coze/recognition` 的真实识别结果与 `audio_url`（TTS）仍**未验证**，因为暂无 `COZE_IMAGE_TO_TEXT_AND_VOICE`。**不能宣称真实图像识别与语音讲解可用。**
+2. **⚠️ AC-C2 的 1.5 秒口径真实模型达不到**：实测 `soul`（纳兰性德）耗时 **2457ms**、`chat` 866ms、自定先贤 1408ms、`yayan` 1165ms。即：雅译在 2 秒内，赋魂超过 AC-C2 写死的 1.5 秒。可选处理：① 放宽 AC-C2 口径为 3 秒；② 前端先出「正在考释」骨架、真实结果到达即回填；③ 换更快的模型或精简 prompt。请队长裁定，本项不由 A 单方面改口径。
+3. **越界文件待追认**：`backend/src/routes/deepseek-api.js` 不在 §2.6 显式名单（只列了 `coze-api.js`），但新接口必须挂载于此。
+4. **`main.jsx` 挂载主题 Provider 待追认**：§2.6 未把 `main.jsx` 列为禁改，也未列入成员 A 白名单；不挂载则 ThemeContext 无法全局生效（`App.jsx` 属禁改）。
+5. **深色主题只完成底座**：令牌层与全站基底（背景、默认文字）已具备，识物页已随之切换；B/C 页面仍使用 Less 编译期令牌，需各自改为消费 `var(--gf-*)` 才会整体进入月下墨境。**D 的文件（`poem.less` / `poemCollection.less` / `minePage.less` 等）已由本人授权改造**，见同分支的第二个提交（AC-D4「切换后全站生效」需要它）。
+6. **深色令牌裁定项**：`--gf-seal` 与 `--gf-bamboo` 保留 TRD 明示的 `#8A2B2B` / `#2D5A3F`，而深色定稿按钮实测为 `#701010` / `#31392E`（绘画压色）。是否随稿下压请队长裁定。
+7. **识物页缺一张手绘插图**（`DESIGN.md §2.5` 第 4 要素）：仓库无器物类插图素材，且 §1.2 铁律禁止 AI 生图，故未自制，需设计侧补图。
+8. **识物接口仍要求 Token**：未登录访问会走前端兜底并被公共拦截器引导登录；是否放开为可选鉴权待定。
+9. **2 秒兜底策略待确认演示口径**：当前为「2 秒先出兜底、真实结果回来替换」；若要求 2 秒内必须是真实结果，则需缩短 Coze 上游超时或提高工作流速度。
+10. **`audio_url` 字段未来接入前端播控需真机验证**：兜底态恒为空，播放器显示「无语音讲解」。
+11. **⚠️ 图标库缺日 / 月图标**：`font_5104647`、`font_5241957` 两个 Iconfont 库与 `antd-mobile-icons` 的导出清单里**都没有日 / 月图标**（已逐项核对）。`ThemeToggle` 暂以**内联线性矢量 SVG** 兜底（非位图、非 emoji、`currentColor` 可变色）。请队长在 iconfont 国风库补 `icon-ri` / `icon-yue` 两个图标，届时把组件内两个 Glyph 换成 `<i className="iconfont icon-ri" />` 即可，样式无需改动。
+12. **`ThemeToggle` 暂无页面实例化**：按裁定只交付组件、由 B / D 在自己题头引入；因此它不进前端 bundle，只在渲染层断言与 ESLint 中验证（引用方式见组件头注释）。
+13. **密钥提示**：本次联调用的 DeepSeek Key 由本人提供，仅写入被忽略的 `backend/.env.local`。该 Key 已在对话中出现过明文，**建议答辩结束或 PR 合并后到 DeepSeek 控制台轮换一次**。
+
+### 六、复现命令
+
+```bash
+# 前端
+cd frontend && npm run build && npx eslint src/pages/Recognition.jsx src/context/ThemeContext.jsx
+# 后端语法
+node --check backend/src/controllers/deepseekController.js
+# 后端起服（无 .env 即无 Key，可直接验证兜底分支）
+cd backend && npm ci && node src/index.js
+# 控制器级 23 项用例：见本次 AI 输出目录的 a-fallback-verify.js（未加入仓库）
+# 渲染层 31 项断言 + 令牌对比度实测：见本次 AI 输出目录的 run-ssr.mjs（未加入仓库）
+```
+
+结论：成员 A 本阶段授权范围的实现与本地验证完成，可提交评审；真实模型 / 真实 Coze 工作流、B/C/D 页面主题适配与团队全链路联调仍未验收，不以本轮兜底测试冒充真实 AI 落地。

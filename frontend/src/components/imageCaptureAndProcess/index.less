@@ -1,306 +1,304 @@
 @import '../../styles/variables.less';
 
-// 图片拍照和处理公共组件样式（对齐 DESIGN.md v3：宣纸水墨体系，移除冷蓝/橙配色）
-.image-capture-root {
-  background: @color-bg;
-  display: flex;
-  flex-direction: column;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: @color-text-main;
+// ════════════════════════════════════════════════════
+//  物溯古今 · 拍照识器 —— 图片采集器样式（成员 A 独占）
+//  基准视口 390px，1rem = clientWidth / 10
+//  视觉基准：phase3 定稿的水墨宣纸体系；颜色一律走令牌 / 主题变量（不写死硬编码色值）
+//  命名空间：所有子样式必须嵌套在 .image-capture-root 内（协作红线 §2.6）
+//  日月主题：var(--gf-*) 取 ../context/theme.less，后面的 Less 令牌作浅色回退值
+// ════════════════════════════════════════════════════
 
-  /* 页面头部样式 */
-  .image-capture-header h1 {
-    color: @color-text-main;
-  }
+// ── 回纹描金外框（本模块自持，不跨模块引用他人 Less）──
+.gu-frame(@len: 0.22rem) {
+  position: relative;
+  border: 1px solid fade(@color-gold, 48%);
 
-  .image-capture-header__back {
-    background-color: @color-bg-sunk;
-    color: @color-text-main;
-  }
-
-  /* 页面主体内容样式 */
-  .image-capture-main {
-    flex: 1;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  /* 结果组件基础样式 */
-  .result-container {
-    background-color: @color-card;
-    border: 1px solid @color-border;
-    border-radius: @radius-card;
-    padding: 24px;
-    box-shadow: @shadow-card;
-    animation: fadeIn 0.5s ease;
-  }
-}
-
-// 页面头部
-.image-capture-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  background-color: transparent;
-  box-shadow: none;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-
-  &__back {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: @color-bg-sunk;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 18px;
-    color: @color-text-main;
-    .iconfont {
-      font-weight: 700;
-      font-size: 18px;
-    }
-
-    &:hover {
-      background-color: @color-divider;
-    }
-  }
-
-  h1 {
-    font-size: 20px;
-    font-weight: 600;
-    color: @color-text-main;
-    margin: 0;
-  }
-
-  &__placeholder {
-    width: 40px;
-  }
-}
-
-// 页面主体内容
-.image-capture-main {
-  flex: 1;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-// 图片预览区域（宣纸底 + 极淡泥金晕染）
-.image-capture-preview {
-  background: radial-gradient(circle at 20% 20%, fade(@color-gold, 10%) 0, transparent 35%),
-              @color-card;
-  border: 1px solid @color-border;
-  border-radius: @radius-card;
-  padding: 20px;
-  box-shadow: @shadow-card;
-  aspect-ratio: 4/3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-
-  &__placeholder {
-    text-align: center;
-    color: @color-text-sub;
-
-    i {
-      font-size: 64px;
-      margin-bottom: 16px;
-      opacity: 0.5;
-      display: block;
-    }
-
-    p {
-      font-size: 16px;
-      margin: 0;
-    }
-  }
-
-  &__image-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  &__image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    border-radius: 8px;
-  }
-
-  &__clear {
+  &::before,
+  &::after {
+    content: '';
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background-color: fade(@color-text-main, 70%);
-    border: none;
+    width: @len;
+    height: @len;
+    border: 1px solid fade(@color-gold, 70%);
+    pointer-events: none;
+  }
+
+  &::before {
+    top: 0.05rem;
+    left: 0.05rem;
+    border-right: none;
+    border-bottom: none;
+  }
+
+  &::after {
+    right: 0.05rem;
+    bottom: 0.05rem;
+    border-left: none;
+    border-top: none;
+  }
+}
+
+.image-capture-root {
+  position: relative;
+  min-height: 100vh;
+  padding: 0 0.42rem 0.4rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  color: var(--gf-text-main, @color-text-main);
+  // 全屏水墨山水背景层（与全站 body 同源素材），卡片浮于画面之上
+  background: var(--gf-bg-paper, @color-bg) url('/assets/common/bg_guofeng.jpg') no-repeat center center / cover fixed;
+  font-family: 'Songti SC', 'STSong', 'SimSun', 'Noto Serif SC', serif;
+
+  // 宣纸 / 夜色罩层：浅色下统一色调，深色下把山水压到月下墨境
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: var(--gf-veil, fade(@color-bg, 16%));
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  // ── 顶部题头：返回 + 居中标题 + 朱砂篆刻小印 ──────────────
+  .image-capture-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.2rem;
+    padding: 0.3rem 0 0.26rem;
+
+    &__back {
+      flex: none;
+      width: 0.72rem;
+      height: 0.72rem;
+      border-radius: 50%;
+      border: 1px solid fade(@color-gold, 45%);
+      background-color: var(--gf-bg-card, @color-card);
+      color: var(--gf-text-main, @color-text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.2s ease;
+
+      .iconfont {
+        font-size: 0.34rem;
+      }
+
+      &:active {
+        transform: scale(0.94);
+      }
+    }
+
+    &__title {
+      flex: 1;
+      margin: 0;
+      text-align: center;
+      font-size: 0.5rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: var(--gf-text-main, @color-text-main);
+      white-space: nowrap;
+    }
+
+    // 朱砂篆刻小印（纯 CSS 方章，沿用品牌印【华风】）；印面文字恒为象牙白
+    &__seal {
+      flex: none;
+      width: 0.62rem;
+      height: 0.62rem;
+      border-radius: @radius-seal;
+      background-color: var(--gf-seal, @color-seal);
+      color: @color-card;
+      font-size: 0.24rem;
+      font-style: normal;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1.05;
+      box-shadow: inset 0 0 0 1px fade(@color-gold, 55%);
+    }
+  }
+
+  // ── 主体 ─────────────────────────────────────────────
+  .image-capture-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.36rem;
+  }
+
+  // 影像台：描金双线边框 + 回纹四角
+  .image-capture-preview {
+    .gu-frame();
+
+    aspect-ratio: 4 / 3;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    font-size: 16px;
-    color: @color-card;
-
-    &:hover {
-      background-color: fade(@color-text-main, 85%);
-    }
-  }
-}
-// 操作按钮区域
-.image-capture-actions {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-// 按钮样式
-.image-capture-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 16px 32px;
-  border-radius: 50px;
-  font-size: 18px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  min-width: 150px;
-
-  i {
-    font-size: 20px;
-  }
-
-  &--primary {
-    background-color: @color-seal; // 主操作：朱砂印泥红
-    color: @color-card;
+    padding: 0.24rem;
+    box-sizing: border-box;
+    border-radius: @radius-card;
+    background-color: var(--gf-bg-card, @color-card);
     box-shadow: @shadow-card;
+    overflow: hidden;
 
-    &:hover {
-      background-color: darken(@color-seal, 6%);
-      transform: translateY(-2px);
-      box-shadow: @shadow-card;
+    &__video {
+      display: none;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: (@radius-card - 2px);
+
+      &.is-live {
+        display: block;
+      }
+    }
+
+    &__placeholder {
+      text-align: center;
+      color: var(--gf-text-sub, @color-text-sub);
+
+      .iconfont {
+        display: block;
+        font-size: 1.3rem;
+        color: fade(@color-seal, 45%);
+        margin-bottom: 0.2rem;
+      }
+
+      p {
+        margin: 0 0 0.1rem;
+        font-size: 0.36rem;
+        color: var(--gf-text-main, @color-text-main);
+      }
+
+      span {
+        font-size: 0.3rem;
+        color: var(--gf-text-sub, @color-text-sub);
+        letter-spacing: 0.02em;
+      }
+    }
+
+    &__image-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &__image {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 0.16rem;
+    }
+
+    &__clear {
+      position: absolute;
+      top: 0.1rem;
+      right: 0.1rem;
+      width: 0.72rem;
+      height: 0.72rem;
+      border-radius: 50%;
+      border: none;
+      background-color: fade(@color-text-main, 72%);
+      color: @color-card;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+
+      .iconfont {
+        font-size: 0.32rem;
+      }
+
+      &:active {
+        transform: scale(0.94);
+      }
     }
   }
 
-  &--secondary {
-    background-color: @color-bg-sunk;
-    color: @color-text-main;
-    box-shadow: @shadow-card;
-
-    &:hover {
-      background-color: @color-divider;
-      transform: translateY(-2px);
-      box-shadow: @shadow-card;
-    }
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-}
-
-// 加载状态
-// TODO(规范 §九)：DESIGN.md v3 要求加载态使用「与版式同尺寸的宣纸灰骨架占位」，
-// 当前仍是环形转圈，需在 JSX 中改为骨架占位后再删除本节。
-.image-capture-loading {
-  text-align: center;
-  padding: 40px 20px;
-
-  &__spinner {
-    width: 50px;
-    height: 50px;
-    margin: 0 auto 16px;
-    border: 4px solid fade(@color-seal, 25%);
-    border-top: 4px solid @color-seal;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-
-  p {
-    color: @color-text-sub;
-    font-size: 16px;
-    margin: 0;
-  }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-// 错误提示（朱砂系，替代旧版红橙警示色）
-.image-capture-error {
-  background-color: fade(@color-seal, 8%);
-  border-left: 4px solid @color-seal;
-  padding: 16px 20px;
-  border-radius: 8px;
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-
-  i {
-    color: @color-seal;
-    font-size: 20px;
-    margin-top: 2px;
-  }
-
-  p {
-    color: @color-seal;
-    font-size: 14px;
-    margin: 0;
+  // 温和提示（摄像头未授权、图片读取失败等，不用红色报错）
+  .image-capture-hint {
+    margin: -0.16rem 0 0;
+    padding: 0.2rem 0.26rem;
+    border-left: 2px solid var(--gf-seal, @color-seal);
+    border-radius: 0.12rem;
+    background-color: fade(@color-seal, 8%);
+    color: var(--gf-seal, @color-seal);
+    font-size: 0.32rem;
     line-height: 1.5;
-  }
-}
-
-// 响应式设计
-@media (max-width: 768px) {
-  .image-capture-main {
-    padding: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   }
 
+  // ── 操作区：印章式主按钮 + 描金次按钮 ─────────────────
   .image-capture-actions {
-    flex-direction: column;
-    gap: 16px;
+    display: flex;
+    gap: 0.28rem;
   }
 
   .image-capture-btn {
-    width: 100%;
-    max-width: none;
-  }
-}
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.14rem;
+    min-height: 1.15rem;
+    padding: 0 0.2rem;
+    border-radius: @radius-seal;
+    font-size: 0.4rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    font-family: inherit;
+    cursor: pointer;
+    transition: transform 0.2s ease;
 
-// 隐藏的视频和画布元素
-video,
-canvas {
-  display: none;
-}
+    .iconfont {
+      font-size: 0.4rem;
+    }
 
-// 淡入动画
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+    // 主按钮：朱砂实底 + 泥金双线描边 + 象牙白字（不加外发光）
+    &--primary {
+      background-color: var(--gf-seal, @color-seal);
+      color: @color-card;
+      border: 1px solid fade(@color-gold, 70%);
+      box-shadow: inset 0 0 0 2px fade(@color-gold, 40%);
+
+      &:active {
+        transform: scale(0.98);
+      }
+
+      &:disabled {
+        opacity: 0.72;
+      }
+    }
+
+    // 次按钮：米白底 + 泥金细线描边
+    &--secondary {
+      background-color: var(--gf-bg-card, @color-card);
+      color: var(--gf-text-main, @color-text-main);
+      border: 1px solid fade(@color-gold, 55%);
+
+      &:active {
+        transform: scale(0.98);
+      }
+    }
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  // 定格帧画布仅用于取样，不参与版面
+  .image-capture-canvas {
+    display: none;
   }
 }

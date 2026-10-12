@@ -1,148 +1,249 @@
 @import '../../styles/variables.less';
 
-// 🏺 博古识器 · 识别结果样式（改用 variables.less 令牌，取代逐处硬编码色值）
-.object-recognition-result__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
+// ════════════════════════════════════════════════════
+//  物溯古今 · 识别结果 + 加载骨架（成员 A 独占）
+//  基准视口 390px，1rem = clientWidth / 10
+//  命名空间：全部规则嵌套在 .object-recognition-result / .object-recognition-skeleton 内
+//  日月主题：var(--gf-*) 取 ../context/theme.less，后面的 Less 令牌作浅色回退值
+// ════════════════════════════════════════════════════
 
-  h2 {
-    font-size: 22px;
-    font-weight: 700;
-    color: @color-text-main;
-    margin: 0;
-    letter-spacing: 1px;
+// ── 回纹描金外框（本模块自持）──
+.gu-frame(@len: 0.22rem) {
+  position: relative;
+  border: 1px solid fade(@color-gold, 48%);
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    width: @len;
+    height: @len;
+    border: 1px solid fade(@color-gold, 70%);
+    pointer-events: none;
   }
 
-  &__voice {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background-color: fade(@color-gold, 16%); // 泥金淡底
-    border: 1px solid fade(@color-gold, 45%);
+  &::before {
+    top: 0.05rem;
+    left: 0.05rem;
+    border-right: none;
+    border-bottom: none;
+  }
+
+  &::after {
+    right: 0.05rem;
+    bottom: 0.05rem;
+    border-left: none;
+    border-top: none;
+  }
+}
+
+.object-recognition-result {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+  // 兜底提示：只说明降级事实，不做恐吓式红色报错
+  &__notice {
+    margin: 0;
+    padding: 0.2rem 0.26rem;
+    border-left: 2px solid @color-gold;
+    border-radius: 0.12rem;
+    background-color: fade(@color-gold, 12%);
+    color: var(--gf-text-sub, @color-text-sub);
+    font-size: 0.3rem;
+    line-height: 1.6;
+  }
+
+  &__name {
     display: flex;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 20px;
-    color: @color-seal;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px fade(@color-seal, 12%);
+    gap: 0.2rem;
+    flex-wrap: wrap;
 
-    &:hover {
-      background-color: fade(@color-gold, 30%);
-      transform: scale(1.05);
-      box-shadow: 0 4px 12px fade(@color-seal, 18%);
+    h3 {
+      margin: 0;
+      font-family: 'Songti SC', 'STSong', 'SimSun', 'Noto Serif SC', serif;
+      font-size: 0.56rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--gf-seal, @color-seal);
+    }
+  }
+
+  // 朝代印章（印面文字恒为象牙白）
+  &__dynasty {
+    padding: 0.08rem 0.16rem;
+    border-radius: @radius-seal;
+    background-color: var(--gf-seal, @color-seal);
+    color: @color-card;
+    font-size: 0.3rem;
+    letter-spacing: 0.04em;
+    box-shadow: inset 0 0 0 1px fade(@color-gold, 55%);
+  }
+
+  &__score {
+    margin: 0.22rem 0 0;
+    font-size: 0.32rem;
+    color: var(--gf-text-sub, @color-text-sub);
+  }
+
+  &__text {
+    margin: 0;
+    font-size: 0.36rem;
+    line-height: 1.75;
+    color: var(--gf-text-main, @color-text-main);
+    white-space: pre-wrap;
+  }
+
+  &__voice-row {
+    display: flex;
+    margin-top: 0.28rem;
+  }
+
+  // 语音试听播放器（印章式按钮）
+  &__voice {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.12rem;
+    min-height: 0.9rem;
+    padding: 0 0.3rem;
+    border-radius: @radius-seal;
+    border: 1px solid fade(@color-gold, 70%);
+    background-color: var(--gf-seal, @color-seal);
+    color: @color-card;
+    font-size: 0.34rem;
+    font-family: inherit;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 2px fade(@color-gold, 40%);
+    transition: transform 0.2s ease;
+
+    .iconfont {
+      font-size: 0.36rem;
     }
 
     &:active {
-      transform: scale(0.95);
+      transform: scale(0.98);
+    }
+
+    &.is-disabled,
+    &:disabled {
+      background-color: var(--gf-bg-sunk, @color-bg-sunk);
+      color: var(--gf-text-sub, @color-text-sub);
+      border-color: fade(@color-gold, 35%);
+      box-shadow: none;
+      cursor: not-allowed;
     }
   }
-}
 
-.object-recognition-result__content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.object-recognition-result__name {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-
-  h3 {
-    font-size: 28px;
-    font-weight: 700;
-    color: @color-seal; // 朱砂印泥红
+  &__statement {
     margin: 0;
-  }
-
-  &__category {
-    background-color: fade(@color-bamboo, 12%); // 竹青淡底
-    color: @color-bamboo;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 600;
+    text-align: center;
+    font-size: 0.28rem;
+    line-height: 1.6;
+    color: var(--gf-text-sub, @color-text-sub);
   }
 }
 
-.object-recognition-result__pronunciation {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background-color: @color-card; // 绢帛卡片白
-  border-radius: 8px;
+// ── 三大卡片 ─────────────────────────────────────────
+.object-recognition-card {
+  .gu-frame();
 
-  i {
-    color: @color-text-sub;
-    font-size: 18px;
-  }
+  padding: 0.34rem 0.38rem;
+  border-radius: @radius-card;
+  background-color: var(--gf-bg-card, @color-card);
+  box-shadow: @shadow-card;
+  animation: recognition-fade-in 0.4s ease;
 
-  span {
-    font-size: 16px;
-    color: @color-text-sub;
-    font-weight: 500;
-  }
-}
-
-.object-recognition-result__description,
-.object-recognition-result__safety {
-
-  h4 {
-    font-size: 18px;
-    font-weight: 600;
-    color: @color-text-main;
-    margin: 0 0 12px 0;
+  &__title {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.14rem;
+    margin: 0 0 0.24rem;
+    padding-bottom: 0.16rem;
+    border-bottom: 1px dashed fade(@color-seal, 18%);
+    font-family: 'Songti SC', 'STSong', 'SimSun', 'Noto Serif SC', serif;
+    font-size: 0.42rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--gf-text-main, @color-text-main);
 
-    &::before {
-      content: '';
-      width: 4px;
-      height: 20px;
-      background-color: @color-seal; // 朱砂竖条
-      border-radius: 2px;
+    .iconfont {
+      font-size: 0.4rem;
+      color: var(--gf-seal, @color-seal);
     }
   }
 
-  p {
-    font-size: 16px;
-    line-height: 1.6;
-    color: @color-text-main;
+  &__body {
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+}
+
+// ── 加载骨架：宣纸灰占位 ─────────────────────────────
+.object-recognition-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+
+  &__card {
+    .gu-frame();
+
+    padding: 0.34rem 0.38rem;
+    border-radius: @radius-card;
+    background-color: var(--gf-bg-card, @color-card);
+    box-shadow: @shadow-card;
+  }
+
+  &__line {
+    display: block;
+    height: 0.3rem;
+    margin-bottom: 0.18rem;
+    border-radius: 0.08rem;
+    background: linear-gradient(
+      90deg,
+      var(--gf-bg-sunk, @color-bg-sunk) 0%,
+      var(--gf-bg-card, @color-card) 50%,
+      var(--gf-bg-sunk, @color-bg-sunk) 100%
+    );
+    background-size: 200% 100%;
+    animation: recognition-shimmer 1.4s linear infinite;
+
+    &--title {
+      width: 42%;
+      height: 0.42rem;
+    }
+
+    &--short {
+      width: 58%;
+      margin-bottom: 0;
+    }
+  }
+
+  &__hint {
     margin: 0;
+    text-align: center;
+    font-size: 0.3rem;
+    color: var(--gf-text-sub, @color-text-sub);
   }
 }
 
-// 文人品鉴心得：苍竹墨绿，去除旧版橙色安全提示感
-.object-recognition-result__safety {
-
-  h4 {
-    color: @color-bamboo;
-
-    &::before {
-      background-color: @color-bamboo;
-    }
+@keyframes recognition-shimmer {
+  from {
+    background-position: 0 0;
   }
-
-  p {
-    color: @color-text-sub;
+  to {
+    background-position: -200% 0;
   }
 }
 
-// 响应式设计
-@media (max-width: 768px) {
-  .object-recognition-result__name h3 {
-    font-size: 24px;
+@keyframes recognition-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.2rem);
   }
-
-  .object-recognition-result {
-    padding: 20px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
