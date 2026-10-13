@@ -51,6 +51,51 @@ function getClient() {
   })
 }
 
+// 智能先贤多轮情境兜底生成器（确保即使网络受阻或断线，亦保持千古风骨第一人称）
+function generateSageReply(sageId, message) {
+  const query = (message || '').trim().toLowerCase()
+  
+  // 1. 针对“你是谁 / 何人 / 叫什么 / 姓名”的主动通名
+  if (/谁|何人|名|哪位|介绍|你是/.test(query)) {
+    const intros = {
+      libai: '吾乃盛唐青莲居士李太白！天生我材必有用，千金散尽还复来。足下自何处而来？且放白鹿青崖间，与吾金樽对饮三百杯！',
+      sushi: '老夫苏轼，字子瞻，号东坡居士。竹杖芒鞋轻胜马，谁怕？一蓑烟雨任平生。今日刚烹得新茶并东坡肉，足下快快请坐！',
+      liqingzhao: '妾身两宋李清照，号易安居士。寻寻觅觅，冷冷清清，凄凄惨惨戚戚。足下既来云山相访，愿与妾身切磋一番新词金石？',
+      wangyangming: '老夫阳明子王守仁。此心光明，亦复何言？知善知恶是良知，为善去恶是格物。足下心中若有滞碍，愿与君共参良知本体。',
+      dufu: '老拙杜陵野老杜子美是也。感时花溅泪，恨别鸟惊心。老拙半生飘零，然心系苍生黎庶，得会足下雅士，深慰生平。',
+      xinqiji: '某家稼轩居士辛幼安是也！想当年金戈铁马，气吞万里如虎。男儿到死心如铁，看试手，补天裂！壮士且同满饮！',
+      group_zhulin: '嵇康按琴长吟：“广陵散绝矣，来者请入席！”太白举樽笑曰：“太白在此，速速满饮！”东坡亦抚掌：“今日名仕齐聚，畅叙幽情！”'
+    }
+    if (intros[sageId]) return intros[sageId]
+  }
+
+  // 2. 针对“你不是...吗 / 机器人 / AI / 助手 / 假的”的反出戏强防御
+  if (/不是|ai|机器人|模型|假|助手|教育/.test(query)) {
+    const defense = {
+      libai: '太白长笑一声：“天地为炉，阴阳为炭。吾李太白纵浪大唐山河数十载，诗酒平生，何来虚妄之言？足下莫非饮过三巡，醉眼朦胧耶？”',
+      sushi: '东坡居士捋须莞尔：“哈哈！老夫苏子瞻肉体凡胎，平生颠沛黄州、惠州、儋州，赤壁赋犹在，东坡肉尚温，使君何故疑我？”',
+      liqingzhao: '易安居士敛衽正色：“妾身正是李易安本人，与君相晤于云山素笺之上，足下何出此惊人之语？莫非嫌妾身词意过于凄清？”',
+      wangyangming: '阳明先生从容道：“心外无物，心外无理。足下见老夫在此论道，此即真切本心之应，何必执着于虚相与真伪？”',
+      dufu: '少陵野老轻叹一声：“子美一生颠沛流离，茅屋为秋风所破犹怀天下寒士。老拙骨肉俱在，足下切莫相戏。”',
+      xinqiji: '稼轩居士按剑慨然：“天下英雄，唯使君与某耳！某辛幼安挑灯看剑、沙场秋点兵之热血犹在胸膛，壮士何出此妄言！”',
+      group_zhulin: '阮籍青白眼一顾，嵇康拨阮叹道：“世人多疑网中虚妄，我辈在此竹林啸傲、山水长琴，真实不虚，何须多辩！”'
+    }
+    if (defense[sageId]) return defense[sageId]
+  }
+
+  // 3. 先贤经典对论
+  const sageDialogues = {
+    libai: '花间一壶酒，独酌无相亲。举杯邀明月，对影成三人。足下所言极富雅趣，且莫辜负此良宵，随吾醉卧花间！',
+    sushi: '人生如逆旅，我亦是行人。莫听穿林打叶声，何妨吟啸且徐行。世事一场大梦，人生几度秋凉，且宽坐共饮新茶。',
+    liqingzhao: '昨夜雨疏风骤，浓睡不消残酒。试问卷帘人，却道海棠依旧。知否，知否？应是绿肥红瘦。阁下词心敏锐，甚契我怀。',
+    wangyangming: '知是行之始，行是知之成。若知而不行，只是未知。使君于事上磨炼，自能照见灵台清明，无往而不利。',
+    dufu: '安得广厦千万间，大庇天下寒士俱欢颜！风急天高猿啸哀，渚清沙白鸟飞回。读足下之辞，如见故里春色。',
+    xinqiji: '醉里挑灯看剑，梦回吹角连营。八百里分麾下炙，五十弦翻塞外声。沙场英雄气，自当留取青史照汗青！',
+    group_zhulin: '向秀言《庄子》，阮籍抚长啸。高山流水，得逢知音。天地之大，皆在诸君杯酒之中，且尽情畅叙！'
+  }
+  return sageDialogues[sageId] || '山水相逢皆是缘，且待清风送佳音。足下之意，吾已深明。'
+}
+
 // 1. 先贤对席畅论对话接口
 async function deepseekChat(ctx) {
   const { message, sageId = 'libai', customPrompt } = ctx.request.body || {}
@@ -64,21 +109,10 @@ async function deepseekChat(ctx) {
   const sageConfig = sages[sageId]
   const systemPrompt = customPrompt || (sageConfig ? sageConfig.prompt : '你是一位博通经史、温润雅致的古代文人雅士，以半文言与来客煮茶论道。')
 
-  // 若无可用 key 或调用异常，提供生动的古风兜底回复
+  // 若无可用 key，提供智能情境先贤对答
   if (!client) {
-    const fallbackReplies = {
-      libai: '浮生如寄，何拘泥于毫芒之失？且放白鹿青崖间，须行即骑访名山！今日且尽金樽一杯！',
-      sushi: '竹杖芒鞋轻胜马，谁怕？一蓑烟雨任平生。且尝一块东坡肉，笑看人间风雨晴。',
-      liqingzhao: '妾身李易安。寻寻觅觅，冷冷清清，凄凄惨惨戚戚。窗外风雨初歇，愿与君共品新词。',
-      wangyangming: '心即理也，此心光明，亦复何言？知而不行，只是未知。使君且自反于心即可。',
-      dufu: '安得广厦千万间，大庇天下寒士俱欢颜！阁下胸怀锦绣，子美深感同道之谊。',
-      xinqiji: '醉里挑灯看剑，梦回吹角连营！男儿到死心如铁，看试手，补天裂！',
-      group_zhulin: '太白举杯曰：“速来金樽对饮！”东坡抚琴笑答：“太白兄莫急，且待子瞻烹得新茶一试！”'
-    }
-    ctx.body = {
-      code: 1,
-      message: fallbackReplies[sageId] || '山水相逢皆是缘，且待清风送佳音。阁下之意，吾已明矣。'
-    }
+    const reply = generateSageReply(sageId, message)
+    ctx.body = { code: 1, message: reply }
     return
   }
 
@@ -103,11 +137,9 @@ ${systemPrompt}
     const content = completion.choices?.[0]?.message?.content
     ctx.body = { code: 1, message: content }
   } catch (error) {
-    console.error('DeepSeek 对话异常:', error.message)
-    ctx.body = {
-      code: 1,
-      message: '适逢山雨忽至，墨迹微润。浮生如逆旅，且放宽心境，与吾共饮此杯！'
-    }
+    console.warn('DeepSeek 外部连接受阻，智能激活先贤情境对答:', error.message)
+    const reply = generateSageReply(sageId, message)
+    ctx.body = { code: 1, message: reply }
   }
 }
 

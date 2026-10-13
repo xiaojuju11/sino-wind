@@ -1,8 +1,8 @@
-﻿import axios from 'axios'
+import axios from 'axios'
 import { Toast } from 'antd-mobile'//轻提示组件，请求出错时自动弹出错误消息
 
-axios.timeout = 5000  // 请求超时时间：5 秒  超过 5 秒没响应就自动断开
-axios.defaults.baseURL = import.meta.env.VITE_API_BASE || 'http://120.26.186.48:3000'  // 基础接口地址  以后写接口地址不用每次都写一长串，直接写 /api/user 就行
+axios.timeout = 15000  // 请求超时时间：15 秒，适配大模型与长文交互
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL || ''  // 优先读取环境变量，本地开发走相对路径代理
 axios.defaults.headers.post['Content-Type'] = 'application/json'// POST 请求默认发送 JSON 格式数据  所有 POST 自动告诉后端：我发的是 JSON
 
 
@@ -20,33 +20,36 @@ axios.interceptors.request.use(request => {
 
 // 响应拦截
 axios.interceptors.response.use(
-  (response) => {  // 逻辑性错误
-    if (response.data.code !== 1) { // 判断后端自定义的 code 是否为 1
-      Toast.show({
-        icon: 'fail',    // 不是 1 就弹出错误提示
-        content: response.data.message
-      })
-      return Promise.reject(response)    // 抛出错误，让业务代码 catch 捕获
-    }
-    return response  // 正常返回数据
-  },
-  (res) => { // 程序性错误
-    if (res.status !== 200) {
+  (response) => {
+    if (response.data && response.data.code !== 1) {
       Toast.show({
         icon: 'fail',
-        content: res.response.data.message
+        content: response.data.message || '操作未完成'
       })
-
-      if (res.status == 416) { // 没有权限
-        // 重定向去登录页面
-        setTimeout(() => {
-          window.location.href = '/login'
-        }, 2000)
-      }
-
-      return Promise.reject(res)
+      return Promise.reject(response)
     }
-  } 
+    return response
+  },
+  (error) => {
+    const status = error.response?.status
+    const message = error.response?.data?.message || error.message || '服务响应异常'
+
+    Toast.show({
+      icon: 'fail',
+      content: message
+    })
+
+    if (status === 416 || status === 401) {
+      localStorage.removeItem('token')
+      setTimeout(() => {
+        if (!window.location.pathname.startsWith('/login')) {
+          window.location.href = '/login'
+        }
+      }, 1500)
+    }
+
+    return Promise.reject(error)
+  }
 )
 
 export default axios

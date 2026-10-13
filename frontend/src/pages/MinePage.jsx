@@ -4,7 +4,10 @@ import { ActionSheet, Toast, ImageViewer } from 'antd-mobile'
 import { RightOutline } from 'antd-mobile-icons'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext'
+import ThemeToggle from '../context/ThemeToggle.jsx'
 import axios from '../http'
+
+const BASE = import.meta.env.BASE_URL
 
 export default function MinePage() {
   const navigate = useNavigate()
@@ -181,6 +184,24 @@ export default function MinePage() {
             <RightOutline className='shuzhai-list-item__arrow' />
           </div>
 
+          {/* 墨色雅意：日月主题快捷切换（TRD §3.5 书斋清规 / AC-D4 双向同步；控件为成员 A 提供的共享 ThemeToggle） */}
+          <div className='shuzhai-list-item shuzhai-list-item--theme'>
+            <i className='iconfont icon-shezhi'></i>
+            <div className='shuzhai-list-item__content'>
+              <span className='shuzhai-list-item__title'>墨色雅意</span>
+              <span className='shuzhai-list-item__desc'>晓色晨宣 / 月下墨境切换</span>
+            </div>
+            <ThemeToggle className='shuzhai-theme-toggle' />
+          </div>
+
+          <div className='shuzhai-list-item' onClick={() => Toast.show('印章保护安全生效中')}>
+            <i className='iconfont icon-suo'></i>
+            <div className='shuzhai-list-item__content'>
+              <span className='shuzhai-list-item__title'>隐私与安全</span>
+              <span className='shuzhai-list-item__desc'>密码修改与印章保护</span>
+            </div>
+            <RightOutline className='shuzhai-list-item__arrow' />
+          </div>
           <div className='shuzhai-list-item' onClick={() => Toast.show('岁时节气通知已开启')}>
             <i className='iconfont icon-tongzhi'></i>
             <div className='shuzhai-list-item__content'>

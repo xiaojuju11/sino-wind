@@ -1,3 +1,10 @@
+const path = require('path')
+const dotenv = require('dotenv')
+dotenv.config({ path: path.resolve(__dirname, '../.env') })
+if (require('fs').existsSync(path.resolve(__dirname, '../.env.local'))) {
+  dotenv.config({ path: path.resolve(__dirname, '../.env.local'), override: true })
+}
+
 const Koa = require('koa')
 const Router = require('koa-router')
 const cors = require('@koa/cors');
@@ -6,11 +13,6 @@ const authRoutes = require('./routes/authRoutes.js')
 const poemRoutes = require('./routes/poemRoutes.js')
 const cozeRoutes = require('./routes/coze-api.js')
 const deepseekRoutes = require('./routes/deepseek-api.js')
-const dotenv = require('dotenv')
-
-dotenv.config({
-  path: ['.env.local', '.env']
-})
 
 const app = new Koa()
 app.use(cors());
@@ -35,6 +37,6 @@ app
   .use(deepseekRoutes.routes(), deepseekRoutes.allowedMethods())
   
 
-app.listen(3000, () => {
-  console.log('服务运行在 3000 端口');
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`服务运行在 ${process.env.PORT || 3000} 端口`);
 })

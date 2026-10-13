@@ -1,29 +1,53 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react'
 
-const ThemeContext = createContext({
+export const THEME_LIGHT = 'light'
+export const THEME_DARK = 'dark'
+export const THEME_STORAGE_KEY = 'gufeng_theme'
+
+export const ThemeContext = createContext({
   theme: 'light',
-  toggleTheme: () => {}
+  isDark: false,
+  toggleTheme: () => {},
+  setTheme: () => {}
 })
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('gufeng_theme') || 'light'
+  const [theme, setThemeState] = useState(() => {
+    try {
+      return localStorage.getItem(THEME_STORAGE_KEY) || 'light'
+    } catch {
+      return 'light'
+    }
   })
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
-    localStorage.setItem('gufeng_theme', theme)
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, theme)
+    } catch {
+      // ignore
+    }
   }, [theme])
 
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'light' ? 'dark' : 'light'))
-  }
+  const setTheme = useCallback((next) => {
+    setThemeState(next === THEME_DARK ? THEME_DARK : THEME_LIGHT)
+  }, [])
+
+  const toggleTheme = useCallback(() => {
+    setThemeState((prev) => (prev === THEME_DARK ? THEME_LIGHT : THEME_DARK))
+  }, [])
+
+  const value = useMemo(
+    () => ({ theme, isDark: theme === THEME_DARK, toggleTheme, setTheme }),
+    [theme, setTheme, toggleTheme]
+  )
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, isDark: theme === 'dark' }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   )
 }
 
 export const useTheme = () => useContext(ThemeContext)
+export default ThemeProvider
