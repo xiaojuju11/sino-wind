@@ -81,11 +81,13 @@
 
 **顺带修掉一个真实缺陷**：雅译请求失败时原先**不清理结果卡**，页面会留着上一句雅言（张冠李戴）；现改为失败即清空译文 + 摘录置灰 + 古风提示。另补齐 `gufeng_yayan_list` 缺失的 `modern` 字段，并对离线兜底结果标注朱砂徽标「离线典范」。
 
-### ⚠️ 演示前必须解决（已实测确认）
+### ✅ 演示环境（2026-10-13 已实测跑通，非阻塞）
 
-1. **云端后端 404**：`http://120.26.186.48:3000/api/deepseek/yayan` 实测返回 **404 未找到** → 公网演示白话雅译会走失败路径（不白屏，但失去「秒级雅译」亮点）。
-2. **本机后端起不来**：`backend/.env` 缺失（只有 `.env.example`），且全机**没有 DeepSeek Key**（`VITE_DEEPSEEK_API_KEY` 未配置）→ 本机无法验证真实 AI 雅译（无 Key 时 `translateYayan` 走**离线典范库**，功能可用但非 AI）。
-3. **本机联调做法**：在 `frontend/.env.local` 写 `VITE_API_BASE=http://localhost:3000` 并起本地后端（需先补 `backend/.env`），否则前端会打云端。
+1. **前端代理已通，无需配任何 `.env`**：团队主线已把 `http/index.js` 改为 `VITE_API_BASE_URL || ''`（相对路径），`vite.config.js` 有 `/api → http://127.0.0.1:3000` 代理 → **本机演示走本地真实 AI**。
+   ✅ 实测：`POST http://localhost:5174/api/deepseek/yayan` → **200 / 1.1~2.1s**，真实语句（非兜底）、无「离线典范」徽标；`proof/demo-dryrun-yayan.js` 可一键彩排。
+2. **`backend/.env.local` 已就位**：从 `D:\sino-wind\backend\.env.local` 复制过来（含本地 MySQL 口令 + DeepSeek Key，**已被 gitignore，不进仓库**）。后端已在 3000 端口跑通。
+3. **答辩当天只需两个服务**：`cd backend && node src/index.js`（→3000）＋ `cd frontend && npm run dev -- --port 5174 --strictPort`（→5174）。
+4. ⚠️ **仅“部署到公网”才会出问题**：云端 `120.26.186.48:3000` 实测 **404**（未部署 `/api/deepseek/yayan`）→ 需队长 / A 重新部署后端。**本机演示不受影响。**
 
 ### 口径待队长裁定
 
