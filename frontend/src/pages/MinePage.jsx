@@ -170,7 +170,9 @@ export default function MinePage() {
             <i className='iconfont icon-tongzhi'></i>
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>日月交替（墨境切换）</span>
-              <span className='shuzhai-list-item__desc'>当前为：{isDark ? '🌙 月下墨境（暗色）' : '☀️ 晓色晨宣（浅色）'}</span>
+              <span className='shuzhai-list-item__desc'>
+                当前为：<span className='shuzhai-theme-badge'>{isDark ? '月' : '日'}</span> {isDark ? '月下墨境（暗色）' : '晓色晨宣（浅色）'}
+              </span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </div>

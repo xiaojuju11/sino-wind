@@ -369,7 +369,7 @@ export default function PoemPage() {
           onClick={() => {
             setPlayingMusic(true)
             playGuqinArpeggio()
-            Toast.show({ content: '🎶 琴韵绕梁，静听松风' })
+            Toast.show({ content: '琴韵绕梁，静听松风' })
             setTimeout(() => setPlayingMusic(false), 2600)
           }}
         >

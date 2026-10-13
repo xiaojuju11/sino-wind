@@ -245,12 +245,12 @@ export default function Home() {
               <textarea
                 className="home-yayan-textarea"
                 rows={2}
-                maxLength={100}
+                maxLength={150}
                 placeholder="输入你的日常大白话（如：今天心情真好）…"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
               />
-              <span className={`home-yayan-counter${inputText.length >= 100 ? ' is-limit' : ''}`}>{inputText.length}/100</span>
+              <span className={`home-yayan-counter${inputText.length >= 150 ? ' is-limit' : ''}`}>{inputText.length}/150</span>
             </div>
 
             <div className="home-yayan-divider" aria-hidden="true">

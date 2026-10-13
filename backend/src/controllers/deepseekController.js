@@ -1,4 +1,5 @@
 const OpenAI = require('openai')
+const db = require('../config/db')
 require('dotenv').config({ path: ['.env.local', '.env'] })
 
 // 先贤人设库（第一人称强约束人设，彻底杜绝 AI 助手味）
@@ -171,6 +172,9 @@ async function deepseekChat(ctx) {
   if (!client) {
     const reply = generateSageReply(sageId, message)
     ctx.body = { code: 1, message: reply }
+    if (ctx.userId) {
+      try { await db.execute('UPDATE users SET debate_count = COALESCE(debate_count, 0) + 1 WHERE id = ?', [ctx.userId]) } catch {}
+    }
     return
   }
 
@@ -196,9 +200,17 @@ ${systemPrompt}
     const content = sanitizeSageReply(rawContent, sageId)
     ctx.body = { code: 1, message: content }
   } catch (error) {
-    console.warn('DeepSeek 外部连接受阻，智能激活先贤情境对答:', error.message)
     const reply = generateSageReply(sageId, message)
     ctx.body = { code: 1, message: reply }
+  }
+
+  // 登录用户自动闭环沉淀知音论道修持看板数据（TRD 四维修持数据打通）
+  if (ctx.userId) {
+    try {
+      await db.execute('UPDATE users SET debate_count = COALESCE(debate_count, 0) + 1 WHERE id = ?', [ctx.userId])
+    } catch {
+      // 计数失败不阻断对席对话畅通
+    }
   }
 }
 
@@ -243,6 +255,9 @@ async function translateYayan(ctx) {
   if (!client) {
     const matched = offlineMatches.find(item => item.keywords.some(k => text.includes(k))) || offlineMatches[0]
     ctx.body = { code: 1, data: { modern: text, ...matched } }
+    if (ctx.userId) {
+      try { await db.execute('UPDATE users SET yayan_count = COALESCE(yayan_count, 0) + 1 WHERE id = ?', [ctx.userId]) } catch {}
+    }
     return
   }
 
@@ -284,6 +299,15 @@ async function translateYayan(ctx) {
         author: '苏轼',
         explanation: '清风怡情，信步幽林，极尽潇散之趣。'
       }
+    }
+  }
+
+  // 登录用户沉淀白话雅言研习修持记录
+  if (ctx.userId) {
+    try {
+      await db.execute('UPDATE users SET yayan_count = COALESCE(yayan_count, 0) + 1 WHERE id = ?', [ctx.userId])
+    } catch {
+      // 忽略沉淀异常
     }
   }
 }

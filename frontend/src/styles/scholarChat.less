@@ -286,6 +286,9 @@
 }
 
 .scholar-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.06rem;
   padding: 0.06rem 0.18rem;
   background: var(--gf-bg-paper, #F7F4EB);
   border: 1px solid fade(@color-gold, 50%);
@@ -299,6 +302,25 @@
     border-color: @color-seal;
     color: @color-seal;
   }
+}
+
+.scholar-tool-seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.01rem 0.06rem;
+  font-size: 0.18rem;
+  font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+  font-weight: 700;
+  color: var(--gf-cinnabar);
+  border: 1px solid currentColor;
+  border-radius: 0.04rem;
+  line-height: 1;
+}
+
+.scholar-tool-icon {
+  font-size: 0.24rem;
+  color: var(--gf-bamboo);
 }
 
 .scholar-input-bar {

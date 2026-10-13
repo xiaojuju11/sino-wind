@@ -23,4 +23,23 @@ function verifyToken() {
     await next()
   }
 }
-module.exports = { verifyToken, JWT_SECRET }
+
+function optionalToken() {
+  return async (ctx, next) => {
+    const header = ctx.request.header.authorization
+    const token = typeof header === 'string' ? header.replace(/^Bearer\s+/i, '').trim() : ''
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, JWT_SECRET)
+        if (Number.isSafeInteger(decoded.id) && decoded.id > 0) {
+          ctx.userId = decoded.id
+        }
+      } catch {
+        // 可选鉴权失败不阻断公开访问
+      }
+    }
+    await next()
+  }
+}
+
+module.exports = { verifyToken, optionalToken, JWT_SECRET }

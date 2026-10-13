@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import '../styles/scholarChat.less'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { LeftOutline, SendOutline, SoundOutline } from 'antd-mobile-icons'
+import { LeftOutline, SendOutline, SoundOutline, EditSOutline } from 'antd-mobile-icons'
 import { Toast, DotLoading } from 'antd-mobile'
 import axios from '../http'
 
@@ -320,14 +320,16 @@ export default function ScholarChat() {
             className="scholar-tool-btn"
             onClick={handleCiteShiwu}
           >
-            🏺 引物溯古今
+            <span className="scholar-tool-seal">物</span>
+            引物溯古今
           </button>
           <button
             type="button"
             className="scholar-tool-btn"
             onClick={() => handleSend('请兄台以此时月色为题，口占一绝。')}
           >
-            ✍️ 邀诗一首
+            <EditSOutline className="scholar-tool-icon" />
+            邀诗一首
           </button>
         </div>
 
