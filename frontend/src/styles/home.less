@@ -1706,3 +1706,19 @@
   background-position: center center, center center;
   background-color: var(--gf-bg-card);
 }
+
+// ── 暗夜·古今识物底图：与「古诗词鉴赏」暗夜效果完全一致 ──
+// 参考值(bg-layer)：cover ｜ right bottom ｜ 透明度 0.32 ｜ brightness(.7) saturate(.85)
+// 识物卡片 ::after 被回纹描金角占用 → 用「暗色蒙层 68% + 底图」两步等效：0.32 ≈ 1-0.68
+[data-theme='dark'] .home-shiwu-section {
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--gf-bg-card) 68%, transparent),
+      color-mix(in srgb, var(--gf-bg-card) 68%, transparent)
+    ),
+    url('/assets/home/bg-shiwu.jpg');
+  background-repeat: no-repeat, no-repeat;
+  background-size: cover, cover;
+  background-position: center center, right bottom;
+  background-color: var(--gf-bg-card);
+}
