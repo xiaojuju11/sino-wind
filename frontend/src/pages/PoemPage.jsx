@@ -169,7 +169,7 @@ export default function PoemPage() {
       } else {
         throw new Error('empty')
       }
-    } catch (err) {
+    } catch {
       // 后端未就绪 / 网络异常：优雅降级
       const pick = MOCK_POEMS[Math.floor(Math.random() * MOCK_POEMS.length)]
       setPoem(pick)
@@ -196,7 +196,7 @@ export default function PoemPage() {
       const res = await axios.get('/api/poem/search', { params: { q } })
       const list = res?.data?.data
       setResults(Array.isArray(list) ? list : [])
-    } catch (err) {
+    } catch {
       setResults([])
     } finally {
       setSearching(false)
@@ -240,7 +240,7 @@ export default function PoemPage() {
       const count = res?.data?.newPoemCount
       setCollectTip(count ? `已摘录入卷 · 诗笺共 ${count} 篇` : '已摘录入卷')
       Toast.show({ icon: 'success', content: res?.data?.message || '已成功摘录入卷' })
-    } catch (err) {
+    } catch {
       // 响应拦截器已统一提示错误
     } finally {
       setCollecting(false)
@@ -305,13 +305,16 @@ export default function PoemPage() {
         )}
 
         {loading || !poem ? (
-          <>
-            <h2 className="poem-scroll__title">研墨中</h2>
+          /* 加载态：与主卡同尺寸的宣纸灰骨架占位（不用圆形转圈，避免版式跳动） */
+          <div className="poem-scroll__skeleton" role="status" aria-live="polite">
+            <span className="poem-skeleton__bar poem-skeleton__bar--title" />
+            <span className="poem-skeleton__bar poem-skeleton__bar--meta" />
             <div className="poem-scroll__divider" />
-            <div className="poem-scroll__body">
-              <span className="poem-scroll__line">静候诗泉，稍待片刻……</span>
-            </div>
-          </>
+            <span className="poem-skeleton__bar poem-skeleton__bar--verse" />
+            <span className="poem-skeleton__bar poem-skeleton__bar--verse" />
+            <span className="poem-skeleton__bar poem-skeleton__bar--verse-short" />
+            <span className="poem-skeleton__hint">墨迹研开中……</span>
+          </div>
         ) : (
           <>
             <h2 className="poem-scroll__title">{poem.title}</h2>

@@ -1,0 +1,51 @@
+@import '../styles/variables.less';
+
+// ════════════════════════════════════════════════════
+//  日月模式切换药丸（成员 A 提供，供成员 B / D 复用）
+//  命名空间：全部规则嵌套在 .theme-toggle 内（协作红线 §2.6）
+//  颜色走 var(--gf-*)，因此药丸本身在两种主题下都成立
+// ════════════════════════════════════════════════════
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.04rem;
+  padding: 0.05rem;
+  border: 1px solid fade(@color-gold, 55%);
+  border-radius: 1rem;
+  background-color: var(--gf-bg-card, @color-card);
+  box-shadow: inset 0 0 0 1px fade(@color-gold, 22%);
+
+  &__option {
+    width: 0.6rem;
+    height: 0.6rem;
+    padding: 0.1rem;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 50%;
+    background-color: transparent;
+    // 未激活态：水墨淡灰；激活态：朱砂 + 泥金圈
+    color: var(--gf-text-sub, @color-text-sub);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+
+    svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    &:active {
+      transform: scale(0.94);
+    }
+
+    &.is-active {
+      color: var(--gf-accent-text, @color-seal);
+      background-color: fade(@color-gold, 24%);
+      box-shadow: inset 0 0 0 1px fade(@color-gold, 62%);
+    }
+  }
+}

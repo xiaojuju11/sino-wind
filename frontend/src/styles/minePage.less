@@ -22,7 +22,7 @@
     &__title {
       font-size: 26px;
       font-weight: 800;
-      color: @color-text-main;
+      color: var(--gf-text-main, @color-text-main);
       letter-spacing: 2px;
       margin: 0;
       font-family: 'STKaiti', 'KaiTi', 'SimSun', serif;
@@ -31,7 +31,7 @@
     &__seal {
       font-size: 10px;
       color: #fff;
-      background-color: @color-seal;
+      background-color: var(--gf-seal, @color-seal);
       padding: 1px 4px;
       border-radius: 3px;
       writing-mode: vertical-lr;
@@ -41,21 +41,21 @@
 
     &__subtitle {
       font-size: 13px;
-      color: @color-text-sub;
+      color: var(--gf-text-sub, @color-text-sub);
       margin: 6px 0 0;
       letter-spacing: 1.5px;
       font-family: 'STKaiti', 'KaiTi', serif;
 
       &::before, &::after {
         content: ' —— ';
-        color: @color-gold;
+        color: var(--gf-gold, @color-gold);
       }
     }
   }
 
   // 2. 雅士身份大卡片
   .scholar-card {
-    background-color: rgba(250, 247, 240, 0.92); // 绢帛微透
+    background-color: var(--gf-bg-card, rgba(250, 247, 240, 0.92)); // 绢帛微透
     backdrop-filter: blur(4px);
     border: 1.5px solid @color-border;
     border-radius: @radius-card;
@@ -102,7 +102,7 @@
       .scholar-name {
         font-size: 20px;
         font-weight: 700;
-        color: @color-text-main;
+        color: var(--gf-text-main, @color-text-main);
         margin: 0;
         font-family: 'STKaiti', 'KaiTi', serif;
       }
@@ -125,7 +125,7 @@
 
       .scholar-motto {
         font-size: 12px;
-        color: @color-text-sub;
+        color: var(--gf-text-sub, @color-text-sub);
         margin: 0;
         letter-spacing: 0.5px;
       }
@@ -156,14 +156,14 @@
       &__num {
         font-size: 20px;
         font-weight: 800;
-        color: @color-seal; // 朱砂红数据
+        color: var(--gf-accent-text, @color-seal); // 朱砂红数据
         font-family: 'Georgia', serif;
         line-height: 1.2;
       }
 
       &__label {
         font-size: 11px;
-        color: @color-text-sub;
+        color: var(--gf-text-sub, @color-text-sub);
         margin-top: 4px;
         letter-spacing: 0.5px;
       }
@@ -172,7 +172,7 @@
 
   // 3. 通用功能板块卡片
   .shuzhai-section-card {
-    background-color: rgba(250, 247, 240, 0.92);
+    background-color: var(--gf-bg-card, rgba(250, 247, 240, 0.92));
     backdrop-filter: blur(4px);
     border: 1px solid @color-border;
     border-radius: @radius-card;
@@ -200,14 +200,14 @@
       .shuzhai-section-title {
         font-size: 18px;
         font-weight: 700;
-        color: @color-seal;
+        color: var(--gf-accent-text, @color-seal);
         margin: 0;
         font-family: 'STKaiti', 'KaiTi', serif;
       }
 
       .shuzhai-seal {
         font-size: 10px;
-        color: @color-seal;
+        color: var(--gf-accent-text, @color-seal);
         border: 1px solid @color-seal;
         padding: 0 3px;
         border-radius: 2px;
@@ -216,7 +216,7 @@
 
       .shuzhai-section-sub {
         font-size: 11px;
-        color: @color-text-sub;
+        color: var(--gf-text-sub, @color-text-sub);
         margin: 4px 0 0;
       }
 
@@ -250,7 +250,7 @@
         .iconfont, &__icon {
           font-size: 20px !important;
           margin-right: 14px !important;
-          color: @color-seal !important; // 核心：强制统一朱砂红！
+          color: var(--gf-accent-text, @color-seal) !important; // 核心：强制统一朱砂红（深色下取强调文字令牌，避免深红落在夜色上不可读）！
           line-height: 1 !important;
           width: 24px;
           text-align: center;
@@ -269,18 +269,32 @@
         &__title {
           font-size: 15px;
           font-weight: 600;
-          color: @color-text-main;
+          color: var(--gf-text-main, @color-text-main);
         }
 
         &__desc {
           font-size: 11px;
-          color: @color-text-sub;
+          color: var(--gf-text-sub, @color-text-sub);
           margin-top: 2px;
         }
 
         &__arrow {
           font-size: 14px;
           color: lighten(@color-text-sub, 20%);
+        }
+
+        // 墨色雅意：日月主题快捷切换行（TRD §3.5 / AC-D4；控件由成员 A 的共享 ThemeToggle 提供）
+        &--theme {
+          cursor: default;
+
+          &:active {
+            background-color: transparent;
+          }
+
+          .shuzhai-theme-toggle {
+            margin-left: 10px;
+            flex-shrink: 0;
+          }
         }
       }
     }
@@ -296,7 +310,7 @@
       height: 44px;
       background: transparent;
       border: 1.5px solid @color-seal;
-      color: @color-seal;
+      color: var(--gf-accent-text, @color-seal);
       font-size: 15px;
       font-weight: 700;
       letter-spacing: 3px;
@@ -305,7 +319,7 @@
       transition: all 0.2s ease;
 
       &:active {
-        background-color: @color-seal;
+        background-color: var(--gf-seal, @color-seal);
         color: #fff;
       }
     }
