@@ -51,19 +51,6 @@ function getClient() {
   })
 }
 
-// 1. 先贤对席畅论对话接口
-async function deepseekChat(ctx) {
-  const { message, sageId = 'libai', customPrompt } = ctx.request.body || {}
-  if (typeof message !== 'string' || !message.trim()) {
-    ctx.status = 400
-    ctx.body = { code: 0, message: '请填写有效论道消息' }
-    return
-  }
-
-  const client = getClient()
-  const sageConfig = sages[sageId]
-  const systemPrompt = customPrompt || (sageConfig ? sageConfig.prompt : '你是一位博通经史、温润雅致的古代文人雅士，以半文言与来客煮茶论道。')
-
 // 智能先贤多轮情境兜底生成器（确保即使网络受阻或断线，亦保持千古风骨第一人称）
 function generateSageReply(sageId, message) {
   const query = (message || '').trim().toLowerCase()
