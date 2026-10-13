@@ -8,9 +8,10 @@ import { useNavigate } from 'react-router-dom'
  * 约定：本组件只负责采集与编码，不发起网络请求（识物请求统一在 Recognition.jsx 走公共 Axios）。
  */
 
-// 服务端限制：Base64 字符串 ≤ 14MB、原图 ≤ 10MB；这里留出余量，超限先经画布重编码
-const MAX_BASE64_LENGTH = 13 * 1024 * 1024
-const MAX_SIDE = 1600 // 手机原图长边压缩上限，保证 2 秒预算内完成上传
+// 视觉大模型最佳输入长边：1280px（兼顾金石纹理细节与秒级传输速度）
+const MAX_SIDE = 1280
+// 超过 400KB 的图片一律通过 Canvas 智能降采样，保障任何超大图（20MB~50MB）均可秒级识别
+const COMPRESS_THRESHOLD_BYTES = 400 * 1024
 const SUPPORTED_DATA_URL = /^data:image\/(?:jpeg|png|webp);base64,/
 
 function readAsDataUrl(file) {
@@ -31,7 +32,7 @@ function loadImage(src) {
   })
 }
 
-/** 等比缩放并重编码为 JPEG（体积超限或格式不被服务端接受时使用） */
+/** 等比缩放并重编码为高质量 JPEG（智能自适应，消灭超大图超限与卡顿） */
 async function shrinkToJpeg(dataUrl) {
   const image = await loadImage(dataUrl)
   const width = image.naturalWidth || image.width
@@ -41,13 +42,18 @@ async function shrinkToJpeg(dataUrl) {
   const canvas = document.createElement('canvas')
   canvas.width = Math.max(1, Math.round(width * scale))
   canvas.height = Math.max(1, Math.round(height * scale))
-  canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height)
-  return canvas.toDataURL('image/jpeg', 0.82)
+  const ctx = canvas.getContext('2d')
+  // 开启高质量图像平滑处理
+  ctx.imageSmoothingEnabled = true
+  ctx.imageSmoothingQuality = 'high'
+  ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
+  return canvas.toDataURL('image/jpeg', 0.85)
 }
 
 async function toRecognitionPayload(file) {
   const raw = await readAsDataUrl(file)
-  if (SUPPORTED_DATA_URL.test(raw) && raw.length <= MAX_BASE64_LENGTH) return raw
+  // 小于 400KB 且格式符合的直接放行，超大图一律执行 Canvas 极速自适应压模
+  if (SUPPORTED_DATA_URL.test(raw) && raw.length <= COMPRESS_THRESHOLD_BYTES) return raw
   return shrinkToJpeg(raw)
 }
 

@@ -12,7 +12,7 @@ require('dotenv').config({ path: ['.env.local', '.env'] })
  */
 
 const COZE_ENDPOINT = 'https://r85vf8qf77.coze.site/run'
-const COZE_TIMEOUT = 5000
+const COZE_TIMEOUT = 20000 // 放宽至 20 秒，保障真实大模型多节点工作流（视觉+流变+TTS）完整执行
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024
 
 // 内置文博库兜底条目：文案取自 TRD §4.4 的既有示例（保温杯 ➔ 宋代执壶 / 汤瓶）与 §3.1 的流变路线。
@@ -73,7 +73,7 @@ async function recognition(ctx) {
   try {
     const response = await axios.post(COZE_ENDPOINT, { image: img }, {
       headers: { Authorization: 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
-      timeout: COZE_TIMEOUT, signal: AbortSignal.timeout(COZE_TIMEOUT), maxContentLength: 2 * 1024 * 1024
+      timeout: COZE_TIMEOUT, signal: AbortSignal.timeout(COZE_TIMEOUT), maxContentLength: 10 * 1024 * 1024
     })
     data = parseResult(response.data)
   } catch {
