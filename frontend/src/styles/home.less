@@ -1692,3 +1692,17 @@
 [data-theme='dark'] .home-shiwu-demo::after {
   background-image: none;
 }
+
+// ── 暗夜模式：古今识物底图【铺满】（b179ca09…png = bg-shiwu.jpg 青釉描金花瓶）──
+[data-theme='dark'] .home-shiwu-section {
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--gf-bg-card) 52%, transparent),
+      color-mix(in srgb, var(--gf-bg-card) 52%, transparent)
+    ),
+    url('/assets/home/bg-shiwu.jpg');
+  background-repeat: no-repeat, no-repeat;
+  background-size: cover, cover;
+  background-position: center center, center center;
+  background-color: var(--gf-bg-card);
+}
