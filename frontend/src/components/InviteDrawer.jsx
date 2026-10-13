@@ -86,6 +86,7 @@ export default function InviteDrawer({ visible, onClose, onInviteSuccess }) {
       welcome: welcome.trim() || `吾乃${name}，幸与足下相逢于云山之境。`,
       biography,
       tags,
+      prompt: `你现在就是${dynasty}名仕${name.trim()}本人。生平概览：${biography || '诗文传世，德高望重'}。你谈吐文雅典雅、半文半白、严格以第一人称对答，坚决保持${name.trim()}本人身份，绝不可自称AI助手或教育助手。`,
       unread: 0,
       lastMsg: welcome || '新友初至，且奉清茗一杯。',
       time: '刚刚'

@@ -175,5 +175,44 @@
 - `docs/handovers/dev-C-phase2.md`
 - `docs/handovers/ai-log-C-phase2.md`
 
+---
+
+# 📌 记录五：2026-10-13 · 用户书斋头像实时同步与DeepSeek先贤人设反出戏防御
+
+* **填报日期**：2026-10-13
+* **当前分支**：`main`
+* **负责模块**：成员 C 核心业务——知音沉浸对话（`ScholarChat.jsx`）、先贤迎请抽屉（`InviteDrawer.jsx`）、后端大模型控制器（`deepseekController.js`）
+* **今日整体完成度**：**100%（全站个人头像同步打通，AI先贤人设深度加固，构建 0 报错）**
+
+### 一、 本轮完成工作详述
+
+1. **用户头像与个人中心（书斋）全局动态同步打通**：
+   - 彻底解决 `ScholarChat.jsx` 用户气泡写死王阳明头像的遗留问题；
+   - 引入动态状态 `userProfile`，优先读取本地缓存，并在组件挂载后异步通过 `GET /api/auth/info` 实时获取当前登录用户的自定义头像与雅士昵称（与 `MinePage.jsx`、`AccountSetting.jsx` 保持完全一致）；
+   - 配置优雅古典兜底机制：若用户未设置头像或离线状态，默认展示书斋专属水墨头像（`${BASE}assets/shuzhai/avatar_yunshan.png`），并具备 `onError` 图片破损自动修复回退。
+
+2. **彻底攻克大模型“教育助手/AI助手”破绽与反出戏防御**：
+   - **痛点根治**：彻底消除早期亲子教育原型的遗留 Prompt，重构 `backend/src/controllers/deepseekController.js` 的 System 指令；
+   - **第一人称铁律加固**：针对李清照、李白、苏轼、王阳明、杜甫、辛弃疾、魏晋竹林等所有先贤，全量注入第一人称强约束人设；
+   - **反身份质询防御机制**：即便来客直接发送“你不是李清照吗？”或“你是AI吗？”，先贤也会严格以第一人称本人口吻对答（如“妾身正是李易安，与君相晤于云山，足下何出此言？”），坚决捍卫真实历史人物身份，绝对杜绝任何“我是一个AI”、“我是以XX风格交流的助手”等出戏破绽；
+   - **自定义知己人设注入**：在 `InviteDrawer.jsx` 迎请新友时，自动根据所选朝代与考据生平生成专属文风 Prompt 挂载至会话实体，确保新友交流同样沉浸。
+
+### 二、 本地验证与质量自查结果
+
+* [x] **【头像同步验收】**：用户在书斋/账号设置修改头像后，进入与李清照、李白等所有古友的会话，右侧消息气泡实时同步展现最新头像与居士名号。
+* [x] **【人设防御验收】**：针对李清照等先贤提问身份质询，AI 严格以易安居士本人口吻应答，无任何“教育助手”或现代白话痕迹。
+* [x] **【编译构建】**：`npm run build` 耗时 26.71s，转换 1020 个模块，**0 报错 0 告警**。
+* [x] **【服务联调】**：前端 Vite 服务与后端接口协同顺畅。
+
+---
+
+### 三、 交付文件清单
+- `frontend/src/pages/ScholarChat.jsx`
+- `frontend/src/components/InviteDrawer.jsx`
+- `backend/src/controllers/deepseekController.js`
+- `docs/handovers/dev-C-phase2.md`
+- `docs/handovers/ai-log-C-phase2.md`
+
+
 
 
