@@ -1,0 +1,179 @@
+﻿{
+  "structure": {
+    "rem": 39,
+    "viewport": [
+      390,
+      844
+    ],
+    "hasRoot": true,
+    "bgImage": "http://localhost:5174/assets/common/bg_guofeng.jpg",
+    "heroTitle": "云山竹简",
+    "heroSeal": "华风",
+    "glyphs": {
+      "themeGlyphSvg": 1,
+      "weatherSunSvg": 1,
+      "wuhouSeal": 1,
+      "demoSeals": 2,
+      "demoTitleIcon": 1,
+      "antdIcons": 12,
+      "iconfont": 3
+    },
+    "seals": [
+      {
+        "cls": "home-almanac__wuhou-seal",
+        "ch": "菊"
+      },
+      {
+        "cls": "home-shiwu-demo__seal",
+        "ch": "酪"
+      },
+      {
+        "cls": "home-shiwu-demo__seal",
+        "ch": "笈"
+      }
+    ],
+    "overflowX": false,
+    "scrollWidth": 390,
+    "clientWidth": 390
+  },
+  "emojiScan": {
+    "hits": [],
+    "hitCount": 0
+  },
+  "longText": {
+    "injected": 100,
+    "sample": "今天心情特别好想出去走走"
+  },
+  "longTextLayout": {
+    "valueLen": 100,
+    "counterText": "100/100",
+    "counterLimitClass": true,
+    "counterColor": "rgb(138, 43, 43)",
+    "taHeight": 91.34,
+    "taMaxHeight": "179.4px",
+    "taScrollH": 91,
+    "taScrollable": false,
+    "fieldSizingSupported": true,
+    "taFieldSizing": "content",
+    "taOverflowWrap": "anywhere",
+    "taWordBreak": "break-word",
+    "boxH": 104,
+    "boxW": 301,
+    "cardW": 301,
+    "widthsEqual": true,
+    "ancientWhiteSpace": "normal",
+    "ancientOverflowWrap": "anywhere",
+    "overflowX": false,
+    "scrollWidth": 390,
+    "clientWidth": 390
+  },
+  "shortText": {
+    "len": 1
+  },
+  "shortTextLayout": {
+    "taHeight": 30.41,
+    "boxH": 43,
+    "counterText": "1/100",
+    "counterLimitClass": false
+  },
+  "noSpaceText": {
+    "sLen": 89
+  },
+  "noSpaceLayout": {
+    "pWidth": 290,
+    "cardWidth": 301,
+    "textInsideCard": true,
+    "pLines": 2,
+    "taHeight": 38.94,
+    "overflowX": false,
+    "scrollWidth": 390,
+    "clientWidth": 390
+  },
+  "ancientWrap": {
+    "pHeight": 56,
+    "lineHeight": 18.72,
+    "lines": 3,
+    "pWidth": 290,
+    "cardWidth": 301,
+    "textInsideCard": true,
+    "sealInsideCard": true,
+    "sealVisible": true,
+    "overflowX": false,
+    "scrollWidth": 390,
+    "clientWidth": 390
+  },
+  "darkMode": {
+    "dataTheme": "dark",
+    "bodyBg": "rgb(13, 17, 23)",
+    "rootBgColor": "rgb(13, 17, 23)",
+    "themeGlyph": {
+      "fill": "rgb(0, 0, 0)",
+      "stroke": "none",
+      "color": "rgb(184, 59, 50)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "w": 17,
+      "h": 17
+    },
+    "weatherSun": {
+      "fill": "rgb(0, 0, 0)",
+      "stroke": "none",
+      "color": "rgb(212, 175, 55)",
+      "bg": "rgba(0, 0, 0, 0)",
+      "w": 23,
+      "h": 23
+    },
+    "wuhouSeal": {
+      "fill": "rgb(0, 0, 0)",
+      "stroke": "none",
+      "color": "rgb(251, 248, 241)",
+      "bg": "rgb(184, 59, 50)",
+      "w": 10,
+      "h": 10
+    },
+    "demoSeal": {
+      "fill": "rgb(0, 0, 0)",
+      "stroke": "none",
+      "color": "rgb(251, 248, 241)",
+      "bg": "rgb(184, 59, 50)",
+      "w": 12,
+      "h": 12
+    },
+    "sealTextColor": "rgb(251, 248, 241)",
+    "overflowX": false,
+    "consoleErrors": 0
+  },
+  "lightFinal": {
+    "dataTheme": "light",
+    "topPad": "44.07px",
+    "rootBgImage": "http://localhost:5174/assets/common/bg_guofeng.jpg",
+    "bgRepeat": "no-repeat",
+    "bgSize": "100% 100%",
+    "docHeight": 920,
+    "overflowX": false,
+    "blockHeights": {
+      "yayan": 203,
+      "almanac": 119,
+      "shiwu": 123,
+      "poem": 162
+    }
+  },
+  "offlinePath": {
+    "beforeAuthor": "—— 苏轼（化用风骨）",
+    "beforeOfflineBadge": 0
+  },
+  "offlinePathAfterFail": {
+    "resultCardPresent": false,
+    "authorText": null,
+    "ancientText": null,
+    "offlineBadgeCount": 0,
+    "offlineBadgeText": null,
+    "offlineBadgeVisible": false,
+    "offlineBadgeInsideCard": null,
+    "offlineBadgeClipped": null,
+    "collectDisabled": true,
+    "submitLabel": "译为雅言",
+    "overflowX": false
+  },
+  "consoleErrors": [],
+  "consoleErrorsIgnoredNetwork": 1
+}

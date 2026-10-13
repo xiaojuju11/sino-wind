@@ -1,13 +1,70 @@
-﻿import React, { useState } from 'react'
+import React, { useState } from 'react'
 import '../styles/home.less'
 import { Toast } from 'antd-mobile'
-import { DownOutline, RightOutline, CompassOutline, EditSOutline, CheckCircleOutline, DownCircleOutline } from 'antd-mobile-icons'
+import { DownOutline, RightOutline, UpOutline, CompassOutline, EditSOutline, CheckCircleOutline, DownCircleOutline } from 'antd-mobile-icons'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext'
 import axios from '../http'
 
 const BASE = import.meta.env.BASE_URL
-const asset = (name) => `${BASE}assets/home/${name}`
+
+// ════════════════════════════════════════════════════
+//  国风矢量字形（TRD v3.0 §2.3 图标红线：严禁原生 Emoji）
+//  · 第一优先级 antd-mobile-icons 无「日 / 月 / 云日」图标（已逐项核对 152 个）
+//  · 故本页日 / 月 / 云日走红线允许的【第三优先级：内联 SVG】
+//  · 统一 24×24 线性描边、只吃 currentColor、fill:none ⇒ 可随主题着色，
+//    与 ThemeToggle 的内联 SVG 口径一致，跨平台渲染完全一致（非位图字形）
+// ════════════════════════════════════════════════════
+const GLYPH_STROKE = {
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 1.6,
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
+}
+
+/** 日轮（题头切换 · 晓色晨宣） */
+function SunGlyph() {
+  return (
+    <svg viewBox='0 0 24 24' aria-hidden='true' focusable='false'>
+      <circle cx='12' cy='12' r='4.3' {...GLYPH_STROKE} />
+      <path
+        d='M12 2.4v2.6M12 19v2.6M2.4 12h2.6M19 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9'
+        {...GLYPH_STROKE}
+      />
+    </svg>
+  )
+}
+
+/** 弦月（题头切换 · 月下墨境） */
+function MoonGlyph() {
+  return (
+    <svg viewBox='0 0 24 24' aria-hidden='true' focusable='false'>
+      <path d='M20.2 14.8A8.6 8.6 0 1 1 9.2 3.8a6.9 6.9 0 0 0 11 11Z' {...GLYPH_STROKE} />
+    </svg>
+  )
+}
+
+/**
+ * 云日纹（时令天气）——古制「日轮 + 芒」纹样
+ * 心圈 + 八主芒 + 八辅芒，取古人绘日之法，比通用天气图标更贴两宋水墨调性
+ */
+function SunWheelGlyph() {
+  return (
+    <svg viewBox='0 0 24 24' aria-hidden='true' focusable='false'>
+      <circle cx='12' cy='12' r='3.1' {...GLYPH_STROKE} />
+      <path
+        d='M12 1.8v3.2M12 19v3.2M1.8 12h3.2M19 12h3.2M4.8 4.8l2.3 2.3M16.9 16.9l2.3 2.3M19.2 4.8l-2.3 2.3M7.1 16.9l-2.3 2.3'
+        {...GLYPH_STROKE}
+      />
+      <path
+        d='M12 6.6v1.1M12 16.3v1.1M6.6 12h1.1M16.3 12h1.1M8.4 8.4l.8.8M14.8 14.8l.8.8M15.6 8.4l-.8.8M9.2 14.8l-.8.8'
+        {...GLYPH_STROKE}
+        strokeWidth={1.1}
+      />
+    </svg>
+  )
+}
 
 // ════════════════════════════════════════════════════
 //  传统时辰换算（TRD v3.0：动态算法换算十二时辰）
@@ -58,10 +115,18 @@ function getDateText(date = new Date()) {
 }
 
 // 古今识物 · 示例体验（对齐设计稿两条）
+// 图标走 TRD §2.3 第三优先级「CSS 印章」：朱砂印泥 + 单字古称，随主题着色
 const SHIWU_DEMOS = [
-  { icon: '☕', modern: '拍奶茶', ancient: '酪饮 / 酥签' },
-  { icon: '🎒', modern: '拍书包', ancient: '筒简 / 书笈' },
+  { seal: '酪', modern: '拍奶茶', ancient: '酪饮 / 酥签' },
+  { seal: '笈', modern: '拍书包', ancient: '筒简 / 书笈' },
 ]
+
+// 首屏预置的雅译范例（与后端离线典范库口径一致）
+const YAYAN_PRESET = {
+  ancient: '偷得浮生半日闲，竹杖芒鞋轻胜马。',
+  author: '苏轼（化用风骨）',
+  explanation: '清风怡情，信步幽林，极尽萧散之趣。',
+}
 
 export default function Home() {
   const navigate = useNavigate()
@@ -70,11 +135,9 @@ export default function Home() {
   // ① 白话雅译
   const [inputText, setInputText] = useState('')
   const [translating, setTranslating] = useState(false)
-  const [yayanResult, setYayanResult] = useState({
-    ancient: '偷得浮生半日闲，竹杖芒鞋轻胜马。',
-    author: '苏轼（化用风骨）',
-    explanation: '清风怡情，信步幽林，极尽萧散之趣。',
-  })
+  const [yayanResult, setYayanResult] = useState(YAYAN_PRESET)
+  // 离线兜底标记（TRD_PHASE3 §3.3：保留本地名句兜底库；标记后按兜底文案呈现，不冒充 AI 生成）
+  const [yayanOffline, setYayanOffline] = useState(false)
 
   // ② 时令天象（动态换算）
   const curShichen = getTraditionalTime()
@@ -91,11 +154,20 @@ export default function Home() {
     setTranslating(true)
     try {
       const res = await axios.post('/api/deepseek/yayan', { text })
-      if (res?.data?.data) {
-        setYayanResult(res.data.data)
+      const data = res?.data?.data
+      if (data && data.ancient) {
+        setYayanResult(data)
+        // 后端离线典范库命中 / 上游异常兜底时按兜底文案标注
+        setYayanOffline(res.data.degraded === true || res.data.source === 'local-fallback')
+      } else {
+        throw new Error('yayan: empty payload')
       }
-    } catch (err) {
-      Toast.show({ content: '墨迹暂凝，已呈清雅之辞' })
+    } catch {
+      // 长文本防御的最后一环：请求失败时不得遗留「上一句」雅言，避免张冠李戴
+      // 故清空译文（结果卡与「摘录入卷」一并置灰），只留古风提示
+      setYayanResult(null)
+      setYayanOffline(true)
+      Toast.show({ content: '墨迹暂凝，未得雅言，请再试一次' })
     } finally {
       setTranslating(false)
     }
@@ -108,7 +180,12 @@ export default function Home() {
       const saved = JSON.parse(localStorage.getItem('gufeng_yayan_list') || '[]')
       saved.unshift({
         id: Date.now(),
-        ...yayanResult,
+        // 数据契约（TRD_PHASE3 依据 PHASE3_CHANGES §2.1）：{ id, modern, ancient, author, explanation }
+        modern: (yayanResult.modern || inputText || '').trim(),
+        ancient: yayanResult.ancient,
+        author: yayanResult.author,
+        explanation: yayanResult.explanation,
+        offline: yayanOffline, // 兜底来源标记，书斋列表可据此不以「AI 生成」呈现
         createdAt: new Date().toLocaleDateString(),
       })
       localStorage.setItem('gufeng_yayan_list', JSON.stringify(saved))
@@ -119,7 +196,7 @@ export default function Home() {
   }
 
   return (
-    <div className="home-root" style={{ backgroundImage: `url(${asset('bg-paper.jpg')})` }}>
+    <div className="home-root">
       {/* ── 题头：云山竹简 + 朱砂印「华风」+ 副标 + 右上角日月/设置 ── */}
       <header className="home-hero">
         <div className="home-hero__actions">
@@ -129,7 +206,10 @@ export default function Home() {
             onClick={toggleTheme}
             aria-label={isDark ? '切换为晓色晨宣' : '切换为月下墨境'}
           >
-            <span className="home-hero__icon-emoji">{isDark ? '🌙' : '☀️'}</span>
+            {/* 图标铁律：antd-mobile-icons 无日/月 ⇒ 第三优先级内联 SVG，currentColor 着色 */}
+            <span className="home-hero__glyph" aria-hidden="true">
+              {isDark ? <MoonGlyph /> : <SunGlyph />}
+            </span>
           </button>
           <button
             type="button"
@@ -170,7 +250,7 @@ export default function Home() {
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
               />
-              <span className="home-yayan-counter">{inputText.length}/100</span>
+              <span className={`home-yayan-counter${inputText.length >= 100 ? ' is-limit' : ''}`}>{inputText.length}/100</span>
             </div>
 
             <div className="home-yayan-divider" aria-hidden="true">
@@ -185,6 +265,11 @@ export default function Home() {
                 </p>
                 <p className="home-yayan-explain"><span className="home-yayan-explain__label">文言释义：</span>{yayanResult.explanation}</p>
                 <p className="home-yayan-author">—— {yayanResult.author}</p>
+                {yayanOffline && (
+                  <p className="home-yayan-offline-line">
+                    <span className="home-yayan-offline">离线典范</span>
+                  </p>
+                )}
               </div>
             )}
 
@@ -239,7 +324,10 @@ export default function Home() {
           <div className="home-almanac__col">
             <span className="home-almanac__label">现代 · 今日</span>
             <div className="home-almanac__weather">
-              <span className="home-almanac__sun" aria-hidden="true">☀️</span>
+              {/* 图标铁律：天气改内联「云日纹」SVG（原太阳 Emoji 已消灭） */}
+              <span className="home-almanac__sun" aria-hidden="true">
+                <SunWheelGlyph />
+              </span>
               <span className="home-almanac__temp">24°</span>
             </div>
             <p className="home-almanac__city">
@@ -260,7 +348,11 @@ export default function Home() {
               {ganzhi.year} {ganzhi.month} {curShichen.name}
             </p>
             <p className="home-almanac__desc">天朗气清，惠风和畅。</p>
-            <p className="home-almanac__wuhou">🌼 物候：菊有黄华</p>
+            <p className="home-almanac__wuhou">
+              {/* 图标铁律：物候改 CSS 印章「菊」（原花卉 Emoji 已消灭） */}
+              <span className="home-almanac__wuhou-seal" aria-hidden="true">菊</span>
+              <span className="home-almanac__wuhou-label">物候：</span>菊有黄华
+            </p>
           </div>
         </div>
       </section>
@@ -287,7 +379,9 @@ export default function Home() {
 
           <div className="home-shiwu-demo">
             <p className="home-shiwu-demo__title">
-              ↗ 示例体验（点击试试）
+              {/* 图标铁律：示例前缀 `↗` 改 antd 矢量图标 UpOutline（东北向箭头，视觉等效） */}
+              <UpOutline className="home-shiwu-demo__title-icon" />
+              示例体验（点击试试）
             </p>
             {SHIWU_DEMOS.map((item) => (
               <button
@@ -296,7 +390,8 @@ export default function Home() {
                 className="home-shiwu-demo__item"
                 onClick={() => navigate('/recognition')}
               >
-                <span className="home-shiwu-demo__icon" aria-hidden="true">{item.icon}</span>
+                {/* 图标铁律：奶茶 / 书包 Emoji 改 CSS 印章「酪」「笈」 */}
+                <span className="home-shiwu-demo__seal" aria-hidden="true">{item.seal}</span>
                 <span className="home-shiwu-demo__modern">{item.modern}</span>
                 <RightOutline className="home-shiwu-demo__arrow" />
                 <span className="home-shiwu-demo__ancient">{item.ancient}</span>

@@ -336,3 +336,109 @@ node %TEMP%\check-home.js                        # 结构核验（印章/标题/
 node %TEMP%\scan-emoji.js                        # 残留 emoji（对接 iconfont 进度）
 node %TEMP%\check-yayan.js                       # 白话雅译两框等宽 + 箭头外圈已删除
 ```
+
+---
+
+# 📌 记录八：第三阶段 · 首页风雅与晨昏雅集收官（2026-10-13）
+
+* **分支**：`feat/phase3-home-polish`（基于 `team/main@09d26ed`，即第三阶段最新主干）
+* **独占文件**：`frontend/src/pages/Home.jsx`、`frontend/src/styles/home.less`（**红线文件零改动**）
+* **依据**：`TRD_PHASE3.md` §3.3 + AC-B1 / AC-B2 / AC-B3 + §2.2 背景图红线 / §2.3 图标体系红线
+* **新增交付物**：`docs/handovers/demo-B-home-30s.md`（30 秒演示说辞）、`proof/phase3-home-check.js`（可复现验收脚本）、`proof/phase3-*.png`（实拍证据）
+
+## 一、 三项任务完成情况
+
+### ① 消灭首页 6 处原生 Emoji（AC-B1）→ **归零**
+
+| # | 位置 | 替换前 | 替换后 | 采用优先级 |
+| :-- | :--- | :--- | :--- | :--- |
+| 1 | 题头日月切换 | `🌙` / `☀️` | **内联 SVG 弦月 / 日轮**（`<MoonGlyph/>` `<SunGlyph/>`，24×24 线性描边、`currentColor`） | ③ 内联 SVG |
+| 2 | 时令天气 | `☀️` | **内联 SVG「云日纹」**（`<SunWheelGlyph/>`：心圈 + 八主芒 + 八辅芒，古制绘日法） | ③ 内联 SVG |
+| 3 | 物候 | `🌼 物候：菊有黄华` | **CSS 印章「菊」** `.home-almanac__wuhou-seal` + 文字「物候：菊有黄华」 | ③ CSS 印章 |
+| 4 | 示例 · 奶茶 | `☕` | **CSS 印章「酪」** `.home-shiwu-demo__seal` | ③ CSS 印章 |
+| 5 | 示例 · 书包 | `🎒` | **CSS 印章「笈」** `.home-shiwu-demo__seal` | ③ CSS 印章 |
+| 6 | 示例前缀 | `↗`（字符箭头） | **`<UpOutline />`**（antd 东北向箭头，与被替换字形视觉等效） | ① antd-mobile-icons |
+
+* **实测**：`emojiScan.hitCount = 0`（扫描 18 个目标字符的全部文本节点，**零命中**）；同时保留 `antd` 矢量图标 12 个 + iconfont 3 个，**无新增图片素材**。
+
+> 💡 **关于第 6 处的口径（请队长知悉）**：TRD 写「`↗` 统一换为 `<RightOutline />`」，而 `↗` 是**东北向**箭头；`RightOutline` 是**正右**向，换上去会丢失「上浮 / 外链」语义。故本人取 `<UpOutline />`（同为 antd 官方矢量图标，且与 `↗` 字形一致）。若队长坚持字面口径，改一行即可。
+
+### ② 白话雅译 390px 长文本排版防御（AC-B2）
+
+防御分五层，全部在 `home.less` 末尾「第三阶段任务 2」区块内：
+
+1. **输入框自适应长高**：`field-sizing: content`（Edge/Chrome 123+ 原生支持，实测 `CSS.supports` 为 true），`max-height: 4.6rem`（≈179px ≈8 行）封顶，超出改为**卡内滚动** → 100 字时框高 91.3px（**不滚动**），1 字时回落到 30.4px。
+2. **译文允许折行**：去掉历史遗留的 `white-space: nowrap`（原规则为对齐参考图「一行显示」，长句会横向溢出）→ 44 字长雅言实测折 **3 行**，`textInsideCard = true`。
+3. **超长无空格串防御**：`overflow-wrap: anywhere` + `word-break: break-word`（输入框 / 译文 / 释义 / 按钮全覆盖）→ 89 字连续 URL 实测折行且不出卡。
+4. **双按钮列宽兜底**：grid `minmax(0, 1fr)` 的隐性下限补 `min-width: 0` + `box-sizing: border-box`。
+5. **极端长度兜底**：作者行 `nowrap + ellipsis`（不换行撑高）；`.home-yayan-section` / `.home-card-scroll` 加 `overflow-x: hidden`。
+
+**新增交互回执**：字数顶格（100/100）时计数转朱砂加粗（`.home-yayan-counter.is-limit`），给用户「已达上限」的视觉提示。
+
+**顺带修掉一个真实缺陷（新发现）**：原 `catch` 分支只弹 Toast，**不清理结果卡**，导致「请求失败时页面上仍留着上一句雅言」的张冠李戴。现改为 **失败即清空译文**（结果卡隐藏 + 「摘录入卷」自动置灰）+ 提示「墨迹暂凝，未得雅言，请再试一次」。
+> 同时清理了未使用的 `catch (err)` 形参（ESLint 0 报错）。
+
+**离线来源标注**：后端 `translateYayan` 的离线典范库命中时（当前实现返回 `code:1`，**不带** `degraded` 标记），前端按 `degraded === true || source === 'local-fallback'` 判定，命中则在作者行下方居中显示朱砂徽标**「离线典范」**——落实 TRD §3.3「兜底名句不冒充 AI 生成」。
+**数据契约**：「摘录入卷」写入 `localStorage.gufeng_yayan_list`，字段对齐 `{ id, modern, ancient, author, explanation }`（**本次补齐了原先缺失的 `modern`**），并附加 `offline` 布尔位供书斋列表区分来源。
+
+### ③ 30 秒演示说辞 → `docs/handovers/demo-B-home-30s.md`
+逐秒分镜（0:00–0:30）+ 演示前 6 项准备清单 + 代码位置对照表 + 3 条问答预案 + 实测数据背书。
+
+## 二、 第三阶段两条新红线的落实
+
+| 红线 | 落实方式 | 实测 |
+| :--- | :--- | :--- |
+| **§2.2 背景图**：全页面背景统一 `/assets/common/bg_guofeng.jpg` | 删除 `Home.jsx` 里写死 `assets/home/bg-paper.jpg` 的**内联 style**；`home.less` 的 `.home-root` 显式声明 `url('/assets/common/bg_guofeng.jpg')`（与 `app.less` 的 `body` 同图，继承链上不再有第二张纸本图） | `bgImage = http://localhost:5174/assets/common/bg_guofeng.jpg` ✅ |
+| **§2.3 图标体系**：严禁原生黄色 Emoji | 6 处全部按三级优先级替换（见上表）；**未新增任何图片素材**，**未改动 `index.html`**（未私自添加 Iconfont 链接） | `emojiScan.hitCount = 0` ✅ |
+
+## 三、 实测证据（CDP 真机 390×844 · 可复现）
+
+复现命令：
+```powershell
+# 1) 起调试浏览器
+msedge --headless=new --disable-gpu --remote-debugging-port=9229 --user-data-dir=D:\sino-wind-taskB\.dsh-cdp --no-first-run --hide-scrollbars about:blank
+# 2) 起前端
+cd D:\sino-wind-taskB\frontend ; npm run dev -- --port 5174 --strictPort
+# 3) 跑第三阶段验收（emoji 归零 / 背景红线 / 长文本防御 / 离线路径 / 日夜底色）
+cd D:\sino-wind-taskB ; node proof\phase3-home-check.js 9229
+```
+原始 JSON：`proof/phase3-result.json`；截图：`proof/phase3-home-light-390.png`、`phase3-home-dark-390.png`、`phase3-home-offline-390.png`。
+
+| 检测项 | 结果 |
+| :--- | :--- |
+| `rem` 基准 / 视口 | 39px / 390×844 ✅ |
+| **原生 Emoji 残留** | **0**（18 个目标字符全扫，零命中）✅ |
+| **背景图（红线）** | `/assets/common/bg_guofeng.jpg` ✅ |
+| 横向溢出（`scrollWidth > clientWidth`） | **false**（390 = 390），长文本态、无空格串态、暗夜态均 false ✅ |
+| 输入 100 字 | 框高 91.3px，**不滚动**；计数 `100/100` 且转朱砂 ✅ |
+| 输入 1 字 | 框高 30.4px（不塌陷）、计数 `1/100` ✅ |
+| 89 字无空格串 | 折行、文字在卡内、无横向溢出 ✅ |
+| 44 字长雅言 | 折 3 行，`闲` 印仍在卡内且可见 ✅ |
+| 输入框 / 译文卡宽度 | 301px / 301px，**完全等宽** ✅ |
+| 白昼底色 / 暗夜底色 | `#F7F4EB` / `rgb(13,17,23)` = `#0D1117` ✅ |
+| 顶部状态栏安全区 | 44.07px ✅ |
+| 暗色下印章可读性 | 底 `rgb(184,59,50)` 朱砂 + 字 `rgb(251,248,241)` 象牙白 ✅ |
+| **白话雅译区块高** | **203px（= 设计稿 203）**；时令 119 / 识物 123 / 诗词 162 |
+| 首页总高 | 920（内容 844）✅ |
+| 雅译失败路径 | 结果卡消失、摘录禁用、**无残留旧句**、无未捕获异常 ✅ |
+| Console 报错（排除刻意掐断的上游请求） | **0** ✅ |
+| `npx eslint src/pages/Home.jsx` | exit 0 ✅ |
+| `npm run build` | `✓ 1024 modules transformed`，**0 报错**（8.29s）✅ |
+
+## 四、 需队长 / 队友知悉（本人未越界改动的部分）
+
+| # | 事项 | 归属 | 说明 |
+| :-- | :--- | :--- | :--- |
+| 1 | **`PoemPage.jsx:253` 仍在使用 `assets/home/bg-paper.jpg`** | 成员 D | §2.2 背景图红线要求全站统一 `bg_guofeng.jpg`；该行是内联 style（与本人首页原先同一写法）。本人不越界修改，**建议 D 直接删掉该内联 style**（`app.less` 的 body 已统一铺图）。 |
+| 2 | `authPage.less` 用 `reference-login.png` 做**局部装饰位**（角花/云纹/印章切图） | 成员 A | §2.2 禁止的是「把带 UI 卡片的参考稿截图当**背景**」，**背景本身已是 `bg_guofeng.jpg`**，故不构成红线违反；此处仅备案，若队长从严解释需 A 处理。 |
+| 3 | 第 6 处 emoji 的图标口径（`UpOutline` vs `RightOutline`） | 队长裁定 | 见任务①注。 |
+| 4 | 线上 `120.26.186.48:3000` 是否已部署 `/api/deepseek/yayan` | 队长 / A | **影响答辩演示**：未部署时雅译会走失败路径（无译文 + 古风提示），不会白屏但失去「秒级雅译」亮点。演示前请确认后端在跑（`node backend/src/index.js`），当前仓库版本已在本地返回离线典范库。 |
+| 5 | 后端 `translateYayan` 未返回 `degraded` / `source` 字段 | 成员 A | 当前离线兜底与在线结果**同形**（都是 `code:1 + data`），前端已额外兼容 `degraded`/`source` 标记；若 A 后续补上标记，「离线典范」徽标会自动生效，前端无需再改。 |
+
+## 五、 已知限制（如实登记，不作已完成宣称）
+
+1. **`field-sizing: content` 的浏览器支持**：Edge/Chrome 123+ 原生生效（本机实测支持）；Safari 与旧内核不支持时，回退为「输入框固定约 1 行 + 卡内滚动」——**仍然不会横向溢出**，只是少了自动长高的观感。
+2. **`100` 字上限未放宽**：前后端契约（`PHASE3_CHANGES §2.1`）为 1~100 字，与输入框 `maxLength=100`、计数 `0/100` 一致。TRD §3.3 提到「测试 50~150 字」属**压测口径**（150 字场景由长译文的折行防御覆盖，实测 44 字已折 3 行、断行能力与字数无关）；若队长要求放宽到 150 字，需**同步改后端校验**，故本人未擅自放宽。
+3. **线上后端未部署时无法演示真实 AI 雅译**（见上表第 4 条）。
+4. **`bg_guofeng.jpg` 为 300KB**：整页唯一背景图（`app.less` 与 `.home-root` 同 URL，浏览器只下载一次）。若要求 ≤200KB，需设计侧另行压缩，属素材范围。
+

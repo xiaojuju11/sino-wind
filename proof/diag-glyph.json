@@ -1,0 +1,133 @@
+﻿{
+  "htmlFontSize": "39px",
+  "heroGlyphSvg": {
+    "sel": ".home-hero__glyph svg",
+    "tag": "svg",
+    "rect": [
+      17.16,
+      17.16
+    ],
+    "computed": {
+      "width": "17.1562px",
+      "height": "17.1562px",
+      "fontSize": "13.3333px",
+      "color": "rgb(138, 43, 43)",
+      "fill": "rgb(0, 0, 0)",
+      "stroke": "none"
+    },
+    "parentFontSize": "13.3333px",
+    "ownFontSizeAttr": null,
+    "rules": [
+      {
+        "href": "inline",
+        "media": "",
+        "sel": ".home-hero__glyph svg",
+        "css": "width: 0.44rem; height: 0.44rem; display: block;"
+      }
+    ]
+  },
+  "weatherSunSvg": {
+    "sel": ".home-almanac__sun svg",
+    "tag": "svg",
+    "rect": [
+      23.39,
+      23.39
+    ],
+    "computed": {
+      "width": "23.3906px",
+      "height": "23.3906px",
+      "fontSize": "12.48px",
+      "color": "rgb(197, 155, 39)",
+      "fill": "rgb(0, 0, 0)",
+      "stroke": "none"
+    },
+    "parentFontSize": "12.48px",
+    "ownFontSizeAttr": null,
+    "rules": [
+      {
+        "href": "inline",
+        "media": "",
+        "sel": ".home-almanac__sun svg",
+        "css": "width: 0.6rem; height: 0.6rem; display: block;"
+      }
+    ]
+  },
+  "wuhouSeal": {
+    "sel": ".home-almanac__wuhou-seal",
+    "tag": "span",
+    "rect": [
+      10.13,
+      10.13
+    ],
+    "computed": {
+      "width": "10.125px",
+      "height": "10.125px",
+      "fontSize": "7.41px",
+      "color": "rgb(251, 248, 241)",
+      "fill": "rgb(0, 0, 0)",
+      "stroke": "none"
+    },
+    "parentFontSize": "8.58px",
+    "ownFontSizeAttr": null,
+    "rules": [
+      {
+        "href": "inline",
+        "media": "",
+        "sel": ".home-almanac__wuhou-seal",
+        "css": "flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 0.26rem; height: 0.26rem; background: var(--gf-cinnabar); color: rgb("
+      }
+    ]
+  },
+  "demoTitleIcon": {
+    "sel": ".home-shiwu-demo__title-icon",
+    "tag": "svg",
+    "rect": [
+      9.36,
+      9.36
+    ],
+    "computed": {
+      "width": "9.35938px",
+      "height": "9.35938px",
+      "fontSize": "8.58px",
+      "color": "rgb(197, 155, 39)",
+      "fill": "rgb(0, 0, 0)",
+      "stroke": "none"
+    },
+    "parentFontSize": "8.58px",
+    "ownFontSizeAttr": null,
+    "rules": [
+      {
+        "href": "inline",
+        "media": "",
+        "sel": ".home-shiwu-demo__title-icon",
+        "css": "width: 0.24rem; height: 0.24rem; margin-right: 0.04rem; vertical-align: -0.03rem; color: var(--gf-gold);"
+      }
+    ]
+  },
+  "demoSeal": {
+    "sel": ".home-shiwu-demo__seal",
+    "tag": "span",
+    "rect": [
+      11.69,
+      11.69
+    ],
+    "computed": {
+      "width": "11.6875px",
+      "height": "11.6875px",
+      "fontSize": "8.19px",
+      "color": "rgb(251, 248, 241)",
+      "fill": "rgb(0, 0, 0)",
+      "stroke": "none"
+    },
+    "parentFontSize": "9.36px",
+    "ownFontSizeAttr": null,
+    "rules": [
+      {
+        "href": "inline",
+        "media": "",
+        "sel": ".home-shiwu-demo__seal",
+        "css": "flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 0.3rem; height: 0.3rem; background: var(--gf-cinnabar); color: rgb(25"
+      }
+    ]
+  }
+}
