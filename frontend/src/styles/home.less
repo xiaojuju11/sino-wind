@@ -1591,3 +1591,43 @@
 .home-yayan-result-card {
   box-sizing: border-box;
 }
+
+// ── 古今识物 · 示例体验框：内部加底图（右下陈设图 + 半透明蒙层保可读）──
+.home-shiwu-demo {
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--gf-bg-card) 62%, transparent),
+      color-mix(in srgb, var(--gf-bg-card) 62%, transparent)
+    ),
+    url('/assets/home/bg-shiwu.jpg');
+  background-repeat: no-repeat, no-repeat;
+  background-size: cover, cover;
+  background-position: center center, right bottom;
+}
+
+// 面板内示例行保持极淡底，避免文字直接压在花纹上
+.home-shiwu-demo__item {
+  background: color-mix(in srgb, var(--gf-bg-card) 42%, transparent);
+  border-radius: 0.16rem;
+  border-bottom: none;
+  margin-top: 0.08rem;
+}
+
+.home-shiwu-demo__item:last-child { border-bottom: none; }
+
+.home-shiwu-demo__title {
+  text-shadow: 0 1px 2px color-mix(in srgb, var(--gf-bg-card) 80%, transparent);
+}
+
+[data-theme='dark'] .home-shiwu-demo {
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--gf-bg-card) 66%, transparent),
+      color-mix(in srgb, var(--gf-bg-card) 66%, transparent)
+    ),
+    url('/assets/home/bg-shiwu.jpg');
+}
+
+[data-theme='dark'] .home-shiwu-demo__item {
+  background: color-mix(in srgb, var(--gf-bg-card) 46%, transparent);
+}
