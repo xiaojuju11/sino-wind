@@ -11,8 +11,8 @@ require('dotenv').config({ path: ['.env.local', '.env'] })
  * 秒级返回内置高保真文博库兜底推演（code:1 + degraded:true），演示永不断流。
  */
 
-const COZE_ENDPOINT = 'https://r85vf8qf77.coze.site/run'
-const COZE_TIMEOUT = 20000 // 放宽至 20 秒，保障真实大模型多节点工作流（视觉+流变+TTS）完整执行
+const COZE_ENDPOINT = process.env.COZE_ENDPOINT || 'https://r85vf8qf77.coze.site/run'
+const COZE_TIMEOUT = parseInt(process.env.COZE_TIMEOUT, 10) || 20000 // 放宽至 20 秒，保障真实大模型多节点工作流（视觉+流变+TTS）完整执行
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024
 
 // 内置文博库兜底条目：文案取自 TRD §4.4 的既有示例（保温杯 ➔ 宋代执壶 / 汤瓶）与 §3.1 的流变路线。
@@ -67,7 +67,7 @@ async function recognition(ctx) {
   const encoded = img.slice(img.indexOf(',') + 1)
   const imageBytes = Math.floor(encoded.length * 3 / 4) - (encoded.endsWith('==') ? 2 : encoded.endsWith('=') ? 1 : 0)
   if (encoded.length % 4 !== 0 || imageBytes > MAX_IMAGE_BYTES) { ctx.status = 400; ctx.body = { code: 0, message: '图片编码无效或超过 10MB' }; return }
-  const apiKey = process.env.COZE_IMAGE_TO_TEXT_AND_VOICE || process.env.VITE_COZE_IMAGE_TO_TEXT_AND_VOICE
+  const apiKey = process.env.COZE_API_TOKEN || process.env.COZE_IMAGE_TO_TEXT_AND_VOICE || process.env.VITE_COZE_IMAGE_TO_TEXT_AND_VOICE
   if (!apiKey) { ctx.body = fallbackBody(); return }
   let data
   try {
