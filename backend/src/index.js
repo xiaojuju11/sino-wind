@@ -35,6 +35,6 @@ app
   .use(deepseekRoutes.routes(), deepseekRoutes.allowedMethods())
   
 
-app.listen(3000, () => {
-  console.log('服务运行在 3000 端口');
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`服务运行在 ${process.env.PORT || 3000} 端口`);
 })

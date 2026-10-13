@@ -20,33 +20,36 @@ axios.interceptors.request.use(request => {
 
 // 响应拦截
 axios.interceptors.response.use(
-  (response) => {  // 逻辑性错误
-    if (response.data.code !== 1) { // 判断后端自定义的 code 是否为 1
-      Toast.show({
-        icon: 'fail',    // 不是 1 就弹出错误提示
-        content: response.data.message
-      })
-      return Promise.reject(response)    // 抛出错误，让业务代码 catch 捕获
-    }
-    return response  // 正常返回数据
-  },
-  (res) => { // 程序性错误
-    if (res.status !== 200) {
+  (response) => {
+    if (response.data && response.data.code !== 1) {
       Toast.show({
         icon: 'fail',
-        content: res.response.data.message
+        content: response.data.message || '操作未完成'
       })
-
-      if (res.status == 416) { // 没有权限
-        // 重定向去登录页面
-        setTimeout(() => {
-          window.location.href = '/login'
-        }, 2000)
-      }
-
-      return Promise.reject(res)
+      return Promise.reject(response)
     }
-  } 
+    return response
+  },
+  (error) => {
+    const status = error.response?.status
+    const message = error.response?.data?.message || error.message || '服务响应异常'
+
+    Toast.show({
+      icon: 'fail',
+      content: message
+    })
+
+    if (status === 416 || status === 401) {
+      localStorage.removeItem('token')
+      setTimeout(() => {
+        if (!window.location.pathname.startsWith('/login')) {
+          window.location.href = '/login'
+        }
+      }, 1500)
+    }
+
+    return Promise.reject(error)
+  }
 )
 
 export default axios
