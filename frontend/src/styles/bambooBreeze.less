@@ -1,0 +1,301 @@
+// ════════════════════════════════════════════════════
+//  随风摇曳修竹与月下流萤动效（DESIGN_AUDIT.md §12 规范）
+//  满帧 60fps GPU 硬件加速，零交互穿透阻碍（pointer-events: none）
+// ════════════════════════════════════════════════════
+
+.bamboo-breeze-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 80;
+  overflow: hidden;
+  transition: filter 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // 晓色晨宣（浅色）
+  &.is-light {
+    --bamboo-stalk-start: #23422c;
+    --bamboo-stalk-mid: #2d5a3f;
+    --bamboo-stalk-end: #1b3523;
+    --bamboo-leaf-light: #3e7352;
+    --bamboo-leaf-dark: #22432d;
+    --bamboo-leaf-light2: #48835e;
+    --bamboo-leaf-dark2: #284c35;
+    --bamboo-node: #162c1d;
+
+    .bamboo-branch-wrapper {
+      animation: bambooBreezeDay 6.5s ease-in-out infinite alternate;
+    }
+  }
+
+  // 月下墨境（深色）
+  &.is-dark {
+    --bamboo-stalk-start: #0a140f;
+    --bamboo-stalk-mid: #16241b;
+    --bamboo-stalk-end: #09120e;
+    --bamboo-leaf-light: #1e3325;
+    --bamboo-leaf-dark: #0f1c14;
+    --bamboo-leaf-light2: #243d2c;
+    --bamboo-leaf-dark2: #132219;
+    --bamboo-node: #070d0a;
+
+    // 夜色下竹影深沉，月光泛冷，微带泥金/青墨晕染
+    filter: brightness(0.68) contrast(1.22) drop-shadow(0 0.08rem 0.2rem rgba(0, 0, 0, 0.6));
+
+    .bamboo-branch-wrapper {
+      // 夜风更轻缓，周期拉长至 9s
+      animation: bambooBreezeNight 9s ease-in-out infinite alternate;
+    }
+  }
+}
+
+// ── 悬挂水墨竹枝容器 ─────────────────────────────
+.bamboo-branch-wrapper {
+  position: absolute;
+  top: -0.15rem;
+  left: -0.15rem;
+  width: 3.4rem;
+  height: 3rem;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.bamboo-branch-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+// 梢部叶簇分段微颤
+.bamboo-leaf-cluster {
+  transform-origin: 1.6rem 2.2rem;
+  will-change: transform;
+
+  &.cluster-a {
+    animation: leafFlutterA 4.2s ease-in-out infinite alternate;
+  }
+  &.cluster-b {
+    animation: leafFlutterB 5s ease-in-out infinite alternate;
+  }
+  &.cluster-c {
+    animation: leafFlutterA 5.8s ease-in-out infinite alternate;
+  }
+}
+
+// ── 白昼晓风物理摆动（6.5s 自然阻尼）──
+@keyframes bambooBreezeDay {
+  0% {
+    transform: rotate(0deg) skewX(0deg);
+  }
+  30% {
+    transform: rotate(-2.6deg) skewX(-1.1deg);
+  }
+  65% {
+    transform: rotate(1.4deg) skewX(0.7deg);
+  }
+  85% {
+    transform: rotate(-0.8deg) skewX(-0.4deg);
+  }
+  100% {
+    transform: rotate(-1.8deg) skewX(-0.8deg);
+  }
+}
+
+// ── 夜间月影轻摇（9s 沉静悠缓）──
+@keyframes bambooBreezeNight {
+  0% {
+    transform: rotate(0deg) skewX(0deg);
+  }
+  40% {
+    transform: rotate(-1.5deg) skewX(-0.6deg);
+  }
+  75% {
+    transform: rotate(0.8deg) skewX(0.4deg);
+  }
+  100% {
+    transform: rotate(-0.9deg) skewX(-0.4deg);
+  }
+}
+
+// 梢头微颤
+@keyframes leafFlutterA {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(2deg) scale(1.01);
+  }
+  100% {
+    transform: rotate(-1.5deg) scale(0.99);
+  }
+}
+
+@keyframes leafFlutterB {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-2.4deg) scale(0.98);
+  }
+  100% {
+    transform: rotate(1.2deg) scale(1.01);
+  }
+}
+
+// ── 随风飘落竹叶粒子（清风漫卷）─────────────────
+.falling-leaf {
+  position: absolute;
+  width: 0.18rem;
+  height: 0.44rem;
+  background: linear-gradient(135deg, #447b56, #244830);
+  border-radius: 80% 0 80% 0;
+  opacity: 0;
+  filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.15));
+
+  .is-dark & {
+    background: linear-gradient(135deg, #243c2c, #111f16);
+    filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, 0.4));
+  }
+
+  &.leaf-1 {
+    top: 0.8rem;
+    left: 1.5rem;
+    animation: driftLeaf1 14s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+    animation-delay: 1.2s;
+  }
+
+  &.leaf-2 {
+    top: 1.6rem;
+    left: 2rem;
+    width: 0.15rem;
+    height: 0.38rem;
+    animation: driftLeaf2 18s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+    animation-delay: 7s;
+  }
+
+  &.leaf-3 {
+    top: 0.5rem;
+    left: 2.4rem;
+    width: 0.14rem;
+    height: 0.34rem;
+    animation: driftLeaf1 16s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+    animation-delay: 12s;
+  }
+}
+
+@keyframes driftLeaf1 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg) scale(0.8);
+  }
+  10% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 0.65;
+    transform: translate(2.2rem, 3.8rem) rotate(140deg) scale(0.95);
+  }
+  85% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(4.5rem, 8.5rem) rotate(290deg) scale(1);
+  }
+}
+
+@keyframes driftLeaf2 {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(20deg) scale(0.7);
+  }
+  12% {
+    opacity: 0.7;
+  }
+  60% {
+    opacity: 0.55;
+    transform: translate(1.8rem, 4.2rem) rotate(-110deg) scale(0.9);
+  }
+  90% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(3.8rem, 9.2rem) rotate(-220deg) scale(1);
+  }
+}
+
+// ── 夜间月下流萤（微光粒子）───────────────────────
+.fireflies-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.firefly {
+  position: absolute;
+  border-radius: 50%;
+  background: #ecd38c;
+  box-shadow: 0 0 0.1rem #f6e3a1, 0 0 0.24rem rgba(206, 165, 89, 0.85);
+  animation: fireflyBreathe 6s ease-in-out infinite;
+
+  &.firefly-1 {
+    width: 0.08rem;
+    height: 0.08rem;
+    top: 2rem;
+    left: 1.8rem;
+    animation-duration: 5.5s;
+    animation-delay: 0.5s;
+  }
+  &.firefly-2 {
+    width: 0.06rem;
+    height: 0.06rem;
+    top: 3.2rem;
+    left: 2.8rem;
+    animation-duration: 7s;
+    animation-delay: 2.2s;
+  }
+  &.firefly-3 {
+    width: 0.09rem;
+    height: 0.09rem;
+    top: 1.2rem;
+    left: 3.4rem;
+    animation-duration: 6.2s;
+    animation-delay: 3.8s;
+  }
+  &.firefly-4 {
+    width: 0.07rem;
+    height: 0.07rem;
+    top: 4.5rem;
+    left: 1.2rem;
+    animation-duration: 8s;
+    animation-delay: 1.5s;
+  }
+}
+
+@keyframes fireflyBreathe {
+  0% {
+    opacity: 0.2;
+    transform: translate(0, 0) scale(0.8);
+  }
+  30% {
+    opacity: 0.85;
+    transform: translate(0.15rem, -0.25rem) scale(1.2);
+  }
+  60% {
+    opacity: 0.35;
+    transform: translate(-0.1rem, -0.5rem) scale(0.9);
+  }
+  80% {
+    opacity: 0.75;
+    transform: translate(0.2rem, -0.75rem) scale(1.1);
+  }
+  100% {
+    opacity: 0.2;
+    transform: translate(0, -1rem) scale(0.8);
+  }
+}

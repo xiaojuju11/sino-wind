@@ -28,6 +28,12 @@
   z-index: 10;
 
 
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: 0.12rem;
+  }
+
   &__back,
   &__action {
     background: transparent;
@@ -251,6 +257,29 @@
     border: 1px solid fade(@color-gold, 45%);
     border-bottom-left-radius: 2px;
     font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+    position: relative;
+  }
+}
+
+.scholar-msg-sound-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.04rem;
+  margin-top: 0.1rem;
+  padding: 0.02rem 0.1rem;
+  font-size: 0.18rem;
+  color: var(--gf-cinnabar);
+  background: color-mix(in srgb, var(--gf-cinnabar) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gf-cinnabar) 30%, transparent);
+  border-radius: 0.14rem;
+  cursor: pointer;
+  line-height: 1;
+  font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+  transition: all 0.2s ease;
+
+  &:active {
+    background: color-mix(in srgb, var(--gf-cinnabar) 20%, transparent);
+    transform: scale(0.96);
   }
 }
 

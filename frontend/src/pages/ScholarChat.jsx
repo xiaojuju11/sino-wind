@@ -4,6 +4,7 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { LeftOutline, SendOutline, SoundOutline, EditSOutline } from 'antd-mobile-icons'
 import { Toast, DotLoading } from 'antd-mobile'
 import axios from '../http'
+import ThemeToggle from '../context/ThemeToggle'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -137,15 +138,26 @@ export default function ScholarChat() {
     }
   }, [])
 
+  // 动态融合诗篇上下文胶囊
+  const poemCtx = location.state?.poemContext
+  const dynamicCapsules = poemCtx
+    ? [`〔赏诗〕请与我畅论《${poemCtx.title}》心境`, ...sageInfo.capsules]
+    : sageInfo.capsules
+
   // 消息列表
-  const [messages, setMessages] = useState([
-    {
-      id: 'msg_welcome',
-      role: 'ai',
-      content: sageInfo.welcome,
-      time: getShichenTime()
-    }
-  ])
+  const [messages, setMessages] = useState(() => {
+    const welcome = poemCtx
+      ? `${sageInfo.welcome}\n\n【雅集案头】：闻使君正品读吾之《${poemCtx.title}》（${(poemCtx.paragraphs || [])[0] || ''}），足下有何会心之论，愿与君共话当年！`
+      : sageInfo.welcome
+    return [
+      {
+        id: 'msg_welcome',
+        role: 'ai',
+        content: welcome,
+        time: getShichenTime()
+      }
+    ]
+  })
   const [inputText, setInputText] = useState('')
   const [loading, setLoading] = useState(false)
   const chatScrollRef = useRef(null)
@@ -206,6 +218,44 @@ export default function ScholarChat() {
     }
   }
 
+  // 雅乐与先贤诵音：纯浏览器古琴合成 + 沉稳名士语调
+  const playVoice = (text) => {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext
+      if (AudioCtx) {
+        const ctx = new AudioCtx()
+        const notes = [261.63, 329.63, 392.00]
+        notes.forEach((freq, i) => {
+          const osc = ctx.createOscillator()
+          const gain = ctx.createGain()
+          osc.type = 'triangle'
+          osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.15)
+          gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.15)
+          gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + i * 0.15 + 0.03)
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.8)
+          osc.connect(gain)
+          gain.connect(ctx.destination)
+          osc.start(ctx.currentTime + i * 0.15)
+          osc.stop(ctx.currentTime + i * 0.15 + 0.9)
+        })
+      }
+      if ('speechSynthesis' in window && text) {
+        window.speechSynthesis.cancel()
+        const clean = text.replace(/〔.+?〕/g, '').replace(/[“”"']/g, '')
+        const utterance = new SpeechSynthesisUtterance(clean.slice(0, 120))
+        utterance.lang = 'zh-CN'
+        utterance.rate = 0.85
+        utterance.pitch = 0.9
+        window.speechSynthesis.speak(utterance)
+        Toast.show({ content: '先贤诵音绕梁…' })
+      } else {
+        Toast.show({ content: '琴韵已绕梁' })
+      }
+    } catch {
+      Toast.show({ content: '琴韵已绕梁' })
+    }
+  }
+
   // 快捷转引物溯古今
   const handleCiteShiwu = () => {
     const quoteText = '太白兄，吾今日在今世见一保温杯，颇类古之执壶与汤瓶，兄以为今古器物之趣有何相通？'
@@ -226,13 +276,20 @@ export default function ScholarChat() {
           </div>
           <span className="scholar-nav__status">● {sageInfo.status}</span>
         </div>
-        <button
-          type="button"
-          className="scholar-nav__action"
-          onClick={() => Toast.show({ content: '琴韵已绕梁' })}
-        >
-          <SoundOutline />
-        </button>
+        <div className="scholar-nav__right">
+          <ThemeToggle className="scholar-nav__theme" />
+          <button
+            type="button"
+            className="scholar-nav__action"
+            onClick={() => {
+              const lastAiMsg = [...messages].reverse().find(m => m.role === 'ai')
+              playVoice(lastAiMsg ? lastAiMsg.content : sageInfo.welcome)
+            }}
+            aria-label="聆听诵音"
+          >
+            <SoundOutline />
+          </button>
+        </div>
       </header>
 
       {/* 2. 顶部知己水墨立绘横幅（Hero Banner） */}
@@ -256,7 +313,7 @@ export default function ScholarChat() {
       {/* 3. 4 大灵感胶囊（可直接点击发送） */}
       <section className="scholar-capsules-bar">
         <div className="scholar-capsules-scroll">
-          {sageInfo.capsules.map((cap, idx) => (
+          {dynamicCapsules.map((cap, idx) => (
             <button
               key={idx}
               type="button"
@@ -286,6 +343,18 @@ export default function ScholarChat() {
 
               <div className={`scholar-msg-bubble scholar-msg-bubble--${item.role}`}>
                 <div className="scholar-msg-content">{item.content}</div>
+                {item.role === 'ai' && (
+                  <button
+                    type="button"
+                    className="scholar-msg-sound-btn"
+                    onClick={() => playVoice(item.content)}
+                    aria-label="诵读此言"
+                    title="聆听名士诵读"
+                  >
+                    <SoundOutline />
+                    <span>品韵</span>
+                  </button>
+                )}
               </div>
 
               {item.role === 'user' && (

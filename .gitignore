@@ -48,3 +48,6 @@ temp/
 .temp/
 coverage/
 .nyc_output/
+backend/uploads_temp/
+backend/public/uploads/avatars/*
+!backend/public/uploads/avatars/.gitkeep

@@ -69,20 +69,16 @@
   }
 }
 
-// ── 顶部：返回 + 标题 ────────────────────────────
+// ── 顶部：返回 + 标题 + 日月主题切换 ───────────────
 .poem-header {
   display: flex;
   align-items: center;
   gap: 0.16rem;
 
-  &__back,
-  &__placeholder {
+  &__back {
     flex: none;
     width: 0.72rem;
     height: 0.72rem;
-  }
-
-  &__back {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -100,13 +96,17 @@
     font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
     font-size: 0.46rem;
     font-weight: 600;
-    letter-spacing: 0.12rem;
+    letter-spacing: 0.08rem;
     text-align: center;
-    text-indent: 0.12rem;
     color: var(--gf-text-main, #1b1c1f);
     text-shadow: 0 0.02rem 0.08rem fade(#fdfaf3, 85%);
   }
+
+  &__theme {
+    flex: none;
+  }
 }
+
 
 // ── 搜索栏（antd-mobile SearchBar 国风化）────────
 .poem-search {
@@ -347,13 +347,14 @@
   }
 }
 
-// ── 诗意赏析折叠面板 ─────────────────────────────
+// ── 诗意赏析折叠面板（升级四维解构 + 先贤亲解）─────────
 .poem-appreciation {
   .gu-frame(0.16rem);
-  margin-top: 0.2rem;
-  background: fade(@color-card, 96%);
+  margin-top: 0.24rem;
+  background: var(--gf-bg-card, fade(@color-card, 96%));
   border-radius: @radius-card;
   overflow: hidden;
+  transition: all 0.3s ease;
 
   &__head {
     display: flex;
@@ -364,12 +365,23 @@
     letter-spacing: 0.04rem;
     color: var(--gf-accent-text, @color-bamboo);
     cursor: pointer;
+    user-select: none;
   }
 
   &__icon {
     flex: none;
     font-size: 0.34rem;
     color: var(--gf-accent-text, @color-bamboo);
+  }
+
+  &__badge {
+    margin-left: 0.08rem;
+    padding: 0.02rem 0.12rem;
+    font-size: 0.22rem;
+    letter-spacing: 0.02rem;
+    border-radius: 0.2rem;
+    color: #fff;
+    background: var(--gf-seal, @color-seal);
   }
 
   &__toggle {
@@ -390,14 +402,149 @@
     font-size: 0.3rem;
     line-height: 1.85;
     color: var(--gf-text-sub, @color-text-sub);
-    transition: max-height 0.28s ease, padding 0.28s ease;
+    transition: max-height 0.32s ease, padding 0.32s ease;
   }
 
   &.is-open &__body {
-    max-height: 5rem;
-    padding: 0 0.26rem 0.28rem;
+    max-height: 12rem;
+    padding: 0 0.26rem 0.32rem;
+    overflow-y: auto;
+  }
+
+  // 赏析多维选项卡
+  &__tabs {
+    display: flex;
+    align-items: center;
+    gap: 0.12rem;
+    padding: 0.06rem 0 0.2rem;
+    border-bottom: 1px dashed fade(@color-gold, 45%);
+    margin-bottom: 0.22rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__tab {
+    flex: none;
+    padding: 0.08rem 0.18rem;
+    font-size: 0.26rem;
+    letter-spacing: 0.03rem;
+    border-radius: 0.2rem;
+    border: 1px solid fade(@color-gold, 35%);
+    background: transparent;
+    color: var(--gf-text-sub, @color-text-sub);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &.is-active {
+      color: #fff;
+      background: var(--gf-seal, @color-seal);
+      border-color: var(--gf-seal, @color-seal);
+      font-weight: 500;
+      box-shadow: 0 0.04rem 0.1rem fade(@color-seal, 30%);
+    }
+
+    &--sage {
+      border-color: fade(@color-gold, 70%);
+      color: var(--gf-accent-text, @color-seal);
+    }
+  }
+
+  &__tab-mark {
+    display: inline-block;
+    width: 0.32rem;
+    height: 0.32rem;
+    line-height: 0.32rem;
+    text-align: center;
+    border-radius: 0.06rem;
+    font-size: 0.22rem;
+    margin-right: 0.06rem;
+    font-family: 'Kaiti SC', 'STKaiti', serif;
+    background: fade(@color-gold, 15%);
+    border: 1px solid fade(@color-gold, 40%);
+    color: var(--gf-accent-text, @color-seal);
+    vertical-align: middle;
+  }
+
+  // 赏析正文内容
+  &__content {
+    min-height: 1.6rem;
+    animation: fadeInTab 0.25s ease;
+  }
+
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.12rem;
+    padding: 0.4rem 0;
+    font-size: 0.28rem;
+    color: var(--gf-text-sub, @color-text-sub);
+  }
+
+  &__text {
+    font-size: 0.3rem;
+    line-height: 1.85;
+    letter-spacing: 0.02rem;
+    color: var(--gf-text-main, #333);
+    text-align: justify;
+    margin: 0;
+  }
+
+  // 先贤手记特有卡片
+  &__sage-card {
+    position: relative;
+    padding: 0.22rem 0.24rem;
+    background: fade(@color-gold, 10%);
+    border: 1px solid fade(@color-gold, 40%);
+    border-radius: 0.12rem;
+  }
+
+  &__sage-title {
+    display: flex;
+    align-items: center;
+    gap: 0.12rem;
+    font-size: 0.3rem;
+    font-weight: 600;
+    color: var(--gf-accent-text, @color-seal);
+    margin-bottom: 0.14rem;
+  }
+
+  &__sage-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.08rem;
+    margin-top: 0.2rem;
+    padding: 0.12rem 0.24rem;
+    font-size: 0.26rem;
+    letter-spacing: 0.04rem;
+    border-radius: 0.3rem;
+    color: #fff;
+    background: var(--gf-bamboo, @color-bamboo);
+    border: 1px solid fade(@color-gold, 50%);
+    cursor: pointer;
+    box-shadow: 0 0.04rem 0.12rem rgba(0, 0, 0, 0.15);
+    transition: transform 0.15s ease;
+
+    &:active {
+      transform: scale(0.96);
+    }
   }
 }
+
+@keyframes fadeInTab {
+  from {
+    opacity: 0;
+    transform: translateY(0.06rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 // ── 四大功能按钮 ─────────────────────────────────
 .poem-actions {

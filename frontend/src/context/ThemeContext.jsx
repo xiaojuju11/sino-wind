@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react'
+import './theme.less'
 
 export const THEME_LIGHT = 'light'
 export const THEME_DARK = 'dark'

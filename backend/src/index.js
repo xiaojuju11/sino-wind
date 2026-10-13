@@ -9,13 +9,17 @@ const Koa = require('koa')
 const Router = require('koa-router')
 const cors = require('@koa/cors');
 const bodyParser = require('koa-bodyparser')
+const koaStatic = require('koa-static')
 const authRoutes = require('./routes/authRoutes.js')
 const poemRoutes = require('./routes/poemRoutes.js')
 const cozeRoutes = require('./routes/coze-api.js')
 const deepseekRoutes = require('./routes/deepseek-api.js')
+const uploadRoutes = require('./routes/uploadRoutes.js')
 
 const app = new Koa()
 app.use(cors());
+// 托管 public 目录下的静态资源（如头像等）
+app.use(koaStatic(path.resolve(__dirname, '../public')));
 
 // 测试接口
 const router = new Router({
@@ -35,6 +39,7 @@ app
   .use(poemRoutes.routes(), poemRoutes.allowedMethods())
   .use(cozeRoutes.routes(), cozeRoutes.allowedMethods())
   .use(deepseekRoutes.routes(), deepseekRoutes.allowedMethods())
+  .use(uploadRoutes.routes(), uploadRoutes.allowedMethods())
   
 
 app.listen(process.env.PORT || 3000, () => {

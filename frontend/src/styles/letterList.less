@@ -15,8 +15,16 @@
 
 // 顶部题头
 .letter-header {
+  position: relative;
   padding: 0.1rem 0 0.28rem;
   text-align: center;
+
+  &__theme {
+    position: absolute;
+    top: 0.1rem;
+    right: 0;
+    z-index: 5;
+  }
 
   &__title-wrap {
     display: flex;

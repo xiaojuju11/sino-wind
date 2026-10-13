@@ -3,6 +3,7 @@ import '../styles/letterList.less'
 import { useNavigate } from 'react-router-dom'
 import { AddOutline } from 'antd-mobile-icons'
 import InviteDrawer from '../components/InviteDrawer'
+import ThemeToggle from '../context/ThemeToggle'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -117,6 +118,7 @@ export default function LetterList() {
     <div className="letter-root">
       {/* 1. 顶部水墨意境题头 */}
       <header className="letter-header">
+        <ThemeToggle className="letter-header__theme" />
         <div className="letter-header__title-wrap">
           <h1 className="letter-header__title">知音信札</h1>
           <span className="letter-header__seal">鸿雁</span>

@@ -92,3 +92,182 @@
   border-radius: 22px;
   box-shadow: 0 2px 10px fade(@color-seal, 30%);
 }
+
+// 🎋 大文件切片上传模态卡片样式
+.chunk-upload-popup {
+  .adm-popup-body {
+    border-top-left-radius: @radius-sheet;
+    border-top-right-radius: @radius-sheet;
+    background-color: @color-bg;
+    overflow: hidden;
+  }
+}
+
+.chunk-upload-box {
+  padding: 20px 20px 28px;
+  background-color: @color-bg;
+  color: @color-text-main;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed @color-divider;
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 600;
+    color: @color-text-main;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__seal {
+    display: inline-block;
+    padding: 2px 7px;
+    font-size: 11px;
+    color: @color-seal;
+    border: 1px solid @color-seal;
+    border-radius: @radius-seal;
+    background-color: fade(@color-seal, 8%);
+    font-weight: 500;
+    letter-spacing: 1px;
+  }
+
+  &__close {
+    font-size: 20px;
+    color: @color-text-sub;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+  }
+
+  &__preview-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0 20px;
+  }
+
+  &__preview-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid @color-card;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 0 0 1px @color-border;
+    background-color: @color-card;
+  }
+
+  &__info-card {
+    background-color: @color-card;
+    border: 1px solid @color-border;
+    border-radius: @radius-card;
+    padding: 12px 14px;
+    margin-bottom: 18px;
+    box-shadow: @shadow-card;
+  }
+
+  &__info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    line-height: 24px;
+    color: @color-text-sub;
+
+    .val {
+      color: @color-text-main;
+      font-weight: 500;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .badge-fast {
+      color: @color-bamboo;
+      font-weight: 500;
+    }
+  }
+
+  &__progress-section {
+    margin-bottom: 20px;
+  }
+
+  &__progress-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: @color-text-main;
+
+    .stage-txt {
+      color: @color-seal;
+      font-weight: 500;
+    }
+    .percent-txt {
+      font-weight: 600;
+      color: @color-seal;
+    }
+  }
+
+  &__progress-track {
+    width: 100%;
+    height: 8px;
+    background-color: @color-bg-sunk;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid fade(@color-border, 50%);
+  }
+
+  &__progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, @color-bamboo 0%, @color-seal 100%);
+    border-radius: 4px;
+    transition: width 0.25s ease-out;
+  }
+
+  &__tip {
+    font-size: 12px;
+    color: @color-text-sub;
+    margin-top: 8px;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  &__btn-start {
+    flex: 2;
+    background-color: @color-seal !important;
+    border-color: @color-seal !important;
+    color: #fff !important;
+    border-radius: 20px !important;
+    font-weight: 500;
+    box-shadow: 0 2px 8px fade(@color-seal, 30%);
+  }
+
+  &__btn-reselect {
+    flex: 1;
+    background-color: @color-bg-sunk !important;
+    border-color: @color-border !important;
+    color: @color-text-main !important;
+    border-radius: 20px !important;
+  }
+
+  &__btn-cancel {
+    width: 100%;
+    border-radius: 20px !important;
+    color: @color-seal !important;
+    border-color: @color-seal !important;
+  }
+}

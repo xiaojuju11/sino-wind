@@ -401,9 +401,155 @@ async function soulScholar(ctx) {
         dynasty,
         welcome: `吾乃${name}，今日得晤雅客，实乃平生快事。`,
         biography: `${name}，${dynasty}代雅士，文心不辍，存世之作风骨清奇。`,
-        circle: ['山林知己', '平生墨友'],
-        tags: ['风雅自居', '笔走龙蛇']
+        circle: ['山野高人', '知己琴师'],
+        tags: ['儒雅', '风骨', '博雅']
       }
+    }
+  }
+}
+
+// 4. 古诗词深度雅析与先贤亲解接口 (TRD v3.0 / 借鉴 zyai-fullstack 并升华)
+const CLASSIC_APPRECIATIONS = {
+  '水调歌头·明月几时有': {
+    overview: '此词作于中秋，东坡兼怀子由。全词以月起兴，把出世与入世的彷徨化作「千里共婵娟」的旷达，豪放与深情兼备，为咏月千古绝唱。',
+    translation: '明月从何时便有了呢？我端起酒杯询问青天。不知天上的宫阙仙境，今夜是哪一年。我本想乘风飞回天上，又恐琼楼玉宇高处耐不住清寒。翩翩起舞伴着清朗月影，哪里比得上在人间自在快活！',
+    background: '宋神宗熙宁九年（1076），东坡在密州任知州。因政治变法坎坷外任，与胞弟苏辙已有五年未见。中秋良夜，东坡大醉，融哲思与离愁于一炉，写下此旷世篇章。',
+    highlight: '「人有悲欢离合，月有阴晴圆缺，此事古难全。但愿人长久，千里共婵娟。」——以宇宙常理释怀人间离恨，境界高远。',
+    sageVoice: '老夫当年在密州超然台上，痛饮达旦。望着那一轮冰轮，起初确有一腔孤冷，想乘风归去；但转念一想，琼楼虽好高处不胜寒，人间烟火才是真味！但愿天下知音，虽隔千里，共沐清辉。',
+    sageId: 'sushi'
+  },
+  '将进酒': {
+    overview: '诗仙李白以黄河奔涌起兴，把韶华易逝的悲慨与狂傲不羁的自信拧成一股浩荡天风，气势磅礴，韵律跌宕，是对生命尊严与自由的最强赞歌。',
+    translation: '你难道看不见黄河之水自天上倾泻而来，浩浩荡荡奔向东海再不回还？你难道看不见高堂明镜中白发凄悲，早晨还是青丝如云傍晚便如飞雪？人生得意时便须痛快尽欢，切莫让金樽空对着明月！天生我这块料必有大用，千金散尽也自会卷土重来！',
+    background: '唐玄宗天宝年间，李白被赐金放还，政治抱负破灭。与知交岑勋、元丹丘登高畅饮，酒兴大发，借杯中物倾吐胸中万丈不平之气与狂狷傲骨。',
+    highlight: '「天生我材必有用，千金散尽还复来。」——千古绝唱，展现了笑傲王侯、睥睨凡俗的绝顶自信。',
+    sageVoice: '吾太白一生狂傲，长安繁华虽好，却容不下吾这谪仙人！既然天子呼来不上船，那便痛饮千杯！休要提什么金樽空对月，天生我材，山河为席，何愁千金不复来！',
+    sageId: 'libai'
+  },
+  '声声慢·寻寻觅觅': {
+    overview: '易安以开篇十四叠字惊艳千古词坛，将国破家亡、颠沛流离后的孤凄心境写得层层递进、如泣如诉，婉约至极而骨力千钧。',
+    translation: '苦苦寻觅，却只落得冷冷清清，怎一个凄凄惨惨戚戚。乍暖还寒的深秋时节，最是难以调养将息。饮下三两盏淡薄残酒，又怎敌得过晚来寒风凄厉？梧桐叶上更滴着沥沥细雨，直到黄昏，点点滴滴。这般无休止的愁绪，怎一个“愁”字了得！',
+    background: '北宋沦亡后，易安南渡避难，丈夫赵明诚不幸病逝，金石书画流散大半。晚年孤居临安，秋风细雨之中，往昔欢悦与现世漂零交叠，遂成绝唱。',
+    highlight: '「寻寻觅觅，冷冷清清，凄凄惨惨戚戚。」——十四叠字连用，由缓入急，将无端之悲刻画入骨。',
+    sageVoice: '妾身这一生，曾有藕花深处的欢快，亦经金石碑版的唱和。然而金兵南下，明诚先去，天地虽大，何处是归舟？窗外梧桐细雨，点点滴滴皆打在心头，实难向外人道也。',
+    sageId: 'liqingzhao'
+  },
+  '静夜思': {
+    overview: '五言绝句浑然天成，以最朴素凝练之白描，勾勒千百年来每一位游子心头最柔软的乡思明月，无斧凿之痕而感人至深。',
+    translation: '床前洒下一片皎洁月光，恍若秋夜初降的秋霜。禁不住抬起头凝望一轮清辉，低下头来思念故土家乡。',
+    background: '唐玄宗开元十四年，二十六岁的李白旅居扬州旅舍。秋夜月明，身在异乡，清冷月光勾起游子无尽故里之思。',
+    highlight: '「举头望明月，低头思故乡。」——一仰一俯之间，极度平淡，却字字千钧。',
+    sageVoice: '当年吾客居扬州逆旅，夜深忽见一地霜白，举头见月，故土碎叶、峨眉山月顿上心头。诗者，直抒胸臆即可，何须繁复雕琢？',
+    sageId: 'libai'
+  },
+  '春晓': {
+    overview: '孟浩然捕捉春晓初醒的听觉意象，以鸟鸣与风雨传神，不著一字惜春，而惜春爱春之情跃然纸上。',
+    translation: '春日酣眠不知不觉天已破晓，耳边处处传来清脆的鸟鸣。回想昨夜听到的风雨声声，那枝头落花不知零落了多少？',
+    background: '孟浩然隐居鹿门山时期，在一个风雨初歇的春日清晨，推窗闻啼鸟而作。',
+    highlight: '「夜来风雨声，花落知多少。」——见微知著，于静谧闲雅中寄寓造化生机。',
+    sageVoice: '山中春睡极沉，天光破晓，啼鸟催醒。晨风中微有湿意，念及庭前花开花落，自有一番造化天趣。',
+    sageId: null
+  }
+}
+
+function matchSageKey(author = '') {
+  if (!author || typeof author !== 'string') return null
+  if (author.includes('李白') || author.includes('太白') || author.includes('青莲')) return 'libai'
+  if (author.includes('苏轼') || author.includes('东坡') || author.includes('子瞻')) return 'sushi'
+  if (author.includes('李清照') || author.includes('易安')) return 'liqingzhao'
+  if (author.includes('杜甫') || author.includes('子美') || author.includes('少陵')) return 'dufu'
+  if (author.includes('辛弃疾') || author.includes('稼轩') || author.includes('幼安')) return 'xinqiji'
+  if (author.includes('王阳明') || author.includes('守仁')) return 'wangyangming'
+  return null
+}
+
+async function appreciatePoem(ctx) {
+  const { title = '', author = '', dynasty = '', content = [] } = ctx.request.body || {}
+  if (!title.trim()) {
+    ctx.status = 400
+    ctx.body = { code: 0, message: '请提供待赏析之诗题' }
+    return
+  }
+
+  const cleanTitle = title.trim()
+  const cleanAuthor = author.trim()
+  const sageKey = matchSageKey(cleanAuthor)
+  const verses = Array.isArray(content) ? content.join(' ') : String(content || '')
+
+  // 1. 优先命中本地经典赏析典范库
+  for (const [key, val] of Object.entries(CLASSIC_APPRECIATIONS)) {
+    if (cleanTitle.includes(key) || key.includes(cleanTitle)) {
+      ctx.body = {
+        code: 1,
+        source: 'classic-vault',
+        data: {
+          ...val,
+          sageId: val.sageId || sageKey
+        }
+      }
+      return
+    }
+  }
+
+  // 2. 尝试调用 DeepSeek 大模型结构化研墨
+  const client = getClient()
+  if (client) {
+    try {
+      const completion = await client.chat.completions.create({
+        model: 'deepseek-chat',
+        response_format: { type: 'json_object' },
+        messages: [
+          {
+            role: 'system',
+            content: `你是一位博古通今的文学院士与古典诗词美学大师。针对给出的古诗词，请进行精湛、文雅、结构化的多维鉴赏。
+请严格输出 JSON 格式：
+{
+  "overview": "【意境总赏】100-160字，剖析诗词宏观艺术境界、情感基调与意象构建。",
+  "translation": "【白话今译】优雅晓畅、保留诗意韵味的逐句白话对译。",
+  "background": "【创作心境】80-140字，还原作者创作该诗时的身世经历、时代沧桑或心境流变。",
+  "highlight": "【名句咀华】提炼最脍炙人口的警策佳句并给出精辟解构。",
+  "sageVoice": "【先贤亲解/名家题记】若作者是李白/苏轼/李清照/杜甫/辛弃疾等名仕，以其第一人称本人口吻（如李白自称太白、苏轼自称老夫）自述创作此诗时的真实心声；若非先贤库人物，则以名家题跋口吻撰写寄语（80-120字）。",
+  "sageId": "${sageKey || ''}"
+}`
+          },
+          {
+            role: 'user',
+            content: `诗名：《${cleanTitle}》\n作者：${cleanAuthor}（${dynasty}）\n诗文：${verses}`
+          }
+        ]
+      })
+      const result = JSON.parse(completion.choices[0].message.content)
+      ctx.body = {
+        code: 1,
+        source: 'deepseek-ai',
+        data: {
+          overview: result.overview || '此篇文辞雅健，意境旷远，声情相称，极具宋韵风骨。',
+          translation: result.translation || '清风入弦，词句自得，言尽而意无穷。',
+          background: result.background || `${cleanAuthor}借景抒怀，借物寄意，笔底自有一番平生阅历与时代浩叹。`,
+          highlight: result.highlight || verses.slice(0, 30) || '句法对仗，音律谐婉。',
+          sageVoice: result.sageVoice || `此作乃吾平生性灵所聚，得遇今之知音，亦足慰平生。`,
+          sageId: sageKey
+        }
+      }
+      return
+    } catch (err) {
+      console.warn('DeepSeek 诗词赏析异常，降级至文风推演兜底:', err.message)
+    }
+  }
+
+  // 3. 离线/异常优雅降级（根据诗词要素动态生成高雅结构化赏析）
+  ctx.body = {
+    code: 1,
+    source: 'offline-vault',
+    data: {
+      overview: `此篇《${cleanTitle}》为${dynasty ? dynasty + '代' : ''}${cleanAuthor}之佳作。构思奇绝，取景澄澈，寄托深远，融写景、抒情与哲思于一体，具有极高之审美韵味。`,
+      translation: verses ? `（译意）${verses.replace(/[，。！？；]/g, '；')}。字字珠玑，清新高拔。` : '意蕴悠长，词句朗畅，传世风流。',
+      background: `${cleanAuthor}一生涉历世事，此篇作时，心境澄澈而寄怀深远，笔触既入世察微，亦出尘自适。`,
+      highlight: verses.slice(0, 28) ? `「${verses.slice(0, 28)}…」——意象高妙，耐人寻味。` : '全篇对仗工整，起承转合浑然天成。',
+      sageVoice: sageKey
+        ? `吾当年写下此篇《${cleanTitle}》，不过是有感而发，直抒胸臆。今日足下抚卷品读，能领略其中微意否？`
+        : `文心千古，墨痕犹温。此《${cleanTitle}》传至今日，君抚卷相看，便是千秋相逢。`,
+      sageId: sageKey
     }
   }
 }
@@ -411,5 +557,7 @@ async function soulScholar(ctx) {
 module.exports = {
   deepseekChat,
   translateYayan,
-  soulScholar
+  soulScholar,
+  appreciatePoem
 }
+

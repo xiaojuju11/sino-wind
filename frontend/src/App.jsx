@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './styles/app.less'
+import BambooBreeze from './components/BambooBreeze'
 import Layout from './pages/Layout'
 import Home from './pages/Home'
 import AIPage from './pages/AIPage'
@@ -16,6 +17,7 @@ import PoemCollection from './pages/PoemCollection'
 export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <BambooBreeze />
       <Routes>
         <Route path='/login' element={<AuthPage/>}></Route>
         <Route path='/' element={<Layout/>}>

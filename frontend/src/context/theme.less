@@ -21,9 +21,12 @@
   --gf-bamboo: #2D5A3F;
   --gf-gold: #C59B27;
   --gf-text-main: #2B2B2B;
-  --gf-text-sub: #6B675B;
-  --gf-accent-text: #8A2B2B; // 强调文字：浅色沿用朱砂，逐像素不变
-  --gf-veil: rgba(247, 244, 235, 0.16);
+  --gf-ink-primary: var(--gf-text-main);
+  --gf-ink-secondary: var(--gf-text-sub);
+  --gf-ink-muted: var(--gf-text-sub);
+  --gf-ink-light: var(--gf-text-sub);
+  --gf-cinnabar: var(--gf-seal);
+  --gf-font-serif: 'Songti SC', 'STSong', 'SimSun', 'Noto Serif SC', serif;
 }
 
 :root[data-theme='dark'] {
@@ -31,17 +34,21 @@
   --gf-bg-paper: #0D1117; // TRD AC-B2 指定
   --gf-bg-card: #171E23; // 深色定稿卡片内面实测
   --gf-bg-sunk: #142029; // 深色定稿卷轴卡面实测
-  --gf-seal: #8A2B2B; // TRD 明示朱砂（定稿按钮绘画压色实测 #701010，是否随稿下压待队长裁定）
-  --gf-bamboo: #2D5A3F; // TRD 明示竹青（定稿按钮绘画压色实测 #31392E，同上）
+  --gf-seal: #8A2B2B; // TRD 明示朱砂
+  --gf-bamboo: #2D5A3F; // TRD 明示竹青
   --gf-gold: #CEA559; // 深色定稿描金线实测
   --gf-text-main: #E8D0B0; // 深色定稿象牙白文字实测（玉帛象牙白）
-  --gf-text-sub: rgba(232, 208, 176, 0.62); // 次要文字：主文字同色降透明度，不另造色相
-  // 强调文字：深色下不能再用朱砂（#8A2B2B 落在 #171E23 上对比度仅 1.84:1，不可读），
-  // 改用深色定稿实测的泥金 #CEA559（定稿在深色下的激活态/强调也确实用泥金而非朱砂）。
-  // 朱砂仍保留为按钮/印章的**填充色**（--gf-seal），其上的象牙白文字对比度达标。
+  --gf-text-sub: rgba(232, 208, 176, 0.62); // 次要文字：主文字同色降透明度
   --gf-accent-text: #CEA559;
   --gf-veil: rgba(13, 17, 23, 0.86); // 压暗全站水墨背景层，使底色主导为 #0D1117
+
+  --gf-ink-primary: #E8D0B0;
+  --gf-ink-secondary: rgba(232, 208, 176, 0.62);
+  --gf-ink-muted: rgba(232, 208, 176, 0.55);
+  --gf-ink-light: rgba(232, 208, 176, 0.62);
+  --gf-cinnabar: #8A2B2B;
 }
+
 
 // ── 深色基底（AC-B2）────────────────────────────────
 // 以 [data-theme] 作用域限定，不写裸标签选择器污染其他成员页面（§2.6 命名空间铁律）
@@ -90,4 +97,87 @@
   .bottom-nav__underline {
     background: var(--gf-accent-text);
   }
+
+  // ── 席位设置（书斋子页面）暗色支持 ──
+  .account-setting {
+    background-color: var(--gf-bg-paper) !important;
+    color: var(--gf-text-main) !important;
+
+    .adm-list {
+      background-color: var(--gf-bg-card) !important;
+      border: 1px solid fade(#CEA559, 25%) !important;
+      --border-inner: 1px solid fade(#CEA559, 15%);
+      --border-top: none;
+      --border-bottom: none;
+    }
+
+    .adm-list-item {
+      background-color: var(--gf-bg-card) !important;
+      color: var(--gf-text-main) !important;
+    }
+
+    .adm-list-item-content-main,
+    .adm-list-item-title {
+      color: var(--gf-text-main) !important;
+    }
+
+    .adm-list-item-description,
+    .adm-list-item-content-extra {
+      color: var(--gf-text-sub) !important;
+    }
+
+    .adm-nav-bar {
+      background-color: var(--gf-bg-card) !important;
+      color: var(--gf-text-main) !important;
+      border-bottom: 1px solid fade(#CEA559, 28%) !important;
+    }
+
+    .update-nickname {
+      background-color: var(--gf-bg-paper) !important;
+      color: var(--gf-text-main) !important;
+
+      &__title {
+        color: var(--gf-text-main) !important;
+      }
+
+      input {
+        background-color: var(--gf-bg-card) !important;
+        color: var(--gf-text-main) !important;
+        border: 1px solid fade(#CEA559, 35%) !important;
+      }
+    }
+  }
+
+  // ── 登堂入席（登录注册子页面）暗色支持 ──
+  .auth-page-root {
+    color: var(--gf-text-main) !important;
+
+    .auth-paper {
+      background: var(--gf-bg-card) !important;
+      border-color: var(--gf-gold) !important;
+      box-shadow: 0 0 0 3px fade(#171E23, 95%), 0 0 0 5px fade(#CEA559, 32%), 0 8px 24px rgba(0, 0, 0, 0.55) !important;
+    }
+
+    h1 {
+      color: var(--gf-text-main) !important;
+    }
+
+    .auth-tabs button {
+      color: var(--gf-text-sub) !important;
+      &[aria-selected='true'] {
+        color: #fff !important;
+      }
+    }
+
+    .auth-input input {
+      background-color: var(--gf-bg-sunk) !important;
+      color: var(--gf-text-main) !important;
+      border-color: fade(#CEA559, 35%) !important;
+    }
+
+    .auth-heading p {
+      color: var(--gf-text-sub) !important;
+    }
+  }
 }
+

@@ -13,6 +13,7 @@ import {
   SoundOutline,
 } from 'antd-mobile-icons'
 import axios from '../http'
+import ThemeToggle from '../context/ThemeToggle.jsx'
 
 const BASE = import.meta.env.BASE_URL
 const asset = (name) => `${BASE}assets/${name}`
@@ -112,9 +113,24 @@ export default function PoemPage() {
   const [collecting, setCollecting] = useState(false)
   const [collectTip, setCollectTip] = useState('')
   const [playingMusic, setPlayingMusic] = useState(false)
+  const [reciting, setReciting] = useState(false)
   const appreciateRef = useRef(null)
 
-  // 雅乐聆音：古琴五声音阶纯浏览器合成（宫商角徵羽，免版权困扰）
+  // 赏析多维状态
+  const [appreciationData, setAppreciationData] = useState(null)
+  const [appreciationTab, setAppreciationTab] = useState('overview')
+  const [loadingAppreciation, setLoadingAppreciation] = useState(false)
+
+  // 离开页面时停止所有朗读语音
+  useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel()
+      }
+    }
+  }, [])
+
+  // 雅乐聆音：古琴五声音阶纯浏览器合成（宫商角徵羽）
   const playGuqinArpeggio = () => {
     try {
       const AudioCtx = window.AudioContext || window.webkitAudioContext
@@ -139,25 +155,112 @@ export default function PoemPage() {
     }
   }
 
-  // 底部「诗意赏析」按钮：展开并滚动到赏析面板（避免与折叠条产生交互歧义）
+  // 获取诗词多维深度赏析（AI 雅析 + 本地经典文库）
+  const fetchAppreciation = useCallback(async (currentPoem) => {
+    if (!currentPoem || !currentPoem.title) return
+    setLoadingAppreciation(true)
+    try {
+      const res = await axios.post('/api/poem/appreciate', {
+        title: currentPoem.title,
+        author: currentPoem.author,
+        dynasty: currentPoem.dynasty,
+        content: currentPoem.paragraphs
+      })
+      if (res?.data?.code === 1 && res.data.data) {
+        setAppreciationData(res.data.data)
+        return
+      }
+    } catch {
+      // 接口降级
+    } finally {
+      setLoadingAppreciation(false)
+    }
+
+    // 默认高雅兜底结构
+    setAppreciationData({
+      overview: currentPoem.appreciation || '此篇文辞雅健，意境旷远，声情相称，极具宋韵风骨。',
+      translation: currentPoem.paragraphs?.join('；') || '清风入弦，词句自得，言尽而意无穷。',
+      background: `${currentPoem.author || '先贤'}借景抒怀，借物寄意，笔底自有一番平生阅历与时代浩叹。`,
+      highlight: currentPoem.paragraphs?.[0] ? `「${currentPoem.paragraphs[0]}」——字句清拔，耐人咀华。` : '句法对仗工整，起承转合浑然天成。',
+      sageVoice: `此作乃吾平生性灵所聚，得遇今之雅客抚卷相看，亦足慰平生。`,
+      sageId: null
+    })
+    setLoadingAppreciation(false)
+  }, [])
+
+  // 雅韵吟诵（Web Speech API TTS 沉稳慢读 + 古琴轻泛起兴）
+  const handleToggleRecitation = () => {
+    if (!poem) return
+    if (!('speechSynthesis' in window)) {
+      playGuqinArpeggio()
+      Toast.show({ content: '浏览器未开启语音合成，且听古琴绕梁' })
+      return
+    }
+
+    if (reciting) {
+      window.speechSynthesis.cancel()
+      setReciting(false)
+      Toast.show({ content: '吟诵已止' })
+      return
+    }
+
+    window.speechSynthesis.cancel()
+    playGuqinArpeggio()
+
+    const text = `《${poem.title}》。${poem.author}。${(poem.paragraphs || []).join('，')}`
+    const utter = new SpeechSynthesisUtterance(text)
+    utter.lang = 'zh-CN'
+    utter.rate = 0.82
+    utter.pitch = 0.96
+
+    utter.onstart = () => {
+      setReciting(true)
+      Toast.show({ content: '雅韵清吟，静听诗声' })
+    }
+    utter.onend = () => setReciting(false)
+    utter.onerror = () => setReciting(false)
+
+    window.speechSynthesis.speak(utter)
+  }
+
+  // 底部「诗意赏析」按钮：展开并滚动到赏析面板
   const toggleAppreciation = () => {
     setShowAppreciation((open) => {
       const next = !open
       if (next) {
+        if (!appreciationData && poem) {
+          fetchAppreciation(poem)
+        }
         setTimeout(() => appreciateRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120)
       }
       return next
     })
   }
 
-  // 拉取随机诗词（失败自动降级到本地诗库）
+  // 携诗问道：带入当前诗篇上下文跳转至先贤对席
+  const handleChatWithSage = () => {
+    if (!appreciationData?.sageId) return
+    if (window.speechSynthesis) window.speechSynthesis.cancel()
+    navigate(`/scholar-chat/${appreciationData.sageId}`, {
+      state: {
+        sageId: appreciationData.sageId,
+        poemContext: poem
+      }
+    })
+  }
+
+  // 拉取随机诗词
   const loadRandom = useCallback(async () => {
+    if (window.speechSynthesis) window.speechSynthesis.cancel()
+    setReciting(false)
     setLoading(true)
+    setAppreciationData(null)
+    setAppreciationTab('overview')
     try {
       const res = await axios.get('/api/poem/random')
       const data = res?.data?.data
       if (data && data.title) {
-        setPoem({
+        const nextPoem = {
           id: data.id || data.poemId || `poem_${Date.now()}`,
           title: data.title,
           author: data.author,
@@ -165,19 +268,22 @@ export default function PoemPage() {
           paragraphs: toParagraphs(data.paragraphs || data.content),
           appreciation: data.appreciation || '',
           bgArt: data.bgArt || '',
-        })
+        }
+        setPoem(nextPoem)
+        fetchAppreciation(nextPoem)
       } else {
         throw new Error('empty')
       }
     } catch {
-      // 后端未就绪 / 网络异常：优雅降级
+      // 优雅降级
       const pick = MOCK_POEMS[Math.floor(Math.random() * MOCK_POEMS.length)]
       setPoem(pick)
+      fetchAppreciation(pick)
     } finally {
       setLoading(false)
       setShowAppreciation(false)
     }
-  }, [])
+  }, [fetchAppreciation])
 
   useEffect(() => {
     loadRandom()
@@ -205,17 +311,23 @@ export default function PoemPage() {
 
   // 选中搜索结果 → 陈列于诗卷
   const handlePickResult = (item) => {
-    setPoem({
+    if (window.speechSynthesis) window.speechSynthesis.cancel()
+    setReciting(false)
+    const nextPoem = {
       id: item.id || `poem_${Date.now()}`,
       title: item.title,
       author: item.author,
       dynasty: item.dynasty || '古代',
       paragraphs: toParagraphs(item.paragraphs || item.content || item.snippet),
       appreciation: item.appreciation || '',
-    })
+    }
+    setPoem(nextPoem)
     setResults(null)
     setKeyword('')
     setShowAppreciation(false)
+    setAppreciationData(null)
+    setAppreciationTab('overview')
+    fetchAppreciation(nextPoem)
   }
 
   // 摘录入卷（收藏）：朱砂印章动效 + 落库
@@ -241,7 +353,7 @@ export default function PoemPage() {
       setCollectTip(count ? `已摘录入卷 · 诗笺共 ${count} 篇` : '已摘录入卷')
       Toast.show({ icon: 'success', content: res?.data?.message || '已成功摘录入卷' })
     } catch {
-      // 响应拦截器已统一提示错误
+      // 错误拦截器统一处理
     } finally {
       setCollecting(false)
     }
@@ -251,13 +363,20 @@ export default function PoemPage() {
 
   return (
     <div className="poem-root" style={{ backgroundImage: `url(${asset('home/bg-paper.jpg')})` }}>
-      {/* 顶部：返回 + 标题 */}
+      {/* 顶部：返回 + 标题 + 日月一键切换 */}
       <header className="poem-header">
-        <div className="poem-header__back" onClick={() => navigate('/home')}>
+        <div
+          className="poem-header__back"
+          onClick={() => {
+            if (window.speechSynthesis) window.speechSynthesis.cancel()
+            navigate('/home')
+          }}
+          title="返回雅集"
+        >
           <LeftOutline />
         </div>
         <h1 className="poem-header__title">古诗词天地</h1>
-        <div className="poem-header__placeholder" />
+        <ThemeToggle className="poem-header__theme" />
       </header>
 
       {/* 顶部搜索框 */}
@@ -305,7 +424,7 @@ export default function PoemPage() {
         )}
 
         {loading || !poem ? (
-          /* 加载态：与主卡同尺寸的宣纸灰骨架占位（不用圆形转圈，避免版式跳动） */
+          /* 加载态：与主卡同尺寸的宣纸灰骨架占位 */
           <div className="poem-scroll__skeleton" role="status" aria-live="polite">
             <span className="poem-skeleton__bar poem-skeleton__bar--title" />
             <span className="poem-skeleton__bar poem-skeleton__bar--meta" />
@@ -339,19 +458,115 @@ export default function PoemPage() {
         )}
       </section>
 
-      {/* 诗意赏析折叠面板 */}
+      {/* 诗意赏析折叠面板（升级四维解构 + 先贤亲解） */}
       <section className={`poem-appreciation ${showAppreciation ? 'is-open' : ''}`} ref={appreciateRef}>
-        <div className="poem-appreciation__head" onClick={() => setShowAppreciation(!showAppreciation)}>
+        <div className="poem-appreciation__head" onClick={toggleAppreciation}>
           <ContentOutline className="poem-appreciation__icon" />
-          诗意赏析
+          <span>诗意雅析</span>
+          {appreciationData?.sageId && <span className="poem-appreciation__badge">先贤亲解</span>}
           <DownOutline className="poem-appreciation__toggle" />
         </div>
+
         <div className="poem-appreciation__body">
-          {poem?.appreciation || '此篇赏析尚待补录，先贤墨迹整理中……'}
+          {/* 赏析维度选项卡 */}
+          <div className="poem-appreciation__tabs">
+            <button
+              type="button"
+              className={`poem-appreciation__tab ${appreciationTab === 'overview' ? 'is-active' : ''}`}
+              onClick={() => setAppreciationTab('overview')}
+            >
+              <span className="poem-appreciation__tab-mark">赏</span> 意境总赏
+            </button>
+            <button
+              type="button"
+              className={`poem-appreciation__tab ${appreciationTab === 'translation' ? 'is-active' : ''}`}
+              onClick={() => setAppreciationTab('translation')}
+            >
+              <span className="poem-appreciation__tab-mark">译</span> 白话今译
+            </button>
+            <button
+              type="button"
+              className={`poem-appreciation__tab ${appreciationTab === 'background' ? 'is-active' : ''}`}
+              onClick={() => setAppreciationTab('background')}
+            >
+              <span className="poem-appreciation__tab-mark">境</span> 创作心境
+            </button>
+            <button
+              type="button"
+              className={`poem-appreciation__tab ${appreciationTab === 'highlight' ? 'is-active' : ''}`}
+              onClick={() => setAppreciationTab('highlight')}
+            >
+              <span className="poem-appreciation__tab-mark">警</span> 名句咀华
+            </button>
+            {appreciationData?.sageVoice && (
+              <button
+                type="button"
+                className={`poem-appreciation__tab poem-appreciation__tab--sage ${appreciationTab === 'sageVoice' ? 'is-active' : ''}`}
+                onClick={() => setAppreciationTab('sageVoice')}
+              >
+                <span className="poem-appreciation__tab-mark">题</span> 先贤手记
+              </button>
+            )}
+          </div>
+
+          {/* 赏析正文内容 */}
+          <div className="poem-appreciation__content">
+            {loadingAppreciation ? (
+              <div className="poem-appreciation__loading">
+                <span>研墨品赏中……</span>
+              </div>
+            ) : (
+              <>
+                {appreciationTab === 'overview' && (
+                  <p className="poem-appreciation__text">
+                    {appreciationData?.overview || poem?.appreciation || '此篇文辞雅健，意境旷远，声情相称，极具宋韵风骨。'}
+                  </p>
+                )}
+
+                {appreciationTab === 'translation' && (
+                  <p className="poem-appreciation__text">
+                    {appreciationData?.translation || lines.join('；')}
+                  </p>
+                )}
+
+                {appreciationTab === 'background' && (
+                  <p className="poem-appreciation__text">
+                    {appreciationData?.background || `${poem?.author || '作者'}借景抒怀，笔底蕴藉平生胸臆。`}
+                  </p>
+                )}
+
+                {appreciationTab === 'highlight' && (
+                  <p className="poem-appreciation__text">
+                    {appreciationData?.highlight || lines[0] || '对仗工整，意境悠长。'}
+                  </p>
+                )}
+
+                {appreciationTab === 'sageVoice' && (
+                  <div className="poem-appreciation__sage-card">
+                    <div className="poem-appreciation__sage-title">
+                      <span><span className="poem-appreciation__tab-mark">题</span> {poem?.author} · 亲解题录</span>
+                    </div>
+                    <p className="poem-appreciation__text">
+                      {appreciationData?.sageVoice}
+                    </p>
+                    {appreciationData?.sageId && (
+                      <button
+                        type="button"
+                        className="poem-appreciation__sage-btn"
+                        onClick={handleChatWithSage}
+                      >
+                        携诗入席 · 与{poem?.author}论道 →
+                      </button>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* 四大功能按钮（全量矢量图标） */}
+      {/* 功能按钮群 */}
       <section className="poem-actions">
         <button className="poem-action poem-action--primary" type="button" onClick={loadRandom}>
           <RedoOutline />
@@ -364,29 +579,31 @@ export default function PoemPage() {
         </button>
 
         <button
-          className={`poem-action ${playingMusic ? 'poem-action--primary' : 'poem-action--ghost'}`}
+          className={`poem-action ${reciting ? 'poem-action--primary' : 'poem-action--ghost'}`}
           type="button"
-          onClick={() => {
-            setPlayingMusic(true)
-            playGuqinArpeggio()
-            Toast.show({ content: '琴韵绕梁，静听松风' })
-            setTimeout(() => setPlayingMusic(false), 2600)
-          }}
+          onClick={handleToggleRecitation}
         >
           <SoundOutline />
-          {playingMusic ? '琴韵绕梁…' : '听琴品韵'}
+          {reciting ? '吟诵中 (按此停止)' : '雅韵吟诵'}
+        </button>
+
+        <button
+          className={`poem-action ${showAppreciation ? 'poem-action--primary' : 'poem-action--ghost'}`}
+          type="button"
+          onClick={toggleAppreciation}
+        >
+          <ContentOutline />
+          诗意雅析
         </button>
 
         <button
           className="poem-action poem-action--ghost"
           type="button"
-          onClick={toggleAppreciation}
+          onClick={() => {
+            if (window.speechSynthesis) window.speechSynthesis.cancel()
+            navigate('/home')
+          }}
         >
-          <ContentOutline />
-          诗意赏析
-        </button>
-
-        <button className="poem-action poem-action--ghost" type="button" onClick={() => navigate('/home')}>
           <LeftOutline />
           返回雅集
         </button>
@@ -397,3 +614,4 @@ export default function PoemPage() {
     </div>
   )
 }
+
