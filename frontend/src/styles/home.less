@@ -1,4 +1,4 @@
-﻿// ════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════
 //  首页【雅集】样式（成员 B 独占 · 对齐新版设计稿）
 //  基准视口 390px，1rem = clientWidth / 10
 //  配色一律走 global.css 的 --gf-* 变量（支持月下墨境暗色模式）
@@ -51,7 +51,9 @@
   }
 }
 
-// ── 页面根：宣纸山水长卷背景 ──────────────────────
+// ── 页面根：全站统一国风背景（TRD v3.0 §2.2 背景图红线）
+//    一律用 /assets/common/bg_guofeng.jpg，不再使用 assets/home/bg-paper.jpg
+//    （其余页面由 app.less 的 body 统一铺，本页显式声明以锁死红线口径、避免继承歧义）
 .home-root {
   position: relative;
   min-height: 100vh;
@@ -62,6 +64,7 @@
   color: var(--gf-ink-primary);
   font-family: var(--gf-font-serif, 'Songti SC', 'STSong', 'SimSun', serif);
   background-color: var(--gf-bg-paper);
+  background-image: url('/assets/common/bg_guofeng.jpg');
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 100% 100%;
@@ -128,6 +131,21 @@
   &__icon-emoji {
     font-size: 0.36rem;
     line-height: 1;
+  }
+
+  // 图标铁律：日 / 月 内联 SVG（1em 机制，父级 font-size 定尺寸，currentColor 着色）
+  // 尺寸对齐被替换的 Emoji 视觉重量：原字形 0.32rem、Emoji 实测约 0.45rem
+  &__glyph {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gf-cinnabar);
+
+    svg {
+      width: 0.44rem;
+      height: 0.44rem;
+      display: block;
+    }
   }
 
   &__title-row {
@@ -524,8 +542,17 @@
   }
 
   &__sun {
-    font-size: 0.44rem;
-    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    color: var(--gf-gold); // 日轮走描金，暗色下自动转深色泥金（#D4AF37）
+
+    // 尺寸与被替换的天气 Emoji 等重（原 ☀️ 实测约 0.6rem ≈ 23px），
+    // 与右侧 24° 温度数字（0.77rem）保持主次关系
+    svg {
+      width: 0.6rem;
+      height: 0.6rem;
+      display: block;
+    }
   }
 
   &__temp {
@@ -587,9 +614,35 @@
   }
 
   &__wuhou {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.04rem;
     margin: 0;
     font-size: 0.28rem;
     color: var(--gf-bamboo);
+    overflow-wrap: anywhere; // 极窄视口下物候句可断行，不撑破卡片
+  }
+
+  // 物候小印「菊」：朱砂印泥 + 象牙白单字（第三优先级 CSS 印章）
+  &__wuhou-seal {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.26rem;
+    height: 0.26rem;
+    background: var(--gf-cinnabar);
+    color: #FBF8F1;
+    font-size: 0.19rem;
+    font-weight: 700;
+    line-height: 1;
+    border-radius: 2px;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gf-gold) 45%, transparent);
+  }
+
+  &__wuhou-label {
+    flex: none;
   }
 }
 
@@ -642,6 +695,15 @@
     color: var(--gf-gold);
   }
 
+  // 示例前缀图标（原字符箭头 ↗ → antd 矢量 UpOutline）
+  &__title-icon {
+    width: 0.24rem;
+    height: 0.24rem;
+    margin-right: 0.04rem;
+    vertical-align: -0.03rem;
+    color: var(--gf-gold);
+  }
+
   &__item {
     display: flex;
     align-items: center;
@@ -665,6 +727,23 @@
   &__icon {
     font-size: 0.34rem;
     line-height: 1;
+  }
+
+  // 示例小印「酪」「笈」：朱砂印泥 + 象牙白单字（第三优先级 CSS 印章，替代 ☕ / 🎒）
+  &__seal {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.3rem;
+    height: 0.3rem;
+    background: var(--gf-cinnabar);
+    color: #FBF8F1;
+    font-size: 0.21rem;
+    font-weight: 700;
+    line-height: 1;
+    border-radius: 2px;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gf-gold) 45%, transparent);
   }
 
   &__modern {
@@ -1751,4 +1830,114 @@
 
 [data-theme='dark'] .home-shiwu-section .home-section-sub {
   font-size: 0.28rem;
+}
+
+// ════════════════════════════════════════════════════
+//  第三阶段任务 2：白话雅译 390px 长文本排版防御（AC-B2）
+//  依据 TRD_PHASE3.md §3.3 第 2 项：输入 50~150 字复杂现代白话的极端情况
+//
+//  防御目标（逐条对应实测项）：
+//   ① 输入框文字增长 → 卡内滚动，绝不撑破卡片（max-height 动态按视口封顶）
+//   ② 雅言译文再长 → 允许折行，去掉历史 nowrap，卡高随内容自适应
+//   ③ 超长无空格串（URL / 连续字母数字）→ 强制断行，不产生横向溢出
+//   ④ 双按钮列宽 minmax(0,1fr) 的下限 → 补 min-width:0，长文案不撑列
+//   ⑤ 出现极端长度即长按可截断（兜底），并顶住卡片内边距
+//  说明：中文字符本身可断行（min-content = 一字），英文/URL 靠 overflow-wrap 兜底
+// ════════════════════════════════════════════════════
+
+// ── ① 输入区：长文本在卡内滚动，卡高不随字数无限增长 ──
+.home-yayan-input-box {
+  overflow: hidden; // 圆角裁剪，内部滚动条不顶破描金边
+}
+
+.home-yayan-textarea {
+  // 输入 50~150 字极端白话时，输入框随内容自适应长高，到上限后改为卡内滚动
+  field-sizing: content;         // 现代内核（Edge/Chrome 123+）原生随内容长高
+  max-height: 4.6rem;            // ≈179px，约 8 行 @390px；超出改为卡内滚动
+  overflow-y: auto;
+  overflow-wrap: anywhere;       // 超长无空格串（URL / 连续字母）强制断行
+  word-break: break-word;
+  -webkit-overflow-scrolling: touch;
+}
+
+// 字数顶格（100/100）时计数转为朱砂，给出「已达上限」的视觉回执
+.home-yayan-counter {
+  transition: color 0.16s ease;
+
+  &.is-limit {
+    color: var(--gf-cinnabar);
+    font-weight: 700;
+  }
+}
+
+// ── ②③ 译文卡：允许折行 + 强制断行（原 nowrap 长句会横向溢出错位）──
+.home-yayan-ancient-text {
+  white-space: normal;         // 覆盖历史「must 一行」规则，长雅言折行显示
+  max-width: 100%;
+  padding-right: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-align: center;
+}
+
+// 句末朱砂小印「闲」：保持随文内联，折行后仍紧随末字（不再挤占右上角）
+.home-yayan-seal {
+  flex: none;
+}
+
+// ── ③ 释义 / 出处：长文本折行不挤压、不穿透卡片边界 ──
+.home-yayan-explain,
+.home-yayan-author {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+// ── ④ 双按钮：grid 列补 min-width:0（minmax(0,1fr) 的下限兜底）──
+.home-yayan-submit-btn,
+.home-yayan-collect-btn {
+  min-width: 0;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+// ── ⑤ 极端长度兜底：作者行单行截断；卡片顶住内边距，绝不外溢 ──
+.home-yayan-author {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+// 离线典范徽标（TRD_PHASE3 §3.3：兜底名句不得冒充 AI 生成）
+// 独立成行 + 居中，避免被上方作者行的单行截断裁掉
+.home-yayan-offline-line {
+  margin: 0.06rem 0 0;
+  text-align: center;
+}
+
+.home-yayan-offline {
+  display: inline-block;
+  padding: 0 0.08rem;
+  font-size: 0.2rem;
+  line-height: 1.5;
+  color: #FBF8F1;
+  background: var(--gf-cinnabar);
+  border-radius: 2px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gf-gold) 40%, transparent);
+}
+
+.home-yayan-section,
+.home-card-scroll {
+  overflow-x: hidden;
+}
+
+// ── 长文本实测用：窄视口（≤360px）下再收一档字号与内边距，保呼吸感 ──
+@media (max-width: 360px) {
+  .home-yayan-ancient-text { font-size: 0.3rem; }
+  .home-yayan-explain { font-size: 0.22rem; }
+  .home-yayan-submit-btn,
+  .home-yayan-collect-btn { font-size: 0.28rem; }
+  .home-yayan-inner { padding-left: 0.06rem; padding-right: 0.1rem; }
 }
