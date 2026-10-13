@@ -1631,3 +1631,30 @@
 [data-theme='dark'] .home-shiwu-demo__item {
   background: color-mix(in srgb, var(--gf-bg-card) 46%, transparent);
 }
+
+// ── 修正：示例体验框【去掉底图】，恢复实底卡片（与上传区一致）──
+.home-shiwu-demo {
+  background: var(--gf-bg-card);
+  background-image: none;
+}
+
+.home-shiwu-demo__item {
+  margin-top: 0.06rem;
+  padding: 0.1rem 0.06rem;
+  background: transparent;
+  border-radius: 0;
+  border-bottom: 1px dashed color-mix(in srgb, var(--gf-border-card) 85%, transparent);
+}
+
+.home-shiwu-demo__item:last-child { border-bottom: none; }
+
+.home-shiwu-demo__title { text-shadow: none; }
+
+[data-theme='dark'] .home-shiwu-demo {
+  background: var(--gf-bg-card);
+  background-image: none;
+}
+
+[data-theme='dark'] .home-shiwu-demo__item {
+  background: transparent;
+}
