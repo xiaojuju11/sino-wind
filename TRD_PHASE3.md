@@ -32,6 +32,13 @@
 >    - **前端零拷贝自适应压模**：使用 `URL.createObjectURL` 配合 Canvas 将长边强制等比缩放到 `1280px`（质量 0.85），在 150ms 内将 20MB~50MB 原图秒级压至 **200KB~350KB**，兼顾微观金石细节与极速上行；
 >    - **全链路超时与容量防御**：后端 `bodyParser` 保持 30MB 余量，Node 网关 `COZE_TIMEOUT` 放宽至 20 秒，前端 Axios 超时放宽至 25 秒，消灭任何 413 报错与提前熔断；
 >    - **Coze 输入对齐**：送入 Coze 工作流的 Base64 仅约 35 万字符，完美适配 Coze 文本输入与大模型视觉节点（豆包视觉/GPT-4o-mini），保证 100% 顺利出结果。
+> 5. **【Iconfont 团队单一信源管理铁律（严禁私改个人链接）】**：
+>    - **单一项目原则**：严禁每位成员各建各的 Iconfont 项目往 `index.html` 里贴个人 CDN 链接（会导致 `@font-face` 相互覆盖、别人的图标直接变空白方块 `□`）；
+>    - **三级使用优先级矩阵**：
+>      * **第一优先级（首选）**：必须优先使用 `antd-mobile-icons` 官方矢量图标（如 `<RightOutline />`、`<MailOpenOutline />`、`<SearchOutline />`、`<LockOutline />` 等），直接 `import`，零网络请求、零代码冲突；
+>      * **第二优先级**：特异性国风图标统一由队长在 iconfont.cn 建立官方团队项目并拉入全员，更新图标后统一生成单一下发 CDN 并在主干合并；
+>      * **第三优先级**：特殊岁时与文人标签使用 CSS 印章样式（如 `<span className="gf-seal">茶</span>`）或内联 SVG；
+>    - **红线惩罚**：`frontend/index.html` 为架构受保护文件，任何 PR 若私自添加/修改个人 Iconfont 链接，**直接驳回不予合并**！
 
 ---
 
