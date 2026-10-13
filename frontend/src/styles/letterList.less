@@ -1,0 +1,622 @@
+@import '../styles/variables.less';
+
+// ════════════════════════════════════════════════════
+//  知音信札列表页样式
+// ════════════════════════════════════════════════════
+
+.letter-root {
+  min-height: 100vh;
+  padding: max(0.4rem, env(safe-area-inset-top)) 0.36rem calc(2.2rem + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  background-color: var(--gf-bg-paper, #F7F4EB);
+  color: var(--gf-ink-primary, #1b1c1f);
+  font-family: 'Songti SC', 'STSong', 'SimSun', serif;
+}
+
+// 顶部题头
+.letter-header {
+  padding: 0.1rem 0 0.28rem;
+  text-align: center;
+
+  &__title-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.12rem;
+  }
+
+  &__title {
+    font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 0.04rem;
+    color: var(--gf-ink-primary, #1b1c1f);
+  }
+
+  &__seal {
+    display: inline-block;
+    padding: 0.04rem 0.14rem;
+    background: @color-seal;
+    color: #fff;
+    font-size: 0.22rem;
+    border-radius: 2px;
+    letter-spacing: 0.02rem;
+  }
+
+  &__subtitle {
+    margin: 0.12rem 0 0;
+    font-size: 0.28rem;
+    color: var(--gf-ink-muted, #726A62);
+    letter-spacing: 0.02rem;
+  }
+}
+
+// 顶部知己横向画卷
+.letter-gallery-section {
+  margin-bottom: 0.3rem;
+}
+
+.letter-gallery-scroll {
+  display: flex;
+  align-items: center;
+  gap: 0.22rem;
+  overflow-x: auto;
+  padding: 0.1rem 0.06rem 0.2rem;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.letter-gallery-item {
+  flex: 0 0 1.42rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  cursor: pointer;
+  transition: transform 0.18s ease;
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.letter-gallery-avatar-box {
+  position: relative;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  border: 2px solid fade(@color-gold, 80%);
+  background: var(--gf-bg-card, #FAF7F0);
+  box-shadow: 0 0.06rem 0.18rem fade(#3a2f1d, 12%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &--add {
+    border: 2px dashed @color-seal;
+    background: fade(@color-seal, 6%);
+    color: @color-seal;
+  }
+}
+
+.letter-gallery-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.letter-unread-badge {
+  position: absolute;
+  top: -0.04rem;
+  right: -0.04rem;
+  min-width: 0.36rem;
+  height: 0.36rem;
+  padding: 0 0.06rem;
+  border-radius: 0.18rem;
+  background: @color-seal;
+  color: #fff;
+  font-size: 0.22rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px fade(#000, 25%);
+  box-sizing: border-box;
+}
+
+.letter-unread-dot {
+  position: absolute;
+  top: 0.04rem;
+  right: 0.04rem;
+  width: 0.2rem;
+  height: 0.2rem;
+  border-radius: 50%;
+  background: @color-seal;
+  border: 2px solid #fff;
+}
+
+.letter-add-icon {
+  font-size: 0.52rem;
+}
+
+.letter-gallery-name {
+  font-size: 0.25rem;
+  color: var(--gf-ink-secondary, #524B46);
+  font-family: 'Kaiti SC', 'STKaiti', serif;
+  font-weight: 500;
+}
+
+// 信札列表区域
+.letter-list-section {
+  position: relative;
+}
+
+.letter-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.18rem;
+  padding: 0 0.06rem;
+}
+
+.letter-list-title {
+  font-family: 'Kaiti SC', 'STKaiti', serif;
+  font-size: 0.32rem;
+  font-weight: 600;
+  color: var(--gf-ink-primary, #1b1c1f);
+}
+
+.letter-list-tip {
+  font-size: 0.24rem;
+  color: var(--gf-ink-muted, #80776E);
+}
+
+.letter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.letter-card {
+  display: flex;
+  align-items: center;
+  gap: 0.24rem;
+  padding: 0.24rem 0.28rem;
+  background: var(--gf-bg-card, #FAF7F0);
+  border: 1px solid fade(@color-gold, 45%);
+  border-radius: 8px;
+  box-shadow: 0 0.06rem 0.2rem fade(#3a2f1d, 8%);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:active {
+    transform: translateY(1px);
+    background: fade(@color-gold, 15%);
+  }
+
+  &__avatar-wrap {
+    position: relative;
+    flex: none;
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  &__avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid fade(@color-gold, 60%);
+  }
+
+  &__dynasty {
+    position: absolute;
+    bottom: -0.04rem;
+    right: -0.04rem;
+    padding: 0.02rem 0.08rem;
+    background: @color-seal;
+    color: #fff;
+    font-size: 0.18rem;
+    border-radius: 2px;
+    line-height: 1.1;
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.08rem;
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__names {
+    display: flex;
+    align-items: center;
+    gap: 0.08rem;
+  }
+
+  &__name {
+    font-family: 'Kaiti SC', 'STKaiti', serif;
+    font-size: 0.36rem;
+    font-weight: 700;
+    color: var(--gf-ink-primary, #1b1c1f);
+  }
+
+  &__title {
+    font-size: 0.24rem;
+    color: @color-seal;
+  }
+
+  &__time {
+    font-size: 0.22rem;
+    color: var(--gf-ink-muted, #80776E);
+  }
+
+  &__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.16rem;
+  }
+
+  &__snippet {
+    margin: 0;
+    font-size: 0.26rem;
+    line-height: 1.45;
+    color: var(--gf-ink-secondary, #524B46);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+
+  &__badge {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0.34rem;
+    height: 0.34rem;
+    padding: 0 0.08rem;
+    border-radius: 0.17rem;
+    background: @color-seal;
+    color: #fff;
+    font-size: 0.2rem;
+    font-weight: 600;
+  }
+}
+
+// 迎请新友抽屉弹窗
+.invite-drawer {
+  display: flex;
+  flex-direction: column;
+  max-height: 88vh;
+  box-sizing: border-box;
+  color: var(--gf-ink-primary, #1b1c1f);
+
+  &__header {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.32rem 0.36rem 0.2rem;
+    border-bottom: 1px solid fade(@color-gold, 35%);
+  }
+
+  &__title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.12rem;
+  }
+
+  &__seal {
+    padding: 0.04rem 0.12rem;
+    background: @color-seal;
+    color: #fff;
+    font-size: 0.22rem;
+    border-radius: 2px;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: 'Kaiti SC', 'STKaiti', serif;
+    font-size: 0.38rem;
+    font-weight: 700;
+  }
+
+  &__close {
+    background: transparent;
+    border: none;
+    font-size: 0.44rem;
+    color: var(--gf-ink-muted, #80776E);
+    cursor: pointer;
+  }
+
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.24rem 0.36rem;
+  }
+
+  &__sub {
+    margin: 0 0 0.24rem;
+    font-size: 0.26rem;
+    color: var(--gf-ink-muted, #726A62);
+    line-height: 1.4;
+  }
+
+  &__quick {
+    margin-bottom: 0.24rem;
+  }
+
+  &__quick-label {
+    font-size: 0.24rem;
+    color: var(--gf-ink-muted, #726A62);
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.12rem;
+    margin-top: 0.1rem;
+  }
+
+  &__chip {
+    padding: 0.08rem 0.2rem;
+    background: var(--gf-bg-paper, #F7F4EB);
+    border: 1px dashed fade(@color-gold, 70%);
+    border-radius: 0.24rem;
+    font-size: 0.24rem;
+    color: var(--gf-ink-primary, #1b1c1f);
+    font-family: 'Kaiti SC', 'STKaiti', serif;
+    cursor: pointer;
+
+    &:active {
+      border-color: @color-seal;
+      color: @color-seal;
+    }
+  }
+
+  // 水墨立绘选择
+  &__avatar-section {
+    margin-bottom: 0.24rem;
+  }
+
+  &__avatars {
+    display: flex;
+    gap: 0.16rem;
+    margin-top: 0.1rem;
+    overflow-x: auto;
+    padding-bottom: 0.08rem;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__avatar-opt {
+    flex: 0 0 1.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.06rem;
+    cursor: pointer;
+    padding: 0.08rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+
+    img {
+      width: 0.95rem;
+      height: 0.95rem;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid fade(@color-gold, 60%);
+    }
+
+    &.is-active {
+      border-color: @color-seal;
+      background: fade(@color-seal, 8%);
+
+      img {
+        border-color: @color-seal;
+        box-shadow: 0 0 0.1rem fade(@color-seal, 40%);
+      }
+
+      .invite-drawer__avatar-name {
+        color: @color-seal;
+        font-weight: 700;
+      }
+    }
+  }
+
+  &__avatar-name {
+    font-size: 0.2rem;
+    color: var(--gf-ink-secondary, #524B46);
+    font-family: 'Kaiti SC', 'STKaiti', serif;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  &__form-row {
+    display: flex;
+    align-items: center;
+    gap: 0.14rem;
+    background: var(--gf-bg-paper, #F7F4EB);
+    border: 1px solid fade(@color-gold, 45%);
+    border-radius: 4px;
+    padding: 0.16rem 0.2rem;
+  }
+
+  &__form-row-dynasty {
+    display: flex;
+    align-items: center;
+    gap: 0.14rem;
+    background: var(--gf-bg-paper, #F7F4EB);
+    border: 1px solid fade(@color-gold, 45%);
+    border-radius: 4px;
+    padding: 0.14rem 0.2rem;
+  }
+
+  &__dynasty-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.1rem;
+    flex: 1;
+  }
+
+  &__dynasty-chip {
+    padding: 0.06rem 0.16rem;
+    background: #fff;
+    border: 1px solid fade(@color-gold, 50%);
+    border-radius: 3px;
+    font-size: 0.22rem;
+    color: var(--gf-ink-secondary, #524B46);
+    cursor: pointer;
+
+    &.is-active {
+      background: @color-seal;
+      border-color: @color-seal;
+      color: #fff;
+      font-weight: 600;
+    }
+  }
+
+  &__label {
+    font-size: 0.26rem;
+    font-weight: 600;
+    color: var(--gf-ink-secondary, #524B46);
+    flex: none;
+  }
+
+  &__input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.28rem;
+    color: var(--gf-ink-primary, #1b1c1f);
+    outline: none;
+  }
+
+  &__textarea {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.26rem;
+    color: var(--gf-ink-primary, #1b1c1f);
+    outline: none;
+    resize: none;
+    line-height: 1.4;
+  }
+
+  &__ai-btn {
+    padding: 0.18rem;
+    background: linear-gradient(135deg, @color-seal 0%, #aa3838 100%);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.28rem;
+    font-weight: 600;
+    letter-spacing: 0.04rem;
+    cursor: pointer;
+    box-shadow: 0 0.06rem 0.16rem fade(@color-seal, 30%);
+
+    &:disabled {
+      opacity: 0.6;
+    }
+  }
+
+  &__soul-card {
+    padding: 0.2rem;
+    background: fade(@color-gold, 15%);
+    border-left: 3px solid @color-seal;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  &__soul-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Kaiti SC', 'STKaiti', serif;
+    font-weight: 600;
+    font-size: 0.28rem;
+    color: @color-seal;
+  }
+
+  &__soul-dynasty {
+    font-size: 0.22rem;
+    color: var(--gf-ink-muted, #726A62);
+  }
+
+  &__soul-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.08rem;
+  }
+
+  &__soul-tag {
+    padding: 0.04rem 0.12rem;
+    background: #fff;
+    border: 1px solid fade(@color-gold, 60%);
+    border-radius: 2px;
+    font-size: 0.2rem;
+    color: var(--gf-ink-secondary, #524B46);
+  }
+
+  &__soul-bio {
+    margin: 0;
+    font-size: 0.23rem;
+    line-height: 1.45;
+    color: var(--gf-ink-secondary, #524B46);
+  }
+
+  &__footer {
+    flex: none;
+    padding: 0.2rem 0.36rem calc(0.24rem + env(safe-area-inset-bottom));
+    background: var(--gf-bg-card, #FAF7F0);
+    border-top: 1px solid fade(@color-gold, 35%);
+  }
+
+  &__confirm-btn {
+    width: 100%;
+    padding: 0.22rem;
+    background: @color-seal;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-family: 'Kaiti SC', 'STKaiti', serif;
+    font-size: 0.36rem;
+    font-weight: 700;
+    letter-spacing: 0.1rem;
+    cursor: pointer;
+    box-shadow: 0 0.08rem 0.2rem fade(@color-seal, 35%);
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+}
+

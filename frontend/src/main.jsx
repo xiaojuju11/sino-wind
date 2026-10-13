@@ -7,9 +7,9 @@ import './utils/rem.js'
 import './styles/global.css'
 
 createRoot(document.getElementById('root')).render(
-    <ThemeProvider>
-      <App />
-    </ThemeProvider>
+  <ThemeProvider>
+    <App />
+  </ThemeProvider>
 )
 
 unstableSetRender((node, container) => {

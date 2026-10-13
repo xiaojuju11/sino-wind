@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const { JWT_SECRET } = require('../utils/jwt.js')
 const { findUserByPhone, createUser, findUserById, updateUserInfo } = require('../models/userModel.js')
 const { generateCaptcha, verifyCaptcha } = require('../utils/captcha.js')
 
@@ -29,8 +30,8 @@ async function login(ctx) {
     return
   }
 
-  // 生成一个 token
-  const token = jwt.sign({ id: user.id, phone: user.phone }, '666', { expiresIn: '7d' })
+  // 生成一个 token（使用安全的 JWT_SECRET）
+  const token = jwt.sign({ id: user.id, phone: user.phone }, JWT_SECRET, { expiresIn: '7d' })
 
   ctx.body = {
     message: '登录成功',

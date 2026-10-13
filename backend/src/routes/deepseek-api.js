@@ -1,18 +1,17 @@
 const Router = require('koa-router')
 const { deepseekChat, translateYayan, soulScholar } = require('../controllers/deepseekController.js')
-const { verifyToken } = require('../utils/jwt.js')
-
 
 const router = new Router({
   prefix: '/api/deepseek'
 })
 
-router.post('/chat', verifyToken(), deepseekChat)
+// 1. 先贤对话畅论
+router.post('/chat', deepseekChat)
 
-// 白话雅译（TRD §4.1）：无鉴权要求，未入席也可试用首页雅译
+// 2. 白话雅译接口 (日常大白话 -> 诗句名言与释义)
 router.post('/yayan', translateYayan)
 
-// AI 一键考释赋魂（TRD §4.2）：无鉴权要求，迎请抽屉可直接调用
+// 3. AI 一键考释赋魂 (输入历史诗人 -> 生成生平纪略、朋友圈、文风标签)
 router.post('/soul', soulScholar)
 
 module.exports = router

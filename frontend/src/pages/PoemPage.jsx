@@ -10,6 +10,7 @@ import {
   HeartOutline,
   ContentOutline,
   DownOutline,
+  SoundOutline,
 } from 'antd-mobile-icons'
 import axios from '../http'
 
@@ -110,7 +111,33 @@ export default function PoemPage() {
   const [stamp, setStamp] = useState(false)
   const [collecting, setCollecting] = useState(false)
   const [collectTip, setCollectTip] = useState('')
+  const [playingMusic, setPlayingMusic] = useState(false)
   const appreciateRef = useRef(null)
+
+  // 雅乐聆音：古琴五声音阶纯浏览器合成（宫商角徵羽，免版权困扰）
+  const playGuqinArpeggio = () => {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext
+      if (!AudioCtx) return
+      const ctx = new AudioCtx()
+      const notes = [261.63, 329.63, 392.00, 440.00, 523.25, 392.00]
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.type = 'triangle'
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.4)
+        gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.4)
+        gain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + i * 0.4 + 0.05)
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.4 + 1.2)
+        osc.connect(gain)
+        gain.connect(ctx.destination)
+        osc.start(ctx.currentTime + i * 0.4)
+        osc.stop(ctx.currentTime + i * 0.4 + 1.2)
+      })
+    } catch {
+      // 容错兜底
+    }
+  }
 
   // 底部「诗意赏析」按钮：展开并滚动到赏析面板（避免与折叠条产生交互歧义）
   const toggleAppreciation = () => {
@@ -334,6 +361,20 @@ export default function PoemPage() {
         <button className="poem-action poem-action--primary" type="button" onClick={handleCollect} disabled={collecting}>
           <HeartOutline />
           摘录入卷
+        </button>
+
+        <button
+          className={`poem-action ${playingMusic ? 'poem-action--primary' : 'poem-action--ghost'}`}
+          type="button"
+          onClick={() => {
+            setPlayingMusic(true)
+            playGuqinArpeggio()
+            Toast.show({ content: '🎶 琴韵绕梁，静听松风' })
+            setTimeout(() => setPlayingMusic(false), 2600)
+          }}
+        >
+          <SoundOutline />
+          {playingMusic ? '琴韵绕梁…' : '听琴品韵'}
         </button>
 
         <button

@@ -46,3 +46,51 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
+
+/* ========================================================
+   🏮 云山竹简 · 华风雅集 全局设计规范 (Design Tokens)
+   ======================================================== */
+:root {
+  /* 日间模式 (晓色晨宣) */
+  --gf-bg-paper: #F7F4EB;
+  --gf-bg-card: #FFFFFF;
+  --gf-ink-primary: #2B2B2B;
+  --gf-ink-secondary: #6B675B;
+  --gf-ink-light: #9B968A;
+  --gf-cinnabar: #8A2B2B;
+  --gf-cinnabar-hover: #A03333;
+  --gf-bamboo: #2D5A3F;
+  --gf-bamboo-light: #EBF2EC;
+  --gf-gold: #C59B27;
+  --gf-gold-light: #FAF4E5;
+  --gf-border: rgba(138, 43, 43, 0.12);
+  --gf-border-card: #E4DDD0;
+  --gf-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  --gf-font-serif: "STKaiti", "KaiTi", "Songti SC", "Noto Serif SC", "SimSun", serif;
+}
+
+[data-theme="dark"] {
+  /* 夜间模式 (月下墨境) */
+  --gf-bg-paper: #0D1117;
+  --gf-bg-card: #161D26;
+  --gf-ink-primary: #E6E1D3;
+  --gf-ink-secondary: #9B988F;
+  --gf-ink-light: #6A6760;
+  --gf-cinnabar: #B83B32;
+  --gf-cinnabar-hover: #D14539;
+  --gf-bamboo: #4A7C59;
+  --gf-bamboo-light: #1A2E22;
+  --gf-gold: #D4AF37;
+  --gf-gold-light: #2A2518;
+  --gf-border: rgba(212, 175, 55, 0.25);
+  --gf-border-card: #26303D;
+  --gf-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+body {
+  background-color: var(--gf-bg-paper);
+  color: var(--gf-ink-primary);
+  font-family: var(--gf-font-serif);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
