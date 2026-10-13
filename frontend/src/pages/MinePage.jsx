@@ -7,6 +7,8 @@ import { useTheme } from '../context/ThemeContext'
 import ThemeToggle from '../context/ThemeToggle.jsx'
 import axios from '../http'
 
+const BASE = import.meta.env.BASE_URL
+
 export default function MinePage() {
   const navigate = useNavigate()
   const [userInfo, setUserInfo] = useState({})

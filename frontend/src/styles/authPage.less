@@ -4,11 +4,16 @@
   --auth-u: min(1vw, 6px);
   --auth-unit: calc(var(--auth-u) * 10);
   box-sizing: border-box;
-  min-height: max(100svh, calc(var(--auth-u) * 177.8));
-  padding: calc(var(--auth-u) * 29.1) 0 calc(var(--auth-u) * 22);
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 0;
   overflow-x: hidden;
   color: @color-text-main;
-  background: @color-bg url('/assets/auth/reference-login.png') center top / min(100%, 600px) auto no-repeat;
+  background: @color-bg url('/assets/auth/reference-login.png') center center / cover no-repeat;
   font-family: 'STKaiti', 'KaiTi', 'Noto Serif SC', 'Songti SC', serif;
   line-height: 1.4;
   *, *::before, *::after { box-sizing: border-box; }
