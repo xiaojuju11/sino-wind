@@ -1722,3 +1722,10 @@
   background-position: center center, right bottom;
   background-color: var(--gf-bg-card);
 }
+
+// ── 修正：暗夜底图的尺寸与位置【与白昼完全一致】（不放大、不偏移）──
+[data-theme='dark'] .home-shiwu-section {
+  background-size: cover, cover;
+  background-position: center center, center center;
+  background-repeat: no-repeat, no-repeat;
+}
