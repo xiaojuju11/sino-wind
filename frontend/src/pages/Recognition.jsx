@@ -12,8 +12,8 @@ import { buildFallbackResult } from '../components/recognitionResult/localFallba
  *  - AC-A2：断网 / 无 Token / 上游超时一律落到内置文博库兜底，页面不抛红、不崩溃、不白屏。
  */
 
-const RESULT_BUDGET = 2000 // AC-A1：2 秒内必须有结果上屏
-const REQUEST_TIMEOUT = 5000 // 公共 Axios 未设置有效超时，这里显式给真实工作流 5 秒等待窗口
+const RESULT_BUDGET = 2000 // AC-A1：2 秒内必须有骨架屏/先期兜底上屏
+const REQUEST_TIMEOUT = 25000 // 真实 Coze 大模型工作流（视觉+流变+TTS）耗时约 4~8 秒，给予 25 秒充足等待窗口确保回填真实结果
 
 export default function Recognition() {
   const [recognitionResult, setRecognitionResult] = useState(null)

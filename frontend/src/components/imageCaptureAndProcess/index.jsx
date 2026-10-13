@@ -32,29 +32,37 @@ function loadImage(src) {
   })
 }
 
-/** 等比缩放并重编码为高质量 JPEG（智能自适应，消灭超大图超限与卡顿） */
-async function shrinkToJpeg(dataUrl) {
-  const image = await loadImage(dataUrl)
-  const width = image.naturalWidth || image.width
-  const height = image.naturalHeight || image.height
-  if (!width || !height) throw new Error('图片尺寸无效')
-  const scale = Math.min(1, MAX_SIDE / Math.max(width, height))
-  const canvas = document.createElement('canvas')
-  canvas.width = Math.max(1, Math.round(width * scale))
-  canvas.height = Math.max(1, Math.round(height * scale))
-  const ctx = canvas.getContext('2d')
-  // 开启高质量图像平滑处理
-  ctx.imageSmoothingEnabled = true
-  ctx.imageSmoothingQuality = 'high'
-  ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
-  return canvas.toDataURL('image/jpeg', 0.85)
+/** 等比缩放并重编码为高质量 JPEG（使用 ObjectURL 零拷贝，完美吃下 20MB~50MB 手机原图） */
+async function shrinkFileToJpeg(file) {
+  const objectUrl = URL.createObjectURL(file)
+  try {
+    const image = await loadImage(objectUrl)
+    const width = image.naturalWidth || image.width
+    const height = image.naturalHeight || image.height
+    if (!width || !height) throw new Error('图片尺寸无效')
+    const scale = Math.min(1, MAX_SIDE / Math.max(width, height))
+    const canvas = document.createElement('canvas')
+    canvas.width = Math.max(1, Math.round(width * scale))
+    canvas.height = Math.max(1, Math.round(height * scale))
+    const ctx = canvas.getContext('2d')
+    // 开启高质量图像平滑插值
+    ctx.imageSmoothingEnabled = true
+    ctx.imageSmoothingQuality = 'high'
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
+    return canvas.toDataURL('image/jpeg', 0.85)
+  } finally {
+    URL.revokeObjectURL(objectUrl)
+  }
 }
 
 async function toRecognitionPayload(file) {
+  // 任何大于 400KB 的大文件（如 10MB~50MB 手机原图/相机照），直接走 ObjectURL 极速降维，杜绝内存溢出
+  if (file.size > COMPRESS_THRESHOLD_BYTES) {
+    return shrinkFileToJpeg(file)
+  }
   const raw = await readAsDataUrl(file)
-  // 小于 400KB 且格式符合的直接放行，超大图一律执行 Canvas 极速自适应压模
-  if (SUPPORTED_DATA_URL.test(raw) && raw.length <= COMPRESS_THRESHOLD_BYTES) return raw
-  return shrinkToJpeg(raw)
+  if (SUPPORTED_DATA_URL.test(raw)) return raw
+  return shrinkFileToJpeg(file)
 }
 
 export default function ImageCaptureAndProcess({ onRecognition, children }) {
