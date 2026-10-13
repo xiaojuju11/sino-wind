@@ -86,3 +86,14 @@ mysql -u root -p sino_wind_restore_check < "%USERPROFILE%\sino-wind-before-day1.
 - 最新真实 Koa 入口与 /api/test 验证通过；测试使用隔离临时端口，不占用正式 3000，不修改源代码端口，结束后关闭测试服务。
 - backend/.env.example 已在远程 main 跟踪；本次未改密钥、数据库配置、端口、业务代码或依赖。
 - 新部署机器必须各自执行本地迁移；本机验证不等于云端数据库已迁移。
+
+
+## 本地配置交付补齐与验证（2026-10-13）
+此前未创建任务指定的 .env，现已补齐 backend/.env 的全部模板字段。数据库真实配置沿用已验证的 .env.local；本次将用户提供的未注释 Coze Token 和 DeepSeek API Key 同步写入两份文件，防止 .env.local 将新 .env 覆盖为空值。没有将凭证写入模板、文档或 Git。
+两份环境文件按 dotenv 解析后与所提供值一致，PORT 与数据库配置没有意外变化；全部模板字段已填写，独立数据库连接及当前入口验证成功。AI 凭证“已配置”不等于 API 权限、余额或真实工作流效果已验收；按任务书 AI 实际接入验证交成员 C。
+.env 和 .env.local 被 backend/.gitignore 忽略，Git 索引中未跟踪；backend/.env.example 已在远程 main 及当前提交跟踪，无需重复提交。
+已重新执行 init-day1.js，退出码 0，现有库结构齐备，不重建或搬迁数据。后端使用既有 PORT=3000，与代码和模板一致；task_assignments.md 的“默认3001”仍须队长统一，未私改服务端口。
+本次仅更新本机配置和任务 A 文档；备份恢复与云端迁移没有执行。
+
+## 成员 B 反馈中的端口与鉴权说明
+当前 backend/src/index.js 使用 process.env.PORT || 3000，模板及本地 PORT=3000；文档示例3001不作为擅自变更端口的依据。已有鉴权工具支持 Bearer 和原始 Token，失效返回历史416（用户不存在的业务场景可返回401）；这些状态应由前端按现有协议处理。公共前端超时、主题兼容和队友 PR 合流交队长处理，不属于本轮任务 A 数据库配置改动。
