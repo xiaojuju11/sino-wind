@@ -1729,3 +1729,26 @@
   background-position: center center, center center;
   background-repeat: no-repeat, no-repeat;
 }
+
+// ── 暗夜·古今识物：底图再压暗 + 标题/导语提高对比（解决「拍一物，识古名…」看不清）──
+[data-theme='dark'] .home-shiwu-section {
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--gf-bg-card) 84%, transparent),
+      color-mix(in srgb, var(--gf-bg-card) 84%, transparent)
+    ),
+    url('/assets/home/bg-shiwu.jpg');
+  background-size: cover, cover;
+  background-position: center center, center center;
+  background-repeat: no-repeat, no-repeat;
+}
+
+[data-theme='dark'] .home-shiwu-section .home-section-title,
+[data-theme='dark'] .home-shiwu-section .home-section-sub {
+  color: var(--gf-ink-primary);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme='dark'] .home-shiwu-section .home-section-sub {
+  font-size: 0.28rem;
+}
