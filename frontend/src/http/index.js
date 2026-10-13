@@ -1,8 +1,8 @@
-import axios from 'axios'
+﻿import axios from 'axios'
 import { Toast } from 'antd-mobile'//轻提示组件，请求出错时自动弹出错误消息
 
 axios.timeout = 5000  // 请求超时时间：5 秒  超过 5 秒没响应就自动断开
-axios.defaults.baseURL = 'http://120.26.186.48:3000'  // 基础接口地址  以后写接口地址不用每次都写一长串，直接写 /api/user 就行
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE || 'http://120.26.186.48:3000'  // 基础接口地址  以后写接口地址不用每次都写一长串，直接写 /api/user 就行
 axios.defaults.headers.post['Content-Type'] = 'application/json'// POST 请求默认发送 JSON 格式数据  所有 POST 自动告诉后端：我发的是 JSON
 
 

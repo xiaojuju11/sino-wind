@@ -54,3 +54,16 @@ export { useTheme } from './useTheme.js'
 | :--- | :--- | :--- |
 | 任务B（雅集首页与白话雅译） | 已并入 main（PR #12）；后续 9 个暗夜/底图精修待合并 | `Home.jsx` / `home.less` / 5 张底图 / 交接文档 |
 | 任务B（基础环境准备·前端联调） | ✅ 完成 | 前端 5173 启动成功 + 健康检查/登录/Token/CORS 全链路实测通过；报告 `docs/FRONTEND_VERIFICATION.md`（含截图与原始 JSON 响应） |
+
+---
+
+## 📌 更新记录（2026-10-13 · 已直接处理）
+
+| 原条目 | 处理结果 |
+| :--- | :--- |
+| 二、`http/index.js` baseURL 写死远程 | ✅ **已改**：`import.meta.env.VITE_API_BASE \|\| 'http://120.26.186.48:3000'`（保留远程默认，本地用 `frontend/.env.local` 覆盖为 `http://localhost:3000`，该文件已被 .gitignore 排除） |
+| 三、`Layout.jsx`「知音」推车图标 | ✅ **已改**：改用 `antd-mobile-icons` 的 **`MailOpenOutline`（矢量信札）**，语义正确且激活态可随 `currentColor` 变朱砂红（雅集/书斋仍用切图 mask） |
+| 三、7 处 emoji | ⚠️ **减 1**：首页示例箭头 `→` 已换 `<RightOutline />`；剩 6 处（🌙日月/☀️天气/🌼物候/☕奶茶/🎒书包/↗）**仍需队长上传 iconfont** |
+| 四-1、主题模块兼容导出 | 📄 **已出补丁**：`docs/patches/03-theme-reexport.md`（一行 `export { useTheme } from './useTheme.js'`）；**未直接改 A 的分支**，避免与其在改文件冲突 |
+| 四-2/3、`backend/.env`、端口与 416 口径 | ⏳ 仍待 A / 队长处理（属后端与文档范围） |
+| 一、合并分支 | ✅ **已由用户授权并执行**：本分支已合入 `team/main` 并推送 origin + team |

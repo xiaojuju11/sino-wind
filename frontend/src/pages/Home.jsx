@@ -298,7 +298,7 @@ export default function Home() {
               >
                 <span className="home-shiwu-demo__icon" aria-hidden="true">{item.icon}</span>
                 <span className="home-shiwu-demo__modern">{item.modern}</span>
-                <span className="home-shiwu-demo__arrow" aria-hidden="true">→</span>
+                <RightOutline className="home-shiwu-demo__arrow" />
                 <span className="home-shiwu-demo__ancient">{item.ancient}</span>
                 <RightOutline className="home-shiwu-demo__chevron" />
               </button>
