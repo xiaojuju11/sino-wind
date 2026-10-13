@@ -1676,3 +1676,19 @@
   background-image: none;
   background-color: var(--gf-bg-card);
 }
+
+// ── 暗夜模式：古今识物整块【不显示底图】（用户要求，浅色保留）──
+[data-theme='dark'] .home-shiwu-section {
+  background-image: none;
+  background-color: var(--gf-bg-card);
+}
+
+// 兜底：两种模式下示例体验框都不得有底图
+.home-shiwu-demo,
+.home-shiwu-demo::before,
+.home-shiwu-demo::after,
+[data-theme='dark'] .home-shiwu-demo,
+[data-theme='dark'] .home-shiwu-demo::before,
+[data-theme='dark'] .home-shiwu-demo::after {
+  background-image: none;
+}
