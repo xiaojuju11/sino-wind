@@ -135,6 +135,7 @@ export default function MinePage() {
     <div className='shuzhai-root'>
       {/* 1. 顶部水墨意境题头 */}
       <header className='shuzhai-header'>
+        <ThemeToggle className='shuzhai-header__theme' />
         <div className='shuzhai-header__title-wrap'>
           <h1 className='shuzhai-header__title'>墨隐书斋</h1>
           <span className='shuzhai-header__seal'>两宋</span>

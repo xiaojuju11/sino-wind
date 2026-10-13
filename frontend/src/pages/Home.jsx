@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import '../styles/home.less'
-import { Toast } from 'antd-mobile'
+import { Toast, ActionSheet } from 'antd-mobile'
 import { DownOutline, RightOutline, UpOutline, CompassOutline, EditSOutline, CheckCircleOutline, DownCircleOutline } from 'antd-mobile-icons'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext'
@@ -128,6 +128,16 @@ const YAYAN_PRESET = {
   explanation: '清风怡情，信步幽林，极尽萧散之趣。',
 }
 
+// 漫游古今经典城邑库
+const ANCIENT_CITIES = [
+  { name: '杭州', ancient: '临安', temp: '24°', weather: '晴和', desc: '天朗气清，惠风和畅。', wuhou: '菊有黄华', text: '临安（杭州）· 水光潋滟晴方好' },
+  { name: '开封', ancient: '汴京', temp: '19°', weather: '微风', desc: '烟柳画桥，风帘翠幕，参差十万人家。', wuhou: '草木黄落', text: '汴京（开封）· 烟柳画桥风帘幕' },
+  { name: '西安', ancient: '长安', temp: '18°', weather: '清爽', desc: '春风得意马蹄疾，一日看尽长安花。', wuhou: '鸿雁来宾', text: '长安（西安）· 春风得意马蹄疾' },
+  { name: '洛阳', ancient: '洛邑', temp: '20°', weather: '晴朗', desc: '洛阳地脉花最宜，牡丹尤为天下奇。', wuhou: '玄鸟归去', text: '洛阳（洛邑）· 地脉花宜满城香' },
+  { name: '苏州', ancient: '姑苏', temp: '21°', weather: '薄雾', desc: '月落乌啼霜满天，江枫渔火对愁眠。', wuhou: '寒蝉鸣止', text: '姑苏（苏州）· 江枫渔火对愁眠' },
+  { name: '南京', ancient: '金陵', temp: '23°', weather: '和煦', desc: '江南佳丽地，金陵帝王州。', wuhou: '水始涸', text: '金陵（南京）· 江南佳丽帝王州' },
+]
+
 export default function Home() {
   const navigate = useNavigate()
   const { toggleTheme, isDark } = useTheme()
@@ -139,7 +149,9 @@ export default function Home() {
   // 离线兜底标记（TRD_PHASE3 §3.3：保留本地名句兜底库；标记后按兜底文案呈现，不冒充 AI 生成）
   const [yayanOffline, setYayanOffline] = useState(false)
 
-  // ② 时令天象（动态换算）
+  // ② 时令天象（动态换算与漫游古今城邑）
+  const [currentCity, setCurrentCity] = useState(ANCIENT_CITIES[0])
+  const [visibleCitySheet, setVisibleCitySheet] = useState(false)
   const curShichen = getTraditionalTime()
   const ganzhi = getGanzhi()
   const dateText = getDateText()
@@ -312,7 +324,8 @@ export default function Home() {
           <button
             type="button"
             className="home-almanac__roam"
-            onClick={() => Toast.show({ content: '漫游古今：换城易时，静候雅聚' })}
+            onClick={() => setVisibleCitySheet(true)}
+            aria-label="漫游古今城邑"
           >
             <CompassOutline className="home-almanac__roam-icon" />
             漫游
@@ -328,10 +341,16 @@ export default function Home() {
               <span className="home-almanac__sun" aria-hidden="true">
                 <SunWheelGlyph />
               </span>
-              <span className="home-almanac__temp">24°</span>
+              <span className="home-almanac__temp">{currentCity.temp}</span>
             </div>
-            <p className="home-almanac__city">
-              杭州
+            <p
+              className="home-almanac__city"
+              onClick={() => setVisibleCitySheet(true)}
+              style={{ cursor: 'pointer' }}
+              role="button"
+              tabIndex={0}
+            >
+              {currentCity.ancient}（{currentCity.name}）
               <DownOutline className="home-almanac__caret" />
             </p>
             <p className="home-almanac__date">{dateText}</p>
@@ -347,11 +366,11 @@ export default function Home() {
             <p className="home-almanac__ganzhi">
               {ganzhi.year} {ganzhi.month} {curShichen.name}
             </p>
-            <p className="home-almanac__desc">天朗气清，惠风和畅。</p>
+            <p className="home-almanac__desc">{currentCity.desc}</p>
             <p className="home-almanac__wuhou">
-              {/* 图标铁律：物候改 CSS 印章「菊」（原花卉 Emoji 已消灭） */}
-              <span className="home-almanac__wuhou-seal" aria-hidden="true">菊</span>
-              <span className="home-almanac__wuhou-label">物候：</span>菊有黄华
+              {/* 图标铁律：物候改 CSS 印章「菊」/ 依城而定（原花卉 Emoji 已消灭） */}
+              <span className="home-almanac__wuhou-seal" aria-hidden="true">{currentCity.wuhou.slice(0, 1)}</span>
+              <span className="home-almanac__wuhou-label">物候：</span>{currentCity.wuhou}
             </p>
           </div>
         </div>
@@ -426,6 +445,26 @@ export default function Home() {
           </button>
         </div>
       </section>
+
+      {/* ── 漫游古今城邑抽屉 ── */}
+      <ActionSheet
+        visible={visibleCitySheet}
+        actions={ANCIENT_CITIES.map((c) => ({
+          text: c.text,
+          key: c.ancient,
+          description: `物候：${c.wuhou} · 气温 ${c.temp}`
+        }))}
+        onClose={() => setVisibleCitySheet(false)}
+        onAction={(action) => {
+          const matched = ANCIENT_CITIES.find((c) => c.ancient === action.key)
+          if (matched) {
+            setCurrentCity(matched)
+            Toast.show({ content: `已漫游至${matched.ancient}：${matched.desc}` })
+          }
+          setVisibleCitySheet(false)
+        }}
+        cancelText="留驻当下"
+      />
     </div>
   )
 }

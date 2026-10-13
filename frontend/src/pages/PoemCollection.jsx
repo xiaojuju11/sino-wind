@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { LeftOutline, SearchOutline, FileOutline, RightOutline, HeartOutline } from 'antd-mobile-icons'
+import { LeftOutline, SearchOutline, FileOutline, RightOutline, HeartOutline, CloseOutline } from 'antd-mobile-icons'
 import { Toast, Modal } from 'antd-mobile'
 import axios from '../http'
+import ThemeToggle from '../context/ThemeToggle'
 import '../styles/poemCollection.less'
 
 // 古典兜底名篇（若后端未连接或新用户暂无收藏时展示）
@@ -80,7 +81,28 @@ export default function PoemCollection() {
     )
   })
 
-  // 移除诗笺操作
+  // 携诗入席论道
+  const handleChatWithSage = (poem) => {
+    let sageKey = 'sushi'
+    const author = poem?.author || ''
+    if (author.includes('李白')) sageKey = 'libai'
+    else if (author.includes('李清照')) sageKey = 'liqingzhao'
+    else if (author.includes('王阳明')) sageKey = 'wangyangming'
+    else if (author.includes('苏轼')) sageKey = 'sushi'
+
+    navigate(`/chat/${sageKey}`, {
+      state: {
+        poemContext: {
+          title: poem.title,
+          author: poem.author,
+          dynasty: poem.dynasty,
+          paragraphs: typeof poem.content === 'string' ? poem.content.split(/[，。！？；\n]+/).filter(Boolean) : poem.content
+        }
+      }
+    })
+  }
+
+  // 移除诗笺操作（服务端数据库同步与修持计数核销）
   const handleRemovePoem = (e, poemId) => {
     e.stopPropagation()
     Modal.confirm({
@@ -88,9 +110,15 @@ export default function PoemCollection() {
       content: '确定要将此诗笺从您的书斋珍藏中移出吗？',
       confirmText: '移出',
       cancelText: '保留',
-      onConfirm: () => {
-        setPoems(prev => prev.filter(p => p.id !== poemId))
-        Toast.show({ content: '已移出诗笺', icon: 'success' })
+      onConfirm: async () => {
+        try {
+          const res = await axios.post('/api/poem/remove', { id: poemId })
+          setPoems(prev => prev.filter(p => p.id !== poemId))
+          Toast.show({ content: res.data?.message || '已成功退卷归架', icon: 'success' })
+        } catch {
+          setPoems(prev => prev.filter(p => p.id !== poemId))
+          Toast.show({ content: '已移出诗笺', icon: 'success' })
+        }
       }
     })
   }
@@ -106,8 +134,9 @@ export default function PoemCollection() {
           <h1 className='collection-header__title'>我的诗笺</h1>
           <span className='collection-header__seal'>墨隐珍藏</span>
         </div>
-        <div className='collection-header__count'>
-          共 {poems.length} 卷
+        <div className='collection-header__actions'>
+          <span className='collection-header__count'>共 {poems.length} 卷</span>
+          <ThemeToggle className='collection-header__theme' />
         </div>
       </header>
 
@@ -123,8 +152,8 @@ export default function PoemCollection() {
             onChange={(e) => setSearchKey(e.target.value)}
           />
           {searchKey && (
-            <button className='collection-search-clear' onClick={() => setSearchKey('')}>
-              ×
+            <button className='collection-search-clear' onClick={() => setSearchKey('')} aria-label='清空'>
+              <CloseOutline />
             </button>
           )}
         </div>
@@ -207,9 +236,18 @@ export default function PoemCollection() {
               </div>
             )}
 
-            <button className='poem-modal-close-btn' onClick={() => setActivePoem(null)}>
-              卷 轴 归 架
-            </button>
+            <div className='poem-modal-actions'>
+              <button
+                type='button'
+                className='poem-modal-action-btn--sage'
+                onClick={() => handleChatWithSage(activePoem)}
+              >
+                携诗入席 · 与{activePoem.author}论道 →
+              </button>
+              <button type='button' className='poem-modal-close-btn' onClick={() => setActivePoem(null)}>
+                卷 轴 归 架
+              </button>
+            </div>
             <span className='poem-modal-roller bottom' />
           </div>
         </div>

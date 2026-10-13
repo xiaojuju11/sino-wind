@@ -193,8 +193,58 @@ async function collection(ctx) {
 }
 async function myList(ctx) {
   try {
-    const [rows] = await db.execute('SELECT id, title, author, dynasty, content, created_at FROM user_poems WHERE user_id = ? ORDER BY created_at DESC, id DESC', [ctx.userId])
+    const [rows] = await db.execute('SELECT id, poem_id, title, author, dynasty, content, appreciation, created_at FROM user_poems WHERE user_id = ? ORDER BY created_at DESC, id DESC', [ctx.userId])
     ctx.body = { code: 1, message: '获取成功', data: rows }
   } catch { ctx.status = 503; ctx.body = { code: 0, message: '诗笺暂未获取，请稍后重试' } }
 }
-module.exports = { random, search, collect, collection, myList }
+
+async function removeCollect(ctx) {
+  const poemId = ctx.params?.id || ctx.request.body?.id || ctx.request.body?.poemId
+  if (!poemId) {
+    ctx.status = 400
+    ctx.body = { code: 0, message: '请提供待移出之诗笺编号' }
+    return
+  }
+
+  let connection
+  try {
+    connection = await db.getConnection()
+    await connection.beginTransaction()
+
+    // 查找该用户是否拥有此收藏（支持按记录自增 id 或上游 poem_id 匹配）
+    const [existing] = await connection.execute(
+      'SELECT id FROM user_poems WHERE user_id = ? AND (id = ? OR poem_id = ?) LIMIT 1',
+      [ctx.userId, poemId, String(poemId)]
+    )
+
+    if (!existing.length) {
+      await connection.rollback()
+      ctx.body = { code: 1, message: '诗笺已移出或不存在', removed: false }
+      return
+    }
+
+    const rowId = existing[0].id
+    await connection.execute('DELETE FROM user_poems WHERE id = ?', [rowId])
+    await connection.execute(
+      'UPDATE users SET poem_count = GREATEST(0, COALESCE(poem_count, 1) - 1) WHERE id = ?',
+      [ctx.userId]
+    )
+    const [[updated]] = await connection.execute('SELECT poem_count FROM users WHERE id = ?', [ctx.userId])
+    await connection.commit()
+
+    ctx.body = {
+      code: 1,
+      message: '已成功退卷归架',
+      newPoemCount: updated?.poem_count ?? 0,
+      removed: true
+    }
+  } catch (error) {
+    if (connection) await connection.rollback().catch(() => {})
+    ctx.status = 503
+    ctx.body = { code: 0, message: '移出诗笺暂不可用，请稍后重试' }
+  } finally {
+    if (connection) connection.release()
+  }
+}
+
+module.exports = { random, search, collect, collection, myList, removeCollect }

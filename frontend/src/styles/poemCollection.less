@@ -64,6 +64,12 @@
     transform: scale(0.9);
   }
 
+  &__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.16rem;
+  }
+
   &__count {
     font-size: 0.32rem;
     color: var(--gf-text-sub, @color-text-sub);
@@ -400,15 +406,41 @@
     }
   }
 
+  .poem-modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .poem-modal-action-btn--sage {
+    display: block;
+    width: 100%;
+    padding: 0.22rem 0;
+    background: var(--gf-bamboo, @color-bamboo);
+    color: #fff;
+    border: 1px solid fade(@color-gold, 50%);
+    border-radius: 0.4rem;
+    font-size: 0.34rem;
+    font-weight: 600;
+    letter-spacing: 0.04rem;
+    cursor: pointer;
+    box-shadow: 0 0.06rem 0.16rem rgba(0, 0, 0, 0.15);
+    transition: transform 0.15s ease;
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
   .poem-modal-close-btn {
     display: block;
     width: 100%;
-    padding: 0.24rem 0;
+    padding: 0.22rem 0;
     background: var(--gf-seal, @color-seal);
     color: #FAF7F0;
     border: none;
     border-radius: 0.4rem;
-    font-size: 0.38rem;
+    font-size: 0.36rem;
     font-weight: 600;
     letter-spacing: 0.08rem;
     cursor: pointer;

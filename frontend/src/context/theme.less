@@ -179,5 +179,114 @@
       color: var(--gf-text-sub) !important;
     }
   }
+
+  // ── 墨隐书斋（主页面三）暗色模式深化 ──
+  .shuzhai-root {
+    color: var(--gf-text-main) !important;
+
+    .scholar-card,
+    .shuzhai-section-card {
+      background-color: var(--gf-bg-card) !important;
+      border-color: fade(#CEA559, 28%) !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45) !important;
+    }
+
+    .scholar-card__profile,
+    .shuzhai-section-head {
+      border-bottom-color: fade(#CEA559, 20%) !important;
+    }
+
+    .shuzhai-list-item:not(:last-child) {
+      border-bottom-color: fade(#CEA559, 15%) !important;
+    }
+
+    .scholar-stats__item:not(:last-child) {
+      border-right-color: fade(#CEA559, 20%) !important;
+    }
+  }
+
+  // 雅译锦囊抽屉与关于弹窗暗色
+  .yayan-popup {
+    .adm-popup-body {
+      background-color: var(--gf-bg-paper) !important;
+    }
+    .yayan-box {
+      color: var(--gf-text-main) !important;
+      &__header {
+        border-bottom-color: fade(#CEA559, 25%) !important;
+      }
+      &__item {
+        background-color: var(--gf-bg-card) !important;
+        border-color: fade(#CEA559, 28%) !important;
+      }
+      &__ancient {
+        color: var(--gf-text-main) !important;
+      }
+      &__modern {
+        color: var(--gf-text-sub) !important;
+      }
+    }
+  }
+
+  .about-box {
+    background-color: var(--gf-bg-paper) !important;
+    &__title {
+      color: var(--gf-text-main) !important;
+    }
+    &__desc {
+      background-color: var(--gf-bg-card) !important;
+      border-color: fade(#CEA559, 28%) !important;
+      color: var(--gf-text-sub) !important;
+    }
+  }
+
+  // ── 我的诗笺（PoemCollection 子页面）暗色支持 ──
+  .poem-collection-root {
+    background-color: var(--gf-bg-paper) !important;
+    color: var(--gf-text-main) !important;
+
+    .collection-header {
+      background-color: var(--gf-bg-card) !important;
+      border-bottom-color: fade(#CEA559, 35%) !important;
+    }
+
+    .collection-search-box {
+      background-color: var(--gf-bg-card) !important;
+      border-color: fade(#CEA559, 35%) !important;
+    }
+
+    .poem-card {
+      background-color: var(--gf-bg-card) !important;
+      border-color: fade(#CEA559, 30%) !important;
+      box-shadow: 0 0.06rem 0.2rem rgba(0, 0, 0, 0.4) !important;
+    }
+
+    .poem-modal-paper {
+      background-color: var(--gf-bg-card) !important;
+      border-color: fade(#CEA559, 45%) !important;
+      color: var(--gf-text-main) !important;
+    }
+
+    .poem-modal-appreciation {
+      background: var(--gf-bg-sunk) !important;
+    }
+  }
+
+  // ── 问道先贤（ScholarChat 子页面）暗色立绘横幅深化 ──
+  .scholar-hero-banner {
+    background: linear-gradient(180deg, #171E23 0%, #10161B 100%) !important;
+    border-bottom-color: fade(#CEA559, 35%) !important;
+  }
+  .scholar-msg-avatar {
+    background: #171E23 !important;
+  }
+
+  // ── 拍照识器（Recognition 子页面）暗色模式深化 ──
+  .image-capture-root {
+    .image-capture-preview {
+      background-color: var(--gf-bg-card) !important;
+      border-color: fade(#CEA559, 35%) !important;
+    }
+  }
 }
 
