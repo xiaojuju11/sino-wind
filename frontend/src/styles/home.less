@@ -1658,3 +1658,21 @@
 [data-theme='dark'] .home-shiwu-demo__item {
   background: transparent;
 }
+
+// ── 修复：暗色模式下内层 body 底图仍显示（旧暗色规则优先级更高压过了 opacity:0）──
+.home-shiwu-body::after {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+[data-theme='dark'] .home-shiwu-body::after {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+// 顺带确认：示例体验框在两种模式下都无底图
+.home-shiwu-demo,
+[data-theme='dark'] .home-shiwu-demo {
+  background-image: none;
+  background-color: var(--gf-bg-card);
+}
