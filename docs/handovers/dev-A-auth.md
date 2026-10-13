@@ -340,3 +340,12 @@ cd backend && npm ci && node src/index.js
 ```
 
 结论：成员 A 本阶段授权范围的实现与本地验证完成，可提交评审；真实模型 / 真实 Coze 工作流、B/C/D 页面主题适配与团队全链路联调仍未验收，不以本轮兜底测试冒充真实 AI 落地。
+
+
+## 环境准备任务 A（2026-10-13）
+- 刘霞，feat/phase2-backend，远程 main 6e1256a 已快进同步。
+- 对照 task_assignments.md 仅完成 A 的后端与数据库环境检查；沿用当前项目契约和默认 3000，不执行冲突的 AI 请求示例或 Docker 任务。
+- MySQL 8.0.43、四列默认值、收藏表九字段、用户索引及两表 InnoDB 检查通过；现有 init-day1.js 重跑成功，不需要重建或搬迁数据库。
+- 当前真实 Koa 入口及健康接口验证通过（隔离临时端口，不改源代码）。
+- 新增 docs/DB_MIGRATION.md，含配置、备份、迁移、检查、错误和恢复步骤；真实密钥沿用本机 .env.local，不上传。迁移前备份及恢复步骤本次未执行，不虚构记录。
+- .env.example 已在 main 入库；新增 AI 使用记录 docs/handovers/ai-log-xiaoxia-2026-10-13.md。仅文档改动，无业务代码修改；待本人审阅提交。
