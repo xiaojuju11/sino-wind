@@ -13,11 +13,7 @@
     text-align: center;
     padding: 10px 0 14px;
 
-    &__theme {
-      position: absolute;
-      right: 0;
-      top: 10px;
-    }
+    // 原 &__theme（题头右上角日月切换的绝对定位）已随该控件移除，故一并删除。
 
     &__title-wrap {
       display: inline-flex;
@@ -302,23 +298,6 @@
           font-size: 11px;
           color: var(--gf-text-sub, @color-text-sub);
           margin-top: 2px;
-
-          .shuzhai-theme-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 15px;
-            height: 15px;
-            font-size: 10px;
-            font-family: 'STKaiti', 'KaiTi', serif;
-            font-weight: 700;
-            color: var(--gf-accent-text, @color-seal);
-            border: 1px solid currentColor;
-            border-radius: 50%;
-            margin-right: 2px;
-            vertical-align: -1px;
-            line-height: 1;
-          }
         }
 
         &__arrow {
@@ -347,6 +326,7 @@
   .shuzhai-logout-wrap {
     text-align: center;
     padding: 10px 0 20px;
+    
 
     .shuzhai-logout-btn {
       width: 100%;
@@ -391,6 +371,22 @@
     padding-bottom: 12px;
     border-bottom: 1px dashed @color-divider;
     margin-bottom: 14px;
+
+    // ── 窗口冻结（吸顶）──────────────────────────────────
+    // 滚动容器是 .yayan-popup .adm-popup-body（max-height: 75vh; overflow-y: auto），
+    // 故把表头 sticky 在其顶部：滚动锦囊列表时标题与关闭键始终可见。
+    // 关键点：
+    //  1) 必须有实底背景，否则下方条目会从表头底下透出来，糊成一片；
+    //     底色取抽屉本体的 --gf-bg-paper（而非卡片色），吸顶块才不会与抽屉出现色差；
+    //  2) 用负外边距 + 等量内边距把背景横向铺满整个抽屉（否则 .yayan-box 的
+    //     18px 内边距会在表头两侧留下两条"缝"，滚过的内容从缝里露出来）；
+    //  3) z-index 提到列表之上，并补回上内边距，避免吸顶后贴住抽屉顶沿。
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    margin: 0 -18px 14px;
+    padding: 12px 18px;
+    background-color: var(--gf-bg-paper, @color-bg);
   }
 
   &__title {
@@ -551,3 +547,51 @@
   }
 }
 
+
+// ════════════════════════════════════════════════════
+//  「关于云山竹简」弹窗的确认按钮（知悉）
+//  类名由 MinePage.jsx 的 Modal.show({ actions: [{ className: 'shuzhai-about-confirm' }] }) 注入；
+//  Antd Modal 渲染到 body 下的 portal，不在 .shuzhai-root 子树内，故只能按类名命中，
+//  站内其他 Modal 未使用该类名，互不影响。
+//  视觉口径：与「整装离席」同一套语汇（朱砂描边 + 朱砂字 + 700 + 胶囊圆角），
+//  底色不设（沿用 Antd 默认白底）。
+//  ⚠️ Antd 的两条规则需分别对付：
+//    .adm-modal-footer .adm-modal-button { font-size: …; line-height: 25px }  → 两点选择器，用双类名提优先级
+//    …:not(.adm-modal-button-primary) { padding-top: 0; padding-bottom: 0 }   → longhand 恒胜 shorthand，
+//                                                                               只能靠 JSX 内联 style 压制
+//  暗色底色走 --gf-bg-card：Antd 的 --adm-color-background 暗色下仍是白。
+// ════════════════════════════════════════════════════
+.shuzhai-about-confirm.shuzhai-about-confirm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1.5px solid var(--gf-seal, @color-seal);
+  color: var(--gf-accent-text, @color-seal);
+  font-family: 'STKaiti', 'KaiTi', var(--gf-font-serif, serif);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 8px 32px;
+  line-height: 1.35;
+  background-color: var(--gf-bg-card, #ffffff);
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+
+  &:active {
+    background-color: var(--gf-seal, @color-seal);
+    border-color: var(--gf-seal, @color-seal);
+    color: #fff;
+  }
+
+  [data-theme='dark'] & {
+    border-color: var(--gf-accent-text, @color-gold);
+    color: var(--gf-accent-text, @color-gold);
+
+    &:active {
+      background-color: var(--gf-seal, @color-seal);
+      border-color: var(--gf-seal, @color-seal);
+      color: #fff;
+    }
+  }
+}
