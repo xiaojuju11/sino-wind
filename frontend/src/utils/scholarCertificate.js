@@ -69,7 +69,8 @@ export async function createScholarCertificate(game, documentObject = document) 
   await documentObject.fonts?.ready
   const lines = game.turns.map(t => `${t.role === 'user' ? '雅士' : '先贤'}：${t.line}。`).join('')
   const outcome = game.winner === 'user' ? '胜出' : game.winner === 'draw' ? '和局' : '研习'
-  const text = `雅士${String(game.nickname || '云山居士').slice(0, 30)}，与${game.sageId === 'sushi' ? '苏轼' : '李白'}对席飞花。以「${game.keyword}」为令，遵${game.rhyme || '未定韵'}，共成${game.rounds}轮，今记${outcome}。${lines}本局实记修持${game.pointsAwarded || 0}分。`
+  const sageName = { libai: '李白', sushi: '苏轼', liqingzhao: '李清照', wangyangming: '王阳明', dufu: '杜甫' }[game.sageId] || '先贤'
+  const text = `雅士${String(game.nickname || '云山居士').slice(0, 30)}，与${sageName}对席飞花。以「${game.keyword}」为令，遵${game.rhyme || '未定韵'}，共成${game.rounds}轮，今记${outcome}。${lines}本局实记修持${game.pointsAwarded || 0}分。`
   const columns = 12, rows = Math.ceil(Array.from(text).length / columns) + 2
   const width = 600, height = Math.max(1080, 510 + rows * 30), scale = 2
   if (height > 4000) throw new Error('文牒过长，请减少记录内容')

@@ -459,7 +459,7 @@ export default function ScholarChat() {
       {/* 5. 底部宣纸输入与操作栏 */}
       {!gameOpen && <footer className="scholar-footer">
         <div className="scholar-footer__quick-tools">
-          {['libai', 'sushi'].includes(sageKey) && <button type="button" className="scholar-tool-btn" disabled={loading} onClick={() => setGameOpen(true)}><EditSOutline /> 飞花令</button>}
+          {['libai', 'sushi', 'liqingzhao', 'wangyangming', 'dufu'].includes(sageKey) && <button type="button" className="scholar-tool-btn" disabled={loading || hydrating} onClick={() => setGameOpen(true)}><EditSOutline /> 飞花令</button>}
           {loading && <button type="button" className="scholar-tool-btn" onClick={() => activeRequest.current?.controller.abort()}>停止研墨</button>}
           <button
             type="button"

@@ -65,7 +65,7 @@ async function turn(ctx) {
 }
 async function rules(ctx) {
   const availableRhymes = Object.fromEntries(engine.KEYWORDS.map(key => [key, [...new Set(engine.poems.filter(p => p.line.includes(key)).flatMap(p => engine.rhymeGroups(p.line)))]]))
-  ctx.body = { code: 1, data: { keywords: engine.KEYWORDS, rhymes: engine.rhymeData.groups.map(g => g.name), availableRhymes, poems: engine.poems, seconds: 30, maxRounds: 6, winPoints: 3, drawPoints: 1, source: engine.rhymeData.source } }
+  ctx.body = { code: 1, data: { sages: engine.SAGES, keywords: engine.KEYWORDS, rhymes: engine.rhymeData.groups.map(g => g.name), availableRhymes, poems: engine.poems, seconds: 30, maxRounds: 6, winPoints: 3, drawPoints: 1, source: engine.rhymeData.source } }
 }
 const readState = row => ({ id: row.id, ...(typeof row.state === 'string' ? JSON.parse(row.state) : row.state), pointsAwarded: row.awarded_points, settled: true })
 async function records(ctx) {

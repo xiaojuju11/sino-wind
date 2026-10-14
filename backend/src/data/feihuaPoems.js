@@ -26,4 +26,6 @@ module.exports = [
   ['春江水暖鸭先知','苏轼','惠崇春江晚景'],['潭面无风镜未磨','刘禹锡','望洞庭'],
   ['春眠不觉晓','孟浩然','春晓'],['春色满园关不住','叶绍翁','游园不值'],
   ['春风得意马蹄疾','孟郊','登科后'],['一枝红杏出墙来','叶绍翁','游园不值']
-].map(([line, author, title]) => ({ line, author, title }))
+].map(([line, author, title]) => ({ line, author, title, source: `https://zh.wikisource.org/zh-hans/Author:${author}` }))
+// Preserve existing entry order for saved games; deduplicate the expanded corpus.
+module.exports = [...new Map([...module.exports, ...require('./feihuaCorpus')].map(p => [p.line, p])).values()]

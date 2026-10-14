@@ -41,6 +41,19 @@ async function run() {
   await api.detail(conversation); assert.equal(conversation.body.data.reply.unread, false)
   const other = { userId: userId + 999999, params: { sageId: 'libai' } }; await api.detail(other); assert.equal(other.body.data.turns.length, 0)
   console.log('PASS 信札归档去重、四轮离席、并发仅一封、个性赠言、未读持久化与账户隔离')
+  assert.ok(engine.poems.length >= 150)
+  assert.ok(engine.poems.every(p => engine.rhymeGroups(p.line).length), '每条题库句末都有韵部或有明确多音部候选')
+  assert.ok(engine.poems.filter(p => engine.KEYWORDS.some(k => p.line.includes(k)) && engine.rhymeGroups(p.line).length).length >= 150)
+  assert.equal(new Set(engine.poems.map(p => engine.normalize(p.line))).size, engine.poems.length)
+  const samples = { libai: '举头望明月', sushi: '举头望明月', liqingzhao: '峨眉山月半轮秋', wangyangming: '不识庐山真面目', dufu: '风吹草低见牛羊' }
+  for (const [sageId, line] of Object.entries(samples)) {
+    const keyword = engine.SAGES[sageId].keywords.find(k => line.includes(k))
+    const game = engine.createGame({ sageId, keyword, rhyme: engine.rhymeGroups(line)[0] }, 0)
+    const next = engine.move(game, { action: 'submit', line }, 1).game
+    assert.equal(next.turns[1].author, engine.SAGES[sageId].name)
+  }
+  for (const line of ['床前明月光','春眠不觉晓','白日依山尽','举头望明月','花落知多少','春风又绿江南岸','天门中断楚江开','春江水暖鸭先知','春风花草香','国破山河在','月是故乡明','明月松间照','清泉石上流','野火烧不尽','明月来相照','月出惊山鸟','江清月近人','青山郭外斜','春风不度玉门关','一片冰心在玉壶','二月春风似剪刀','春色满园关不住','映日荷花别样红','问君能有几多愁','月满西楼','载不动许多愁','清风半夜鸣蝉','风急天高猿啸哀','山重水复疑无路','夜阑卧听风吹雨']) assert.ok(engine.poems.some(p => p.line === line), line)
+  console.log(`PASS 五位先贤风格优先、去重题库${engine.poems.length}句、可校韵应令150+句、30句常见名篇回归样本（非教材全集覆盖率）`)
 }
 run().catch(e => { console.error(e); process.exitCode = 1 }).finally(async () => {
   for (const id of ids) await db.execute('DELETE FROM feihua_games WHERE id=?', [id])

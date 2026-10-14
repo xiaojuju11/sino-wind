@@ -11,7 +11,7 @@ export default function FeihuaPanel({ sageId, onClose }) {
   const live = useRef(false), lock = useRef(false), offset = useRef(0), guest = useRef(null), versionSent = useRef(null), retryAfter = useRef(0)
   useEffect(() => {
     live.current = true
-    axios.get('/api/deepseek/feihua/rules').then(res => { if (live.current) setRules(res.data.data) })
+    axios.get('/api/deepseek/feihua/rules').then(res => { if (live.current) { setRules(res.data.data); setKeyword(res.data.data.sages?.[sageId]?.keywords[0] || '月') } })
       .catch(() => { if (live.current) setNotice('规则暂未载入，请稍后重新进入') })
     try {
       const saved = JSON.parse(sessionStorage.getItem(`feihua:${sageId}`) || 'null')
@@ -68,13 +68,14 @@ export default function FeihuaPanel({ sageId, onClose }) {
   return <section className='feihua-panel' aria-label='飞花令对弈'>
     <div className='feihua-heading'><h2>飞花令 · 对席</h2><button type='button' onClick={onClose} aria-label='返回对话'><CloseOutline /></button></div>
     <p>三十息应令，同韵续句，双方不可重复。先贤从公开经典题库应答；胜得三分、和局一分，败局不计分。未登录可体验，积分不入书斋。</p>
+    <p>{rules?.sages?.[sageId]?.name} · {rules?.sages?.[sageId]?.style}。跨朝代引句以题库作者署名为准。</p>
     {!game || game.status === 'finished' ? <div className='feihua-controls'>
-      <label>令字<select value={keyword} onChange={e => { setKeyword(e.target.value); setRhyme('') }}>{(rules?.keywords || ['月']).map(k => <option key={k}>{k}</option>)}</select></label>
+      <label>令字<select value={keyword} onChange={e => { setKeyword(e.target.value); setRhyme('') }}>{[...new Set([...(rules?.sages?.[sageId]?.keywords || []), ...(rules?.keywords || ['月'])])].map(k => <option key={k}>{k}</option>)}</select></label>
       <label>平水韵<select value={rhyme} onChange={e => setRhyme(e.target.value)}><option value=''>首句定韵</option>{(rules?.availableRhymes?.[keyword] || []).map(r => <option key={r}>{r}</option>)}</select></label>
       <button type='button' onClick={start} disabled={busy || !rules}>{game ? '再开一局' : '开席行令'}</button>
     </div> : <div className='feihua-round'><strong>令：{game.keyword} · {game.rhyme || '首句定韵'}</strong><span role='timer' aria-label='剩余秒数'>{seconds}秒</span></div>}
     {notice && <p role='status'>{notice}</p>}
-    {game?.turns.map((t, i) => <blockquote key={i}><b>{t.role === 'user' ? '雅士' : game.sageId === 'libai' ? '太白' : '东坡'}：</b>{t.line}<small>〔{t.author}《{t.title}》〕</small></blockquote>)}
+    {game?.turns.map((t, i) => <blockquote key={i}><b>{t.role === 'user' ? '雅士' : rules?.sages?.[game.sageId]?.name || '先贤'}：</b>{t.line}<small>〔{t.author}《{t.title}》〕</small></blockquote>)}
     {game?.status === 'playing' && <form onSubmit={e => { e.preventDefault(); send('submit') }}>
       <label>应令诗句<input value={line} maxLength={100} onChange={e => setLine(e.target.value)} autoComplete='off' placeholder='输入题库中的完整单句' /></label>
       <button type='submit' disabled={busy || !line.trim()}>应令</button><button type='button' disabled={busy} onClick={() => send('resign')}>揖让收局</button>
