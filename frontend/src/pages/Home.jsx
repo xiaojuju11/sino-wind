@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import '../styles/home.less'
 import { Toast, ActionSheet } from 'antd-mobile'
 import { DownOutline, RightOutline, UpOutline, CompassOutline, EditSOutline, CheckCircleOutline, DownCircleOutline } from 'antd-mobile-icons'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../context/useTheme'
+import InkParticleField from '../components/InkParticleField.jsx'
 import axios from '../http'
 
 const BASE = import.meta.env.BASE_URL
@@ -204,6 +205,8 @@ const ANCIENT_CITIES = [
 export default function Home() {
   const navigate = useNavigate()
   const { toggleTheme, isDark } = useTheme()
+  // 题头元素引用：水墨粒子引擎的手势监听直接挂在这里（不新增遮挡层）
+  const heroRef = useRef(null)
 
   // ① 白话雅译
   const [inputText, setInputText] = useState('')
@@ -275,8 +278,11 @@ export default function Home() {
       {/* ── 黑色水墨山水背景（纯矢量 + 刷新水墨生宣漫染动效）── */}
       <InkLandscape />
 
+      {/* ── 水墨流体粒子引擎（Canvas 物理引擎：落叶/流萤/烟雨/飞雪 + 划动水墨扩散）── */}
+      <InkParticleField interactionTarget={heroRef} />
+
       {/* ── 题头：云山竹简 + 朱砂印「华风」+ 副标 + 右上角日月/设置 ── */}
-      <header className="home-hero">
+      <header className="home-hero is-ink-zone" ref={heroRef}>
         <div className="home-hero__actions">
           <button
             type="button"

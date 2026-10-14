@@ -1,0 +1,199 @@
+// ════════════════════════════════════════════════════
+//  水墨流体粒子引擎 · 样式
+//
+//  铁律：装饰画布绝不拦截内容点击（pointer-events: none）
+//        手势交互直接挂在「题头元素」上，不新增任何覆盖层
+// ════════════════════════════════════════════════════
+
+.ink-engine {
+  position: fixed;
+  inset: 0;
+  pointer-events: none; // 装饰层：永不拦截点击
+  overflow: hidden;
+  z-index: 6; // 高于页面背景、低于内容卡片（卡片在 .home-root > * 的 z-index:1 层内）
+  opacity: 0;
+  transition: opacity 0.9s ease;
+
+  &.is-ready {
+    opacity: 1;
+  }
+
+  &__canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+}
+
+// ════════════════════════════════════════════════════
+//  题头手势区：只加视觉线索，不加覆盖层
+//  （由 Home 给 .home-hero 挂 is-ink-zone 类）
+// ════════════════════════════════════════════════════
+.home-hero.is-ink-zone {
+  &::after {
+    content: '划动此处 · 水墨随之散开';
+    position: absolute;
+    left: 50%;
+    bottom: -0.04rem;
+    transform: translateX(-50%);
+    padding: 0.03rem 0.12rem;
+    font-family: var(--gf-font-serif, serif);
+    font-size: 0.19rem;
+    white-space: nowrap;
+    color: color-mix(in srgb, var(--gf-ink-secondary, #6B675B) 80%, transparent);
+    background: color-mix(in srgb, var(--gf-bg-card, #FAF7F0) 66%, transparent);
+    border: 1px dashed color-mix(in srgb, var(--gf-gold, #C59B27) 40%, transparent);
+    border-radius: 0.14rem;
+    pointer-events: none;
+    opacity: 0;
+    animation: inkHint 4.6s ease-in-out 1.2s 1 both;
+  }
+}
+
+// ════════════════════════════════════════════════════
+//  节气读数面板（HUD）：仅按钮自身可点
+// ════════════════════════════════════════════════════
+.ink-engine__hud {
+  position: absolute;
+  left: 0.42rem;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 1.72rem); // 避开固定底栏（1.52rem）
+  display: flex;
+  align-items: center;
+  gap: 0.08rem;
+  max-width: calc(100vw - 0.84rem);
+  padding: 0.06rem 0.1rem;
+  // 关键：面板本身不拦事件（否则会吃掉题头划动手势），只让其中的按钮可点
+  pointer-events: none;
+  background: color-mix(in srgb, var(--gf-bg-card, #FAF7F0) 74%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gf-gold, #C59B27) 34%, transparent);
+  border-radius: 0.2rem;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0.04rem 0.16rem rgba(58, 47, 29, 0.08);
+
+  &--static {
+    bottom: 1.72rem;
+  }
+}
+
+.ink-engine__term {
+  font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', var(--gf-font-serif, serif);
+  font-size: 0.24rem;
+  font-weight: 700;
+  color: var(--gf-cinnabar, #8A2B2B);
+  letter-spacing: 0.02rem;
+}
+
+.ink-engine__motif {
+  font-family: var(--gf-font-serif, serif);
+  font-size: 0.2rem;
+  color: var(--gf-ink-secondary, #6B675B);
+  white-space: nowrap;
+}
+
+.ink-engine__hint {
+  position: absolute;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 2.4rem);
+  transform: translateX(-50%);
+  padding: 0.04rem 0.14rem;
+  font-family: var(--gf-font-serif, serif);
+  font-size: 0.2rem;
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--gf-ink-secondary, #6B675B) 82%, transparent);
+  background: color-mix(in srgb, var(--gf-bg-card, #FAF7F0) 68%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--gf-gold, #C59B27) 42%, transparent);
+  border-radius: 0.14rem;
+  opacity: 0;
+  animation: inkHint 4.6s ease-in-out 0.8s 1 both;
+
+  &--static {
+    position: static;
+    transform: none;
+    animation: none;
+    opacity: 1;
+    font-size: 0.2rem;
+    color: var(--gf-ink-light, #9B968A);
+  }
+}
+
+.ink-engine__modes {
+  display: flex;
+  gap: 0.04rem;
+  margin-left: 0.04rem;
+  padding-left: 0.08rem;
+  border-left: 1px solid color-mix(in srgb, var(--gf-border-card, #E4DDD0) 90%, transparent);
+}
+
+.ink-engine__mode {
+  padding: 0.02rem 0.1rem;
+  font-family: inherit;
+  font-size: 0.2rem;
+  line-height: 1.6;
+  color: var(--gf-ink-secondary, #6B675B);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 0.14rem;
+  cursor: pointer;
+  pointer-events: auto; // 只有按钮自身接收点击
+  transition: color 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+
+  &.is-active {
+    color: #FBF8F1;
+    background: var(--gf-cinnabar, #8A2B2B);
+    border-color: color-mix(in srgb, var(--gf-gold, #C59B27) 50%, transparent);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+.ink-engine__close {
+  width: 0.3rem;
+  height: 0.3rem;
+  padding: 0;
+  font-size: 0.24rem;
+  line-height: 1;
+  color: var(--gf-ink-light, #9B968A);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  pointer-events: auto; // 只有按钮自身接收点击
+}
+
+[data-theme='dark'] .ink-engine__hud {
+  background: color-mix(in srgb, var(--gf-bg-card, #171E23) 76%, transparent);
+  box-shadow: 0 0.04rem 0.2rem rgba(0, 0, 0, 0.45);
+}
+
+// 手势提示：首次访问闪现一次
+@keyframes inkHint {
+  0% { opacity: 0; transform: translate(-50%, 4px); }
+  14% { opacity: 1; transform: translate(-50%, 0); }
+  72% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -4px); }
+}
+
+// 窄屏（≤360px）：读数面板换行，避免撑破
+@media (max-width: 360px) {
+  .ink-engine__hud {
+    flex-wrap: wrap;
+    row-gap: 0.04rem;
+  }
+  .ink-engine__mode {
+    padding: 0.02rem 0.07rem;
+  }
+}
+
+// 宽屏（≥520px）：粒子引擎只在移动画幅内出现，不铺满桌面
+@media (min-width: 520px) {
+  .ink-engine {
+    max-width: 480px;
+    left: 50%;
+    right: auto;
+    width: 100%;
+    transform: translateX(-50%);
+  }
+}
