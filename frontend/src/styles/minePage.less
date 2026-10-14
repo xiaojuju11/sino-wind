@@ -13,11 +13,7 @@
     text-align: center;
     padding: 10px 0 14px;
 
-    &__theme {
-      position: absolute;
-      right: 0;
-      top: 10px;
-    }
+    // 原 &__theme（题头右上角日月切换的绝对定位）已随该控件移除，故一并删除。
 
     &__title-wrap {
       display: inline-flex;
@@ -290,23 +286,6 @@
           font-size: 11px;
           color: var(--gf-text-sub, @color-text-sub);
           margin-top: 2px;
-
-          .shuzhai-theme-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 15px;
-            height: 15px;
-            font-size: 10px;
-            font-family: 'STKaiti', 'KaiTi', serif;
-            font-weight: 700;
-            color: var(--gf-accent-text, @color-seal);
-            border: 1px solid currentColor;
-            border-radius: 50%;
-            margin-right: 2px;
-            vertical-align: -1px;
-            line-height: 1;
-          }
         }
 
         &__arrow {
@@ -335,6 +314,7 @@
   .shuzhai-logout-wrap {
     text-align: center;
     padding: 10px 0 20px;
+    
 
     .shuzhai-logout-btn {
       width: 100%;
@@ -379,6 +359,22 @@
     padding-bottom: 12px;
     border-bottom: 1px dashed @color-divider;
     margin-bottom: 14px;
+
+    // ── 窗口冻结（吸顶）──────────────────────────────────
+    // 滚动容器是 .yayan-popup .adm-popup-body（max-height: 75vh; overflow-y: auto），
+    // 故把表头 sticky 在其顶部：滚动锦囊列表时标题与关闭键始终可见。
+    // 关键点：
+    //  1) 必须有实底背景，否则下方条目会从表头底下透出来，糊成一片；
+    //     底色取抽屉本体的 --gf-bg-paper（而非卡片色），吸顶块才不会与抽屉出现色差；
+    //  2) 用负外边距 + 等量内边距把背景横向铺满整个抽屉（否则 .yayan-box 的
+    //     18px 内边距会在表头两侧留下两条"缝"，滚过的内容从缝里露出来）；
+    //  3) z-index 提到列表之上，并补回上内边距，避免吸顶后贴住抽屉顶沿。
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    margin: 0 -18px 14px;
+    padding: 12px 18px;
+    background-color: var(--gf-bg-paper, @color-bg);
   }
 
   &__title {
@@ -524,4 +520,71 @@
     color: lighten(@color-text-sub, 15%);
     letter-spacing: 1px;
   }
-}
+}
+
+// ════════════════════════════════════════════════════
+//  「关于云山竹简」弹窗的确认按钮（知悉）
+//
+//  为什么是这个选择器：Antd Mobile 的 Modal 渲染到 body 下的 portal，
+//  不在 .shuzhai-root 子树内，所以无法用祖先作用域限定，只能按类名直接命中；
+//  类名由 MinePage.jsx 的 Modal.show({ actions: [{ className: 'shuzhai-about-confirm' }] }) 注入，
+//  因此不会影响站内其他 Modal（其他处并未使用该类名）。
+//
+//  视觉口径：与书斋「整装离席」按钮同一套语汇 ——
+//    朱砂描边 + 朱砂字 + 700 字重 + 胶囊圆角；
+//  底色刻意不设（沿用 Antd 默认白底），与改动前保持一致。
+//
+//  ⚠️ 优先级说明（实测踩过）：
+//  Antd 有 `.adm-modal-footer .adm-modal-button { font-size: …; line-height: 25px }`，
+//  这是【两点】选择器（0,2,0），而单独的 `.shuzhai-about-confirm` 只有一点（0,1,0），
+//  所以我的 font-size / line-height 会被压掉（实测字号仍是 18px、行高 25px、按钮仅 27px 高）。
+//  故这里用【双层选择器】把优先级提到 (0,2,0) 并与 Antd 同层、靠顺序取胜；
+//  同时又不去碰 `.adm-modal-footer`，以免污染站内其他 Modal。
+// ════════════════════════════════════════════════════
+.shuzhai-about-confirm.shuzhai-about-confirm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  // 椭圆胶囊：用 999px 而非固定值，便于日后改高度时仍是正椭圆
+  border-radius: 999px;
+  // 描边 + 字色统一走令牌，自动随日月主题切换
+  border: 1.5px solid var(--gf-seal, @color-seal);
+  color: var(--gf-accent-text, @color-seal);
+  font-family: 'STKaiti', 'KaiTi', var(--gf-font-serif, serif);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  // 上下留白撑出胶囊的"饱满感"（Antd 对非 primary 按钮强制 padding-top/bottom: 0，
+  // 需在更高优先级处覆盖，否则按钮只有一行字高、显得又扁又小）
+  padding: 8px 32px;
+  line-height: 1.35;
+  // 底色：白昼维持 Antd 默认的纯白（与改动前一致）；暗色改用项目卡片令牌 #171E23。
+  // ⚠️ 不能用 Antd 的 --adm-color-background：它在暗色下仍是 #ffffff，
+  //    而 Antd 自身的 Modal 面板用的是 --adm-color-background-body（暗色下变深）。
+  //    结果就是暗色弹窗里贴出一块白底按钮，非常突兀（实测截图确认）。
+  //    故这里改走项目自己的 --gf-bg-card，与弹窗面板同色、自动随主题切换。
+  background-color: var(--gf-bg-card, #ffffff);
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+
+  // 按下反馈：与「整装离席」一致的朱砂实底反白
+  &:active {
+    background-color: var(--gf-seal, @color-seal);
+    border-color: var(--gf-seal, @color-seal);
+    color: #fff;
+  }
+
+  // 暗色模式：描边与字色转为泥金强调色（与全站暗色口径一致）
+  [data-theme='dark'] & {
+    border-color: var(--gf-accent-text, @color-gold);
+    color: var(--gf-accent-text, @color-gold);
+
+    &:active {
+      background-color: var(--gf-seal, @color-seal);
+      border-color: var(--gf-seal, @color-seal);
+      color: #fff;
+    }
+  }
+}
+
+

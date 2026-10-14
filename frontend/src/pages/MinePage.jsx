@@ -3,7 +3,6 @@ import '../styles/minePage.less'
 import { ActionSheet, Toast, ImageViewer, Popup, Modal } from 'antd-mobile'
 import { RightOutline } from 'antd-mobile-icons'
 import { useNavigate } from 'react-router-dom'
-import { useTheme } from '../context/useTheme'
 import ThemeToggle from '../context/ThemeToggle.jsx'
 import axios from '../http'
 
@@ -73,7 +72,9 @@ export default function MinePage() {
     }
   }
 
-  const { theme, toggleTheme, isDark } = useTheme()
+  // 主题切换唯一入口：「书斋清规 → 墨色雅意」行内的 ThemeToggle（共享组件自读 context）。
+  // 原先此处还解构了 { theme, toggleTheme, isDark }，但 theme 从未被使用（ESLint 报错），
+  // 而 toggleTheme / isDark 仅服务于已删除的「日月交替」重复行 —— 故一并清理。
 
   // 雅士修持 4 大数据（四维修持）支持点击联动与跳转
   const stats = [
@@ -109,8 +110,11 @@ export default function MinePage() {
   }
 
   // 关于弹窗
+  // 说明：原用 Modal.alert，但其 ModalAlertProps 只接受 confirmText，无法给确认按钮传样式；
+  // 故改用 Modal.show + 自定义 action（Action 支持 className/style），
+  // 把「知悉」按钮统一为品牌朱砂 #8A2B2B。closeOnAction 保留「点按钮即关闭」的原行为。
   const handleShowAbout = () => {
-    Modal.alert({
+    Modal.show({
       title: (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
           <span style={{ fontSize: '18px', fontWeight: 800, fontFamily: 'STKaiti, KaiTi, serif' }}>云山竹简 · 华风雅集</span>
@@ -127,15 +131,36 @@ export default function MinePage() {
           </p>
         </div>
       ),
-      confirmText: '知悉'
+      closeOnAction: true,
+      actions: [
+        {
+          key: 'known',
+          text: '知悉',
+          // 底色沿用 Antd 默认白底（不设 background），保持与改动前一致；
+          // 只做「椭圆胶囊 + 朱砂描边 + 朱砂字」，与书斋「整装离席」按钮同一套语汇。
+          //
+          // ⚠️ 为什么 padding 必须写在内联样式里（实测踩过）：
+          // Antd 对非 primary 的 modal 按钮有
+          //   `.adm-modal-footer .adm-modal-button:not(.adm-modal-button-primary) { padding-top: 0; padding-bottom: 0 }`
+          // 这是【longhand】声明。CSS 层叠规则规定：同一元素上 longhand 与 shorthand 冲突时，
+          // 无论优先级高低、源码顺序如何，**longhand 恒胜**（按属性名逐一比较）。
+          // 所以样式表里写 `padding: 8px 32px` 永远覆盖不掉它 —— 实测上下 padding 始终为 0、
+          // 按钮被压成一行字高（23.6px）。
+          // 内联 style 是级联中最高一级，且 antd-mobile 会把它直接透传到 <button> 上，
+          // 故用它来压住这两个 longhand；其余样式仍留在 .shuzhai-about-confirm 便于统一维护。
+          style: { padding: '8px 32px' },
+          className: 'shuzhai-about-confirm',
+        },
+      ],
     })
   }
 
   return (
     <div className='shuzhai-root'>
-      {/* 1. 顶部水墨意境题头 */}
+      {/* 1. 顶部水墨意境题头
+          说明：题头右上角原有的 ThemeToggle 已按要求移除。
+          日月切换在本书斋只保留「书斋清规 → 墨色雅意」一处入口，避免同页多个入口。 */}
       <header className='shuzhai-header'>
-        <ThemeToggle className='shuzhai-header__theme' />
         <div className='shuzhai-header__title-wrap'>
           <h1 className='shuzhai-header__title'>墨隐书斋</h1>
           <span className='shuzhai-header__seal'>两宋</span>
@@ -242,16 +267,9 @@ export default function MinePage() {
         </div>
 
         <div className='shuzhai-list'>
-          <div className='shuzhai-list-item' onClick={toggleTheme}>
-            <i className='iconfont icon-tongzhi'></i>
-            <div className='shuzhai-list-item__content'>
-              <span className='shuzhai-list-item__title'>日月交替（墨境切换）</span>
-              <span className='shuzhai-list-item__desc'>
-                当前为：<span className='shuzhai-theme-badge'>{isDark ? '月' : '日'}</span> {isDark ? '月下墨境（暗色）' : '晓色晨宣（浅色）'}
-              </span>
-            </div>
-            <RightOutline className='shuzhai-list-item__arrow' />
-          </div>
+          {/* 说明：此处原有「日月交替（墨境切换）」整行，与下方「墨色雅意」功能完全重复
+              （同一 theme 状态、同一 toggleTheme），且用的是通知铃铛图标、语义不符。
+              按要求只保留「墨色雅意」作为唯一的日月切换入口。 */}
 
           <div className='shuzhai-list-item' onClick={() => navigate('/accountSetting')}>
             <i className='iconfont icon-zhanghao'></i>
@@ -262,7 +280,7 @@ export default function MinePage() {
             <RightOutline className='shuzhai-list-item__arrow' />
           </div>
 
-          {/* 墨色雅意快捷切换 */}
+          {/* 墨色雅意：日月主题切换的唯一入口 */}
           <div className='shuzhai-list-item shuzhai-list-item--theme'>
             <i className='iconfont icon-shezhi'></i>
             <div className='shuzhai-list-item__content'>
@@ -272,14 +290,8 @@ export default function MinePage() {
             <ThemeToggle className='shuzhai-theme-toggle' />
           </div>
 
-          <div className='shuzhai-list-item' onClick={() => navigate('/accountSetting')}>
-            <i className='iconfont icon-suo'></i>
-            <div className='shuzhai-list-item__content'>
-              <span className='shuzhai-list-item__title'>隐私与安全</span>
-              <span className='shuzhai-list-item__desc'>修改密码与雅士名帖印章保护</span>
-            </div>
-            <RightOutline className='shuzhai-list-item__arrow' />
-          </div>
+          {/* 说明：此处原有「隐私与安全」整行，但它与上方「账号设置」指向同一路由
+              /accountSetting、功能完全重复（改密码本就在账号设置页内），按要求只保留账号设置。 */}
 
           <div className='shuzhai-list-item' onClick={() => {
             const next = !notifyEnabled
