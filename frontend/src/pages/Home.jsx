@@ -5,6 +5,7 @@ import { DownOutline, RightOutline, UpOutline, CompassOutline, EditSOutline, Che
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../context/useTheme'
 import InkParticleField from '../components/InkParticleField.jsx'
+import InkWashBackground from '../components/InkWashBackground.jsx'
 import axios from '../http'
 
 const BASE = import.meta.env.BASE_URL
@@ -64,69 +65,6 @@ function SunWheelGlyph() {
         strokeWidth={1.1}
       />
     </svg>
-  )
-}
-
-/**
- * 黑色水墨山水背景（纯矢量 SVG + CSS 刷新水墨生宣漫染动效）
- * 墨分三色（远山淡墨、中景叠嶂、近水墨石）+ 归鸿飞鸟，全端口矢量无损自适应
- */
-function InkLandscape() {
-  return (
-    <div className="home-ink-landscape" aria-hidden="true">
-      <svg
-        className="home-ink-landscape__svg"
-        viewBox="0 0 1200 460"
-        preserveAspectRatio="xMidYMax slice"
-      >
-        <defs>
-          {/* 水墨渐变：山脊重墨，山腰向山脚如水雾化开 */}
-          <linearGradient id="inkFarGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#252525" stopOpacity="0.48" />
-            <stop offset="55%" stopColor="#303030" stopOpacity="0.18" />
-            <stop offset="100%" stopColor="#303030" stopOpacity="0" />
-          </linearGradient>
-          <linearGradient id="inkMidGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#181818" stopOpacity="0.68" />
-            <stop offset="60%" stopColor="#222222" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#222222" stopOpacity="0" />
-          </linearGradient>
-          <linearGradient id="inkNearGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#080808" stopOpacity="0.85" />
-            <stop offset="55%" stopColor="#151515" stopOpacity="0.42" />
-            <stop offset="100%" stopColor="#151515" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-
-        {/* 1. 远景淡墨群峰 */}
-        <path
-          className="ink-mountain ink-mountain--far"
-          d="M0 290 C 140 190, 260 250, 390 170 C 510 240, 630 150, 760 220 C 890 140, 1020 210, 1200 190 L 1200 460 L 0 460 Z"
-          fill="url(#inkFarGrad)"
-        />
-
-        {/* 2. 中景浓墨山势重峦叠嶂 */}
-        <path
-          className="ink-mountain ink-mountain--mid"
-          d="M0 340 C 130 260, 250 310, 380 230 C 500 300, 620 200, 750 270 C 880 210, 1030 290, 1200 250 L 1200 460 L 0 460 Z"
-          fill="url(#inkMidGrad)"
-        />
-
-        {/* 3. 近景重墨水石与渚岸倒影 */}
-        <path
-          className="ink-mountain ink-mountain--near"
-          d="M0 395 C 120 330, 240 365, 350 315 C 470 375, 590 325, 730 365 C 860 315, 1000 355, 1200 335 L 1200 460 L 0 460 Z"
-          fill="url(#inkNearGrad)"
-        />
-
-        {/* 4. 水天烟岚中掠过的几点归鸿水墨飞鸟 */}
-        <g className="ink-birds" fill="#141414" opacity="0.6">
-          <path d="M 860 130 Q 872 120 884 130 Q 896 120 908 130 Q 896 125 884 132 Q 872 125 860 130 Z" />
-          <path d="M 905 152 Q 914 144 923 152 Q 932 144 941 152 Q 932 148 923 154 Q 914 148 905 152 Z" />
-          <path d="M 948 138 Q 955 131 962 138 Q 969 131 976 138 Q 969 135 962 140 Q 955 135 948 138 Z" />
-        </g>
-      </svg>
-    </div>
   )
 }
 
@@ -275,8 +213,7 @@ export default function Home() {
 
   return (
     <div className="home-root">
-      {/* ── 黑色水墨山水背景（纯矢量 + 刷新水墨生宣漫染动效）── */}
-      <InkLandscape />
+      <InkWashBackground />
 
       {/* ── 水墨流体粒子引擎（Canvas 物理引擎：落叶/流萤/烟雨/飞雪 + 划动水墨扩散）── */}
       <InkParticleField interactionTarget={heroRef} />

@@ -1,0 +1,72 @@
+.home-root > .home-ink-wash {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(155deg, #f7ebdb, #f4e8d7 56%, #f8eee1);
+
+  .home-ink-wash__canvas,
+  .home-ink-wash__fallback,
+  .home-ink-wash__mist {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .home-ink-wash__canvas { display: block; }
+
+  .home-ink-wash__fallback {
+    background-image: var(--ink-art-url);
+    background-repeat: no-repeat;
+    opacity: 0.86;
+  }
+
+  .home-ink-wash__fallback--top {
+    background-size: auto 100%;
+    background-position: left top;
+    -webkit-mask-image: linear-gradient(to bottom, black 0 18%, transparent 40%);
+    mask-image: linear-gradient(to bottom, black 0 18%, transparent 40%);
+  }
+
+  .home-ink-wash__fallback--bottom {
+    background-size: auto 100%;
+    background-position: right bottom;
+    -webkit-mask-image: linear-gradient(to top, black 0 17%, transparent 36%);
+    mask-image: linear-gradient(to top, black 0 17%, transparent 36%);
+  }
+
+  &.is-painted .home-ink-wash__fallback { display: none; }
+
+  .home-ink-wash__mist {
+    opacity: 0.4;
+    background: radial-gradient(ellipse 45% 15% at 40% 28%, #fff9, transparent),
+      radial-gradient(ellipse 48% 13% at 58% 84%, #fff7, transparent);
+    animation: inkMistDrift 11s ease-in-out infinite alternate;
+  }
+
+  &.is-paused .home-ink-wash__mist { animation-play-state: paused; }
+}
+
+@keyframes inkMistDrift {
+  from { transform: translate(-2%, 0); }
+  to { transform: translate(2%, -1%); }
+}
+
+[data-theme='dark'] .home-root > .home-ink-wash {
+  background: linear-gradient(155deg, #101820, #111a23 56%, #0b1119);
+
+  .home-ink-wash__canvas,
+  .home-ink-wash__fallback {
+    filter: grayscale(0.85) invert(0.76) sepia(0.18) hue-rotate(167deg) brightness(0.8);
+    opacity: 0.68;
+  }
+
+  .home-ink-wash__mist { opacity: 0.14; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-root > .home-ink-wash .home-ink-wash__mist { animation: none; }
+}
