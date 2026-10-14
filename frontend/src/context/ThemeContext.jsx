@@ -1,16 +1,14 @@
-import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react'
+import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import './theme.less'
+import {
+  ThemeContext,
+  useTheme,
+  THEME_LIGHT,
+  THEME_DARK,
+  THEME_STORAGE_KEY
+} from './useTheme.js'
 
-export const THEME_LIGHT = 'light'
-export const THEME_DARK = 'dark'
-export const THEME_STORAGE_KEY = 'gufeng_theme'
-
-export const ThemeContext = createContext({
-  theme: 'light',
-  isDark: false,
-  toggleTheme: () => {},
-  setTheme: () => {}
-})
+export { useTheme }
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setThemeState] = useState(() => {
@@ -50,5 +48,4 @@ export const ThemeProvider = ({ children }) => {
   )
 }
 
-export const useTheme = () => useContext(ThemeContext)
 export default ThemeProvider

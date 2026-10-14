@@ -13,7 +13,13 @@
   padding: 24px 0;
   overflow-x: hidden;
   color: @color-text-main;
-  background: @color-bg url('/assets/common/bg_guofeng.jpg') center center / cover no-repeat;
+  background-color: var(--gf-bg-paper, @color-bg);
+  background-image:
+    radial-gradient(ellipse 90% 45% at 50% 0%, color-mix(in srgb, #fff 24%, transparent) 0%, transparent 70%),
+    radial-gradient(ellipse 100% 35% at 50% 100%, color-mix(in srgb, var(--gf-ink-primary, #2B2B2B) 5%, transparent) 0%, transparent 100%),
+    linear-gradient(180deg, color-mix(in srgb, var(--gf-bg-paper, @color-bg) 98%, #fff 2%) 0%, color-mix(in srgb, var(--gf-bg-paper, @color-bg) 95%, #000 5%) 100%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   font-family: 'STKaiti', 'KaiTi', 'Noto Serif SC', 'Songti SC', serif;
   line-height: 1.4;
   *, *::before, *::after { box-sizing: border-box; }

@@ -2,7 +2,13 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-  background: @color-bg url('/assets/common/bg_guofeng.jpg') no-repeat top center / cover fixed;
+  background-color: var(--gf-bg-paper, @color-bg);
+  background-image:
+    radial-gradient(ellipse 90% 45% at 50% 0%, color-mix(in srgb, #fff 24%, transparent) 0%, transparent 70%),
+    radial-gradient(ellipse 100% 35% at 50% 100%, color-mix(in srgb, var(--gf-ink-primary, #2B2B2B) 5%, transparent) 0%, transparent 100%),
+    linear-gradient(180deg, color-mix(in srgb, var(--gf-bg-paper, @color-bg) 98%, #fff 2%) 0%, color-mix(in srgb, var(--gf-bg-paper, @color-bg) 95%, #000 5%) 100%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   color: @color-text-main;
   min-height: 100vh;
   margin: 0;

@@ -3,6 +3,7 @@ import { Toast } from 'antd-mobile'
 import { MessageOutline } from 'antd-mobile-icons'
 import Login from './Login'
 import Register from './Register'
+import ThemeToggle from '../context/ThemeToggle'
 import '../styles/authPage.less'
 
 export default function AuthPage() {
@@ -19,7 +20,10 @@ export default function AuthPage() {
   return (
     <main className={"auth-page-root " + (activeTab === "register" ? "is-register" : "is-login")}>
       <section className="auth-paper" aria-label="华风雅集账号认证"><span className="auth-corner top-left" aria-hidden="true" /><span className="auth-corner top-right" aria-hidden="true" /><span className="auth-corner bottom-left" aria-hidden="true" /><span className="auth-corner bottom-right" aria-hidden="true" /><span className="auth-cloud cloud-left" aria-hidden="true" /><span className="auth-cloud cloud-right" aria-hidden="true" />
-        <header className="auth-heading">
+        <header className="auth-heading" style={{ position: 'relative' }}>
+          <div style={{ position: 'absolute', right: 0, top: '-0.1rem' }}>
+            <ThemeToggle />
+          </div>
           <div className="auth-seal" aria-label="華風"><span>華</span><span>風</span></div>
           <h1>云山竹简 · 华风雅集</h1>
           <p>读千年风雅 与君共此山河</p>

@@ -272,13 +272,201 @@
     }
   }
 
-  // ── 问道先贤（ScholarChat 子页面）暗色立绘横幅深化 ──
-  .scholar-hero-banner {
-    background: linear-gradient(180deg, #171E23 0%, #10161B 100%) !important;
-    border-bottom-color: fade(#CEA559, 35%) !important;
+  // ── 通用移动端弹窗与浮层暗色适配 ──
+  .adm-popup-body {
+    background-color: var(--gf-bg-paper) !important;
+    color: var(--gf-text-main) !important;
   }
-  .scholar-msg-avatar {
-    background: #171E23 !important;
+  .adm-modal-body,
+  .adm-modal-content {
+    background-color: var(--gf-bg-card) !important;
+    color: var(--gf-text-main) !important;
+  }
+  .adm-modal-footer {
+    background-color: var(--gf-bg-card) !important;
+  }
+  .adm-action-sheet-popup .adm-popup-body {
+    background-color: var(--gf-bg-card) !important;
+  }
+  .adm-action-sheet-button-item {
+    background-color: var(--gf-bg-card) !important;
+    color: var(--gf-text-main) !important;
+  }
+  .adm-action-sheet-cancel {
+    background-color: var(--gf-bg-sunk) !important;
+    color: var(--gf-text-sub) !important;
+  }
+
+  // ── 古诗词天地（PoemPage）暗色模式深化 ──
+  .poem-root {
+    background-color: var(--gf-bg-paper) !important;
+    color: var(--gf-text-main) !important;
+
+    .poem-header__back {
+      background-color: var(--gf-bg-card) !important;
+      border-color: fade(#CEA559, 35%) !important;
+      color: var(--gf-accent-text) !important;
+    }
+
+    .poem-search .adm-search-bar {
+      --background: var(--gf-bg-card) !important;
+      --placeholder-color: var(--gf-text-sub) !important;
+      border-color: fade(#CEA559, 35%) !important;
+      box-shadow: 0 0.06rem 0.18rem rgba(0, 0, 0, 0.4) !important;
+    }
+
+    .poem-results {
+      background: var(--gf-bg-card) !important;
+      border-color: fade(#CEA559, 35%) !important;
+
+      &__item + &__item {
+        border-top-color: fade(#CEA559, 18%) !important;
+      }
+      &__item:active {
+        background: fade(#CEA559, 15%) !important;
+      }
+    }
+
+    .poem-scroll {
+      background: var(--gf-bg-card) !important;
+      border-color: fade(#CEA559, 35%) !important;
+      box-shadow: 0 0.1rem 0.28rem rgba(0, 0, 0, 0.5) !important;
+
+      .poem-scroll__line {
+        color: var(--gf-text-main) !important;
+      }
+    }
+
+    .poem-appreciation {
+      background: var(--gf-bg-card) !important;
+      border-color: fade(#CEA559, 35%) !important;
+
+      &__sage-card {
+        background: var(--gf-bg-sunk) !important;
+        border-color: fade(#CEA559, 30%) !important;
+      }
+
+      &__text {
+        color: var(--gf-text-main) !important;
+      }
+    }
+
+    .poem-action--ghost {
+      background: var(--gf-bg-card) !important;
+      border-color: fade(#CEA559, 45%) !important;
+      color: var(--gf-accent-text) !important;
+    }
+  }
+
+  // ── 知音鸿雁（LetterList）暗色模式深化 ──
+  .letter-root {
+    background-color: var(--gf-bg-paper) !important;
+    color: var(--gf-text-main) !important;
+
+    .letter-card {
+      background: var(--gf-bg-card) !important;
+      border-color: fade(#CEA559, 30%) !important;
+      box-shadow: 0 0.06rem 0.2rem rgba(0, 0, 0, 0.4) !important;
+
+      &:active {
+        background: fade(#CEA559, 15%) !important;
+      }
+    }
+
+    .letter-unread-badge,
+    .letter-unread-dot {
+      border-color: var(--gf-bg-card) !important;
+    }
+
+    .invite-drawer {
+      color: var(--gf-text-main) !important;
+
+      &__header {
+        border-bottom-color: fade(#CEA559, 25%) !important;
+      }
+
+      .invite-input,
+      .invite-textarea {
+        background-color: var(--gf-bg-sunk) !important;
+        color: var(--gf-text-main) !important;
+        border-color: fade(#CEA559, 30%) !important;
+      }
+
+      .invite-chip {
+        background-color: var(--gf-bg-card) !important;
+        border-color: fade(#CEA559, 30%) !important;
+        color: var(--gf-text-main) !important;
+
+        &.is-selected {
+          border-color: var(--gf-seal) !important;
+          background: color-mix(in srgb, var(--gf-seal) 16%, transparent) !important;
+        }
+      }
+    }
+  }
+
+  // ── 问道先贤（ScholarChat）暗色模式深化 ──
+  .scholar-chat-root {
+    background-color: var(--gf-bg-paper) !important;
+    color: var(--gf-text-main) !important;
+
+    .scholar-nav {
+      background: var(--gf-bg-card) !important;
+      border-bottom-color: fade(#CEA559, 28%) !important;
+      box-shadow: 0 0.04rem 0.12rem rgba(0, 0, 0, 0.3) !important;
+
+      &__back, &__action {
+        color: var(--gf-text-main) !important;
+      }
+    }
+
+    .scholar-hero-banner {
+      background: linear-gradient(180deg, #171E23 0%, #10161B 100%) !important;
+      border-bottom-color: fade(#CEA559, 35%) !important;
+    }
+
+    .scholar-quick-btn {
+      background: var(--gf-bg-card) !important;
+      border-color: fade(#CEA559, 30%) !important;
+      color: var(--gf-text-main) !important;
+    }
+
+    .scholar-msg-avatar {
+      background: #171E23 !important;
+    }
+
+    .scholar-msg-bubble--ai {
+      background: var(--gf-bg-card) !important;
+      border-color: fade(#CEA559, 30%) !important;
+      color: var(--gf-text-main) !important;
+    }
+
+    .scholar-footer {
+      background: var(--gf-bg-card) !important;
+      border-top-color: fade(#CEA559, 28%) !important;
+      box-shadow: 0 -0.06rem 0.16rem rgba(0, 0, 0, 0.35) !important;
+    }
+
+    .scholar-tool-btn {
+      background: var(--gf-bg-sunk) !important;
+      border-color: fade(#CEA559, 30%) !important;
+      color: var(--gf-text-sub) !important;
+    }
+
+    .scholar-mic-btn {
+      background: var(--gf-bg-sunk) !important;
+      border-color: fade(#CEA559, 35%) !important;
+    }
+
+    .scholar-textarea {
+      background: var(--gf-bg-sunk) !important;
+      border-color: fade(#CEA559, 35%) !important;
+      color: var(--gf-text-main) !important;
+
+      &::placeholder {
+        color: var(--gf-text-sub) !important;
+      }
+    }
   }
 
   // ── 拍照识器（Recognition 子页面）暗色模式深化 ──

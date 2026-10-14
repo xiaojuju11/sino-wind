@@ -4,6 +4,7 @@ import { List, Avatar, ActionSheet, Toast, Popup, Button, Input } from 'antd-mob
 import axios from '../http'
 import { LeftOutline, CloseOutline } from 'antd-mobile-icons'
 import { uploadFileChunks, DEFAULT_CHUNK_SIZE } from '../utils/chunkUpload'
+import ThemeToggle from '../context/ThemeToggle'
 import '../styles/accountSetting.less'
 
 const actions = [
@@ -248,7 +249,7 @@ export default function AccountSetting() {
           <LeftOutline aria-hidden="true" />
         </button>
         <h1>账号设置</h1>
-        <div className="image-capture-header__placeholder"></div>
+        <ThemeToggle className="account-setting__theme-toggle" />
       </header>
 
       {/* 账号配置列表 */}
@@ -266,6 +267,11 @@ export default function AccountSetting() {
           </List.Item>
           <List.Item extra={account} clickable>
             账号
+          </List.Item>
+          <List.Item
+            extra={<ThemeToggle />}
+          >
+            墨色雅意
           </List.Item>
           <List.Item
             extra='修改密码'

@@ -3,7 +3,7 @@ import '../styles/minePage.less'
 import { ActionSheet, Toast, ImageViewer, Popup, Modal } from 'antd-mobile'
 import { RightOutline } from 'antd-mobile-icons'
 import { useNavigate } from 'react-router-dom'
-import { useTheme } from '../context/ThemeContext'
+import { useTheme } from '../context/useTheme'
 import ThemeToggle from '../context/ThemeToggle.jsx'
 import axios from '../http'
 
