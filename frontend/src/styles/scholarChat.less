@@ -428,3 +428,29 @@
   }
 }
 
+
+// Streaming ink and the self-contained Feihua panel.
+.scholar-ink-fresh { animation: scholar-ink-settle .35s ease-out; }
+.scholar-ink-caret { display: inline-block; width: 2px; height: 1em; margin-left: 4px; vertical-align: text-bottom; background: var(--gf-seal, #8a2b2b); animation: scholar-caret 1s ease-in-out infinite; }
+.scholar-stream-note { display: block; margin-top: .16rem; font-size: .24rem; color: var(--gf-ink-secondary, #786954); }
+.scholar-chat-root.is-game { .scholar-hero-banner, .scholar-capsules-bar { display: none; } }
+.scholar-footer__quick-tools { flex-wrap: wrap; }
+.feihua-panel {
+  color: var(--gf-ink-primary, #342d24); line-height: 1.7; padding: .18rem; overflow-wrap: anywhere;
+  p, small { font-size: .27rem; }
+  small { display: block; color: var(--gf-ink-secondary, #786954); }
+  button, select, input { font: inherit; color: inherit; border: 1px solid var(--gf-gold, #af8d53); border-radius: 6px; background: var(--gf-bg-card, #faf7f0); padding: .12rem .18rem; min-height: 40px; max-width: 100%; box-sizing: border-box; }
+  button { cursor: pointer; } button:disabled { opacity: .55; cursor: wait; }
+  select { width: 100%; } label { display: grid; gap: .06rem; }
+  form { display: flex; flex-wrap: wrap; gap: .12rem; } form label { width: 100%; }
+  blockquote { margin: .2rem 0; padding: .18rem; border-inline-start: 3px solid var(--gf-gold, #af8d53); background: var(--gf-bg-card, #faf7f0); }
+  details { margin-top: .3rem; } summary { cursor: pointer; font-weight: bold; }
+}
+.feihua-heading, .feihua-round { display: flex; justify-content: space-between; align-items: center; gap: .12rem; }
+.feihua-heading h2 { font-size: .4rem; margin: 0; }
+.feihua-round { padding: .2rem 0; color: var(--gf-seal, #8a2b2b); }
+.feihua-controls { display: grid; grid-template-columns: 1fr 2fr; gap: .15rem; } .feihua-controls > button { grid-column: 1 / -1; }
+.feihua-outcome { border: 1px solid var(--gf-gold, #af8d53); padding: .24rem; margin: .24rem 0; text-align: center; }
+@keyframes scholar-ink-settle { from { opacity: .25; filter: blur(1.5px); } to { opacity: 1; filter: blur(0); } }
+@keyframes scholar-caret { 50% { opacity: .15; } }
+@media (prefers-reduced-motion: reduce) { .scholar-ink-fresh, .scholar-ink-caret { animation: none; } }

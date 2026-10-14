@@ -21,6 +21,20 @@
   --home-mat: #1A2129;
 }
 
+// 🍎 苹果液态玻璃 × 东方温润水玉卡片混入 (Liquid Jade Glass)
+.liquid-jade-card() {
+  backdrop-filter: blur(24px) saturate(190%) brightness(1.02);
+  -webkit-backdrop-filter: blur(24px) saturate(190%) brightness(1.02);
+  background: color-mix(in srgb, var(--gf-bg-card) 76%, transparent);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 0.42rem;
+  box-shadow: 
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.92), // 顶部液态折射高光线
+    inset 0 -1px 1px 0 color-mix(in srgb, var(--gf-gold) 16%, transparent),
+    0 0.14rem 0.44rem -0.04rem var(--home-shadow),
+    0 0.03rem 0.1rem 0 rgba(0, 0, 0, 0.03);
+}
+
 // ── 回纹描金外框（模块卡片通用）──
 .gu-frame(@len: 0.22rem) {
   position: relative;
@@ -51,9 +65,10 @@
   }
 }
 
-// ── 页面根：纯 CSS 拟真水墨晕染宣纸背景（方案 B · 墨分五色 · 漫染生宣 · 零图片多端自适应）
+// 页面根：画卷在内容背后，保持原有模块布局。
 .home-root {
   position: relative;
+  isolation: isolate;
   min-height: 100vh;
   // 顶部 44px 状态栏安全区（9:41 / 灵动岛 / 电量）
   padding: calc(env(safe-area-inset-top, 0px) + 1.13rem) 0.42rem 0.4rem;
@@ -64,180 +79,9 @@
   background-color: var(--gf-bg-paper);
   background-attachment: fixed;
 
-  // ── 水墨晕染层一（大墨晕与远山气象：底层水墨自然渗开）──
-  &::before {
-    content: '';
-    position: fixed;
-    top: -10%;
-    left: -10%;
-    width: 120%;
-    height: 120%;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.85;
-    mix-blend-mode: multiply;
-    background-image:
-      // ① 底部主墨核：浓墨向外晕散，如远山坐镇
-      radial-gradient(ellipse 65% 30% at 35% 92%, color-mix(in srgb, var(--gf-ink-primary) 14%, transparent) 0%, color-mix(in srgb, var(--gf-ink-primary) 5%, transparent) 45%, transparent 75%),
-      // ② 底部副墨晕：错落湖山水气，墨阶分明
-      radial-gradient(ellipse 70% 35% at 75% 96%, color-mix(in srgb, var(--gf-ink-primary) 11%, transparent) 0%, color-mix(in srgb, var(--gf-ink-primary) 3%, transparent) 50%, transparent 80%),
-      // ③ 右上角淡烟岚：似有若无的云气墨迹
-      radial-gradient(circle 260px at 90% 8%, color-mix(in srgb, var(--gf-ink-primary) 8%, transparent) 0%, color-mix(in srgb, var(--gf-ink-primary) 2%, transparent) 60%, transparent 85%),
-      // ④ 左侧中段侧锋泼墨虚晕（绝不侵入中间核心阅读区）
-      radial-gradient(circle 320px at -10% 42%, color-mix(in srgb, var(--gf-ink-primary) 7%, transparent) 0%, transparent 70%);
-    filter: blur(16px); // 高斯模糊化开墨边，呈现生宣吸水扩散感
-    transform: translateZ(0);
-  }
-
-  // ── 水墨晕染层二（宣纸微光与水痕渗透：天光漫射 + 留白通透）──
-  &::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    z-index: 0;
-    background-image:
-      // 顶部案台天光照射（破墨提亮）
-      radial-gradient(ellipse 85% 45% at 50% -5%, color-mix(in srgb, #fff 35%, transparent) 0%, transparent 70%),
-      // 中间留白区：空灵清朗，保证文字阅读极其舒适
-      radial-gradient(circle 380px at 50% 45%, color-mix(in srgb, #fff 15%, transparent) 0%, transparent 80%),
-      // 纸本基底纵向自然光影
-      linear-gradient(180deg, color-mix(in srgb, var(--gf-bg-paper) 98%, #fff 2%) 0%, color-mix(in srgb, var(--gf-bg-paper) 94%, #000 6%) 100%);
-    opacity: 0.92;
-  }
-
   > * {
     position: relative;
     z-index: 1;
-  }
-}
-
-// ── 夜间模式（月下墨境）：水墨晕染转为冷月清辉与幽蓝云岚 ──
-[data-theme='dark'] .home-root {
-  &::before {
-    mix-blend-mode: screen;
-    opacity: 0.55;
-    background-image:
-      // ① 底部月夜深黛冷雾
-      radial-gradient(ellipse 65% 30% at 35% 92%, rgba(68, 92, 120, 0.28) 0%, rgba(68, 92, 120, 0.08) 50%, transparent 80%),
-      // ② 底部侧峰淡蓝墨韵
-      radial-gradient(ellipse 70% 35% at 75% 96%, rgba(50, 75, 105, 0.22) 0%, rgba(50, 75, 105, 0.05) 55%, transparent 80%),
-      // ③ 右上角冷月清辉晕
-      radial-gradient(circle 280px at 90% 8%, rgba(100, 130, 165, 0.18) 0%, rgba(100, 130, 165, 0.04) 65%, transparent 85%),
-      // ④ 左侧月夜幽气
-      radial-gradient(circle 340px at -10% 42%, rgba(60, 85, 115, 0.15) 0%, transparent 75%);
-    filter: blur(20px);
-  }
-
-  &::after {
-    background-image:
-      radial-gradient(ellipse 85% 45% at 50% -5%, rgba(120, 150, 190, 0.08) 0%, transparent 70%),
-      linear-gradient(180deg, #0E141D 0%, #0A0D13 100%);
-    opacity: 0.95;
-  }
-}
-
-// ════════════ 黑色水墨山水背景（纯矢量 · 刷新生宣晕染动效）════════════
-.home-ink-landscape {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 45vh;
-  max-height: 460px;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-  mix-blend-mode: multiply;
-
-  // 刷新入场：水墨在生宣纸上自然漫散扩散
-  animation: inkBleedSpread 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  transform-origin: 50% 100%;
-
-  &__svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
-
-  .ink-mountain--far {
-    animation: inkMountainBleed 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    transform-origin: 50% 100%;
-  }
-
-  .ink-mountain--mid {
-    animation: inkMountainBleed 2.1s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
-    transform-origin: 50% 100%;
-  }
-
-  .ink-mountain--near {
-    animation: inkMountainBleed 1.9s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both;
-    transform-origin: 50% 100%;
-  }
-
-  .ink-birds {
-    animation: inkBirdsIn 2.6s ease-out 0.5s both;
-  }
-}
-
-[data-theme='dark'] .home-ink-landscape {
-  mix-blend-mode: screen;
-  opacity: 0.72;
-  filter: brightness(1.25) contrast(95%);
-}
-
-// ── 水墨漫染动画：模拟一滴浓墨落入水中/湿宣纸，墨色从凝聚到自然扩散化开 ──
-@keyframes inkBleedSpread {
-  0% {
-    opacity: 0;
-    filter: blur(22px) contrast(140%);
-    transform: scale(0.93) translateY(28px);
-    -webkit-mask-image: radial-gradient(ellipse 45% 35% at 50% 100%, black 15%, transparent 75%);
-    mask-image: radial-gradient(ellipse 45% 35% at 50% 100%, black 15%, transparent 75%);
-  }
-  45% {
-    opacity: 0.85;
-    filter: blur(9px) contrast(115%);
-    -webkit-mask-image: radial-gradient(ellipse 85% 70% at 50% 100%, black 45%, transparent 85%);
-    mask-image: radial-gradient(ellipse 85% 70% at 50% 100%, black 45%, transparent 85%);
-  }
-  100% {
-    opacity: 1;
-    filter: blur(0px) contrast(100%);
-    transform: scale(1) translateY(0);
-    -webkit-mask-image: radial-gradient(ellipse 135% 100% at 50% 100%, black 85%, transparent 100%);
-    mask-image: radial-gradient(ellipse 135% 100% at 50% 100%, black 85%, transparent 100%);
-  }
-}
-
-@keyframes inkMountainBleed {
-  0% {
-    opacity: 0;
-    transform: scaleY(0.7) translateY(22px);
-    filter: blur(14px);
-  }
-  60% {
-    opacity: 0.9;
-    filter: blur(4px);
-  }
-  100% {
-    opacity: 1;
-    transform: scaleY(1) translateY(0);
-    filter: blur(0px);
-  }
-}
-
-@keyframes inkBirdsIn {
-  0% {
-    opacity: 0;
-    transform: translate(-18px, 10px) scale(0.75);
-  }
-  100% {
-    opacity: 0.6;
-    transform: translate(0, 0) scale(1);
   }
 }
 
@@ -263,14 +107,19 @@
     width: 0.78rem;
     height: 0.78rem;
     padding: 0;
-    background: color-mix(in srgb, var(--gf-bg-card) 82%, transparent);
-    border: 1px solid color-mix(in srgb, var(--gf-gold) 55%, transparent);
-    border-radius: 50%;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background: color-mix(in srgb, var(--gf-bg-card) 76%, transparent);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 0.24rem;
+    box-shadow: 
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.85),
+      0 2px 8px rgba(0, 0, 0, 0.08);
     cursor: pointer;
-    transition: transform 0.16s ease;
+    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 
     &:active {
-      transform: translateY(1px);
+      transform: scale(0.90);
     }
   }
 
@@ -311,8 +160,9 @@
     color: var(--gf-ink-primary);
   }
 
-  // 朱砂小印「华风」：朱底白字 + 泥金细框
+  // 朱砂小印「华风」：朱底白字 + 泥金细框 + 印泥微触动效
   &__seal {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -328,7 +178,23 @@
     writing-mode: vertical-rl;
     border: 1px solid color-mix(in srgb, var(--gf-gold) 75%, transparent);
     border-radius: 2px;
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gf-gold) 30%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gf-gold) 30%, transparent),
+                0 0.02rem 0.08rem fade(#8A2B2B, 25%);
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+
+    &:hover {
+      transform: scale(1.06);
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gf-gold) 60%, transparent),
+                  0 0.04rem 0.12rem fade(#8A2B2B, 35%);
+    }
+
+    &:active {
+      transform: scale(0.92);
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gf-gold) 90%, transparent),
+                  0 0 0.08rem fade(#8A2B2B, 50%);
+    }
   }
 
   &__sub {
@@ -342,12 +208,11 @@
 // ════════════ 模块卡片通用外壳 ════════════
 .home-card-scroll {
   .gu-frame(0.2rem);
+  .liquid-jade-card();
   margin-top: 0.62rem; // 模块间垂直间距 ≈24px
   padding: 0.34rem 0.3rem 0.36rem;
   box-sizing: border-box;
-  background: var(--gf-bg-card);
-  border-radius: 0.31rem; // 12px
-  box-shadow: 0 0.1rem 0.4rem var(--home-shadow);
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s ease;
 }
 
 .home-section-header {
@@ -382,6 +247,8 @@
   font-weight: 700;
   line-height: 1;
   border-radius: 3px;
+  border: 1px solid color-mix(in srgb, var(--gf-gold, #C59B27) 45%, transparent);
+  box-shadow: 0 0.02rem 0.06rem fade(#8A2B2B, 30%);
 }
 
 .home-section-sub {
@@ -2092,4 +1959,71 @@
   .home-yayan-submit-btn,
   .home-yayan-collect-btn { font-size: 0.28rem; }
   .home-yayan-inner { padding-left: 0.06rem; padding-right: 0.1rem; }
+}
+
+// ════════════════════════════════════════════════════
+// 🍎 苹果液态玻璃 × 东方温润水玉 全局质感统合层
+// ════════════════════════════════════════════════════
+.home-card-scroll {
+  backdrop-filter: blur(24px) saturate(190%) brightness(1.02) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(190%) brightness(1.02) !important;
+  background-color: color-mix(in srgb, var(--gf-bg-card) 76%, transparent) !important;
+  background-image: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.72) !important;
+  border-radius: 0.42rem !important;
+  box-shadow: 
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.92), // 顶部液态折射高光线
+    inset 0 -1px 1px 0 color-mix(in srgb, var(--gf-gold) 16%, transparent),
+    0 0.14rem 0.44rem -0.04rem var(--home-shadow),
+    0 0.03rem 0.1rem 0 rgba(0, 0, 0, 0.03) !important;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s ease;
+
+  &:active {
+    transform: scale(0.992);
+  }
+}
+
+// 子卡片、卷轴与输入位：次级液态毛玻璃
+.home-yayan-scroll,
+.home-yayan-result-card,
+.home-yayan-input-box {
+  backdrop-filter: blur(14px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
+  background-color: color-mix(in srgb, var(--home-mat) 75%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 28%, transparent) !important;
+  border-radius: 0.28rem !important;
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+// 按钮触感：iOS 物理微缩放反馈
+.home-yayan-submit-btn,
+.home-yayan-collect-btn,
+.home-almanac__roam,
+.home-shiwu-upload-card {
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    transform: scale(0.93);
+  }
+}
+
+// 月下墨境（暗色模式）黑晶琉璃透光质感
+[data-theme='dark'] {
+  .home-card-scroll {
+    background-color: color-mix(in srgb, var(--gf-bg-card) 72%, transparent) !important;
+    border-color: rgba(206, 165, 89, 0.32) !important;
+    box-shadow: 
+      inset 0 1px 1.5px 0 rgba(232, 208, 176, 0.32),
+      inset 0 -1px 1px 0 rgba(0, 0, 0, 0.45),
+      0 0.18rem 0.52rem -0.04rem rgba(0, 0, 0, 0.65) !important;
+  }
+
+  .home-yayan-scroll,
+  .home-yayan-result-card,
+  .home-yayan-input-box {
+    background-color: color-mix(in srgb, var(--home-mat) 70%, transparent) !important;
+    border-color: rgba(206, 165, 89, 0.22) !important;
+    box-shadow: inset 0 1px 1px 0 rgba(232, 208, 176, 0.18);
+  }
 }

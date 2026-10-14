@@ -5,6 +5,7 @@ import { DownOutline, RightOutline, UpOutline, CompassOutline, EditSOutline, Che
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../context/useTheme'
 import InkParticleField from '../components/InkParticleField.jsx'
+import InkSpreadZone from '../components/InkSpreadZone.jsx'
 import axios from '../http'
 
 const BASE = import.meta.env.BASE_URL
@@ -24,27 +25,6 @@ const GLYPH_STROKE = {
   strokeLinejoin: 'round',
 }
 
-/** 日轮（题头切换 · 晓色晨宣） */
-function SunGlyph() {
-  return (
-    <svg viewBox='0 0 24 24' aria-hidden='true' focusable='false'>
-      <circle cx='12' cy='12' r='4.3' {...GLYPH_STROKE} />
-      <path
-        d='M12 2.4v2.6M12 19v2.6M2.4 12h2.6M19 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9'
-        {...GLYPH_STROKE}
-      />
-    </svg>
-  )
-}
-
-/** 弦月（题头切换 · 月下墨境） */
-function MoonGlyph() {
-  return (
-    <svg viewBox='0 0 24 24' aria-hidden='true' focusable='false'>
-      <path d='M20.2 14.8A8.6 8.6 0 1 1 9.2 3.8a6.9 6.9 0 0 0 11 11Z' {...GLYPH_STROKE} />
-    </svg>
-  )
-}
 
 /**
  * 云日纹（时令天气）——古制「日轮 + 芒」纹样
@@ -68,68 +48,22 @@ function SunWheelGlyph() {
 }
 
 /**
- * 黑色水墨山水背景（纯矢量 SVG + CSS 刷新水墨生宣漫染动效）
- * 墨分三色（远山淡墨、中景叠嶂、近水墨石）+ 归鸿飞鸟，全端口矢量无损自适应
+ * 素娥月轮纹（夜间切换）——纯矢量宋风玄月
  */
-function InkLandscape() {
+function MoonCrescentGlyph() {
   return (
-    <div className="home-ink-landscape" aria-hidden="true">
-      <svg
-        className="home-ink-landscape__svg"
-        viewBox="0 0 1200 460"
-        preserveAspectRatio="xMidYMax slice"
-      >
-        <defs>
-          {/* 水墨渐变：山脊重墨，山腰向山脚如水雾化开 */}
-          <linearGradient id="inkFarGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#252525" stopOpacity="0.48" />
-            <stop offset="55%" stopColor="#303030" stopOpacity="0.18" />
-            <stop offset="100%" stopColor="#303030" stopOpacity="0" />
-          </linearGradient>
-          <linearGradient id="inkMidGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#181818" stopOpacity="0.68" />
-            <stop offset="60%" stopColor="#222222" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#222222" stopOpacity="0" />
-          </linearGradient>
-          <linearGradient id="inkNearGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#080808" stopOpacity="0.85" />
-            <stop offset="55%" stopColor="#151515" stopOpacity="0.42" />
-            <stop offset="100%" stopColor="#151515" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-
-        {/* 1. 远景淡墨群峰 */}
-        <path
-          className="ink-mountain ink-mountain--far"
-          d="M0 290 C 140 190, 260 250, 390 170 C 510 240, 630 150, 760 220 C 890 140, 1020 210, 1200 190 L 1200 460 L 0 460 Z"
-          fill="url(#inkFarGrad)"
-        />
-
-        {/* 2. 中景浓墨山势重峦叠嶂 */}
-        <path
-          className="ink-mountain ink-mountain--mid"
-          d="M0 340 C 130 260, 250 310, 380 230 C 500 300, 620 200, 750 270 C 880 210, 1030 290, 1200 250 L 1200 460 L 0 460 Z"
-          fill="url(#inkMidGrad)"
-        />
-
-        {/* 3. 近景重墨水石与渚岸倒影 */}
-        <path
-          className="ink-mountain ink-mountain--near"
-          d="M0 395 C 120 330, 240 365, 350 315 C 470 375, 590 325, 730 365 C 860 315, 1000 355, 1200 335 L 1200 460 L 0 460 Z"
-          fill="url(#inkNearGrad)"
-        />
-
-        {/* 4. 水天烟岚中掠过的几点归鸿水墨飞鸟 */}
-        <g className="ink-birds" fill="#141414" opacity="0.6">
-          <path d="M 860 130 Q 872 120 884 130 Q 896 120 908 130 Q 896 125 884 132 Q 872 125 860 130 Z" />
-          <path d="M 905 152 Q 914 144 923 152 Q 932 144 941 152 Q 932 148 923 154 Q 914 148 905 152 Z" />
-          <path d="M 948 138 Q 955 131 962 138 Q 969 131 976 138 Q 969 135 962 140 Q 955 135 948 138 Z" />
-        </g>
-      </svg>
-    </div>
+    <svg viewBox='0 0 24 24' aria-hidden='true' focusable='false'>
+      <path
+        d='M20.5 13.05A8.8 8.8 0 1 1 11.2 3.7 6.8 6.8 0 0 0 20.5 13.05z'
+        {...GLYPH_STROKE}
+        fill='currentColor'
+        fillOpacity={0.2}
+      />
+      <circle cx='18' cy='6.2' r='0.8' fill='currentColor' stroke='none' />
+      <circle cx='20.2' cy='9.2' r='0.6' fill='currentColor' stroke='none' />
+    </svg>
   )
 }
-
 // ════════════════════════════════════════════════════
 //  传统时辰换算（TRD v3.0：动态算法换算十二时辰）
 // ════════════════════════════════════════════════════
@@ -207,6 +141,19 @@ export default function Home() {
   const { toggleTheme, isDark } = useTheme()
   // 题头元素引用：水墨粒子引擎的手势监听直接挂在这里（不新增遮挡层）
   const heroRef = useRef(null)
+  const heroInkZoneRef = useRef(null)
+
+  // 点击题头「华风」朱砂印章：激荡朱砂印泥水墨晕染
+  const handleSealClick = (e) => {
+    e.stopPropagation()
+    if (!heroRef.current || !heroInkZoneRef.current) return
+    const heroRect = heroRef.current.getBoundingClientRect()
+    const sealRect = e.currentTarget.getBoundingClientRect()
+    const x = sealRect.left - heroRect.left + sealRect.width / 2
+    const y = sealRect.top - heroRect.top + sealRect.height / 2
+    heroInkZoneRef.current.triggerBleed(x, y, 'cinnabar', 1.8)
+    Toast.show({ content: '朱砂落印 · 雅意自生', duration: 1200 })
+  }
 
   // ① 白话雅译
   const [inputText, setInputText] = useState('')
@@ -275,24 +222,26 @@ export default function Home() {
 
   return (
     <div className="home-root">
-      {/* ── 黑色水墨山水背景（纯矢量 + 刷新水墨生宣漫染动效）── */}
-      <InkLandscape />
+      <InkWashBackground />
 
       {/* ── 水墨流体粒子引擎（Canvas 物理引擎：落叶/流萤/烟雨/飞雪 + 划动水墨扩散）── */}
       <InkParticleField interactionTarget={heroRef} />
 
       {/* ── 题头：云山竹简 + 朱砂印「华风」+ 副标 + 右上角日月/设置 ── */}
       <header className="home-hero is-ink-zone" ref={heroRef}>
+        {/* 题头局部宣纸水墨晕染层 */}
+        <InkSpreadZone ref={heroInkZoneRef} targetRef={heroRef} color="ink" />
+
         <div className="home-hero__actions">
           <button
             type="button"
             className="home-hero__icon-btn home-hero__icon-btn--theme"
             onClick={toggleTheme}
-            aria-label={isDark ? '切换为晓色晨宣' : '切换为月下墨境'}
+            aria-label={isDark ? '当前月下墨境 · 点击切换为晓色晨宣' : '当前晓色晨宣 · 点击切换为月下墨境'}
+            title={isDark ? '切换为晓色晨宣' : '切换为月下墨境'}
           >
-            {/* 图标铁律：antd-mobile-icons 无日/月 ⇒ 第三优先级内联 SVG，currentColor 着色 */}
-            <span className="home-hero__glyph" aria-hidden="true">
-              {isDark ? <MoonGlyph /> : <SunGlyph />}
+            <span className="home-hero__glyph">
+              {isDark ? <MoonCrescentGlyph /> : <SunWheelGlyph />}
             </span>
           </button>
           <button
@@ -308,7 +257,15 @@ export default function Home() {
 
         <div className="home-hero__title-row">
           <h1 className="home-hero__title">云山竹简</h1>
-          <span className="home-hero__seal">华风</span>
+          <span
+            className="home-hero__seal"
+            onClick={handleSealClick}
+            title="点击落印 · 激荡朱砂印泥"
+            role="button"
+            tabIndex={0}
+          >
+            华风
+          </span>
         </div>
         <p className="home-hero__sub">—— 读千年风雅 与君共此山河 ——</p>
       </header>

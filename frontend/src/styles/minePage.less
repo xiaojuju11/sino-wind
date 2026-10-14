@@ -58,14 +58,20 @@
 
   // 2. 雅士身份大卡片
   .scholar-card {
-    background-color: var(--gf-bg-card, rgba(250, 247, 240, 0.92)); // 绢帛微透
-    backdrop-filter: blur(4px);
-    border: 1.5px solid @color-border;
-    border-radius: @radius-card;
-    padding: 16px;
-    margin-bottom: 14px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(24px) saturate(190%) brightness(1.02);
+    -webkit-backdrop-filter: blur(24px) saturate(190%) brightness(1.02);
+    background-color: color-mix(in srgb, var(--gf-bg-card, #FAF7F0) 76%, transparent);
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: 18px;
+    padding: 18px 16px;
+    margin-bottom: 16px;
+    box-shadow: 
+      inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.92), // 顶部液态折射光
+      inset 0 -1px 1px 0 color-mix(in srgb, var(--gf-gold) 16%, transparent),
+      0 10px 30px -4px rgba(45, 35, 25, 0.08),
+      0 2px 8px 0 rgba(45, 35, 25, 0.03);
     position: relative;
+    transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 
     &__profile {
       display: flex;
@@ -182,13 +188,19 @@
 
   // 3. 通用功能板块卡片
   .shuzhai-section-card {
-    background-color: var(--gf-bg-card, rgba(250, 247, 240, 0.92));
-    backdrop-filter: blur(4px);
-    border: 1px solid @color-border;
-    border-radius: @radius-card;
-    padding: 14px 16px;
-    margin-bottom: 14px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+    backdrop-filter: blur(24px) saturate(190%) brightness(1.02);
+    -webkit-backdrop-filter: blur(24px) saturate(190%) brightness(1.02);
+    background-color: color-mix(in srgb, var(--gf-bg-card, #FAF7F0) 76%, transparent);
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 
+      inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.92),
+      inset 0 -1px 1px 0 color-mix(in srgb, var(--gf-gold) 16%, transparent),
+      0 10px 30px -4px rgba(45, 35, 25, 0.08),
+      0 2px 8px 0 rgba(45, 35, 25, 0.03);
+    transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 
     .shuzhai-section-head {
       display: flex;
@@ -522,59 +534,56 @@
   }
 }
 
+// 🍎 书斋页暗色模式水玉琉璃质感
+[data-theme='dark'] {
+  .scholar-card,
+  .shuzhai-section-card {
+    background-color: color-mix(in srgb, var(--gf-bg-card, #171E23) 74%, transparent) !important;
+    border-color: rgba(206, 165, 89, 0.32) !important;
+    box-shadow: 
+      inset 0 1px 1.5px 0 rgba(232, 208, 176, 0.3),
+      inset 0 -1px 1px 0 rgba(0, 0, 0, 0.45),
+      0 12px 36px -4px rgba(0, 0, 0, 0.65) !important;
+  }
+}
+
+
 // ════════════════════════════════════════════════════
 //  「关于云山竹简」弹窗的确认按钮（知悉）
-//
-//  为什么是这个选择器：Antd Mobile 的 Modal 渲染到 body 下的 portal，
-//  不在 .shuzhai-root 子树内，所以无法用祖先作用域限定，只能按类名直接命中；
-//  类名由 MinePage.jsx 的 Modal.show({ actions: [{ className: 'shuzhai-about-confirm' }] }) 注入，
-//  因此不会影响站内其他 Modal（其他处并未使用该类名）。
-//
-//  视觉口径：与书斋「整装离席」按钮同一套语汇 ——
-//    朱砂描边 + 朱砂字 + 700 字重 + 胶囊圆角；
-//  底色刻意不设（沿用 Antd 默认白底），与改动前保持一致。
-//
-//  ⚠️ 优先级说明（实测踩过）：
-//  Antd 有 `.adm-modal-footer .adm-modal-button { font-size: …; line-height: 25px }`，
-//  这是【两点】选择器（0,2,0），而单独的 `.shuzhai-about-confirm` 只有一点（0,1,0），
-//  所以我的 font-size / line-height 会被压掉（实测字号仍是 18px、行高 25px、按钮仅 27px 高）。
-//  故这里用【双层选择器】把优先级提到 (0,2,0) 并与 Antd 同层、靠顺序取胜；
-//  同时又不去碰 `.adm-modal-footer`，以免污染站内其他 Modal。
+//  类名由 MinePage.jsx 的 Modal.show({ actions: [{ className: 'shuzhai-about-confirm' }] }) 注入；
+//  Antd Modal 渲染到 body 下的 portal，不在 .shuzhai-root 子树内，故只能按类名命中，
+//  站内其他 Modal 未使用该类名，互不影响。
+//  视觉口径：与「整装离席」同一套语汇（朱砂描边 + 朱砂字 + 700 + 胶囊圆角），
+//  底色不设（沿用 Antd 默认白底）。
+//  ⚠️ Antd 的两条规则需分别对付：
+//    .adm-modal-footer .adm-modal-button { font-size: …; line-height: 25px }  → 两点选择器，用双类名提优先级
+//    …:not(.adm-modal-button-primary) { padding-top: 0; padding-bottom: 0 }   → longhand 恒胜 shorthand，
+//                                                                               只能靠 JSX 内联 style 压制
+//  暗色底色走 --gf-bg-card：Antd 的 --adm-color-background 暗色下仍是白。
 // ════════════════════════════════════════════════════
 .shuzhai-about-confirm.shuzhai-about-confirm {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  // 椭圆胶囊：用 999px 而非固定值，便于日后改高度时仍是正椭圆
   border-radius: 999px;
-  // 描边 + 字色统一走令牌，自动随日月主题切换
   border: 1.5px solid var(--gf-seal, @color-seal);
   color: var(--gf-accent-text, @color-seal);
   font-family: 'STKaiti', 'KaiTi', var(--gf-font-serif, serif);
   font-size: 16px;
   font-weight: 700;
   letter-spacing: 2px;
-  // 上下留白撑出胶囊的"饱满感"（Antd 对非 primary 按钮强制 padding-top/bottom: 0，
-  // 需在更高优先级处覆盖，否则按钮只有一行字高、显得又扁又小）
   padding: 8px 32px;
   line-height: 1.35;
-  // 底色：白昼维持 Antd 默认的纯白（与改动前一致）；暗色改用项目卡片令牌 #171E23。
-  // ⚠️ 不能用 Antd 的 --adm-color-background：它在暗色下仍是 #ffffff，
-  //    而 Antd 自身的 Modal 面板用的是 --adm-color-background-body（暗色下变深）。
-  //    结果就是暗色弹窗里贴出一块白底按钮，非常突兀（实测截图确认）。
-  //    故这里改走项目自己的 --gf-bg-card，与弹窗面板同色、自动随主题切换。
   background-color: var(--gf-bg-card, #ffffff);
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
   cursor: pointer;
 
-  // 按下反馈：与「整装离席」一致的朱砂实底反白
   &:active {
     background-color: var(--gf-seal, @color-seal);
     border-color: var(--gf-seal, @color-seal);
     color: #fff;
   }
 
-  // 暗色模式：描边与字色转为泥金强调色（与全站暗色口径一致）
   [data-theme='dark'] & {
     border-color: var(--gf-accent-text, @color-gold);
     color: var(--gf-accent-text, @color-gold);
@@ -586,5 +595,3 @@
     }
   }
 }
-
-
