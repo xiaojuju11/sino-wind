@@ -1,0 +1,15 @@
+.scholar-sheet-backdrop { position: fixed; inset: 0; z-index: 1001; background: color-mix(in srgb, var(--gf-ink-primary) 35%, transparent); display: flex; align-items: flex-end; justify-content: center; }
+.scholar-sheet { box-sizing: border-box; width: min(100%, 520px); max-height: 88dvh; overflow-y: auto; overscroll-behavior: contain; padding: 22px 18px max(24px, env(safe-area-inset-bottom)); border-radius: 18px 18px 0 0; background: var(--gf-bg-paper); color: var(--gf-ink-primary); font-size: 15px; line-height: 1.8; box-shadow: 0 -4px 24px color-mix(in srgb, var(--gf-ink-primary) 12%, transparent);
+  header, nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  h2 { font-size: 22px; font-family: STKaiti, KaiTi, serif; }
+  p { margin: 12px 0; }
+  button { color: var(--gf-ink-primary); background: var(--gf-bg-card); border: 1px solid var(--gf-ink-muted); border-radius: 6px; padding: 8px 12px; min-height: 44px; font: inherit; cursor: pointer; }
+  button:disabled { opacity: .5; cursor: default; }
+  button:focus-visible { outline: 2px solid var(--gf-cinnabar); outline-offset: 2px; }
+  .scholar-archive-card { display: block; box-sizing: border-box; width: 100%; min-width: 0; padding: 12px; margin: 12px 0; text-align: start; overflow-wrap: anywhere; border-inline-start: 3px solid var(--gf-cinnabar); span, time { display: block; font-size: 13px; color: var(--gf-ink-secondary); } }
+}
+.scholar-certificate-preview img { width: 100%; display: block; margin: 12px 0; }
+.scholar-reply-letter { padding: 20px; margin: 14px 0; background: var(--gf-bg-card); color: var(--gf-ink-primary); border: 1px solid var(--gf-cinnabar); line-height: 2; white-space: pre-wrap; animation: scholar-letter-unfold .45s ease-out; }
+.scholar-reply-letter button { font: inherit; min-height: 44px; padding: 6px 12px; color: var(--gf-ink-primary); background: var(--gf-bg-paper); border: 1px solid var(--gf-cinnabar); border-radius: 4px; }
+@keyframes scholar-letter-unfold { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .scholar-reply-letter { animation: none; } }

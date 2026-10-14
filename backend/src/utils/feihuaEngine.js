@@ -1,6 +1,13 @@
 const rhymeData = require('../data/pingshui.json')
 const poems = require('../data/feihuaPoems')
-const KEYWORDS = ['月', '花', '风', '山', '水', '春']
+const KEYWORDS = ['月', '花', '风', '山', '水', '春', '愁', '心', '明', '秋', '江']
+const SAGES = Object.freeze({
+  libai: { name: '李白', keywords: ['月', '山', '水', '风'], style: '纵情山水，豪迈浪漫' },
+  sushi: { name: '苏轼', keywords: ['月', '风', '江', '水'], style: '旷达清欢，豪放通透' },
+  liqingzhao: { name: '李清照', keywords: ['花', '愁', '月', '风'], style: '婉约清丽，优先引易安词与宋词' },
+  wangyangming: { name: '王阳明', keywords: ['山', '水', '心', '明'], style: '知行相资，优先心学与理趣诗句' },
+  dufu: { name: '杜甫', keywords: ['春', '秋', '江', '风'], style: '沉郁顿挫，心系苍生' }
+})
 const index = new Map()
 for (const group of rhymeData.groups) for (const char of group.characters) {
   if (!index.has(char)) index.set(char, [])
@@ -10,7 +17,7 @@ const normalize = text => typeof text === 'string' ? text.normalize('NFKC').repl
 const entries = new Map(poems.map(p => [normalize(p.line), p]))
 function rhymeGroups(line) { return index.get(Array.from(line).at(-1)) || [] }
 function createGame({ sageId = 'libai', keyword = '月', rhyme = '', nickname = '未登录雅士' }, now) {
-  if (!['libai', 'sushi'].includes(sageId) || !KEYWORDS.includes(keyword) || (rhyme && !rhymeData.groups.some(g => g.name === rhyme))) throw new Error('无效的先贤、令字或韵部')
+  if (!Object.hasOwn(SAGES, sageId) || !KEYWORDS.includes(keyword) || (rhyme && !rhymeData.groups.some(g => g.name === rhyme))) throw new Error('无效的先贤、令字或韵部')
   if (rhyme && !poems.some(p => p.line.includes(keyword) && rhymeGroups(p.line).includes(rhyme))) throw new Error('此令字与韵部暂无题库诗句，请另选韵部')
   return { sageId, keyword, rhyme, nickname, version: 0, status: 'playing', deadline: now + 30000, turns: [], rounds: 0, winner: null, reason: '', endedAt: null }
 }
@@ -41,7 +48,8 @@ function move(previous, { action, line }, now) {
   game.turns.push({ role: 'user', ...poem })
   game.rounds++; game.version++
   const available = poems.filter(p => p.line.includes(game.keyword) && rhymeGroups(p.line).includes(game.rhyme) && !game.turns.some(t => t.line === p.line))
-  available.sort((a, b) => Number(b.author === (game.sageId === 'libai' ? '李白' : '苏轼')) - Number(a.author === (game.sageId === 'libai' ? '李白' : '苏轼')))
+  const priority = p => p.author === SAGES[game.sageId]?.name ? 10 : game.sageId === 'liqingzhao' && p.dynasty === '宋' ? 5 : game.sageId === 'wangyangming' && ['观书有感','题西林壁','登鹳雀楼','登飞来峰'].includes(p.title) ? 5 : 0
+  available.sort((a, b) => priority(b) - priority(a))
   if (!available.length) return { game: finish(game, 'user', '本局经典题库已无可应之句，雅士胜出', now), changed: true }
   game.turns.push({ role: 'sage', ...available[0] })
   if (game.rounds >= 6) return { game: finish(game, 'draw', '六轮唱和俱合令，以和为贵', now), changed: true }
@@ -49,4 +57,12 @@ function move(previous, { action, line }, now) {
   return { game, changed: true }
 }
 const points = game => game.status !== 'finished' ? 0 : game.winner === 'user' ? 3 : game.winner === 'draw' ? 1 : 0
-module.exports = { KEYWORDS, createGame, move, points, normalize, rhymeGroups, poems, rhymeData }
+// One authoritative rank function; clients consume its API result rather than guessing.
+function scholarRank(value) {
+  const score = Math.max(0, Number(value) || 0)
+  return [
+    [5, '白衣布衣'], [15, '秀才 / 茂才'], [30, '举人 / 乡贡'],
+    [60, '贡士'], [100, '同进士出身'], [150, '进士及第'], [Infinity, '翰林大学士']
+  ].find(([ceiling]) => score <= ceiling)[1]
+}
+module.exports = { KEYWORDS, SAGES, createGame, move, points, scholarRank, normalize, rhymeGroups, poems, rhymeData }

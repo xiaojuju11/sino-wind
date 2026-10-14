@@ -1,6 +1,6 @@
 const Router = require('koa-router')
 const { deepseekChatStream, deepseekChat, translateYayan, soulScholar, appreciatePoem } = require('../controllers/deepseekController.js')
-const { optionalToken } = require('../utils/jwt.js')
+const { optionalToken, verifyToken } = require('../utils/jwt.js')
 
 const router = new Router({
   prefix: '/api/deepseek'
@@ -23,5 +23,16 @@ const feihua = require('../controllers/feihuaController')
 router.get('/feihua/rules', feihua.rules)
 router.post('/feihua/start', optionalToken(), feihua.start)
 router.post('/feihua/turn', optionalToken(), feihua.turn)
+router.get('/feihua/records', verifyToken(), feihua.records)
+router.get('/feihua/records/:id', verifyToken(), feihua.record)
+const ecosystem = require('../controllers/scholarEcosystemController')
+router.get('/scholar/letters', verifyToken(), ecosystem.list)
+router.get('/scholar/letters/:sageId', verifyToken(), ecosystem.detail)
+router.post('/scholar/letters/:sageId/leave', verifyToken(), ecosystem.leave)
+router.post('/scholar/letters/:sageId/read', verifyToken(), ecosystem.read)
+const artifacts = require('../controllers/scholarArtifactController')
+router.get('/scholar/artifacts', verifyToken(), artifacts.list)
+router.post('/scholar/artifacts', verifyToken(), artifacts.save)
+router.delete('/scholar/artifacts/:id', verifyToken(), artifacts.remove)
 
 module.exports = router

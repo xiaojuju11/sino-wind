@@ -554,7 +554,7 @@ async function appreciatePoem(ctx) {
   }
 }
 
-const deepseekChatStream = require('../utils/scholarSSE').createScholarStream({ getClient, sages, generateSageReply, sanitizeSageReply, db })
+const deepseekChatStream = require('../utils/scholarSSE').createScholarStream({ getClient, sages, generateSageReply, sanitizeSageReply, db, saveTurn: require('../utils/scholarLetters').saveTurn, loadArtifact: require('./scholarArtifactController').loadArtifact })
 
 module.exports = {
   deepseekChatStream,

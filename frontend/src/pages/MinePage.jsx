@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../context/useTheme'
 import ThemeToggle from '../context/ThemeToggle.jsx'
 import axios from '../http'
+import ScholarArchive from '../components/ScholarArchive'
+import ScholarArtifactDrawer from '../components/ScholarArtifactDrawer'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -23,6 +25,8 @@ const PRESET_YAYAN = [
 export default function MinePage() {
   const navigate = useNavigate()
   const [userInfo, setUserInfo] = useState({})
+  const [archiveOpen, setArchiveOpen] = useState(false)
+  const [artifactsOpen, setArtifactsOpen] = useState(false)
   const [visibleLogout, setVisibleLogout] = useState(false)
   const [visibleAvatarViewer, setVisibleAvatarViewer] = useState(false)
   const [visibleYayanDrawer, setVisibleYayanDrawer] = useState(false)
@@ -158,7 +162,7 @@ export default function MinePage() {
               <h2 className='scholar-name'>{userInfo.nickname || '云山居士'}</h2>
               <span className='scholar-badge'>
                 <i className='iconfont icon-wode scholar-badge__icon'></i>
-                {userInfo.title || '翰林学士'}
+                {userInfo.scholar_rank || '白衣布衣'}
               </span>
             </div>
             <p className='scholar-motto'>读千年风雅 与君共此山河</p>
@@ -191,7 +195,14 @@ export default function MinePage() {
         </div>
 
         <div className='shuzhai-list'>
-          <div className='shuzhai-list-item' onClick={() => navigate('/recognition')}>
+          <button type='button' className='shuzhai-list-item' onClick={() => setArchiveOpen(true)} style={{ width: '100%', background: 'var(--gf-bg-card)', color: 'var(--gf-ink-primary)', border: 0, textAlign: 'start' }}>
+            <i className='iconfont icon-shuben' aria-hidden='true' />
+            <div className='shuzhai-list-item__content'>
+              <span className='shuzhai-list-item__title'>藏牒阁（通关诏书）</span>
+              <span className='shuzhai-list-item__desc'>历局唱和存卷 · 高清文牒回看与分享</span>
+            </div><RightOutline className='shuzhai-list-item__arrow' />
+          </button>
+          <div className='shuzhai-list-item' onClick={() => setArtifactsOpen(true)}>
             <i className='iconfont icon-zhanpin'></i>
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>物溯宝鉴（已鉴藏品）</span>
@@ -315,6 +326,8 @@ export default function MinePage() {
         </button>
       </div>
 
+      {archiveOpen && <ScholarArchive onClose={() => setArchiveOpen(false)} />}
+      {artifactsOpen && <ScholarArtifactDrawer onClose={() => setArtifactsOpen(false)} />}
       {/* 退出登录确认弹窗 */}
       <ActionSheet
         visible={visibleLogout}

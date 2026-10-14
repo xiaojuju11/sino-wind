@@ -38,10 +38,10 @@ async function run() {
   assert.equal(call.body.code, 1); let game = call.body.data; gameIds.push(game.id)
   const stranger = { userId: testUser + 1000000, request: { body: { id: game.id, version: 0, action: 'resign' } } }
   await controller.turn(stranger); assert.equal(stranger.status, 403)
-  for (const line of ['举头望明月', '小时不识月', '今人不见古时月']) {
-    call = ctx({ id: game.id, version: game.version, action: 'submit', line }); await controller.turn(call); game = call.body.data
-    assert.equal(game.status, 'playing')
-  }
+  // A fixed near-exhausted corpus state isolates settlement from future corpus growth.
+  const fixture = engine.createGame({ keyword: '月', rhyme: '入声六月' }, Date.now())
+  fixture.turns = engine.poems.filter(p => p.line.includes('月') && engine.rhymeGroups(p.line).includes('入声六月') && p.line !== '海上生明月').map(p => ({ role: 'sage', ...p }))
+  await db.execute('UPDATE feihua_games SET state=? WHERE id=?', [JSON.stringify(fixture), game.id])
   const finish = { id: game.id, version: game.version, action: 'submit', line: '海上生明月' }
   const repeats = await Promise.all(Array.from({ length: 4 }, async () => { const c = ctx(finish); await controller.turn(c); return c }))
   assert.ok(repeats.every(c => c.body.data.winner === 'user' && c.body.data.pointsAwarded === 3))
