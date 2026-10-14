@@ -21,6 +21,20 @@
   --home-mat: #1A2129;
 }
 
+// 🍎 苹果液态玻璃 × 东方温润水玉卡片混入 (Liquid Jade Glass)
+.liquid-jade-card() {
+  backdrop-filter: blur(24px) saturate(190%) brightness(1.02);
+  -webkit-backdrop-filter: blur(24px) saturate(190%) brightness(1.02);
+  background: color-mix(in srgb, var(--gf-bg-card) 76%, transparent);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 0.42rem;
+  box-shadow: 
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.92), // 顶部液态折射高光线
+    inset 0 -1px 1px 0 color-mix(in srgb, var(--gf-gold) 16%, transparent),
+    0 0.14rem 0.44rem -0.04rem var(--home-shadow),
+    0 0.03rem 0.1rem 0 rgba(0, 0, 0, 0.03);
+}
+
 // ── 回纹描金外框（模块卡片通用）──
 .gu-frame(@len: 0.22rem) {
   position: relative;
@@ -93,14 +107,19 @@
     width: 0.78rem;
     height: 0.78rem;
     padding: 0;
-    background: color-mix(in srgb, var(--gf-bg-card) 82%, transparent);
-    border: 1px solid color-mix(in srgb, var(--gf-gold) 55%, transparent);
-    border-radius: 50%;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background: color-mix(in srgb, var(--gf-bg-card) 76%, transparent);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 0.24rem;
+    box-shadow: 
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.85),
+      0 2px 8px rgba(0, 0, 0, 0.08);
     cursor: pointer;
-    transition: transform 0.16s ease;
+    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 
     &:active {
-      transform: translateY(1px);
+      transform: scale(0.90);
     }
   }
 
@@ -141,8 +160,9 @@
     color: var(--gf-ink-primary);
   }
 
-  // 朱砂小印「华风」：朱底白字 + 泥金细框
+  // 朱砂小印「华风」：朱底白字 + 泥金细框 + 印泥微触动效
   &__seal {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -158,7 +178,23 @@
     writing-mode: vertical-rl;
     border: 1px solid color-mix(in srgb, var(--gf-gold) 75%, transparent);
     border-radius: 2px;
-    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gf-gold) 30%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gf-gold) 30%, transparent),
+                0 0.02rem 0.08rem fade(#8A2B2B, 25%);
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+
+    &:hover {
+      transform: scale(1.06);
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gf-gold) 60%, transparent),
+                  0 0.04rem 0.12rem fade(#8A2B2B, 35%);
+    }
+
+    &:active {
+      transform: scale(0.92);
+      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gf-gold) 90%, transparent),
+                  0 0 0.08rem fade(#8A2B2B, 50%);
+    }
   }
 
   &__sub {
@@ -172,12 +208,11 @@
 // ════════════ 模块卡片通用外壳 ════════════
 .home-card-scroll {
   .gu-frame(0.2rem);
+  .liquid-jade-card();
   margin-top: 0.62rem; // 模块间垂直间距 ≈24px
   padding: 0.34rem 0.3rem 0.36rem;
   box-sizing: border-box;
-  background: var(--gf-bg-card);
-  border-radius: 0.31rem; // 12px
-  box-shadow: 0 0.1rem 0.4rem var(--home-shadow);
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s ease;
 }
 
 .home-section-header {
@@ -212,6 +247,8 @@
   font-weight: 700;
   line-height: 1;
   border-radius: 3px;
+  border: 1px solid color-mix(in srgb, var(--gf-gold, #C59B27) 45%, transparent);
+  box-shadow: 0 0.02rem 0.06rem fade(#8A2B2B, 30%);
 }
 
 .home-section-sub {
@@ -1922,4 +1959,71 @@
   .home-yayan-submit-btn,
   .home-yayan-collect-btn { font-size: 0.28rem; }
   .home-yayan-inner { padding-left: 0.06rem; padding-right: 0.1rem; }
+}
+
+// ════════════════════════════════════════════════════
+// 🍎 苹果液态玻璃 × 东方温润水玉 全局质感统合层
+// ════════════════════════════════════════════════════
+.home-card-scroll {
+  backdrop-filter: blur(24px) saturate(190%) brightness(1.02) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(190%) brightness(1.02) !important;
+  background-color: color-mix(in srgb, var(--gf-bg-card) 76%, transparent) !important;
+  background-image: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.72) !important;
+  border-radius: 0.42rem !important;
+  box-shadow: 
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.92), // 顶部液态折射高光线
+    inset 0 -1px 1px 0 color-mix(in srgb, var(--gf-gold) 16%, transparent),
+    0 0.14rem 0.44rem -0.04rem var(--home-shadow),
+    0 0.03rem 0.1rem 0 rgba(0, 0, 0, 0.03) !important;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s ease;
+
+  &:active {
+    transform: scale(0.992);
+  }
+}
+
+// 子卡片、卷轴与输入位：次级液态毛玻璃
+.home-yayan-scroll,
+.home-yayan-result-card,
+.home-yayan-input-box {
+  backdrop-filter: blur(14px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
+  background-color: color-mix(in srgb, var(--home-mat) 75%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 28%, transparent) !important;
+  border-radius: 0.28rem !important;
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+// 按钮触感：iOS 物理微缩放反馈
+.home-yayan-submit-btn,
+.home-yayan-collect-btn,
+.home-almanac__roam,
+.home-shiwu-upload-card {
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    transform: scale(0.93);
+  }
+}
+
+// 月下墨境（暗色模式）黑晶琉璃透光质感
+[data-theme='dark'] {
+  .home-card-scroll {
+    background-color: color-mix(in srgb, var(--gf-bg-card) 72%, transparent) !important;
+    border-color: rgba(206, 165, 89, 0.32) !important;
+    box-shadow: 
+      inset 0 1px 1.5px 0 rgba(232, 208, 176, 0.32),
+      inset 0 -1px 1px 0 rgba(0, 0, 0, 0.45),
+      0 0.18rem 0.52rem -0.04rem rgba(0, 0, 0, 0.65) !important;
+  }
+
+  .home-yayan-scroll,
+  .home-yayan-result-card,
+  .home-yayan-input-box {
+    background-color: color-mix(in srgb, var(--home-mat) 70%, transparent) !important;
+    border-color: rgba(206, 165, 89, 0.22) !important;
+    box-shadow: inset 0 1px 1px 0 rgba(232, 208, 176, 0.18);
+  }
 }

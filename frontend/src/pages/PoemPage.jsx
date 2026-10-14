@@ -17,6 +17,7 @@ import axios from '../http'
 import ThemeToggle from '../context/ThemeToggle.jsx'
 import RadarChart from '../components/RadarChart.jsx'
 import TonePattern from '../components/TonePattern.jsx'
+import InkSpreadZone from '../components/InkSpreadZone.jsx'
 import { buildMetreReport, scoreDimensions } from '../utils/poemMetre.js'
 
 const BASE = import.meta.env.BASE_URL
@@ -119,6 +120,8 @@ export default function PoemPage() {
   const [playingMusic, setPlayingMusic] = useState(false)
   const [reciting, setReciting] = useState(false)
   const appreciateRef = useRef(null)
+  const scrollRef = useRef(null)
+  const scrollInkRef = useRef(null)
 
   // 赏析多维状态
   const [appreciationData, setAppreciationData] = useState(null)
@@ -342,7 +345,14 @@ export default function PoemPage() {
       return
     }
     setStamp(true)
-    setTimeout(() => setStamp(false), 1100)
+    setTimeout(() => setStamp(false), 1250)
+
+    // 朱砂印章下压：在诗卷中央激荡扩散朱砂印泥水墨晕染
+    if (scrollRef.current && scrollInkRef.current) {
+      const rect = scrollRef.current.getBoundingClientRect()
+      scrollInkRef.current.triggerBleed(rect.width / 2, rect.height * 0.38, 'cinnabar', 2.2)
+    }
+
     setCollecting(true)
     try {
       const res = await axios.post('/api/poem/collect', {
@@ -440,8 +450,10 @@ export default function PoemPage() {
         </section>
       )}
 
-      {/* 宣纸诗卷主体 */}
-      <section className="poem-scroll">
+      {/* 宣纸诗卷主体：内嵌触控水墨落笔晕染 */}
+      <section className="poem-scroll" ref={scrollRef}>
+        <InkSpreadZone ref={scrollInkRef} targetRef={scrollRef} color="ink" />
+
         {poem?.bgArt && (
           <span className="poem-scroll__watermark" style={{ backgroundImage: `url(${poem.bgArt})` }} />
         )}

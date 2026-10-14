@@ -244,7 +244,7 @@ export default function MinePage() {
 
         <div className='shuzhai-list'>
           <div className='shuzhai-list-item' onClick={toggleTheme}>
-            <i className='iconfont icon-tongzhi'></i>
+            <i className={`iconfont ${isDark ? 'icon-uniF438' : 'icon-shouye'}`}></i>
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>日月交替（墨境切换）</span>
               <span className='shuzhai-list-item__desc'>

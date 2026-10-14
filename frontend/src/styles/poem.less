@@ -597,7 +597,7 @@
   }
 }
 
-// ── 摘录成功 · 朱砂印章下压动效 ──────────────────
+// ── 摘录成功 · 朱砂印章下压动效与印泥晕染 ──────────────────
 .poem-stamp {
   position: fixed;
   top: 42%;
@@ -618,27 +618,63 @@
   background: var(--gf-seal, @color-seal);
   border: 3px solid fade(#7d1f20, 80%);
   border-radius: 8px;
-  box-shadow: 0 0.1rem 0.4rem fade(@color-seal, 45%);
-  animation: poem-stamp-press 1.05s ease-out forwards;
+  box-shadow: 0 0.1rem 0.4rem fade(@color-seal, 45%),
+              0 0 0 0.08rem fade(@color-seal, 25%);
+  animation: poem-stamp-press 1.25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   pointer-events: none;
+
+  // 朱砂印泥渗入生宣向四周晕开的光晕光环
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -0.24rem;
+    border-radius: 16px;
+    background: radial-gradient(circle, fade(@color-seal, 40%) 0%, fade(@color-seal, 15%) 60%, transparent 85%);
+    filter: blur(6px);
+    opacity: 0;
+    animation: poem-stamp-bleed 1.25s ease-out forwards;
+    pointer-events: none;
+  }
+}
+
+@keyframes poem-stamp-bleed {
+  0%, 25% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  40% {
+    opacity: 0.85;
+    transform: scale(1.15);
+  }
+  85% {
+    opacity: 0.4;
+    transform: scale(1.4);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
 }
 
 @keyframes poem-stamp-press {
   0% {
     opacity: 0;
-    transform: scale(2.1) rotate(-14deg);
+    transform: scale(2.2) rotate(-14deg);
   }
-  28% {
+  26% {
     opacity: 1;
-    transform: scale(1) rotate(-6deg);
+    transform: scale(0.96) rotate(-5deg);
   }
-  72% {
+  35% {
+    transform: scale(1.02) rotate(-6deg);
+  }
+  75% {
     opacity: 1;
     transform: scale(1) rotate(-6deg);
   }
   100% {
     opacity: 0;
-    transform: scale(1.06) rotate(-6deg);
+    transform: scale(1.05) rotate(-6deg);
   }
 }
 

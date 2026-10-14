@@ -1,7 +1,7 @@
 @import '../styles/variables.less';
 
 // 🏮 公共布局与底部导航（成员 B 独占）
-// 图标：设计稿切图 assets/tabbar/*（以 mask + currentColor 着色，激活态自动变朱砂红）
+// 图标：全量纯矢量 SVG 与 Iconfont（零死图片，激活态自动变朱砂红）
 // 多端适配：已吸收成员 C 的 PC 宽屏居中方案（width: 100%; max-width: 480px; 居中）
 .layout {
   min-height: 100vh;
@@ -9,48 +9,62 @@
 }
 
 .layout-page {
-  padding-bottom: 1.95rem; // 预留固定底栏高度（含安全区）
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 2.1rem); // 预留悬浮底栏高度与呼吸间距
 }
 
+// 🍎 苹果液态玻璃 × 东方温润水玉悬浮 Dock
 .bottom-nav {
   position: fixed;
-  bottom: 0;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 0.28rem); // 悬空脱离底边缘
   left: 50%;
-  transform: translateX(-50%); // 宽屏居中（成员 C 多端适配）
-  width: 100%;
-  max-width: 480px; // 超宽屏不超过 480px，避免底栏被拉伸
+  transform: translateX(-50%); // 宽屏居中
+  width: calc(100% - 0.68rem); // 两侧留出呼吸间距，形成悬浮浮岛 Dock
+  max-width: 430px; // 手机端优美的悬浮长宽比
   z-index: 100;
   display: flex;
   align-items: center;
-  height: 1.52rem;
-  padding: 0 0.36rem calc(env(safe-area-inset-bottom) + 0.06rem);
+  height: 1.48rem;
+  padding: 0 0.4rem;
   box-sizing: border-box;
-  background: @color-card; // 绢帛玉白底色（#FAF7F0）
-  border-top: 1px solid fade(@color-gold, 40%);
-  box-shadow: 0 -0.06rem 0.24rem fade(#3a2f1d, 7%);
 
-  // 两端回纹描金角（对齐设计稿导航栏装饰）
+  // 🍎 核心液态玻璃质感：温润玉帛 + 高透背板虚化 + 液体表面张力高光
+  backdrop-filter: blur(28px) saturate(190%) brightness(1.03);
+  -webkit-backdrop-filter: blur(28px) saturate(190%) brightness(1.03);
+  background: rgba(250, 247, 240, 0.78); // 78% 温润玉帛通透感
+  border: 1px solid rgba(255, 255, 255, 0.75); // 液体反光白亮微边
+  border-radius: 0.74rem; // 完整胶囊大圆角（iOS 经典灵动 Squircle）
+  box-shadow: 
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95), // 顶部液面受光折射高光线
+    inset 0 -1px 1px 0 rgba(197, 155, 39, 0.16),  // 底部微泥金折射收口
+    0 0.18rem 0.46rem -0.04rem rgba(45, 35, 25, 0.13), // 主悬浮柔和阴影
+    0 0.04rem 0.12rem 0 rgba(45, 35, 25, 0.04);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  // 两端回纹描金角（微缩雅致嵌入悬浮胶囊内）
   &::before,
   &::after {
     content: '';
     position: absolute;
-    top: 0.12rem;
-    width: 0.2rem;
-    height: 0.2rem;
-    border: 1px solid fade(@color-gold, 70%);
+    top: 0.22rem;
+    width: 0.16rem;
+    height: 0.16rem;
+    border: 1px solid fade(@color-gold, 55%);
     pointer-events: none;
+    opacity: 0.65;
   }
 
   &::before {
-    left: 0.1rem;
+    left: 0.26rem;
     border-right: none;
     border-bottom: none;
+    border-top-left-radius: 2px;
   }
 
   &::after {
-    right: 0.1rem;
+    right: 0.26rem;
     border-left: none;
     border-bottom: none;
+    border-top-right-radius: 2px;
   }
 
   &__item {
@@ -59,18 +73,29 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.05rem;
+    gap: 0.04rem;
     padding: 0;
     background: none;
     border: none;
     color: #6a655c; // 淡墨（未激活）
     font-family: inherit;
     cursor: pointer;
-    transition: color 0.2s ease;
+    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    -webkit-tap-highlight-color: transparent;
+
+    // 🍎 iOS 原生物理弹性按压微缩放
+    &:active {
+      transform: scale(0.90);
+    }
 
     // 激活态：朱砂红图标 + 朱砂下划线
     &.is-active {
       color: @color-seal;
+
+      .bottom-nav__icon-font,
+      .bottom-nav__icon-svg {
+        transform: translateY(-0.03rem) scale(1.08); // 激活图标轻微灵动跃起
+      }
 
       .bottom-nav__underline {
         opacity: 1;
@@ -79,17 +104,24 @@
     }
   }
 
-  // 器物图标：切图作为 mask，颜色由 currentColor 决定
-  &__icon {
-    width: 0.6rem;
-    height: 0.48rem;
-    background-color: currentColor;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-    -webkit-mask-size: contain;
-    mask-size: contain;
+  // 底部导航矢量图标与 Iconfont：颜色随 currentColor 自然联动，激活态自动变朱砂红
+  &__icon-svg,
+  &__icon-font {
+    font-size: 0.52rem;
+    line-height: 1;
+    color: currentColor;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.52rem;
+    height: 0.52rem;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
   }
 
   &__label {
