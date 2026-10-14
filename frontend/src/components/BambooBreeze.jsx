@@ -1,19 +1,24 @@
 import React from 'react'
+import { useLocation } from 'react-router-dom'
 import { useTheme } from '../context/useTheme'
 import '../styles/bambooBreeze.less'
 
 /**
- * 随风摇曳的水墨修竹与月夜流萤组件
- * 
- * 遵循 DESIGN_AUDIT.md §12 动效架构规范：
- * 1. 左上角近景水墨竹枝：纯矢量写意墨竹，零位图依赖，满帧 60fps。
- * 2. 晓风拂竹物理阻尼自然摇曳（白昼 6s 周期微风拂动）。
- * 3. 闲逸飞叶：偶尔 2~3 片竹叶自竹梢轻盈脱落、随风回旋飘向画卷右下方。
- * 4. 月下墨境：夜间自动转为幽篁月影（深墨黛色），摇动放缓（9s），浮现 4 点清夜流萤（金黄微光柔和呼吸闪烁）。
- * 5. 全程 pointer-events: none，绝不阻挡任何页面交互与按钮点击。
+ * 随风摇曳的水墨修竹组件
+ *
+ * 铁律：
+ * 1. 仅在首页（/ 或 /home）展示，二级跳转页面（诗词/信札/书斋/对话等）绝不展示。
+ * 2. 左上角近景水墨竹枝：纯矢量写意墨竹，零位图依赖，满帧 60fps。
+ * 3. 动态粒子（落叶/流萤）统一由 InkParticleField 接管，消除冗余重复渲染。
+ * 4. 全程 pointer-events: none，绝不阻挡任何页面交互与按钮点击。
  */
 export default function BambooBreeze() {
   const { isDark } = useTheme()
+  const location = useLocation()
+
+  // 严格限定：仅在一级首页展现，跳转到其他页面彻底卸载，保持二级页面视野清爽
+  const isHomePage = location.pathname === '/' || location.pathname === '/home'
+  if (!isHomePage) return null
 
   return (
     <div className={`bamboo-breeze-root ${isDark ? 'is-dark' : 'is-light'}`} aria-hidden="true">
@@ -103,20 +108,6 @@ export default function BambooBreeze() {
         </svg>
       </div>
 
-      {/* ── 随风飘落的轻盈竹叶粒子（2~3 片自然漫落）── */}
-      <div className="falling-leaf leaf-1" />
-      <div className="falling-leaf leaf-2" />
-      <div className="falling-leaf leaf-3" />
-
-      {/* ── 夜间模式特有：寒夜月影流萤（金黄微光浮动）── */}
-      {isDark && (
-        <div className="fireflies-layer">
-          <span className="firefly firefly-1" />
-          <span className="firefly firefly-2" />
-          <span className="firefly firefly-3" />
-          <span className="firefly firefly-4" />
-        </div>
-      )}
     </div>
   )
 }

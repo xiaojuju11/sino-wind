@@ -37,7 +37,7 @@ export default function InkParticleField({ interactionTarget }) {
   const canvasRef = useRef(null)
   const engineRef = useRef(null)
   const [mode, setMode] = useState('auto')
-  const [showHud, setShowHud] = useState(true)
+  const [showHud, setShowHud] = useState(false)
   const [reduced, setReduced] = useState(false)
   const [ready, setReady] = useState(false)
 

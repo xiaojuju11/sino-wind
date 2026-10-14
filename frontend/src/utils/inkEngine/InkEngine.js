@@ -54,10 +54,10 @@ const PRESETS = {
     alpha: [0.45, 0.9],
   },
   firefly: {
-    count: 26, gravity: 0, drag: 0.42, maxSpeed: 210, windGain: 0.35,
-    size: [1.1, 2.3], brownian: 46, buoyancy: 15, homeForce: 0.75, spin: false,
+    count: 6, gravity: 0, drag: 0.42, maxSpeed: 160, windGain: 0.35,
+    size: [0.6, 1.2], brownian: 35, buoyancy: 10, homeForce: 0.75, spin: false,
     palette: ['#F6E3A1', '#ECD38C', '#CEA559'],
-    alpha: [0.3, 0.95],
+    alpha: [0.25, 0.8],
   },
   rain: {
     // 雨滴数量直接决定帧成本（每滴一条短线 + 落水涟漪），移动端不宜过多
@@ -257,11 +257,12 @@ export class InkEngine {
     // 出生点：落叶/花瓣自上方随风入场；流萤在活动域内随机；雨自顶部
     if (this.mode === 'firefly') {
       p.home.x = r() * this.width
-      p.home.y = this.height * (0.25 + r() * 0.7)
-      p.pos.x = p.home.x + (r() - 0.5) * 60
-      p.pos.y = p.home.y + (r() - 0.5) * 60
-      p.vel.x = (r() - 0.5) * 26
-      p.vel.y = (r() - 0.5) * 26
+      // 避开中间核心卡片阅读区，主要在顶部远山竹梢(0.04~0.22)和底部渚岸水草(0.78~0.96)漫游
+      p.home.y = r() > 0.45 ? this.height * (0.04 + r() * 0.18) : this.height * (0.78 + r() * 0.18)
+      p.pos.x = p.home.x + (r() - 0.5) * 40
+      p.pos.y = p.home.y + (r() - 0.5) * 40
+      p.vel.x = (r() - 0.5) * 16
+      p.vel.y = (r() - 0.5) * 16
     } else if (this.mode === 'rain') {
       p.pos.x = r() * (this.width + 120) - 60
       p.pos.y = -20 - r() * this.height * (initial ? 0.6 : 0.15)
@@ -681,22 +682,22 @@ export class InkEngine {
   }
 
   drawFirefly(ctx, p) {
-    // 呼吸辉光：亮度随相位起伏（每只萤火虫频率不同 → 错落）
-    const breathe = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(this.time * 2.3 + p.phase * 3.1))
-    const a = p.alpha * breathe
-    const R = p.radius * 7.5
+    // 呼吸辉光：幽微柔和金芒，不刺眼（每只萤火虫频率与相位错落）
+    const breathe = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(this.time * 2.1 + p.phase * 3.1))
+    const a = p.alpha * breathe * 0.72
+    const R = p.radius * 2.6
     const g = ctx.createRadialGradient(p.pos.x, p.pos.y, 0, p.pos.x, p.pos.y, R)
-    g.addColorStop(0, this.rgba('#FFF6C9', a))
-    g.addColorStop(0.28, this.rgba(p.color, a * 0.6))
+    g.addColorStop(0, this.rgba('#FFF9DF', a * 0.85))
+    g.addColorStop(0.38, this.rgba(p.color, a * 0.4))
     g.addColorStop(1, this.rgba(p.color, 0))
     ctx.fillStyle = g
     ctx.beginPath()
     ctx.arc(p.pos.x, p.pos.y, R, 0, Math.PI * 2)
     ctx.fill()
-    // 虫体核心
-    ctx.fillStyle = this.rgba('#FFFBE8', Math.min(1, a * 1.4))
+    // 虫体核心（微小星点）
+    ctx.fillStyle = this.rgba('#FFFDF0', Math.min(1, a * 1.1))
     ctx.beginPath()
-    ctx.arc(p.pos.x, p.pos.y, p.radius * 0.85, 0, Math.PI * 2)
+    ctx.arc(p.pos.x, p.pos.y, p.radius * 0.55, 0, Math.PI * 2)
     ctx.fill()
   }
 

@@ -10,7 +10,7 @@
   inset: 0;
   pointer-events: none; // 装饰层：永不拦截点击
   overflow: hidden;
-  z-index: 6; // 高于页面背景、低于内容卡片（卡片在 .home-root > * 的 z-index:1 层内）
+  z-index: 0; // 底层背景：必须低于内容卡片，绝不遮挡文字与按钮
   opacity: 0;
   transition: opacity 0.9s ease;
 
@@ -53,9 +53,10 @@
 }
 
 // ════════════════════════════════════════════════════
-//  节气读数面板（HUD）：仅按钮自身可点
+//  节气读数面板（HUD）：生产环境默认隐藏，不打扰用户
 // ════════════════════════════════════════════════════
 .ink-engine__hud {
+  display: none !important; // 调试控制台在正常界面中隐藏
   position: absolute;
   left: 0.42rem;
   bottom: calc(env(safe-area-inset-bottom, 0px) + 1.72rem); // 避开固定底栏（1.52rem）

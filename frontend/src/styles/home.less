@@ -51,193 +51,21 @@
   }
 }
 
-// ── 页面根：纯 CSS 拟真水墨晕染宣纸背景（方案 B · 墨分五色 · 漫染生宣 · 零图片多端自适应）
+// ── 首页宣纸底与业务层级 ──
 .home-root {
   position: relative;
   min-height: 100vh;
-  // 顶部 44px 状态栏安全区（9:41 / 灵动岛 / 电量）
   padding: calc(env(safe-area-inset-top, 0px) + 1.13rem) 0.42rem 0.4rem;
   box-sizing: border-box;
   overflow-x: hidden;
+  isolation: isolate;
   color: var(--gf-ink-primary);
   font-family: var(--gf-font-serif, 'Songti SC', 'STSong', 'SimSun', serif);
   background-color: var(--gf-bg-paper);
-  background-attachment: fixed;
-
-  // ── 水墨晕染层一（大墨晕与远山气象：底层水墨自然渗开）──
-  &::before {
-    content: '';
-    position: fixed;
-    top: -10%;
-    left: -10%;
-    width: 120%;
-    height: 120%;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.85;
-    mix-blend-mode: multiply;
-    background-image:
-      // ① 底部主墨核：浓墨向外晕散，如远山坐镇
-      radial-gradient(ellipse 65% 30% at 35% 92%, color-mix(in srgb, var(--gf-ink-primary) 14%, transparent) 0%, color-mix(in srgb, var(--gf-ink-primary) 5%, transparent) 45%, transparent 75%),
-      // ② 底部副墨晕：错落湖山水气，墨阶分明
-      radial-gradient(ellipse 70% 35% at 75% 96%, color-mix(in srgb, var(--gf-ink-primary) 11%, transparent) 0%, color-mix(in srgb, var(--gf-ink-primary) 3%, transparent) 50%, transparent 80%),
-      // ③ 右上角淡烟岚：似有若无的云气墨迹
-      radial-gradient(circle 260px at 90% 8%, color-mix(in srgb, var(--gf-ink-primary) 8%, transparent) 0%, color-mix(in srgb, var(--gf-ink-primary) 2%, transparent) 60%, transparent 85%),
-      // ④ 左侧中段侧锋泼墨虚晕（绝不侵入中间核心阅读区）
-      radial-gradient(circle 320px at -10% 42%, color-mix(in srgb, var(--gf-ink-primary) 7%, transparent) 0%, transparent 70%);
-    filter: blur(16px); // 高斯模糊化开墨边，呈现生宣吸水扩散感
-    transform: translateZ(0);
-  }
-
-  // ── 水墨晕染层二（宣纸微光与水痕渗透：天光漫射 + 留白通透）──
-  &::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    z-index: 0;
-    background-image:
-      // 顶部案台天光照射（破墨提亮）
-      radial-gradient(ellipse 85% 45% at 50% -5%, color-mix(in srgb, #fff 35%, transparent) 0%, transparent 70%),
-      // 中间留白区：空灵清朗，保证文字阅读极其舒适
-      radial-gradient(circle 380px at 50% 45%, color-mix(in srgb, #fff 15%, transparent) 0%, transparent 80%),
-      // 纸本基底纵向自然光影
-      linear-gradient(180deg, color-mix(in srgb, var(--gf-bg-paper) 98%, #fff 2%) 0%, color-mix(in srgb, var(--gf-bg-paper) 94%, #000 6%) 100%);
-    opacity: 0.92;
-  }
 
   > * {
     position: relative;
     z-index: 1;
-  }
-}
-
-// ── 夜间模式（月下墨境）：水墨晕染转为冷月清辉与幽蓝云岚 ──
-[data-theme='dark'] .home-root {
-  &::before {
-    mix-blend-mode: screen;
-    opacity: 0.55;
-    background-image:
-      // ① 底部月夜深黛冷雾
-      radial-gradient(ellipse 65% 30% at 35% 92%, rgba(68, 92, 120, 0.28) 0%, rgba(68, 92, 120, 0.08) 50%, transparent 80%),
-      // ② 底部侧峰淡蓝墨韵
-      radial-gradient(ellipse 70% 35% at 75% 96%, rgba(50, 75, 105, 0.22) 0%, rgba(50, 75, 105, 0.05) 55%, transparent 80%),
-      // ③ 右上角冷月清辉晕
-      radial-gradient(circle 280px at 90% 8%, rgba(100, 130, 165, 0.18) 0%, rgba(100, 130, 165, 0.04) 65%, transparent 85%),
-      // ④ 左侧月夜幽气
-      radial-gradient(circle 340px at -10% 42%, rgba(60, 85, 115, 0.15) 0%, transparent 75%);
-    filter: blur(20px);
-  }
-
-  &::after {
-    background-image:
-      radial-gradient(ellipse 85% 45% at 50% -5%, rgba(120, 150, 190, 0.08) 0%, transparent 70%),
-      linear-gradient(180deg, #0E141D 0%, #0A0D13 100%);
-    opacity: 0.95;
-  }
-}
-
-// ════════════ 黑色水墨山水背景（纯矢量 · 刷新生宣晕染动效）════════════
-.home-ink-landscape {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 45vh;
-  max-height: 460px;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-  mix-blend-mode: multiply;
-
-  // 刷新入场：水墨在生宣纸上自然漫散扩散
-  animation: inkBleedSpread 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  transform-origin: 50% 100%;
-
-  &__svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
-
-  .ink-mountain--far {
-    animation: inkMountainBleed 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    transform-origin: 50% 100%;
-  }
-
-  .ink-mountain--mid {
-    animation: inkMountainBleed 2.1s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
-    transform-origin: 50% 100%;
-  }
-
-  .ink-mountain--near {
-    animation: inkMountainBleed 1.9s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both;
-    transform-origin: 50% 100%;
-  }
-
-  .ink-birds {
-    animation: inkBirdsIn 2.6s ease-out 0.5s both;
-  }
-}
-
-[data-theme='dark'] .home-ink-landscape {
-  mix-blend-mode: screen;
-  opacity: 0.72;
-  filter: brightness(1.25) contrast(95%);
-}
-
-// ── 水墨漫染动画：模拟一滴浓墨落入水中/湿宣纸，墨色从凝聚到自然扩散化开 ──
-@keyframes inkBleedSpread {
-  0% {
-    opacity: 0;
-    filter: blur(22px) contrast(140%);
-    transform: scale(0.93) translateY(28px);
-    -webkit-mask-image: radial-gradient(ellipse 45% 35% at 50% 100%, black 15%, transparent 75%);
-    mask-image: radial-gradient(ellipse 45% 35% at 50% 100%, black 15%, transparent 75%);
-  }
-  45% {
-    opacity: 0.85;
-    filter: blur(9px) contrast(115%);
-    -webkit-mask-image: radial-gradient(ellipse 85% 70% at 50% 100%, black 45%, transparent 85%);
-    mask-image: radial-gradient(ellipse 85% 70% at 50% 100%, black 45%, transparent 85%);
-  }
-  100% {
-    opacity: 1;
-    filter: blur(0px) contrast(100%);
-    transform: scale(1) translateY(0);
-    -webkit-mask-image: radial-gradient(ellipse 135% 100% at 50% 100%, black 85%, transparent 100%);
-    mask-image: radial-gradient(ellipse 135% 100% at 50% 100%, black 85%, transparent 100%);
-  }
-}
-
-@keyframes inkMountainBleed {
-  0% {
-    opacity: 0;
-    transform: scaleY(0.7) translateY(22px);
-    filter: blur(14px);
-  }
-  60% {
-    opacity: 0.9;
-    filter: blur(4px);
-  }
-  100% {
-    opacity: 1;
-    transform: scaleY(1) translateY(0);
-    filter: blur(0px);
-  }
-}
-
-@keyframes inkBirdsIn {
-  0% {
-    opacity: 0;
-    transform: translate(-18px, 10px) scale(0.75);
-  }
-  100% {
-    opacity: 0.6;
-    transform: translate(0, 0) scale(1);
   }
 }
 
@@ -249,28 +77,29 @@
 
   &__actions {
     position: absolute;
-    top: -0.7rem;
-    right: 0;
+    top: 0.08rem;
+    right: 0.12rem;
     display: flex;
     align-items: center;
-    gap: 0.16rem;
+    gap: 0.2rem;
   }
 
   &__icon-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 0.78rem;
-    height: 0.78rem;
+    width: 0.72rem;
+    height: 0.72rem;
     padding: 0;
-    background: color-mix(in srgb, var(--gf-bg-card) 82%, transparent);
-    border: 1px solid color-mix(in srgb, var(--gf-gold) 55%, transparent);
-    border-radius: 50%;
+    background: color-mix(in srgb, var(--gf-bg-card) 85%, transparent);
+    border: 1px solid color-mix(in srgb, var(--gf-gold) 45%, transparent);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     cursor: pointer;
-    transition: transform 0.16s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:active {
-      transform: translateY(1px);
+      transform: scale(0.92);
     }
   }
 
@@ -280,18 +109,22 @@
   }
 
   // 图标铁律：日 / 月 内联 SVG（1em 机制，父级 font-size 定尺寸，currentColor 着色）
-  // 尺寸对齐被替换的 Emoji 视觉重量：原字形 0.32rem、Emoji 实测约 0.45rem
   &__glyph {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: var(--gf-cinnabar);
+    color: var(--gf-accent-text, #C59B27);
 
     svg {
-      width: 0.44rem;
-      height: 0.44rem;
+      width: 0.42rem;
+      height: 0.42rem;
       display: block;
     }
+  }
+
+  .icon-shezhi {
+    font-size: 0.4rem;
+    color: var(--gf-ink-secondary, #6B675B);
   }
 
   &__title-row {
