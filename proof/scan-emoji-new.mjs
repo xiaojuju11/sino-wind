@@ -1,18 +1,22 @@
 // 扫描新增前端源码中的原生 Emoji / 字符箭头（图标红线自查）
 import fs from 'node:fs'
 
-const FILES = [
-  'frontend/src/components/InkParticleField.jsx',
-  'frontend/src/components/RadarChart.jsx',
-  'frontend/src/components/TonePattern.jsx',
-  'frontend/src/styles/inkEngine.less',
-  'frontend/src/styles/poemMetre.less',
-  'frontend/src/utils/inkEngine/physics.js',
-  'frontend/src/utils/inkEngine/solarTerms.js',
-  'frontend/src/utils/inkEngine/InkEngine.js',
-  'frontend/src/utils/poemMetre.js',
-  'frontend/src/utils/radarGeometry.js',
-]
+const FILES = process.argv.slice(2).length
+  ? process.argv.slice(2)
+  : [
+      'frontend/src/components/InkParticleField.jsx',
+      'frontend/src/components/RadarChart.jsx',
+      'frontend/src/components/TonePattern.jsx',
+      'frontend/src/styles/inkEngine.less',
+      'frontend/src/styles/poemMetre.less',
+      'frontend/src/utils/inkEngine/physics.js',
+      'frontend/src/utils/inkEngine/solarTerms.js',
+      'frontend/src/utils/inkEngine/InkEngine.js',
+      'frontend/src/utils/poemMetre.js',
+      'frontend/src/utils/radarGeometry.js',
+      'frontend/src/pages/Home.jsx',
+      'frontend/src/pages/PoemPage.jsx',
+    ]
 
 // 只查真正的 Emoji/符号区间；箭头类字符在注释里属于正常中文技术书写，
 // 但要单独统计，以便确认"渲染内容"里没有它们
