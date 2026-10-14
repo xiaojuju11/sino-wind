@@ -1,0 +1,543 @@
+// ════════════════════════════════════════════════════
+//  格律雅析 · 五维雷达图 + 平仄声律谱
+//  基准视口 390px，1rem = clientWidth / 10（全局 rem.js）
+//  配色一律走 --gf-* 令牌，随日月主题联动
+// ════════════════════════════════════════════════════
+
+// ── 区块外壳（与诗词页既有卡片同一套描金语汇）──
+.poem-metre {
+  margin-top: 0.3rem;
+  padding: 0.26rem 0.24rem 0.28rem;
+  box-sizing: border-box;
+  background: var(--gf-bg-card);
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 30%, transparent);
+  border-radius: 0.28rem;
+  box-shadow: 0 0.08rem 0.28rem rgba(58, 47, 29, 0.07);
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+  }
+
+  // 朱砂小印「律」
+  &__mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.32rem;
+    height: 0.32rem;
+    flex: none;
+    background: var(--gf-cinnabar);
+    color: #FBF8F1;
+    font-size: 0.22rem;
+    font-weight: 700;
+    line-height: 1;
+    border-radius: 3px;
+  }
+
+  &__title {
+    font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', var(--gf-font-serif, serif);
+    font-size: 0.4rem;
+    font-weight: 700;
+    letter-spacing: 0.04rem;
+    color: var(--gf-ink-primary);
+  }
+
+  &__form {
+    margin-left: auto;
+    padding: 0.02rem 0.1rem;
+    font-size: 0.2rem;
+    color: var(--gf-ink-secondary);
+    background: color-mix(in srgb, var(--gf-bg-paper) 80%, transparent);
+    border-radius: 0.14rem;
+  }
+
+  // ── 雷达 + 维度条 双栏（窄屏自动堆叠）──
+  &__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0.12rem;
+    align-items: center;
+    margin-top: 0.16rem;
+  }
+
+  &__radar {
+    min-width: 0;
+  }
+
+  &__dims {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__dim {
+    display: grid;
+    grid-template-columns: 0.62rem minmax(0, 1fr) 0.44rem;
+    align-items: center;
+    gap: 0.06rem;
+    padding: 0.05rem 0.04rem;
+    border-radius: 0.12rem;
+    transition: background 0.16s ease;
+
+    &.is-active {
+      background: color-mix(in srgb, var(--gf-cinnabar) 10%, transparent);
+    }
+  }
+
+  &__dim-label {
+    font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', var(--gf-font-serif, serif);
+    font-size: 0.24rem;
+    color: var(--gf-ink-primary);
+  }
+
+  &__dim-bar {
+    display: block;
+    height: 0.12rem;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--gf-ink-light) 22%, transparent);
+    border-radius: 0.06rem;
+
+    i {
+      display: block;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--gf-cinnabar) 85%, transparent),
+        color-mix(in srgb, var(--gf-gold) 85%, transparent)
+      );
+      border-radius: 0.06rem;
+      // 弹性形变：宽度变化带一点回弹
+      transition: width 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+  }
+
+  &__dim-score {
+    font-size: 0.24rem;
+    font-weight: 700;
+    text-align: right;
+    color: var(--gf-cinnabar);
+  }
+
+  &__rationale {
+    margin: 0.16rem 0 0;
+    padding: 0.1rem 0.12rem;
+    font-size: 0.2rem;
+    line-height: 1.7;
+    color: var(--gf-ink-secondary);
+    background: color-mix(in srgb, var(--gf-bg-paper) 72%, transparent);
+    border-left: 2px solid color-mix(in srgb, var(--gf-gold) 55%, transparent);
+    border-radius: 0 0.1rem 0.1rem 0;
+  }
+
+  // ── 明细折叠 ──
+  &__details {
+    margin-top: 0.12rem;
+
+    summary {
+      font-size: 0.22rem;
+      color: var(--gf-ink-secondary);
+      cursor: pointer;
+    }
+
+    ul {
+      margin: 0.06rem 0 0;
+      padding-left: 0.24rem;
+      list-style: none;
+    }
+
+    li {
+      font-size: 0.2rem;
+      line-height: 1.8;
+      color: var(--gf-ink-secondary);
+
+      em {
+        font-style: normal;
+        color: var(--gf-ink-light);
+      }
+
+      &.is-ok::before {
+        content: '合';
+        margin-right: 0.06rem;
+        color: var(--gf-bamboo);
+      }
+
+      &.is-weak::before {
+        content: '弱';
+        margin-right: 0.06rem;
+        color: var(--gf-cinnabar);
+      }
+    }
+  }
+
+  &__detail {
+    margin-top: 0.1rem;
+  }
+
+  &__detail-title {
+    font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', var(--gf-font-serif, serif);
+    font-size: 0.24rem;
+    font-weight: 700;
+    color: var(--gf-ink-primary);
+  }
+
+  &__tones {
+    margin-top: 0.18rem;
+    padding-top: 0.16rem;
+    border-top: 1px dashed color-mix(in srgb, var(--gf-gold) 38%, transparent);
+  }
+
+  &__tones-title {
+    font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', var(--gf-font-serif, serif);
+    font-size: 0.26rem;
+    font-weight: 700;
+    color: var(--gf-ink-primary);
+  }
+}
+
+// ════════════════════════════════════════════════════
+//  五维雷达图（纯 SVG）
+// ════════════════════════════════════════════════════
+.radar-chart {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__svg {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+  }
+
+  &__ring {
+    fill: none;
+    stroke: color-mix(in srgb, var(--gf-gold) 26%, transparent);
+    stroke-width: 0.6;
+
+    &.is-outer {
+      stroke: color-mix(in srgb, var(--gf-gold) 48%, transparent);
+      stroke-width: 0.9;
+    }
+  }
+
+  &__spoke {
+    stroke: color-mix(in srgb, var(--gf-gold) 22%, transparent);
+    stroke-width: 0.6;
+  }
+
+  // 目标轮廓虚影：一眼看出"正在形变过去"
+  &__ghost {
+    fill: none;
+    stroke: color-mix(in srgb, var(--gf-ink-light) 45%, transparent);
+    stroke-width: 0.7;
+    stroke-dasharray: 2.4 2.4;
+  }
+
+  &__shape {
+    fill: url(#radarFill);
+    stroke: var(--gf-cinnabar);
+    stroke-width: 1.3;
+    stroke-linejoin: round;
+  }
+
+  &__dot {
+    fill: var(--gf-cinnabar);
+    stroke: #FBF8F1;
+    stroke-width: 0.8;
+  }
+
+  &__value {
+    font-size: 7.6px; // SVG 用户单位；与 viewBox 236 成比例
+    font-weight: 700;
+    fill: var(--gf-cinnabar);
+    paint-order: stroke;
+    stroke: color-mix(in srgb, var(--gf-bg-card) 88%, transparent);
+    stroke-width: 2.2px;
+  }
+
+  &__label {
+    font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', var(--gf-font-serif, serif);
+    font-size: 9px;
+    fill: var(--gf-ink-secondary);
+    cursor: pointer;
+    transition: fill 0.16s ease;
+
+    &.is-active {
+      fill: var(--gf-cinnabar);
+      font-weight: 700;
+    }
+  }
+
+  &__caption {
+    margin-top: 0.06rem;
+    font-size: 0.2rem;
+    color: var(--gf-ink-light);
+    text-align: center;
+  }
+}
+
+// ════════════════════════════════════════════════════
+//  平仄声律谱
+// ════════════════════════════════════════════════════
+.tone-pattern {
+  margin-top: 0.12rem;
+
+  &__legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.1rem;
+    font-size: 0.2rem;
+    color: var(--gf-ink-secondary);
+  }
+
+  &__legend-item {
+    &.is-level {
+      color: var(--gf-bamboo);
+    }
+
+    &.is-oblique {
+      color: var(--gf-cinnabar);
+    }
+
+    &.is-unknown {
+      color: var(--gf-ink-light);
+    }
+  }
+
+  &__legend-note {
+    color: var(--gf-ink-light);
+  }
+
+  &__lines {
+    margin: 0.1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__line {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.08rem;
+    padding: 0.04rem 0;
+
+    & + & {
+      border-top: 1px dashed color-mix(in srgb, var(--gf-border-card) 85%, transparent);
+    }
+  }
+
+  &__chars {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.02rem;
+    min-width: 0;
+  }
+
+  &__char {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0.3rem;
+    padding: 0.02rem 0;
+    font-family: inherit;
+    background: transparent;
+    border: none;
+    border-radius: 0.06rem;
+    cursor: pointer;
+    transition: background 0.16s ease;
+
+    &.is-active {
+      background: color-mix(in srgb, var(--gf-gold) 22%, transparent);
+    }
+
+    // 平声：竹青
+    &.is-level .tone-pattern__mark {
+      color: var(--gf-bamboo);
+    }
+
+    // 仄声：朱砂
+    &.is-oblique .tone-pattern__mark {
+      color: var(--gf-cinnabar);
+    }
+
+    // 字表未收：灰
+    &.is-unknown .tone-pattern__mark {
+      color: var(--gf-ink-light);
+    }
+
+    // 字表未收的字也淡一点，表明判定不可靠
+    &.is-unknown .tone-pattern__glyph {
+      color: var(--gf-ink-light);
+    }
+  }
+
+  // 普通话回退：整字降透明度，如实提示"这条判定可能是猜的"
+  &__char.is-fallback {
+    .tone-pattern__glyph {
+      opacity: 0.72;
+    }
+
+    .tone-pattern__mark {
+      opacity: 0.62;
+    }
+  }
+
+  &__glyph {
+    font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', var(--gf-font-serif, serif);
+    font-size: 0.3rem;
+    line-height: 1.15;
+    color: var(--gf-ink-primary);
+  }
+
+  &__mark {
+    font-size: 0.18rem;
+    line-height: 1;
+  }
+
+  // 韵脚：朱砂底圈
+  &__char.is-rhyme {
+    .tone-pattern__glyph {
+      color: var(--gf-cinnabar);
+      font-weight: 700;
+    }
+
+    .tone-pattern__mark {
+      color: #FBF8F1;
+      background: var(--gf-cinnabar);
+      border-radius: 50%;
+      padding: 0 0.02rem;
+    }
+  }
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.02rem;
+    margin-left: auto;
+    flex: none;
+  }
+
+  &__pattern {
+    font-size: 0.18rem;
+    white-space: nowrap;
+    color: var(--gf-ink-light);
+  }
+
+  &__ti {
+    font-size: 0.18rem;
+
+    &.is-ok {
+      color: var(--gf-bamboo);
+    }
+
+    &.is-bad {
+      color: var(--gf-cinnabar);
+      font-weight: 700;
+    }
+  }
+
+  &__rhyme-tag {
+    padding: 0 0.06rem;
+    font-size: 0.18rem;
+    color: #FBF8F1;
+    background: var(--gf-cinnabar);
+    border-radius: 2px;
+  }
+
+  // 单字判定依据浮层
+  &__detail {
+    display: flex;
+    flex-direction: column;
+    gap: 0.02rem;
+    margin-top: 0.1rem;
+    padding: 0.1rem 0.12rem;
+    font-size: 0.2rem;
+    line-height: 1.7;
+    color: var(--gf-ink-secondary);
+    background: color-mix(in srgb, var(--gf-bg-paper) 76%, transparent);
+    border: 1px solid color-mix(in srgb, var(--gf-gold) 34%, transparent);
+    border-radius: 0.16rem;
+  }
+
+  &__detail-char {
+    font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', var(--gf-font-serif, serif);
+    font-size: 0.32rem;
+    color: var(--gf-ink-primary);
+  }
+
+  &__detail-src {
+    color: var(--gf-ink-light);
+  }
+
+  &__summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.04rem 0.12rem;
+    margin-top: 0.12rem;
+    padding-top: 0.1rem;
+    font-size: 0.2rem;
+    color: var(--gf-ink-secondary);
+    border-top: 1px dashed color-mix(in srgb, var(--gf-border-card) 85%, transparent);
+  }
+
+  &__compliance {
+    margin-left: auto;
+    font-weight: 700;
+    color: var(--gf-cinnabar);
+  }
+
+  &__note {
+    margin: 0.06rem 0 0;
+    font-size: 0.18rem;
+    color: var(--gf-ink-light);
+  }
+}
+
+// 窄屏（≤360px）：雷达与维度条改上下堆叠，声律谱字距收紧
+@media (max-width: 360px) {
+  .poem-metre__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .poem-metre__radar {
+    max-width: 3.4rem;
+    margin: 0 auto;
+  }
+
+  .tone-pattern__char {
+    min-width: 0.26rem;
+  }
+
+  .tone-pattern__glyph {
+    font-size: 0.26rem;
+  }
+}
+
+// 暗色模式微调：描金线提亮，虚影降透
+[data-theme='dark'] {
+  .radar-chart__ring {
+    stroke: color-mix(in srgb, var(--gf-gold) 34%, transparent);
+  }
+
+  .radar-chart__ghost {
+    stroke: color-mix(in srgb, var(--gf-ink-light) 55%, transparent);
+  }
+
+  .poem-metre {
+    box-shadow: 0 0.08rem 0.3rem rgba(0, 0, 0, 0.42);
+  }
+
+  .poem-metre__rationale {
+    background: color-mix(in srgb, var(--gf-bg-paper) 62%, transparent);
+  }
+
+  .tone-pattern__detail {
+    background: color-mix(in srgb, var(--gf-bg-paper) 68%, transparent);
+  }
+}
