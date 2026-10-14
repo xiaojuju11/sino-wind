@@ -150,6 +150,7 @@ async function getUserInfo(ctx) {
       debate_count: res.debate_count,
       poem_count: res.poem_count,
       merit_points: res.merit_points ?? 0,
+      scholar_rank: require('../utils/feihuaEngine').scholarRank(res.merit_points),
       rank_level: res.rank_level
     }
     ctx.body = data

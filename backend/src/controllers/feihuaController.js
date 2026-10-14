@@ -67,4 +67,27 @@ async function rules(ctx) {
   const availableRhymes = Object.fromEntries(engine.KEYWORDS.map(key => [key, [...new Set(engine.poems.filter(p => p.line.includes(key)).flatMap(p => engine.rhymeGroups(p.line)))]]))
   ctx.body = { code: 1, data: { keywords: engine.KEYWORDS, rhymes: engine.rhymeData.groups.map(g => g.name), availableRhymes, poems: engine.poems, seconds: 30, maxRounds: 6, winPoints: 3, drawPoints: 1, source: engine.rhymeData.source } }
 }
-module.exports = { start, turn, rules }
+const readState = row => ({ id: row.id, ...(typeof row.state === 'string' ? JSON.parse(row.state) : row.state), pointsAwarded: row.awarded_points, settled: true })
+async function records(ctx) {
+  const page = Number(ctx.query.page || 1), pageSize = Number(ctx.query.pageSize || 10)
+  if (!Number.isSafeInteger(page) || page < 1 || page > 100000 || !Number.isSafeInteger(pageSize) || pageSize < 1 || pageSize > 30) {
+    ctx.status = 400; ctx.body = { code: 0, message: '分页参数无效' }; return
+  }
+  try {
+    const filter = "user_id=? AND JSON_UNQUOTE(JSON_EXTRACT(state,'$.status'))='finished'"
+    const [[count]] = await db.execute(`SELECT COUNT(*) total FROM feihua_games WHERE ${filter}`, [ctx.userId])
+    // Integers are strictly bounded above; values cannot inject SQL through LIMIT.
+    const [rows] = await db.execute(`SELECT id,state,awarded_points FROM feihua_games WHERE ${filter} ORDER BY CAST(JSON_UNQUOTE(JSON_EXTRACT(state,'$.endedAt')) AS UNSIGNED) DESC,id DESC LIMIT ${pageSize} OFFSET ${(page - 1) * pageSize}`, [ctx.userId])
+    const [[user]] = await db.execute('SELECT merit_points FROM users WHERE id=?', [ctx.userId])
+    ctx.body = { code: 1, data: { records: rows.map(readState), total: count.total, page, pageSize, meritPoints: user?.merit_points || 0, rank: engine.scholarRank(user?.merit_points) } }
+  } catch { ctx.status = 503; ctx.body = { code: 0, message: '藏牒阁暂未开卷，请稍后重试' } }
+}
+async function record(ctx) {
+  if (!/^[0-9a-f-]{36}$/i.test(ctx.params.id)) { ctx.status = 400; ctx.body = { code: 0, message: '文牒编号无效' }; return }
+  try {
+    const [[row]] = await db.execute("SELECT id,state,awarded_points FROM feihua_games WHERE id=? AND user_id=? AND JSON_UNQUOTE(JSON_EXTRACT(state,'$.status'))='finished'", [ctx.params.id, ctx.userId])
+    if (!row) { ctx.status = 404; ctx.body = { code: 0, message: '未找到此文牒' }; return }
+    ctx.body = { code: 1, data: readState(row) }
+  } catch { ctx.status = 503; ctx.body = { code: 0, message: '文牒暂未载入' } }
+}
+module.exports = { start, turn, rules, records, record }

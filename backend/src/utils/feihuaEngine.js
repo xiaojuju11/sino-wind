@@ -49,4 +49,12 @@ function move(previous, { action, line }, now) {
   return { game, changed: true }
 }
 const points = game => game.status !== 'finished' ? 0 : game.winner === 'user' ? 3 : game.winner === 'draw' ? 1 : 0
-module.exports = { KEYWORDS, createGame, move, points, normalize, rhymeGroups, poems, rhymeData }
+// One authoritative rank function; clients consume its API result rather than guessing.
+function scholarRank(value) {
+  const score = Math.max(0, Number(value) || 0)
+  return [
+    [5, '白衣布衣'], [15, '秀才 / 茂才'], [30, '举人 / 乡贡'],
+    [60, '贡士'], [100, '同进士出身'], [150, '进士及第'], [Infinity, '翰林大学士']
+  ].find(([ceiling]) => score <= ceiling)[1]
+}
+module.exports = { KEYWORDS, createGame, move, points, scholarRank, normalize, rhymeGroups, poems, rhymeData }
