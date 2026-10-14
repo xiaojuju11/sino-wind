@@ -1,6 +1,6 @@
 const { openSSE } = require('./sse')
 
-function createScholarStream({ getClient, sages, generateSageReply, sanitizeSageReply, db }) {
+function createScholarStream({ getClient, sages, generateSageReply, sanitizeSageReply, db, saveTurn }) {
   return async function scholarStream(ctx) {
     const { message, sageId = 'libai', history = [] } = ctx.request.body || {}
     if (typeof message !== 'string' || !message.trim() || message.length > 2000 || typeof sageId !== 'string' || sageId.length > 80 || !Array.isArray(history)) {
@@ -67,7 +67,13 @@ function createScholarStream({ getClient, sages, generateSageReply, sanitizeSage
             counted = result.affectedRows === 1
           } catch { /* delivered text remains usable if statistics are unavailable */ }
         }
-        await channel.send('done', { source, degraded, counted })
+        let archiveSaved = false
+        if (ctx.userId && saveTurn && !channel.signal.aborted) {
+          const requested = ctx.request.body.requestId
+          const requestId = typeof requested === 'string' && /^[0-9a-f-]{36}$/i.test(requested) ? requested : require('node:crypto').randomUUID()
+          archiveSaved = await saveTurn({ userId: ctx.userId, sageId, requestId, question: message.trim(), answer: full, degraded })
+        }
+        await channel.send('done', { source, degraded, counted, archiveSaved })
       } catch (error) {
         if (!channel.signal.aborted) await channel.send('error', { message: error.message || '对席暂时中断' }).catch(() => {})
       } finally { channel.close() }

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { AddOutline } from 'antd-mobile-icons'
 import InviteDrawer from '../components/InviteDrawer'
 import ThemeToggle from '../context/ThemeToggle'
+import { cachedLetters, loadLetters, shichen } from '../utils/scholarLetters'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -15,9 +16,6 @@ const PRESET_CONVERSATIONS = [
     title: '谪仙人',
     dynasty: '唐',
     avatar: `${BASE}assets/guancang/sage_libai.png`,
-    lastMsg: '仰天大笑出门去，我辈岂是蓬蒿人！今日且共饮三百杯，不醉不归。',
-    time: '申时三刻',
-    unread: 1,
     status: '把酒对月中'
   },
   {
@@ -26,9 +24,6 @@ const PRESET_CONVERSATIONS = [
     title: '魏晋名士',
     dynasty: '群',
     avatar: `${BASE}assets/guancang/scroll_changhe.png`,
-    lastMsg: '嵇康：广陵散绝矣，诸君且听此一曲。山涛：神交已久，且赋新诗！',
-    time: '申时初刻',
-    unread: 2,
     status: '雅士齐聚'
   },
   {
@@ -37,9 +32,6 @@ const PRESET_CONVERSATIONS = [
     title: '东坡居士',
     dynasty: '宋',
     avatar: `${BASE}assets/guancang/sage_sushi.png`,
-    lastMsg: '人生如逆旅，我亦是行人。今日吾又作东坡肉，君欲尝否？',
-    time: '午时二刻',
-    unread: 0,
     status: '烹茶赋词'
   },
   {
@@ -48,9 +40,6 @@ const PRESET_CONVERSATIONS = [
     title: '易安居士',
     dynasty: '宋',
     avatar: `${BASE}assets/guancang/sage_liqingzhao.png`,
-    lastMsg: '昨夜雨疏风骤，浓睡不消残酒。新词已就，且寄君阅。',
-    time: '巳时末刻',
-    unread: 0,
     status: '倚栏校词'
   },
   {
@@ -59,10 +48,11 @@ const PRESET_CONVERSATIONS = [
     title: '少陵野老',
     dynasty: '唐',
     avatar: `${BASE}assets/guancang/sage_wangyangming.png`,
-    lastMsg: '安得广厦千万间，大庇天下寒士俱欢颜！念君远行，平安为盼。',
-    time: '辰时三刻',
-    unread: 0,
     status: '掩卷沉思'
+  },
+  {
+    id: 'wangyangming', name: '王阳明', title: '阳明先生', dynasty: '明',
+    avatar: `${BASE}assets/guancang/sage_wangyangming.png`, status: '心学悟道中'
   },
   {
     id: 'xinqiji',
@@ -70,34 +60,35 @@ const PRESET_CONVERSATIONS = [
     title: '稼轩居士',
     dynasty: '宋',
     avatar: `${BASE}assets/guancang/sage_libai.png`,
-    lastMsg: '醉里挑灯看剑，梦回吹角连营。天下英雄，谁敌手？',
-    time: '昨日',
-    unread: 0,
     status: '挑灯看剑'
   }
 ]
 
 export default function LetterList() {
   const navigate = useNavigate()
-  const [conversations, setConversations] = useState(PRESET_CONVERSATIONS)
-  const [drawerVisible, setDrawerVisible] = useState(false)
-
-  // 读取本地迎请的自定义知己
-  useEffect(() => {
+  const [conversations, setConversations] = useState(() => {
     try {
-      const customList = JSON.parse(localStorage.getItem('gufeng_custom_sages') || '[]')
-      if (customList.length > 0) {
-        const mapped = customList.map((item) => ({
-          ...item,
-          avatar: item.avatar || `${BASE}assets/guancang/sage_wangyangming.png`,
-          status: item.status || '神游相候'
-        }))
-        setConversations([...mapped, ...PRESET_CONVERSATIONS])
-      }
-    } catch {
-      // 降级使用预置列表
-    }
+      const saved = JSON.parse(localStorage.getItem('gufeng_custom_sages') || '[]')
+      return [...(Array.isArray(saved) ? saved.filter(item => !PRESET_CONVERSATIONS.some(p => p.id === item.id)).map(item => ({ ...item, avatar: item.avatar || `${BASE}assets/guancang/sage_wangyangming.png`, status: item.status || '神游相候' })) : []), ...PRESET_CONVERSATIONS]
+    } catch { return PRESET_CONVERSATIONS }
+  })
+  const [drawerVisible, setDrawerVisible] = useState(false)
+  const [letters, setLetters] = useState(cachedLetters)
+  const [notice, setNotice] = useState('')
+  useEffect(() => {
+    let current = true
+    const refresh = () => loadLetters().then(rows => { if (current) { setLetters(rows); setNotice('') } })
+      .catch(() => { if (current) { setLetters(cachedLetters()); setNotice('暂以本机信札展读，云端记录稍后可刷新') } })
+    const local = () => { if (current) setLetters(cachedLetters()) }
+    refresh()
+    const timer = setTimeout(refresh, 1200)
+    window.addEventListener('focus', refresh); window.addEventListener('storage', local); window.addEventListener('scholarLettersUpdated', local)
+    return () => { current = false; clearTimeout(timer); window.removeEventListener('focus', refresh); window.removeEventListener('storage', local); window.removeEventListener('scholarLettersUpdated', local) }
   }, [])
+  const displayed = conversations.map(item => {
+    const row = letters.find(l => l.sageId === item.id)
+    return { ...item, lastMsg: row?.reply?.unread ? `知音回柬：${row.reply.text}` : row?.lastMsg || '尚未对席，展卷与先贤初叙', time: shichen(row?.reply?.unread ? row.reply.at : row?.at), unread: row?.reply?.unread ? 1 : 0, at: Math.max(row?.at || 0, row?.reply?.at || 0) }
+  }).sort((a, b) => b.at - a.at)
 
   // 迎请新友成功回调
   const handleInviteSuccess = (newSage) => {
@@ -129,7 +120,7 @@ export default function LetterList() {
       {/* 2. 顶部水平知己画卷（横向滑动 + 迎请新友按钮） */}
       <section className="letter-gallery-section">
         <div className="letter-gallery-scroll">
-          {conversations.map((item) => (
+          {displayed.map((item) => (
             <div
               key={item.id}
               className="letter-gallery-item"
@@ -138,7 +129,7 @@ export default function LetterList() {
               <div className="letter-gallery-avatar-box">
                 <img src={item.avatar} alt={item.name} className="letter-gallery-avatar" />
                 {item.unread > 0 && (
-                  <span className="letter-unread-badge">{item.unread}</span>
+                  <span className="letter-unread-badge" aria-label='有未读回柬'>1</span>
                 )}
               </div>
               <span className="letter-gallery-name">{item.name.split('·')[0]}</span>
@@ -160,13 +151,14 @@ export default function LetterList() {
 
       {/* 3. 信札往还列表 */}
       <section className="letter-list-section">
+        {notice && <p role='status'>{notice}</p>}
         <div className="letter-list-header">
           <span className="letter-list-title">尺素往来（{conversations.length} 席）</span>
           <span className="letter-list-tip">点击展开长谈</span>
         </div>
 
         <div className="letter-list">
-          {conversations.map((item) => (
+          {displayed.map((item) => (
             <div
               key={item.id}
               className="letter-card"

@@ -7,6 +7,8 @@ import axios from '../http'
 import ThemeToggle from '../context/ThemeToggle'
 import FeihuaPanel from '../components/FeihuaPanel'
 import { receiveScholarStream } from '../utils/scholarStream'
+import { cachedLetters, cacheLetter, saveLocalTurn, leaveScholar, shichen, scholarScope } from '../utils/scholarLetters'
+import '../styles/scholarEcosystem.less'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -163,6 +165,8 @@ export default function ScholarChat() {
   const [inputText, setInputText] = useState('')
   const [loading, setLoading] = useState(false)
   const [gameOpen, setGameOpen] = useState(false)
+  const [hydrating, setHydrating] = useState(true)
+  const [replyLetter, setReplyLetter] = useState(null)
   const activeRequest = useRef(null)
   const stopRequest = () => {
     const request = activeRequest.current
@@ -173,13 +177,36 @@ export default function ScholarChat() {
     activeRequest.current = null
   }
   useEffect(() => {
+    let current = true
+    const scope = scholarScope()
+    setHydrating(true); setReplyLetter(null)
     setGameOpen(false)
     setLoading(false)
     const welcome = poemCtx
       ? `${sageInfo.welcome}\n\n【雅集案头】：正与君品读《${poemCtx.title}》，愿共论诗中微意。`
       : sageInfo.welcome
     setMessages([{ id: 'msg_welcome', role: 'ai', content: welcome, time: getShichenTime() }])
-    return stopRequest
+    const restore = row => {
+      if (!current || scope !== scholarScope()) return
+      if (row?.turns?.length) setMessages([{ id: 'msg_welcome', role: 'ai', content: welcome, time: getShichenTime() }, ...row.turns.flatMap(t => [
+        { id: `${t.id}:user`, role: 'user', content: t.question, time: shichen(t.at) },
+        { id: `${t.id}:ai`, role: 'ai', content: t.answer, degraded: t.degraded, time: shichen(t.at) }
+      ])])
+      if (row?.reply?.unread) {
+        setReplyLetter(row.reply)
+        cacheLetter({ ...row, reply: { ...row.reply, unread: false } })
+        if (localStorage.getItem('token')) axios.post(`/api/deepseek/scholar/letters/${encodeURIComponent(sageKey)}/read`, { replyId: row.reply.id }).catch(() => {})
+      }
+      setHydrating(false)
+    }
+    const cached = cachedLetters().find(l => l.sageId === sageKey)
+    if (localStorage.getItem('token')) axios.get(`/api/deepseek/scholar/letters/${encodeURIComponent(sageKey)}`, { timeout: 10000 })
+      .then(res => { if (current && scope === scholarScope()) { cacheLetter(res.data.data); restore(res.data.data) } })
+      .catch(() => restore(cached))
+    else restore(cached)
+    const leave = () => { if (scope === scholarScope()) leaveScholar(sageKey) }
+    window.addEventListener('pagehide', leave)
+    return () => { current = false; stopRequest(); window.removeEventListener('pagehide', leave); leave() }
     // The selected sage defines a new conversation; previous network work is cancelled.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sageKey])
@@ -196,10 +223,11 @@ export default function ScholarChat() {
   // One reader and one animation clock per request. Navigation cancels both.
   const handleSend = async (customContent) => {
     const text = (customContent || inputText).trim()
-    if (!text || activeRequest.current || gameOpen) return
+    if (!text || activeRequest.current || gameOpen || hydrating) return
     if (text.length > 2000) { Toast.show({ content: '请将论道内容控制在两千字以内' }); return }
     const userMsg = { id: crypto.randomUUID(), role: 'user', content: text, time: getShichenTime() }
     const aiId = crypto.randomUUID()
+    const scope = scholarScope()
     const request = { controller: new AbortController(), queue: [], position: 0, finished: false, timer: null, resolve: null }
     const painted = new Promise(resolve => { request.resolve = resolve })
     activeRequest.current = request
@@ -223,7 +251,7 @@ export default function ScholarChat() {
     const timeout = setTimeout(() => request.controller.abort(), 40000)
     try {
       const history = messages.filter(m => m.content && !m.failed).slice(-8).map(m => ({ role: m.role === 'ai' ? 'assistant' : 'user', content: m.content }))
-      await receiveScholarStream(axios.getUri({ url: '/api/deepseek/chat/stream' }), { sageId: sageKey, message: text, history }, request.controller.signal, (event, data) => {
+      await receiveScholarStream(axios.getUri({ url: '/api/deepseek/chat/stream' }), { sageId: sageKey, message: text, history, requestId: userMsg.id }, request.controller.signal, (event, data) => {
         if (activeRequest.current !== request) return
         if (event === 'delta' && typeof data.text === 'string') request.queue.push(...Array.from(data.text).slice(0, Math.max(0, 2000 - request.queue.length)))
         if (event === 'replace' && typeof data.text === 'string') {
@@ -231,7 +259,11 @@ export default function ScholarChat() {
           setMessages(prev => prev.map(m => m.id === aiId ? { ...m, content: '' } : m))
         }
         if (event === 'meta') setMessages(prev => prev.map(m => m.id === aiId ? { ...m, degraded: Boolean(data.degraded) } : m))
-        if (event === 'done' && data.counted) window.dispatchEvent(new Event('userInfoUpdated'))
+        if (event === 'done' && scope === scholarScope()) {
+          saveLocalTurn(sageKey, { id: userMsg.id, question: text, answer: request.queue.join(''), at: Date.now(), degraded: Boolean(data.degraded) })
+          if (data.counted) window.dispatchEvent(new Event('userInfoUpdated'))
+          if (localStorage.getItem('token') && !data.archiveSaved) Toast.show({ content: '本次对话已存本机，服务端信札暂未归档' })
+        }
       })
     } catch (error) {
       if (activeRequest.current === request) {
@@ -363,6 +395,8 @@ export default function ScholarChat() {
 
       {/* 4. 消息流区域 */}
       <main className="scholar-messages-container" ref={chatScrollRef}>
+        {hydrating && <p role='status'>正在展读旧笺…</p>}
+        {!gameOpen && replyLetter && <aside className='scholar-reply-letter' aria-label='知音回柬'><strong>知音回柬 · {replyLetter.kind}</strong><p>{replyLetter.text}</p><button type='button' onClick={() => setReplyLetter(null)}>收笺续谈</button></aside>}
         {gameOpen && <FeihuaPanel key={sageKey} sageId={sageKey} onClose={() => setGameOpen(false)} />}
         {!gameOpen && messages.map((item) => (
           <div
@@ -472,7 +506,7 @@ export default function ScholarChat() {
           <button
             type="button"
             className="scholar-send-btn"
-            disabled={loading || !inputText.trim()}
+            disabled={loading || hydrating || !inputText.trim()}
             onClick={() => handleSend()}
           >
             <i className="iconfont icon-fasong" />
