@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import '../styles/scholarChat.less'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { LeftOutline, SoundOutline, EditSOutline } from 'antd-mobile-icons'
+import { LeftOutline, SoundOutline, EditSOutline, FileOutline, MessageOutline, CompassOutline, RightOutline } from 'antd-mobile-icons'
 import { Toast, DotLoading } from 'antd-mobile'
 import axios from '../http'
 import ThemeToggle from '../context/ThemeToggle'
@@ -10,8 +10,12 @@ import { receiveScholarStream } from '../utils/scholarStream'
 import { cachedLetters, cacheLetter, saveLocalTurn, leaveScholar, shichen, scholarScope } from '../utils/scholarLetters'
 import '../styles/scholarEcosystem.less'
 import ScholarArtifactDrawer from '../components/ScholarArtifactDrawer'
+import InkWashBackground from '../components/InkWashBackground'
+import '../styles/referencePolish.less'
+import { getScholarScene } from '../utils/scholarScenes'
 
 const BASE = import.meta.env.BASE_URL
+const CAPSULE_ICONS = [FileOutline, EditSOutline, MessageOutline, CompassOutline]
 
 // 预设知己英雄图谱与格言
 const SAGE_HERO_MAP = {
@@ -105,6 +109,9 @@ export default function ScholarChat() {
     welcome: navSage?.welcome || '幸与足下相逢于云山竹简之境，且煮清茶以待君言。',
     capsules: ['〔经史〕请与我畅谈经史子集', '〔茶道〕茶道与修身之道', '〔心境〕如何保持内心宁静', '〔题咏〕作诗一首赠吾']
   }
+  const [failedScene, setFailedScene] = useState('')
+  const scene = getScholarScene(sageKey, sageInfo.name)
+  const hasScene = Boolean(scene && failedScene !== sageKey)
 
   // 同步用户在“我的”页面中的头像与昵称
   const [userProfile, setUserProfile] = useState(() => {
@@ -333,7 +340,12 @@ export default function ScholarChat() {
   }
 
   return (
-    <div className={`scholar-chat-root${gameOpen ? " is-game" : ""}`}>
+    <div className={`scholar-chat-root reference-polish${gameOpen ? " is-game" : ""}${hasScene ? ' has-sage-scene' : ''}`}>
+      {hasScene && <div className='scholar-scene' aria-hidden='true'>
+        <img key={scene.src} className='scholar-scene__art' src={scene.src} alt='' decoding='async' fetchPriority='high' onError={() => setFailedScene(sageKey)} />
+        <div className='scholar-scene__shade' />
+      </div>}
+      <InkWashBackground atmosphereOnly={hasScene} />
       {artifactOpen && <ScholarArtifactDrawer onClose={() => setArtifactOpen(false)} onPick={item => {
         setArtifactOpen(false)
         handleSend(`${sageInfo.name}先生，吾日前识得「${item.name}」，记录暂考为「${item.dynasty || '年代待考'}」${item.degraded ? '，此项仍为内置资料推演' : ''}。愿请先生从所属时代的器用与风雅辨析其来历；若晚于先生之世，亦请说明为跨时推论，不知此物与古今生活有何相通？`, item.id)
@@ -348,7 +360,7 @@ export default function ScholarChat() {
             <span className="scholar-nav__name">{sageInfo.name}</span>
             <span className="scholar-nav__tag">{sageInfo.title}</span>
           </div>
-          <span className="scholar-nav__status">● {sageInfo.status}</span>
+          <span className="scholar-nav__status"><span className='scholar-status-dot' aria-hidden='true' />{sageInfo.status}</span>
         </div>
         <div className="scholar-nav__right">
           <ThemeToggle className="scholar-nav__theme" />
@@ -372,15 +384,15 @@ export default function ScholarChat() {
         <div className="scholar-hero-banner__content">
           <div className="scholar-hero-banner__info">
             <p className="scholar-hero-banner__motto">“{sageInfo.motto}”</p>
-            <div className="scholar-hero-banner__seal">{sageInfo.name.slice(0, 2)}墨宝</div>
+            <div className="scholar-hero-banner__seal">{hasScene ? scene.title : `${sageInfo.name}墨宝`}</div>
           </div>
-          <div className="scholar-hero-banner__portrait-box">
+          {!hasScene && <div className="scholar-hero-banner__portrait-box">
             <img
-              src={sageInfo.portrait}
+              src={sageKey === 'libai' ? `${BASE}assets/guancang/sage-libai-full-v2.png` : sageInfo.portrait}
               alt={sageInfo.name}
               className="scholar-hero-banner__portrait"
             />
-          </div>
+          </div>}
         </div>
       </section>
 
@@ -394,7 +406,9 @@ export default function ScholarChat() {
               className="scholar-capsule"
               onClick={() => handleSend(cap.replace(/^〔.+?〕\s*/, ''))}
             >
-              {cap}
+              <span className='scholar-capsule__icon' aria-hidden='true'>{React.createElement(CAPSULE_ICONS[idx % CAPSULE_ICONS.length])}</span>
+              <span className='scholar-capsule__label'>{cap.replace(/^〔.+?〕\s*/, '')}</span>
+              <RightOutline className='scholar-capsule__arrow' aria-hidden='true' />
             </button>
           ))}
         </div>
@@ -414,7 +428,9 @@ export default function ScholarChat() {
             <div className="scholar-msg-bubble-wrap">
               {item.role === 'ai' && (
                 <div className="scholar-msg-avatar">
-                  <img src={sageInfo.portrait} alt={sageInfo.name} />
+                  <img src={hasScene && scene.face ? scene.src : sageInfo.portrait} alt={sageInfo.name}
+                    className={hasScene && scene.face ? 'scholar-msg-portrait' : undefined}
+                    style={hasScene && scene.face ? { '--face-left': `${50 - scene.face[0] * 800}%`, '--face-top': `${50 - scene.face[1] * 1600}%` } : undefined} />
                 </div>
               )}
 

@@ -70,17 +70,27 @@ export default function InkParticleField({ interactionTarget }) {
       clearTimeout(resizeTimer)
       resizeTimer = setTimeout(() => engine.resize(), 160)
     }
-    const onVisibility = () => (document.hidden ? engine.pause() : engine.resume())
+    const onActivity = () => {
+      const focused = document.activeElement?.matches?.('input, textarea, select, [contenteditable]:not([contenteditable="false"])') ?? false
+      const blocked = document.hidden || focused
+      canvas.closest('.ink-engine')?.classList.toggle('is-input-paused', blocked)
+      if (blocked) engine.pause(); else engine.resume()
+    }
 
     window.addEventListener('resize', onResize)
     window.addEventListener('orientationchange', onResize)
-    document.addEventListener('visibilitychange', onVisibility)
+    document.addEventListener('visibilitychange', onActivity)
+    document.addEventListener('focusin', onActivity)
+    document.addEventListener('focusout', onActivity)
+    onActivity()
 
     return () => {
       clearTimeout(resizeTimer)
       window.removeEventListener('resize', onResize)
       window.removeEventListener('orientationchange', onResize)
-      document.removeEventListener('visibilitychange', onVisibility)
+      document.removeEventListener('visibilitychange', onActivity)
+      document.removeEventListener('focusin', onActivity)
+      document.removeEventListener('focusout', onActivity)
       engine.destroy()
       engineRef.current = null
     }

@@ -5,6 +5,8 @@ import { Toast, Modal } from 'antd-mobile'
 import axios from '../http'
 import ThemeToggle from '../context/ThemeToggle'
 import '../styles/poemCollection.less'
+import InkWashBackground from '../components/InkWashBackground'
+import '../styles/referencePolish.less'
 
 // 古典兜底名篇（若后端未连接或新用户暂无收藏时展示）
 const defaultPoems = [
@@ -124,7 +126,8 @@ export default function PoemCollection() {
   }
 
   return (
-    <div className='poem-collection-root'>
+    <div className='poem-collection-root reference-polish'>
+      <InkWashBackground />
       {/* 1. 顶部水墨意境题头 */}
       <header className='collection-header'>
         <button className='collection-header__back' onClick={() => navigate(-1)} aria-label='返回书斋'>

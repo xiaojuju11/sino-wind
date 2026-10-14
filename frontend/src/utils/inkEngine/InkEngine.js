@@ -54,7 +54,7 @@ const PRESETS = {
     alpha: [0.45, 0.9],
   },
   firefly: {
-    count: 26, gravity: 0, drag: 0.42, maxSpeed: 210, windGain: 0.35,
+    count: 6, gravity: 0, drag: 0.42, maxSpeed: 210, windGain: 0.35,
     size: [1.1, 2.3], brownian: 46, buoyancy: 15, homeForce: 0.75, spin: false,
     palette: ['#F6E3A1', '#ECD38C', '#CEA559'],
     alpha: [0.3, 0.95],
@@ -135,7 +135,7 @@ export class InkEngine {
 
   // ── 生命周期 ──────────────────────────────────────
   start() {
-    if (this.rafId != null || this.destroyed) return
+    if (this.rafId != null || this.destroyed || this.paused) return
     this.lastFrameTime = 0
     this.rafId = requestAnimationFrame(this._boundLoop)
   }
@@ -160,11 +160,13 @@ export class InkEngine {
 
   pause() {
     this.paused = true
+    this.stop()
   }
 
   resume() {
     this.paused = false
     this.lastFrameTime = 0
+    this.start()
   }
 
   // ── 视口与自适应 ──────────────────────────────────
@@ -220,7 +222,8 @@ export class InkEngine {
     // 面积权重：小屏少粒子（保帧率），大屏足量（保观感）
     const area = this.width * this.height
     const areaFactor = clamp(area / (390 * 844), 0.45, 2.6)
-    return Math.max(4, Math.round(preset.count * areaFactor * this.qualityScale))
+    const count = Math.round(preset.count * areaFactor * this.qualityScale)
+    return this.mode === 'firefly' ? clamp(count, 5, 6) : Math.max(4, count)
   }
 
   spawnInitial() {
@@ -257,9 +260,9 @@ export class InkEngine {
     // 出生点：落叶/花瓣自上方随风入场；流萤在活动域内随机；雨自顶部
     if (this.mode === 'firefly') {
       p.home.x = r() * this.width
-      p.home.y = this.height * (0.25 + r() * 0.7)
+      p.home.y = this.height * (r() < .5 ? .03 + r() * .11 : .92 + r() * .05)
       p.pos.x = p.home.x + (r() - 0.5) * 60
-      p.pos.y = p.home.y + (r() - 0.5) * 60
+      p.pos.y = p.home.y
       p.vel.x = (r() - 0.5) * 26
       p.vel.y = (r() - 0.5) * 26
     } else if (this.mode === 'rain') {
@@ -460,6 +463,16 @@ export class InkEngine {
         if (repelFrom(p, o, dt, this.impulse)) {
           addScaled(p.vel, this.impulse.x, this.impulse.y, 1)
         }
+      }
+
+      if (p.kind === 'firefly') {
+        // Keep Brownian motion and pointer repulsion out of the card-reading band.
+        const top = p.home.y < this.height * .5
+        const low = top ? 8 : this.height * .91
+        const high = top ? this.height * .16 : this.height - 8
+        if (p.pos.y < low || p.pos.y > high) p.vel.y *= -.35
+        p.pos.y = clamp(p.pos.y, low, high)
+        p.pos.x = clamp(p.pos.x, 8, this.width - 8)
       }
 
       // 落叶/花瓣：落地后消失（雨滴另做涟漪）
@@ -684,7 +697,7 @@ export class InkEngine {
     // 呼吸辉光：亮度随相位起伏（每只萤火虫频率不同 → 错落）
     const breathe = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(this.time * 2.3 + p.phase * 3.1))
     const a = p.alpha * breathe
-    const R = p.radius * 7.5
+    const R = p.radius * 4.5
     const g = ctx.createRadialGradient(p.pos.x, p.pos.y, 0, p.pos.x, p.pos.y, R)
     g.addColorStop(0, this.rgba('#FFF6C9', a))
     g.addColorStop(0.28, this.rgba(p.color, a * 0.6))

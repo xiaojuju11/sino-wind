@@ -1,10 +1,14 @@
+import ReferenceCorners from '../components/ReferenceCorners'
 import React, { useState, useEffect } from 'react'
 import '../styles/letterList.less'
 import { useNavigate } from 'react-router-dom'
-import { AddOutline } from 'antd-mobile-icons'
+import { AddOutline, SearchOutline, CloseOutline } from 'antd-mobile-icons'
 import InviteDrawer from '../components/InviteDrawer'
 import ThemeToggle from '../context/ThemeToggle'
 import { cachedLetters, loadLetters, shichen } from '../utils/scholarLetters'
+import InkWashBackground from '../components/InkWashBackground'
+import '../styles/referencePolish.less'
+import { getScholarScene } from '../utils/scholarScenes'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -75,6 +79,7 @@ export default function LetterList() {
   const [drawerVisible, setDrawerVisible] = useState(false)
   const [letters, setLetters] = useState(cachedLetters)
   const [notice, setNotice] = useState('')
+  const [searchOpen, setSearchOpen] = useState(false), [searchText, setSearchText] = useState('')
   useEffect(() => {
     let current = true
     const refresh = () => loadLetters().then(rows => { if (current) { setLetters(rows); setNotice('') } })
@@ -88,7 +93,7 @@ export default function LetterList() {
   const displayed = conversations.map(item => {
     const row = letters.find(l => l.sageId === item.id)
     return { ...item, lastMsg: row?.reply?.unread ? `知音回柬：${row.reply.text}` : row?.lastMsg || '尚未对席，展卷与先贤初叙', time: shichen(row?.reply?.unread ? row.reply.at : row?.at), unread: row?.reply?.unread ? 1 : 0, at: Math.max(row?.at || 0, row?.reply?.at || 0) }
-  }).sort((a, b) => b.at - a.at)
+  }).filter(item => `${item.name} ${item.title} ${item.lastMsg}`.includes(searchText.trim())).sort((a, b) => b.at - a.at)
 
   // 迎请新友成功回调
   const handleInviteSuccess = (newSage) => {
@@ -106,51 +111,62 @@ export default function LetterList() {
   }
 
   return (
-    <div className="letter-root">
+    <div className="letter-root reference-polish">
+      <InkWashBackground />
       {/* 1. 顶部水墨意境题头 */}
       <header className="letter-header">
         <ThemeToggle className="letter-header__theme" />
+        <button className='letter-header__search' type='button' onClick={() => { setSearchOpen(v => !v); setSearchText('') }} aria-label='检索知音' aria-expanded={searchOpen}><SearchOutline /></button>
         <div className="letter-header__title-wrap">
-          <h1 className="letter-header__title">知音信札</h1>
-          <span className="letter-header__seal">鸿雁</span>
+          <h1 className="letter-header__title">知己信札</h1>
+          <span className="letter-header__seal">华风</span>
         </div>
         <p className="letter-header__subtitle">云笺素字 · 与千载知音烹茶对坐</p>
       </header>
+      {searchOpen && <div className='letter-reference-search'><input aria-label='检索知音姓名或信札' value={searchText} onChange={e => setSearchText(e.target.value)} placeholder='检索知音姓名或信札' /><button type='button' aria-label='清空检索' onClick={() => setSearchText('')}><CloseOutline /></button></div>}
 
       {/* 2. 顶部水平知己画卷（横向滑动 + 迎请新友按钮） */}
       <section className="letter-gallery-section">
         <div className="letter-gallery-scroll">
-          {displayed.map((item) => (
-            <div
+          {displayed.filter(item => item.id !== 'group_zhulin').slice(0, 4).map((item) => {
+            const scene = getScholarScene(item.id, item.name)
+            return (
+            <button type='button'
               key={item.id}
               className="letter-gallery-item"
+              aria-label={`与${item.name}对席`}
               onClick={() => handleGoChat(item)}
             >
               <div className="letter-gallery-avatar-box">
-                <img src={item.avatar} alt={item.name} className="letter-gallery-avatar" />
+                <span className='letter-portrait-window'>
+                <img src={scene?.face ? scene.src : item.avatar} alt={item.name} className={`letter-gallery-avatar${scene?.face ? ' reference-sage-portrait' : ''}`}
+                  style={scene?.face ? { '--face-left': `${50 - scene.face[0] * 800}%`, '--face-top': `${50 - scene.face[1] * 1600}%` } : undefined} />
+                </span>
                 {item.unread > 0 && (
                   <span className="letter-unread-badge" aria-label='有未读回柬'>1</span>
                 )}
               </div>
               <span className="letter-gallery-name">{item.name.split('·')[0]}</span>
-            </div>
-          ))}
+            </button>
+          )})}
 
           {/* 迎请新友 (+) 按钮 */}
-          <div
+          <button type='button'
             className="letter-gallery-item letter-gallery-item--invite"
+            aria-label='迎请新友'
             onClick={() => setDrawerVisible(true)}
           >
             <div className="letter-gallery-avatar-box letter-gallery-avatar-box--add">
               <AddOutline className="letter-add-icon" />
             </div>
             <span className="letter-gallery-name">迎请新友</span>
-          </div>
+          </button>
         </div>
       </section>
 
       {/* 3. 信札往还列表 */}
       <section className="letter-list-section">
+        <ReferenceCorners />
         {notice && <p role='status'>{notice}</p>}
         <div className="letter-list-header">
           <span className="letter-list-title">尺素往来（{conversations.length} 席）</span>
@@ -158,22 +174,26 @@ export default function LetterList() {
         </div>
 
         <div className="letter-list">
-          {displayed.map((item) => (
+          {displayed.map((item) => {
+            const scene = getScholarScene(item.id, item.name)
+            return (
             <div
               key={item.id}
               className="letter-card"
+              data-group={item.id === 'group_zhulin' || undefined}
               onClick={() => handleGoChat(item)}
             >
               <div className="letter-card__avatar-wrap">
-                <img src={item.avatar} alt={item.name} className="letter-card__avatar" />
+                <img src={scene?.src || item.avatar} alt={item.name} loading='lazy' className={`letter-card__avatar${scene?.face ? ' reference-sage-portrait' : ''}`}
+                  style={scene?.face ? { '--face-left': `${50 - scene.face[0] * 800}%`, '--face-top': `${50 - scene.face[1] * 1600}%` } : undefined} />
                 <span className="letter-card__dynasty">{item.dynasty}</span>
               </div>
 
               <div className="letter-card__body">
                 <div className="letter-card__top">
                   <div className="letter-card__names">
-                    <span className="letter-card__name">{item.name}</span>
-                    <span className="letter-card__title">【{item.title}】</span>
+                    <span className="letter-card__name">{item.id === 'group_zhulin' ? '竹林雅集' : item.name}</span>
+                    <span className="letter-card__title">{item.id === 'group_zhulin' ? '群聊' : `· ${item.title}`}</span>
                   </div>
                   <span className="letter-card__time">{item.time}</span>
                 </div>
@@ -186,7 +206,7 @@ export default function LetterList() {
                 </div>
               </div>
             </div>
-          ))}
+          )})}
         </div>
       </section>
 

@@ -1,0 +1,225 @@
+// Reference screens 1–8: visual layer only. No routing, API or motion-engine changes.
+.reference-paper() {
+  background: linear-gradient(115deg, color-mix(in srgb, var(--gf-bg-card) 35%, var(--gf-bg-paper)), var(--ref-paper,var(--gf-bg-paper)));
+}
+.reference-frame() {
+  .reference-paper();
+  border: 3px double var(--ref-gold, var(--gf-gold));
+  border-radius: 9px;
+  box-shadow: 0 2px 7px color-mix(in srgb, var(--gf-ink-primary) 12%, transparent), inset 0 0 0 3px color-mix(in srgb, var(--gf-gold) 13%, transparent);
+}
+.reference-seal() {
+  background: var(--gf-seal); color: #fff6e3; border: 3px double color-mix(in srgb, #fff6e3 80%, transparent);
+  outline: 1px solid var(--gf-seal); writing-mode: vertical-rl; font-family: STKaiti, KaiTi, serif;
+  font-size: 11px; letter-spacing: 2px; line-height: 1.25; padding: 4px 2px; border-radius: 3px;
+}
+.reference-polish:is(.home-root,.letter-root,.shuzhai-root,.poem-root,.scholar-chat-root,.poem-collection-root) {
+  --ref-gold: color-mix(in srgb, var(--gf-gold) 82%, var(--gf-seal));
+  --ref-paper: color-mix(in srgb, var(--gf-bg-paper) 96%, var(--gf-gold));
+  position: relative; isolation: isolate; color: var(--gf-ink-primary); font-family: var(--gf-font-serif, SimSun, serif);
+  background-color: transparent; background-image: none;
+  > .home-ink-wash { position: fixed; left: 50%; right: auto; width: min(100%, 480px); transform: translateX(-50%); z-index: 0; }
+  > header, > section, > main, > footer, > .shuzhai-logout-wrap { position: relative; z-index: 1; }
+  :is(button,input,textarea,select) { font-family: inherit; }
+  button:focus-visible, a:focus-visible { outline: 2px solid var(--gf-seal); outline-offset: 3px; }
+}
+.reference-polish.home-root {
+  padding: .28rem .36rem .8rem;
+  > .ink-engine { z-index: 0; left: 50%; right: auto; width: min(100%,480px); transform: translateX(-50%); }
+  .ink-engine__canvas { mask-image: linear-gradient(to bottom,black 0 15%,transparent 23% 86%,black 97%); }
+  .home-hero { padding: 1.08rem 0 .48rem; min-height: 2.3rem; box-sizing: border-box; }
+  .home-hero__actions { top: .08rem; right: .12rem; }
+  .home-hero__title { font-family: STKaiti, KaiTi, serif; font-size: .98rem; letter-spacing: .08rem; line-height: 1.15; font-weight: 800; }
+  .home-hero__seal { .reference-seal(); }
+  .home-hero__sub { font-size: .29rem; letter-spacing: .04rem; margin: .16rem 0 0; }
+  .home-card-scroll { .reference-frame(); margin-bottom: .3rem; padding: .25rem .3rem; overflow: visible; }
+  .home-card-scroll { backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .home-section-title { font-size: .43rem; letter-spacing: .05rem; font-family: STKaiti, KaiTi, serif; }
+  .home-section-sub { font-size: max(12px,.28rem); margin: .07rem 0 .2rem; }
+  .home-section-seal { .reference-seal(); font-size: 9px; padding: 2px; }
+  .home-yayan-section { margin: .13rem .12rem .4rem; padding: .35rem .32rem .25rem .85rem; border-radius: 1px; background: repeating-linear-gradient(90deg, transparent 0 13px, color-mix(in srgb,var(--ref-gold) 11%,transparent) 13px 14px), linear-gradient(100deg,var(--gf-bg-sunk),var(--gf-bg-card)); }
+  .home-yayan-section > .home-section-header { position: absolute; left: .12rem; top: .3rem; writing-mode: vertical-rl; background: var(--gf-seal); color: var(--gf-bg-card); padding: .16rem .08rem; border: 3px double var(--ref-gold); border-radius: 3px; }
+  .home-yayan-section .home-section-title { font-size: .34rem; color: inherit; letter-spacing: .12rem; }
+  .home-yayan-section .home-section-seal { display: none; }
+  .home-yayan-scroll { padding: 0; border: 0; box-shadow: none; background: transparent; }
+  .home-yayan-scroll::before,.home-yayan-scroll::after { display: none; }
+  .home-yayan-section::before,.home-yayan-section::after { content: ''; position: absolute; top: -.16rem; bottom: -.16rem; width: .22rem; height: auto; border: 1px solid var(--ref-gold); border-radius: 9px; background: linear-gradient(90deg,#3c2417,#be9665 30%,#f0d3a4 48%,#9b6b3b 80%,#3c2417); box-shadow: 1px 3px 4px #0003; }
+  .home-yayan-section::before { left: -.18rem; }.home-yayan-section::after { right: -.18rem; }
+  .home-yayan-inner { padding: 0; }
+  .home-yayan-input-box { min-height: .94rem; background: var(--gf-bg-card); border: 1px solid color-mix(in srgb,var(--ref-gold) 46%,transparent); border-radius: 7px; }
+  .home-yayan-textarea { font-size: .27rem; min-height: .7rem; }
+  .home-yayan-divider { margin: .1rem 0; height: .38rem; }
+  .home-yayan-result-card { margin: .1rem 0 .2rem; padding: .18rem .22rem; .reference-paper(); border: 1px solid color-mix(in srgb,var(--ref-gold) 38%,transparent); }
+  .home-yayan-ancient-text { font-size: .33rem; line-height: 1.7; }
+  .home-yayan-explain { font-size: max(11px,.27rem); }
+  .home-yayan-btn-row { gap: .2rem; }
+  .home-yayan-submit-btn,.home-yayan-collect-btn { border: 3px double var(--ref-gold); border-radius: 4px; min-height: .72rem; padding: .08rem .1rem; font-size: .31rem; letter-spacing: .04rem; }
+  .home-yayan-submit-btn { background: var(--gf-bamboo); color: var(--gf-bg-card); }.home-yayan-collect-btn { background: var(--gf-seal); color: var(--gf-bg-card); }
+  .home-almanac { min-height: 3.65rem; }
+  .home-almanac__cols { gap: .22rem; }.home-almanac__temp { font-size: .76rem; }
+  .home-almanac__date { font-size: max(11px,.28rem); }.home-almanac__desc { font-size: max(12px,.3rem); }
+  .home-shiwu-upload { border: 1px dashed var(--ref-gold); min-height: 2rem; }
+  .home-shiwu-upload__icon { font-size: .78rem; }.home-shiwu-upload__title { font-size: .29rem; }
+  .home-shiwu-demo__item { padding: .16rem .1rem; }.home-shiwu-demo__modern,.home-shiwu-demo__ancient { font-size: .27rem; }
+  .home-poem-card { min-height: 3.05rem; }.home-poem-title { font-size: .34rem; max-width: 74%; }.home-poem-verses { font-size: .35rem; }
+}
+.reference-polish.letter-root {
+  padding: .28rem .36rem 2rem; min-height: 100dvh;
+  .letter-header { padding: 2.3rem .12rem .4rem; text-align: left; }
+  .letter-header__theme { top: .15rem; right: .1rem; }.letter-header__title-wrap { justify-content: flex-start; gap: .24rem; }
+  .letter-header__title { font-size: .9rem; line-height: 1.1; letter-spacing: .08rem; }.letter-header__seal { .reference-seal(); }
+  .letter-header__subtitle { font-size: .23rem; margin-top: .16rem; }
+  .letter-header__search { position: absolute; right: .08rem; bottom: .72rem; border: 0; background: transparent; color: var(--gf-ink-primary); font-size: .55rem; min-height: 40px; min-width: 40px; }
+  .letter-reference-search { display: flex; gap: .12rem; padding: .14rem .2rem; margin-bottom: .22rem; .reference-frame(); input { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--gf-ink-primary); font-size: .28rem; } button { border: 0; background: transparent; color: var(--gf-ink-primary); min-height: 36px; } }
+  .letter-gallery-scroll { gap: .24rem; padding: .07rem .08rem .24rem; align-items: start; }
+  .letter-gallery-item { flex: 0 0 1.45rem; width: 1.45rem; cursor: pointer; }.letter-gallery-avatar-box { width: 1.4rem; height: 1.4rem; border: 1px solid var(--ref-gold); padding: 0; }
+  .letter-gallery-avatar { width: 100%; height: 100%; object-fit: cover; object-position: center 31%; }
+  .letter-gallery-avatar-box--add { border: 1px dashed var(--gf-ink-primary); background: transparent; }.letter-add-icon { font-size: .7rem; }
+  .letter-gallery-name { font-size: max(12px,.32rem); margin-top: .1rem; }
+  .letter-list-section { .reference-frame(); padding: .12rem .25rem .18rem; }.letter-list-header { padding: .08rem 0; color: var(--gf-ink-muted); font-size: .19rem; }
+  .letter-list { gap: 0; }.letter-card { background: transparent; box-shadow: none; border: 0; border-radius: 0; padding: .23rem 0; min-height: 1.48rem; border-bottom: 1px solid color-mix(in srgb,var(--ref-gold) 25%,transparent); gap: .22rem; }
+  .letter-card:last-child { border-bottom: 0; }.letter-card__avatar-wrap { width: 1.37rem; height: 1.37rem; flex: 0 0 1.37rem; }.letter-card__avatar { border: 1px solid var(--ref-gold); object-position: center 31%; }
+  .letter-card__dynasty { display: none; }.letter-card__top { align-items: center; }.letter-card__names { display: block; min-width: 0; }.letter-card__name { font-size: max(16px,.42rem); }.letter-card__title { font-size: max(11px,.28rem); color: var(--gf-ink-secondary); margin-left: .05rem; }
+  .letter-card__time { font-size: max(10px,.25rem); white-space: nowrap; }.letter-card__snippet { font-size: max(13px,.34rem); line-height: 1.6; margin-top: .1rem; }.letter-card__badge { background: var(--gf-seal); }
+  .letter-list-section { margin-bottom: 2.5rem; }
+}
+.reference-polish.shuzhai-root {
+  padding: .35rem .35rem 1rem;
+  .shuzhai-header { padding: 1.1rem 0 .36rem; }.shuzhai-header__title { font-size: .8rem; letter-spacing: .08rem; }.shuzhai-header__seal { .reference-seal(); }.shuzhai-header__subtitle { font-size: .25rem; letter-spacing: .04rem; }
+  .scholar-card,.shuzhai-section-card { .reference-frame(); margin-bottom: .22rem; padding: .25rem .28rem; }
+  .scholar-avatar { width: 1.55rem; height: 1.55rem; border: 1px solid var(--ref-gold); }.scholar-name { font-size: .46rem; font-family: STKaiti,KaiTi,serif; }.scholar-badge { color: var(--ref-gold); border: 1px solid var(--ref-gold); background: transparent; }
+  .scholar-motto { font-size: .25rem; }.scholar-stats { border-top: 1px solid color-mix(in srgb,var(--ref-gold) 30%,transparent); padding-top: .2rem; }.scholar-stats__num { font-size: .4rem; }.scholar-stats__label { font-size: .24rem; }
+  .shuzhai-section-head { margin: -.14rem -.1rem .12rem; min-height: 1.18rem; padding: .12rem .1rem; }.shuzhai-section-title { color: var(--gf-seal); font-size: .48rem; letter-spacing: .04rem; font-family: STKaiti,KaiTi,serif; }.shuzhai-section-sub { font-size: .24rem; max-width: 80%; }.shuzhai-section-head__illus { width: 2.25rem; height: 1.3rem; object-fit: contain; opacity: .9; }
+  .shuzhai-list { border: 1px solid color-mix(in srgb,var(--ref-gold) 45%,transparent); border-radius: 5px; }.shuzhai-list-item { padding: .16rem .17rem; gap: .22rem; border-bottom-color: color-mix(in srgb,var(--ref-gold) 28%,transparent); min-height: .9rem; }.shuzhai-list-item > .iconfont { font-size: .46rem; color: var(--gf-ink-primary); }.shuzhai-list-item__title { font-size: .31rem; }.shuzhai-list-item__desc { font-size: .22rem; }.shuzhai-list-item__arrow { color: var(--ref-gold); }
+  .shuzhai-logout-btn { color: var(--gf-seal); background: var(--gf-bg-card); border: 1px solid var(--gf-seal); border-radius: 2px; font-size: .35rem; box-shadow: none; }
+}
+.reference-polish.poem-root {
+  padding: .3rem .4rem .6rem; background-image: none;
+  &::before { display: none; }
+  .poem-header { padding: 1.45rem 0 .25rem; min-height: 2.4rem; box-sizing: border-box; justify-content: center; }.poem-header__title { font-family: STKaiti,KaiTi,serif; font-size: .72rem; letter-spacing: .08rem; }.poem-header__back { position: absolute; left: .04rem; top: .2rem; width: .8rem; height: .8rem; border: 1px solid color-mix(in srgb,var(--ref-gold) 35%,transparent); border-radius: 50%; .reference-paper(); }.poem-header__theme { position: absolute; right: 0; top: .2rem; }
+  .poem-reference-sub { text-align: center; font-size: .27rem; letter-spacing: .06rem; margin: 0 0 .48rem; }
+  .poem-header__seal { .reference-seal(); margin-left: .2rem; }
+  .poem-search { .reference-frame(); padding: .1rem; margin-bottom: .28rem; }.poem-search .adm-search-bar { --background: transparent; --border-radius: 4px; --height: 1rem; --placeholder-color: var(--gf-ink-muted); font-size: .32rem; }
+  .poem-scroll { .reference-frame(); margin: .3rem .1rem .35rem; padding: .5rem .45rem .38rem .72rem; min-height: 3.2rem; background: repeating-linear-gradient(90deg, transparent 0 18px, color-mix(in srgb,var(--ref-gold) 10%,transparent) 18px 19px), var(--gf-bg-card); }
+  .poem-scroll::before,.poem-scroll::after { width: .19rem; top: -.15rem; bottom: -.15rem; height: auto; background: linear-gradient(90deg,#251f18,#a98b51,#e8cc88,#493b27); border: 1px solid var(--ref-gold); border-radius: 9px; }.poem-scroll::before { left: -.17rem; }.poem-scroll::after { right: -.17rem; }
+  .poem-scroll__title { font-size: .43rem; line-height: 1.5; }.poem-scroll__meta { font-size: .28rem; }.poem-scroll__line { font-family: STKaiti,KaiTi,serif; font-size: .4rem; line-height: 1.95; }.poem-scroll__body { gap: .12rem; }
+  .poem-results { .reference-frame(); padding: .15rem .24rem; }.poem-results__item { padding: .25rem 0; border-bottom: 1px solid color-mix(in srgb,var(--ref-gold) 30%,transparent); }.poem-results__title { font-family: STKaiti,KaiTi,serif; font-size: .4rem; }.poem-results__snippet { font-size: .28rem; }
+  .poem-results__art { width: 1.55rem; height: 1.8rem; object-fit: cover; border: 1px solid color-mix(in srgb,var(--ref-gold) 60%,transparent); border-radius: 6px; flex: none; margin-right: .22rem; }
+  .poem-appreciation,.poem-metre { .reference-frame(); margin-top: .3rem; }.poem-appreciation__text { font-size: .31rem; line-height: 1.95; }.poem-appreciation__head { font-family: STKaiti,KaiTi,serif; font-size: .4rem; }
+  .poem-actions { gap: .15rem; grid-template-columns: repeat(3,minmax(0,1fr)); }.poem-action { border: 3px double var(--ref-gold); border-radius: 4px; font-size: .26rem; padding: .18rem .05rem; min-height: .8rem; background: var(--gf-bg-card); color: var(--gf-ink-primary); }.poem-action--primary { background: var(--gf-seal); color: var(--gf-bg-card); }
+}
+.reference-polish.scholar-chat-root {
+  height: 100dvh;
+  .scholar-nav { background: transparent; box-shadow: none; border: 0; padding: .25rem .3rem .14rem; }.scholar-nav__name { font-size: .4rem; }.scholar-nav__back,.scholar-nav__action { border: 1px solid color-mix(in srgb,var(--ref-gold) 35%,transparent); border-radius: 50%; .reference-paper(); width: .64rem; height: .64rem; }.scholar-nav__status { font-size: .23rem; }
+  .scholar-hero-banner { background: transparent; border: 0; padding: .05rem .35rem; min-height: 5.6rem; }.scholar-hero-banner__content { min-height: 5.6rem; display: block; }.scholar-hero-banner__portrait-box { position: absolute; left: .35rem; top: 0; width: 3.2rem; height: 4.5rem; margin: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }.scholar-hero-banner__portrait { object-fit: contain; }.scholar-hero-banner__info { position: absolute; bottom: 0; left: 0; right: 0; align-items: center; text-align: center; }.scholar-hero-banner__motto { font-size: .38rem; font-style: normal; line-height: 1.6; font-family: STKaiti,KaiTi,serif; }.scholar-hero-banner__seal { font-size: .2rem; margin-top: .04rem; align-self: center; }
+  .scholar-capsules-bar { background: transparent; border: 0; padding: .08rem .3rem .15rem; }.scholar-capsules-scroll { display: grid; grid-template-columns: 1fr 1fr; gap: .1rem; overflow: visible; }.scholar-capsule { border: 1px solid var(--ref-gold); border-radius: 3px; padding: .12rem .15rem; white-space: normal; text-align: left; font-size: .24rem; line-height: 1.5; min-height: .6rem; }
+  .scholar-messages-container { background: transparent; padding: .18rem .25rem; min-height: 2rem; }.scholar-msg-bubble--ai { .reference-frame(); font-size: .32rem; }.scholar-msg-bubble--user { background: var(--gf-bamboo); color: #f7f1df; font-size: .32rem; }.scholar-msg-avatar { border: 1px solid var(--ref-gold); }.scholar-msg-time { font-size: .2rem; color: var(--gf-ink-secondary); }
+  .scholar-footer { .reference-frame(); border-radius: 9px 9px 0 0; padding: .13rem .22rem max(.17rem,env(safe-area-inset-bottom)); }.scholar-footer__quick-tools { gap: .14rem; }.scholar-tool-btn { font-size: .22rem; }.scholar-input-bar { background: transparent; }.scholar-textarea { border: 3px double color-mix(in srgb,var(--ref-gold) 70%,transparent); background: var(--gf-bg-card); border-radius: 7px; font-size: .29rem; }.scholar-send-btn { background: var(--gf-seal); border: 3px double var(--ref-gold); border-radius: 5px; font-size: .3rem; min-width: 1.2rem; }
+  &.is-game { .scholar-hero-banner,.scholar-capsules-bar { display: none; } }
+}
+.reference-polish.poem-collection-root {
+  padding-top: 1rem;
+  .collection-header { padding-top: .5rem; }.collection-header__title { font-family: STKaiti,KaiTi,serif; font-size: .7rem; }.collection-search-box,.collection-list { .reference-frame(); }.collection-list { padding: .18rem .25rem; }.poem-card { border: 0; border-bottom: 1px solid var(--ref-gold); background: transparent; box-shadow: none; border-radius: 0; }.poem-card__title { font-size: .37rem; }.poem-card__excerpt { font-size: .28rem; }
+}
+.reference-polish.scholar-chat-root.has-sage-scene {
+  > .scholar-scene { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; background: var(--gf-bg-paper); }
+  .scholar-scene__art { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center top; }
+  .scholar-scene__shade { position: absolute; inset: 0; background: linear-gradient(to bottom, color-mix(in srgb,var(--gf-bg-paper) 50%,transparent) 0,transparent 12% 35%,color-mix(in srgb,var(--gf-bg-paper) 12%,transparent) 55%); }
+  .scholar-nav { padding-top: max(.25rem,env(safe-area-inset-top)); }
+  .scholar-nav__center { padding: 4px 10px; border-radius: 5px; background: color-mix(in srgb,var(--gf-bg-paper) 82%,transparent); }
+  .scholar-nav__status { font-size: max(10px,.23rem); color: var(--gf-ink-secondary); }
+  .scholar-hero-banner { height: clamp(180px,34dvh,310px); min-height: 0; }
+  .scholar-hero-banner__content { min-height: 0; height: 100%; }
+  .scholar-hero-banner__bg { display: none; }
+  .scholar-hero-banner__info { background: color-mix(in srgb,var(--gf-bg-paper) 86%,transparent); padding: .1rem .15rem; border-radius: 4px; }
+  .scholar-hero-banner__motto { font-size: max(15px,.38rem); }
+  .scholar-hero-banner__seal { color: var(--gf-accent-text,var(--gf-seal)); border-color: currentColor; }
+  .scholar-msg-sound-btn { color: var(--gf-accent-text,var(--gf-seal)); font-size: 10px; }
+  .scholar-msg-bubble--ai { background: color-mix(in srgb,var(--gf-bg-card) 94%,transparent); }
+  .scholar-msg-avatar { position: relative; overflow: hidden; }
+  .scholar-msg-avatar .scholar-msg-portrait { position: absolute; width: 800%; height: auto; max-width: none; left: var(--face-left); top: var(--face-top); }
+  .scholar-msg-time { background: color-mix(in srgb,var(--gf-bg-paper) 90%,transparent); border-radius: 3px; padding: 2px 5px; font-size: max(10px,.23rem); }
+  &.is-game .scholar-scene { opacity: .45; }
+}
+[data-theme='dark'] .reference-polish.scholar-chat-root.has-sage-scene {
+  .scholar-scene__art { filter: brightness(.48) saturate(.6); }
+  .scholar-scene__shade { background: linear-gradient(to bottom,#07121f26,#07121f10 30%,#07121f96 58%,#07121f80); }
+}
+@media (max-height: 650px) {
+  .reference-polish.scholar-chat-root.has-sage-scene .scholar-hero-banner { height: 18dvh; min-height: 88px; }
+}
+.layout:has(.reference-polish) {
+  background: transparent;
+  .bottom-nav { .reference-frame(); width: 100%; max-width: 480px; height: 1.4rem; padding: .08rem .3rem max(.08rem,env(safe-area-inset-bottom)); border-radius: 11px 11px 0 0; }
+  .bottom-nav__item { color: var(--gf-ink-secondary); gap: .03rem; }.bottom-nav__item.is-active { color: var(--gf-seal); }.bottom-nav__icon-svg,.bottom-nav__icon,.bottom-nav__icon-font { font-size: .48rem; width: .48rem; height: .48rem; }.bottom-nav__label { font-family: STKaiti,KaiTi,serif; font-size: .29rem; }.bottom-nav__underline { width: .55rem; height: 3px; border-radius: 3px; background: currentColor; }
+}
+.reference-invite.invite-drawer {
+  --ref-gold: color-mix(in srgb,var(--gf-gold) 82%,var(--gf-seal));
+  .reference-frame(); padding-top: .18rem; max-height: 90dvh; color: var(--gf-ink-primary); font-family: var(--gf-font-serif,SimSun,serif);
+  &::before { content: ''; display: block; margin: 0 auto .17rem; width: .85rem; height: 4px; border-radius: 4px; background: var(--gf-ink-muted); }
+  height: 78dvh;
+  .invite-drawer__header { padding: .12rem .35rem .2rem; background: transparent; border: 0; }.invite-drawer__title { font-family: STKaiti,KaiTi,serif; font-size: max(18px,.43rem); }.invite-drawer__seal { .reference-seal(); }.invite-drawer__body { display: flex; flex-direction: column; padding: .12rem .4rem; gap: .24rem; }.invite-drawer__sub { font-size: 11px; }
+  .invite-drawer__quick,.invite-drawer__avatar-section { order: 2; }.invite-drawer__form { display: flex; flex-direction: column; gap: .25rem; }
+  .invite-drawer__form-row,.invite-drawer__form-row-dynasty { display: flex; flex-direction: column; align-items: stretch; padding: 0; border: 0; background: transparent; gap: .12rem; }.invite-drawer__label { font-size: max(14px,.34rem); font-weight: 700; }
+  .invite-drawer__input,.invite-drawer__textarea { border: 1px solid var(--ref-gold); border-radius: 7px; background: var(--gf-bg-sunk); padding: .2rem .25rem; font-size: max(13px,.32rem); min-height: .5rem; line-height: 1.8; box-sizing: border-box; width: 100%; }.invite-drawer__textarea { min-height: 1.6rem; }
+  .invite-drawer__ai-btn { .reference-frame(); text-align: left; min-height: 1.25rem; padding: .2rem .3rem; font-size: max(18px,.42rem); color: var(--gf-ink-primary); }.invite-drawer__soul-card { .reference-frame(); }.invite-drawer__soul-bio { font-size: .27rem; line-height: 1.9; }.invite-drawer__dynasty-chip,.invite-drawer__chip,.invite-drawer__soul-tag { background: var(--gf-bg-card); color: var(--gf-ink-primary); border-color: var(--ref-gold); }.invite-drawer__dynasty-chip.is-active { background: var(--gf-bamboo); color: #f7f1df; }
+  .invite-drawer__ai-btn { position: relative; overflow: hidden; background-image: linear-gradient(100deg,var(--gf-bg-card) 45%,transparent), url('/assets/shuzhai/illus_qinggui.png'); background-size: auto, auto 100%; background-repeat: no-repeat; background-position: center, right center; small { display: block; font-size: .22rem; margin: .12rem 0 0 .45rem; font-weight: normal; max-width: 85%; } }
+  .invite-drawer__dynasty-select { font-family: inherit; font-size: .32rem; color: var(--gf-ink-primary); background: var(--gf-bg-sunk); border: 1px solid var(--ref-gold); border-radius: 7px; padding: .2rem .25rem; width: 100%; }
+  .invite-drawer__footer { background: transparent; padding: .2rem .4rem max(.22rem,env(safe-area-inset-bottom)); }.invite-drawer__confirm-btn { border: 3px double var(--ref-gold); border-radius: 5px; font-family: STKaiti,KaiTi,serif; font-size: .37rem; padding: .2rem; background: var(--gf-seal); color: #f7f1df; }
+}
+.reference-polish .reference-corners,.reference-invite .reference-corners { position: absolute; inset: -4px; z-index: 3; pointer-events: none;
+  > i { position: absolute; width: 16px; height: 16px; border-top: 1px solid var(--ref-gold,var(--gf-gold)); border-left: 1px solid var(--ref-gold,var(--gf-gold)); border-radius: 4px 0 0; }
+  > i::before { content: ''; position: absolute; top: 3px; left: 3px; width: 9px; height: 9px; border: 1px solid var(--ref-gold,var(--gf-gold)); border-right: 0; border-bottom: 0; }
+  > i:nth-child(1) { top: 0; left: 0; }> i:nth-child(2) { top: 0; right: 0; transform: rotate(90deg); }> i:nth-child(3) { bottom: 0; right: 0; transform: rotate(180deg); }> i:nth-child(4) { bottom: 0; left: 0; transform: rotate(270deg); }
+}
+// Keep body text readable on the project's 320–480px mobile canvas.
+.reference-polish.home-root {
+  .home-yayan-textarea,.home-yayan-explain { font-size: max(13px,.32rem); }
+  .home-yayan-ancient-text { font-size: max(16px,.4rem); }
+  .home-yayan-submit-btn,.home-yayan-collect-btn { font-size: max(14px,.35rem); min-height: 40px; }
+  .home-almanac__desc,.home-almanac__date { line-height: 1.7; }
+  .home-almanac__label,.home-almanac__ganzhi,.home-almanac__wuhou,.home-almanac__city { font-size: max(12px,.29rem); color: var(--gf-ink-secondary); line-height: 1.6; }
+  .home-almanac__shichen { font-size: max(15px,.36rem); color: var(--gf-ink-primary); }
+  .home-yayan-textarea::placeholder { color: var(--gf-ink-secondary); opacity: 1; }
+  .home-shiwu-upload__icon { color: var(--gf-accent-text,var(--gf-seal)); }
+  .home-shiwu-upload__title,.home-shiwu-demo__modern,.home-shiwu-demo__ancient { font-size: max(13px,.3rem); }
+  .home-poem-title,.home-poem-verses { font-size: max(16px,.38rem); }
+}
+.reference-polish.shuzhai-root {
+  .scholar-motto,.scholar-stats__label,.shuzhai-section-sub,.shuzhai-list-item__desc { font-size: max(12px,.28rem); }
+  .shuzhai-list-item__title { font-size: max(15px,.35rem); }
+  .shuzhai-list-item { min-height: 54px; }
+  .shuzhai-section-card .shuzhai-list .shuzhai-list-item { box-sizing: border-box; padding: 8px 10px; gap: 8px; }
+  .shuzhai-section-card .shuzhai-section-head .shuzhai-section-title { font-size: max(22px,.48rem); color: var(--gf-accent-text,var(--gf-seal)); }
+  .shuzhai-section-card .shuzhai-section-head .shuzhai-section-sub { font-size: 12px; }
+  .shuzhai-logout-wrap .shuzhai-logout-btn { border-radius: 3px; width: 82%; }
+}
+.reference-polish.scholar-chat-root {
+  .scholar-nav__back,.scholar-nav__action { min-width: 40px; min-height: 40px; }
+  .scholar-capsule { font-size: max(12px,.28rem); min-height: 36px; }
+  .scholar-msg-bubble--ai,.scholar-msg-bubble--user { font-size: max(15px,.35rem); line-height: 1.8; }
+  .scholar-textarea { font-size: max(14px,.33rem); }
+  .scholar-textarea::placeholder { color: var(--gf-ink-secondary); opacity: 1; }
+  .scholar-tool-btn { color: var(--gf-ink-secondary); font-size: max(11px,.25rem); min-height: 30px; }
+  .scholar-send-btn { min-height: 40px; font-size: max(15px,.35rem); color: #fff6e3; }
+}
+.reference-polish.poem-root {
+  .poem-scroll__line { font-size: max(17px,.42rem); }
+  .poem-results__art { object-position: 78% center; }
+  .poem-results__snippet,.poem-appreciation__text { font-size: max(14px,.33rem); }
+  .poem-action { min-height: 44px; font-size: max(12px,.29rem); }
+}
+.layout:has(.reference-polish) .bottom-nav__label { font-size: max(12px,.29rem); }
+.layout:has(.reference-polish) .bottom-nav__item.is-active { color: var(--gf-accent-text,var(--gf-seal)); }
+.reference-polish.home-root {
+  .home-yayan-submit-btn,.home-yayan-collect-btn { color: #fff6e3; }
+  .home-yayan-section > .home-section-header { color: #fff6e3; }
+}
+.reference-polish.poem-root .poem-action--primary { color: #fff6e3; }
+.reference-invite.invite-drawer .invite-drawer__confirm-btn { min-height: 44px; font-size: max(16px,.37rem); }
+@media (max-width: 350px) {
+  .reference-polish.letter-root .letter-card__title { display: none; }
+  .reference-polish.scholar-chat-root .scholar-hero-banner { min-height: 2rem; }.reference-polish.scholar-chat-root .scholar-hero-banner__content { min-height: 2rem; }.reference-polish.scholar-chat-root .scholar-hero-banner__portrait-box { height: 2rem; width: 1.8rem; }
+}
+
+@import "./referenceFidelity.less";

@@ -1,12 +1,15 @@
+import ReferenceCorners from '../components/ReferenceCorners'
 import React, { useState, useEffect } from 'react'
 import '../styles/minePage.less'
 import { ActionSheet, Toast, ImageViewer, Popup, Modal } from 'antd-mobile'
-import { RightOutline } from 'antd-mobile-icons'
+import { RightOutline, FileOutline, TeamOutline, UserSetOutline, SetOutline, BellOutline, QuestionCircleOutline, EditSOutline, AppstoreOutline, CloseOutline } from 'antd-mobile-icons'
 import { useNavigate } from 'react-router-dom'
 import ThemeToggle from '../context/ThemeToggle.jsx'
 import axios from '../http'
 import ScholarArchive from '../components/ScholarArchive'
 import ScholarArtifactDrawer from '../components/ScholarArtifactDrawer'
+import InkWashBackground from '../components/InkWashBackground'
+import '../styles/referencePolish.less'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -160,7 +163,8 @@ export default function MinePage() {
   }
 
   return (
-    <div className='shuzhai-root'>
+    <div className='shuzhai-root reference-polish'>
+      <InkWashBackground />
       {/* 1. 顶部水墨意境题头
           说明：题头右上角原有的 ThemeToggle 已按要求移除。
           日月切换在本书斋只保留「书斋清规 → 墨色雅意」一处入口，避免同页多个入口。 */}
@@ -174,6 +178,7 @@ export default function MinePage() {
 
       {/* 2. 雅士身份大卡片 */}
       <section className='scholar-card'>
+        <ReferenceCorners />
         <div className='scholar-card__profile'>
           <div className='scholar-avatar' onClick={() => setVisibleAvatarViewer(true)}>
             <img
@@ -208,6 +213,7 @@ export default function MinePage() {
 
       {/* 3. 列表卡片 1：五大藏品墨卷 */}
       <section className='shuzhai-section-card'>
+        <ReferenceCorners />
         <div className='shuzhai-section-head'>
           <div className='shuzhai-section-head__text'>
             <div className='shuzhai-section-head__title-wrap'>
@@ -221,14 +227,14 @@ export default function MinePage() {
 
         <div className='shuzhai-list'>
           <button type='button' className='shuzhai-list-item' onClick={() => setArchiveOpen(true)} style={{ width: '100%', background: 'var(--gf-bg-card)', color: 'var(--gf-ink-primary)', border: 0, textAlign: 'start' }}>
-            <i className='iconfont icon-shuben' aria-hidden='true' />
+            <FileOutline className='shuzhai-list-symbol' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>藏牒阁（通关诏书）</span>
               <span className='shuzhai-list-item__desc'>历局唱和存卷 · 高清文牒回看与分享</span>
             </div><RightOutline className='shuzhai-list-item__arrow' />
           </button>
           <div className='shuzhai-list-item' onClick={() => setArtifactsOpen(true)}>
-            <i className='iconfont icon-zhanpin'></i>
+            <AppstoreOutline className='shuzhai-list-symbol' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>物溯宝鉴（已鉴藏品）</span>
               <span className='shuzhai-list-item__desc'>已考证之今物与古器原型</span>
@@ -237,7 +243,7 @@ export default function MinePage() {
           </div>
 
           <div className='shuzhai-list-item' onClick={() => navigate('/poem-collection')}>
-            <i className='iconfont icon-zhinan'></i>
+            <FileOutline className='shuzhai-list-symbol' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>我的诗笺</span>
               <span className='shuzhai-list-item__desc'>收录的古诗词与摘录笔记</span>
@@ -246,7 +252,7 @@ export default function MinePage() {
           </div>
 
           <div className='shuzhai-list-item' onClick={() => navigate('/letters')}>
-            <i className='iconfont icon-shoucang-yishoucang'></i>
+            <TeamOutline className='shuzhai-list-symbol' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>知音鸿雁（往来信札）</span>
               <span className='shuzhai-list-item__desc'>与李白、苏轼等千古知己交谈归档</span>
@@ -255,7 +261,7 @@ export default function MinePage() {
           </div>
 
           <div className='shuzhai-list-item' onClick={() => setVisibleYayanDrawer(true)}>
-            <i className='iconfont icon-homework'></i>
+            <EditSOutline className='shuzhai-list-symbol' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>雅译锦囊</span>
               <span className='shuzhai-list-item__desc'>今人白话化两宋雅言之研习札记</span>
@@ -267,6 +273,7 @@ export default function MinePage() {
 
       {/* 4. 列表卡片 2：书斋清规 */}
       <section className='shuzhai-section-card'>
+        <ReferenceCorners />
         <div className='shuzhai-section-head'>
           <div className='shuzhai-section-head__text'>
             <div className='shuzhai-section-head__title-wrap'>
@@ -284,7 +291,7 @@ export default function MinePage() {
               按要求只保留「墨色雅意」作为唯一的日月切换入口。 */}
 
           <div className='shuzhai-list-item' onClick={() => navigate('/accountSetting')}>
-            <i className='iconfont icon-zhanghao'></i>
+            <UserSetOutline className='shuzhai-list-symbol' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>账号设置</span>
               <span className='shuzhai-list-item__desc'>头像换新、修改昵称与账号管理</span>
@@ -294,7 +301,7 @@ export default function MinePage() {
 
           {/* 墨色雅意：日月主题切换的唯一入口 */}
           <div className='shuzhai-list-item shuzhai-list-item--theme'>
-            <i className='iconfont icon-shezhi'></i>
+            <SetOutline className='shuzhai-list-symbol' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>墨色雅意</span>
               <span className='shuzhai-list-item__desc'>晓色晨宣 / 月下墨境切换</span>
@@ -310,7 +317,7 @@ export default function MinePage() {
             setNotifyEnabled(next)
             Toast.show({ content: next ? '岁时节气与知音回信通知已开启' : '岁时通知已静息', icon: 'success' })
           }}>
-            <i className='iconfont icon-tongzhi'></i>
+            <BellOutline className='shuzhai-list-symbol' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>消息通知</span>
               <span className='shuzhai-list-item__desc'>
@@ -321,7 +328,7 @@ export default function MinePage() {
           </div>
 
           <div className='shuzhai-list-item' onClick={handleShowAbout}>
-            <i className='iconfont icon-wenhao-yuankuang'></i>
+            <QuestionCircleOutline className='shuzhai-list-symbol' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>关于云山竹简</span>
               <span className='shuzhai-list-item__desc'>国风两宋美学研习平台 · v2.0 崇雅版</span>
@@ -369,7 +376,7 @@ export default function MinePage() {
               <span>雅译锦囊</span>
               <span className='yayan-box__seal'>两宋白话</span>
             </div>
-            <div className='yayan-box__close' onClick={() => setVisibleYayanDrawer(false)}>✕</div>
+            <button type='button' className='yayan-box__close' aria-label='关闭雅译锦囊' onClick={() => setVisibleYayanDrawer(false)}><CloseOutline /></button>
           </div>
           <p className='yayan-box__sub'>
             收录两宋市井与文人日常白话雅言对照，随取随用，感受千年鲜活墨香。
