@@ -4,7 +4,6 @@ import { List, Avatar, ActionSheet, Toast, Popup, Button, Input } from 'antd-mob
 import axios from '../http'
 import { LeftOutline, CloseOutline } from 'antd-mobile-icons'
 import { uploadFileChunks, DEFAULT_CHUNK_SIZE } from '../utils/chunkUpload'
-import ThemeToggle from '../context/ThemeToggle'
 import '../styles/accountSetting.less'
 
 const actions = [
@@ -243,13 +242,16 @@ export default function AccountSetting() {
 
   return (
     <div className='account-setting'>
-      {/* 头部导航 */}
+      {/* 头部导航
+          说明：题头右侧原有的 ThemeToggle 已删除；下方「墨色雅意」列表项也一并移除，
+          本页不再提供日月切换入口（书斋页仅保留「墨色雅意」一处）。 */}
       <header className='image-capture-header'>
         <button className='image-capture-header__back' aria-label='返回上一页' onClick={() => navigate(-1)}>
           <LeftOutline aria-hidden="true" />
         </button>
-        <h1>账号设置</h1>
-        <ThemeToggle className="account-setting__theme-toggle" />
+        <h1 className='image-capture-header__title'>账号设置</h1>
+        {/* 占位：保持 header 的 space-between 布局，让标题稳定居中 */}
+        <span className='image-capture-header__spacer' aria-hidden='true' />
       </header>
 
       {/* 账号配置列表 */}
@@ -267,11 +269,6 @@ export default function AccountSetting() {
           </List.Item>
           <List.Item extra={account} clickable>
             账号
-          </List.Item>
-          <List.Item
-            extra={<ThemeToggle />}
-          >
-            墨色雅意
           </List.Item>
           <List.Item
             extra='修改密码'
