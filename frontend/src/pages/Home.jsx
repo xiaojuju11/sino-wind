@@ -1,69 +1,21 @@
+import ReferenceCorners from '../components/ReferenceCorners'
 import React, { useRef, useState } from 'react'
 import '../styles/home.less'
 import { Toast, ActionSheet } from 'antd-mobile'
-import { DownOutline, RightOutline, UpOutline, CompassOutline, EditSOutline, CheckCircleOutline, DownCircleOutline } from 'antd-mobile-icons'
+import { DownOutline, RightOutline, UpOutline, CompassOutline, EditSOutline, CheckCircleOutline, DownCircleOutline, StarOutline, ShopbagOutline, FileOutline } from 'antd-mobile-icons'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../context/useTheme'
 import InkParticleField from '../components/InkParticleField.jsx'
 import InkSpreadZone from '../components/InkSpreadZone.jsx'
 import axios from '../http'
+import InkWashBackground from '../components/InkWashBackground'
+import '../styles/referencePolish.less'
 
 const BASE = import.meta.env.BASE_URL
 
-// ════════════════════════════════════════════════════
-//  国风矢量字形（TRD v3.0 §2.3 图标红线：严禁原生 Emoji）
-//  · 第一优先级 antd-mobile-icons 无「日 / 月 / 云日」图标（已逐项核对 152 个）
-//  · 故本页日 / 月 / 云日走红线允许的【第三优先级：内联 SVG】
-//  · 统一 24×24 线性描边、只吃 currentColor、fill:none ⇒ 可随主题着色，
-//    与 ThemeToggle 的内联 SVG 口径一致，跨平台渲染完全一致（非位图字形）
-// ════════════════════════════════════════════════════
-const GLYPH_STROKE = {
-  fill: 'none',
-  stroke: 'currentColor',
-  strokeWidth: 1.6,
-  strokeLinecap: 'round',
-  strokeLinejoin: 'round',
-}
-
-
-/**
- * 云日纹（时令天气）——古制「日轮 + 芒」纹样
- * 心圈 + 八主芒 + 八辅芒，取古人绘日之法，比通用天气图标更贴两宋水墨调性
- */
-function SunWheelGlyph() {
-  return (
-    <svg viewBox='0 0 24 24' aria-hidden='true' focusable='false'>
-      <circle cx='12' cy='12' r='3.1' {...GLYPH_STROKE} />
-      <path
-        d='M12 1.8v3.2M12 19v3.2M1.8 12h3.2M19 12h3.2M4.8 4.8l2.3 2.3M16.9 16.9l2.3 2.3M19.2 4.8l-2.3 2.3M7.1 16.9l-2.3 2.3'
-        {...GLYPH_STROKE}
-      />
-      <path
-        d='M12 6.6v1.1M12 16.3v1.1M6.6 12h1.1M16.3 12h1.1M8.4 8.4l.8.8M14.8 14.8l.8.8M15.6 8.4l-.8.8M9.2 14.8l-.8.8'
-        {...GLYPH_STROKE}
-        strokeWidth={1.1}
-      />
-    </svg>
-  )
-}
-
-/**
- * 素娥月轮纹（夜间切换）——纯矢量宋风玄月
- */
-function MoonCrescentGlyph() {
-  return (
-    <svg viewBox='0 0 24 24' aria-hidden='true' focusable='false'>
-      <path
-        d='M20.5 13.05A8.8 8.8 0 1 1 11.2 3.7 6.8 6.8 0 0 0 20.5 13.05z'
-        {...GLYPH_STROKE}
-        fill='currentColor'
-        fillOpacity={0.2}
-      />
-      <circle cx='18' cy='6.2' r='0.8' fill='currentColor' stroke='none' />
-      <circle cx='20.2' cy='9.2' r='0.6' fill='currentColor' stroke='none' />
-    </svg>
-  )
-}
+// Use the installed official vector library for day/night marks.
+function SunWheelGlyph() { return <CompassOutline aria-hidden="true" /> }
+function MoonCrescentGlyph() { return <StarOutline aria-hidden="true" /> }
 // ════════════════════════════════════════════════════
 //  传统时辰换算（TRD v3.0：动态算法换算十二时辰）
 // ════════════════════════════════════════════════════
@@ -221,7 +173,7 @@ export default function Home() {
   }
 
   return (
-    <div className="home-root">
+    <div className="home-root reference-polish">
       <InkWashBackground />
 
       {/* ── 水墨流体粒子引擎（Canvas 物理引擎：落叶/流萤/烟雨/飞雪 + 划动水墨扩散）── */}
@@ -272,6 +224,7 @@ export default function Home() {
 
       {/* ── 区块① 白话雅译（两端木轴卷轴 + 竖排红签）── */}
       <section className="home-card-scroll home-yayan-section">
+        <ReferenceCorners />
         <div className="home-section-header">
           <h2 className="home-section-title">白话雅译</h2>
           <span className="home-section-seal">简</span>
@@ -285,9 +238,9 @@ export default function Home() {
               </span>
               <textarea
                 className="home-yayan-textarea"
-                rows={2}
+                rows={1}
                 maxLength={150}
-                placeholder="输入你的日常大白话（如：今天心情真好）…"
+                placeholder="输入日常白话，如：心情真好…"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
               />
@@ -347,6 +300,7 @@ export default function Home() {
 
       {/* ── 区块② 古今时令与天象 ── */}
       <section className="home-card-scroll home-almanac">
+        <ReferenceCorners />
         <div className="home-section-header">
           <h2 className="home-section-title">古今时令与天象</h2>
           <span className="home-section-seal">时</span>
@@ -366,7 +320,7 @@ export default function Home() {
           <div className="home-almanac__col">
             <span className="home-almanac__label">现代 · 今日</span>
             <div className="home-almanac__weather">
-              {/* 图标铁律：天气改内联「云日纹」SVG（原太阳 Emoji 已消灭） */}
+              {/* 图标铁律：使用已安装官方库矢量纹样 */}
               <span className="home-almanac__sun" aria-hidden="true">
                 <SunWheelGlyph />
               </span>
@@ -407,6 +361,7 @@ export default function Home() {
 
       {/* ── 区块③ 古今识物 ── */}
       <section className="home-card-scroll home-shiwu-section">
+        <ReferenceCorners />
         <div className="home-section-header">
           <h2 className="home-section-title">古今识物</h2>
           <span className="home-section-seal">物</span>
@@ -438,8 +393,7 @@ export default function Home() {
                 className="home-shiwu-demo__item"
                 onClick={() => navigate('/recognition')}
               >
-                {/* 图标铁律：奶茶 / 书包 Emoji 改 CSS 印章「酪」「笈」 */}
-                <span className="home-shiwu-demo__seal" aria-hidden="true">{item.seal}</span>
+                {item.modern.includes('奶茶') ? <ShopbagOutline className='home-shiwu-demo__symbol' aria-hidden='true' /> : <FileOutline className='home-shiwu-demo__symbol' aria-hidden='true' />}
                 <span className="home-shiwu-demo__modern">{item.modern}</span>
                 <RightOutline className="home-shiwu-demo__arrow" />
                 <span className="home-shiwu-demo__ancient">{item.ancient}</span>
@@ -452,6 +406,7 @@ export default function Home() {
 
       {/* ── 区块④ 古诗词赏析 ── */}
       <section className="home-card-scroll home-poem-card">
+        <ReferenceCorners />
         <div className="home-section-header">
           <h2 className="home-section-title">古诗词赏析</h2>
           <span className="home-section-seal">词</span>

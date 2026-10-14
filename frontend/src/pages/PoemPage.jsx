@@ -1,3 +1,4 @@
+import ReferenceCorners from '../components/ReferenceCorners'
 import '../styles/poem.less'
 import '../styles/poemMetre.less'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -19,9 +20,10 @@ import RadarChart from '../components/RadarChart.jsx'
 import TonePattern from '../components/TonePattern.jsx'
 import InkSpreadZone from '../components/InkSpreadZone.jsx'
 import { buildMetreReport, scoreDimensions } from '../utils/poemMetre.js'
+import InkWashBackground from '../components/InkWashBackground'
+import '../styles/referencePolish.less'
+import { getScholarScene } from '../utils/scholarScenes'
 
-const BASE = import.meta.env.BASE_URL
-const asset = (name) => `${BASE}assets/${name}`
 
 // 🏮 接口异常时的优雅降级诗库（保证页面永不空白）
 const MOCK_POEMS = [
@@ -117,7 +119,6 @@ export default function PoemPage() {
   const [stamp, setStamp] = useState(false)
   const [collecting, setCollecting] = useState(false)
   const [collectTip, setCollectTip] = useState('')
-  const [playingMusic, setPlayingMusic] = useState(false)
   const [reciting, setReciting] = useState(false)
   const appreciateRef = useRef(null)
   const scrollRef = useRef(null)
@@ -395,7 +396,8 @@ export default function PoemPage() {
   const [activeDimension, setActiveDimension] = useState(null)
 
   return (
-    <div className="poem-root" style={{ backgroundImage: `url(${asset('home/bg-paper.jpg')})` }}>
+    <div className={`poem-root reference-polish${results !== null ? ' is-searching' : ''}`}>
+      <InkWashBackground />
       {/* 顶部：返回 + 标题 + 日月一键切换 */}
       <header className="poem-header">
         <div
@@ -408,9 +410,11 @@ export default function PoemPage() {
         >
           <LeftOutline />
         </div>
-        <h1 className="poem-header__title">古诗词天地</h1>
+        <h1 className="poem-header__title">古诗词鉴赏</h1>
+        <span className='poem-header__seal'>云山竹简</span>
         <ThemeToggle className="poem-header__theme" />
       </header>
+      <p className='poem-reference-sub'>读千年风雅 与君共此山河</p>
 
       {/* 顶部搜索框 */}
       <div className="poem-search">
@@ -430,6 +434,7 @@ export default function PoemPage() {
       {/* 搜索结果 */}
       {results !== null && (
         <section className="poem-results">
+          <ReferenceCorners />
           {searching && <div className="poem-results__loading">墨迹研开中……</div>}
           {!searching && results.length === 0 && (
             <div className="poem-results__empty">未寻得相关诗篇，换一关键字再试</div>
@@ -437,6 +442,7 @@ export default function PoemPage() {
           {!searching &&
             results.map((item) => (
               <div className="poem-results__item" key={item.id || item.title} onClick={() => handlePickResult(item)}>
+                <img className='poem-results__art' data-sage-art={Boolean(!item.bgArt && getScholarScene('', item.author))} src={item.bgArt || getScholarScene('', item.author)?.src || `${import.meta.env.BASE_URL}assets/home/bg-poem.jpg`} alt='' loading='lazy' />
                 <div className="poem-results__main">
                   <div className="poem-results__title">{item.title}</div>
                   <div className="poem-results__meta">
@@ -452,6 +458,7 @@ export default function PoemPage() {
 
       {/* 宣纸诗卷主体：内嵌触控水墨落笔晕染 */}
       <section className="poem-scroll" ref={scrollRef}>
+        <ReferenceCorners />
         <InkSpreadZone ref={scrollInkRef} targetRef={scrollRef} color="ink" />
 
         {poem?.bgArt && (
@@ -491,6 +498,48 @@ export default function PoemPage() {
             {collectTip && <p className="poem-scroll__source">{collectTip}</p>}
           </>
         )}
+      </section>
+
+      <section className="poem-actions">
+        <button className="poem-action poem-action--primary" type="button" onClick={handleCollect} disabled={collecting}>
+          <HeartOutline />
+          摘录入卷
+        </button>
+
+        <button className="poem-action poem-action--ghost" type="button" onClick={loadRandom}>
+          <RedoOutline />
+          换一首
+        </button>
+
+        <button
+          className={`poem-action ${reciting ? 'poem-action--primary' : 'poem-action--ghost'}`}
+          type="button"
+          onClick={handleToggleRecitation}
+        >
+          <SoundOutline />
+          {reciting ? '吟诵中 (按此停止)' : '雅韵吟诵'}
+        </button>
+
+        <button
+          className={`poem-action ${showAppreciation ? 'poem-action--primary' : 'poem-action--ghost'}`}
+          type="button"
+          onClick={toggleAppreciation}
+        >
+          <ContentOutline />
+          诗意雅析
+        </button>
+
+        <button
+          className="poem-action poem-action--ghost"
+          type="button"
+          onClick={() => {
+            if (window.speechSynthesis) window.speechSynthesis.cancel()
+            navigate('/home')
+          }}
+        >
+          <LeftOutline />
+          返回雅集
+        </button>
       </section>
 
       {/* 诗意赏析折叠面板（升级四维解构 + 先贤亲解） */}
@@ -590,7 +639,7 @@ export default function PoemPage() {
                         className="poem-appreciation__sage-btn"
                         onClick={handleChatWithSage}
                       >
-                        携诗入席 · 与{poem?.author}论道 →
+                        携诗入席 · 与{poem?.author}论道 <RightOutline aria-hidden='true' />
                       </button>
                     )}
                   </div>
@@ -604,6 +653,7 @@ export default function PoemPage() {
       {/* 格律雅析：五维雷达（纯数学极坐标）+ 平仄声律谱（平水韵算法） */}
       {metreReport?.ok && radarData?.ok && (
         <section className="poem-metre">
+        <ReferenceCorners />
           <div className="poem-metre__head">
             <span className="poem-metre__mark">律</span>
             <span className="poem-metre__title">格律雅析</span>
@@ -667,47 +717,7 @@ export default function PoemPage() {
       )}
 
       {/* 功能按钮群 */}
-      <section className="poem-actions">
-        <button className="poem-action poem-action--primary" type="button" onClick={loadRandom}>
-          <RedoOutline />
-          换一首
-        </button>
 
-        <button className="poem-action poem-action--primary" type="button" onClick={handleCollect} disabled={collecting}>
-          <HeartOutline />
-          摘录入卷
-        </button>
-
-        <button
-          className={`poem-action ${reciting ? 'poem-action--primary' : 'poem-action--ghost'}`}
-          type="button"
-          onClick={handleToggleRecitation}
-        >
-          <SoundOutline />
-          {reciting ? '吟诵中 (按此停止)' : '雅韵吟诵'}
-        </button>
-
-        <button
-          className={`poem-action ${showAppreciation ? 'poem-action--primary' : 'poem-action--ghost'}`}
-          type="button"
-          onClick={toggleAppreciation}
-        >
-          <ContentOutline />
-          诗意雅析
-        </button>
-
-        <button
-          className="poem-action poem-action--ghost"
-          type="button"
-          onClick={() => {
-            if (window.speechSynthesis) window.speechSynthesis.cancel()
-            navigate('/home')
-          }}
-        >
-          <LeftOutline />
-          返回雅集
-        </button>
-      </section>
 
       {/* 摘录成功：朱砂印章下压动效 */}
       {stamp && <div className="poem-stamp">已入卷</div>}

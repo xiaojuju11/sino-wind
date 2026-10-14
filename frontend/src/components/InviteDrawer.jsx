@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Popup, Toast } from 'antd-mobile'
-import { CloseOutline } from 'antd-mobile-icons'
+import { CloseOutline, StarOutline } from 'antd-mobile-icons'
 import axios from '../http'
+import '../styles/referencePolish.less'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -126,15 +127,15 @@ export default function InviteDrawer({ visible, onClose, onInviteSuccess }) {
         background: 'var(--gf-bg-card, #FAF7F0)'
       }}
     >
-      <div className="invite-drawer">
+      <div className="invite-drawer reference-invite">
         {/* 顶部标题栏 */}
         <div className="invite-drawer__header">
           <div className="invite-drawer__title-wrap">
-            <span className="invite-drawer__seal">迎新</span>
-            <h3 className="invite-drawer__title">迎请新友 · 自定千古知己</h3>
+            <span className="invite-drawer__seal">华风</span>
+            <h3 className="invite-drawer__title">迎请故友 · 自定知己</h3>
           </div>
-          <button type="button" className="invite-drawer__close" onClick={handleClose}>
-            <CloseOutline />
+          <button type="button" className="invite-drawer__close" aria-label='离席，关闭邀请' onClick={handleClose}>
+            <CloseOutline /><span>离席</span>
           </button>
         </div>
 
@@ -184,8 +185,9 @@ export default function InviteDrawer({ visible, onClose, onInviteSuccess }) {
           {/* 表单区域 */}
           <div className="invite-drawer__form">
             <div className="invite-drawer__form-row">
-              <label className="invite-drawer__label">名号：</label>
+              <label className="invite-drawer__label" htmlFor='invite-name'>诗人名号</label>
               <input
+                id='invite-name'
                 type="text"
                 className="invite-drawer__input"
                 placeholder="如：陶渊明、辛弃疾、纳兰性德"
@@ -196,19 +198,8 @@ export default function InviteDrawer({ visible, onClose, onInviteSuccess }) {
 
             {/* 朝代快捷选择 */}
             <div className="invite-drawer__form-row-dynasty">
-              <label className="invite-drawer__label">朝代：</label>
-              <div className="invite-drawer__dynasty-chips">
-                {DYNASTY_OPTIONS.map((d) => (
-                  <button
-                    key={d}
-                    type="button"
-                    className={`invite-drawer__dynasty-chip ${dynasty === d ? 'is-active' : ''}`}
-                    onClick={() => setDynasty(d)}
-                  >
-                    {d}
-                  </button>
-                ))}
-              </div>
+              <label className="invite-drawer__label">所属朝代</label>
+              <select aria-label='所属朝代' className='invite-drawer__dynasty-select' value={dynasty} onChange={event => setDynasty(event.target.value)}>{[...new Set([...DYNASTY_OPTIONS, dynasty])].map(d => <option key={d}>{d}</option>)}</select>
             </div>
 
             {/* 典籍考释赋神按钮 */}
@@ -218,7 +209,8 @@ export default function InviteDrawer({ visible, onClose, onInviteSuccess }) {
               disabled={loadingAi}
               onClick={() => handleAiSoul()}
             >
-              {loadingAi ? '研墨考辨风骨中…' : '典籍考据 · 赋其神韵'}
+              <StarOutline aria-hidden='true' /> {loadingAi ? '研墨考辨风骨中…' : 'AI 一键考释赋魂'}
+              <small>输入诗人名号，考释生平与文风；所得内容可编辑</small>
             </button>
 
             {/* 赋魂后生成的详情（纯净暖宣纸底，WCAG 高对比易读） */}
@@ -235,11 +227,10 @@ export default function InviteDrawer({ visible, onClose, onInviteSuccess }) {
                     ))}
                   </div>
                 )}
-                {biography && (
-                  <p className="invite-drawer__soul-bio">{biography}</p>
-                )}
               </div>
             )}
+
+            <div className='invite-drawer__form-row'><label className='invite-drawer__label' htmlFor='invite-biography'>生涯纪略</label><textarea id='invite-biography' className='invite-drawer__textarea' rows={3} placeholder='AI考释后自动填入，也可自行补写生平纪略' value={biography} onChange={e => setBiography(e.target.value)} /></div>
 
             <div className="invite-drawer__form-row">
               <label className="invite-drawer__label">初遇寄语：</label>
@@ -261,7 +252,7 @@ export default function InviteDrawer({ visible, onClose, onInviteSuccess }) {
             className="invite-drawer__confirm-btn"
             onClick={handleConfirmInvite}
           >
-            迎 请 入 席
+            结为知己 · 迎入先贤席
           </button>
         </div>
       </div>

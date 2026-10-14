@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useTheme } from '../context/useTheme'
 import '../styles/bambooBreeze.less'
 
@@ -8,15 +9,37 @@ import '../styles/bambooBreeze.less'
  * 遵循 DESIGN_AUDIT.md §12 动效架构规范：
  * 1. 左上角近景水墨竹枝：纯矢量写意墨竹，零位图依赖，满帧 60fps。
  * 2. 晓风拂竹物理阻尼自然摇曳（白昼 6s 周期微风拂动）。
- * 3. 闲逸飞叶：偶尔 2~3 片竹叶自竹梢轻盈脱落、随风回旋飘向画卷右下方。
- * 4. 月下墨境：夜间自动转为幽篁月影（深墨黛色），摇动放缓（9s），浮现 4 点清夜流萤（金黄微光柔和呼吸闪烁）。
+ * 3. 粒子统一由 InkParticleField 管理；此组件不再叠加 CSS 飞叶/流萤。
+ * 4. 月下墨境：夜间自动转为幽篁月影（深墨黛色），摇动放缓（9s）。
  * 5. 全程 pointer-events: none，绝不阻挡任何页面交互与按钮点击。
  */
 export default function BambooBreeze() {
   const { isDark } = useTheme()
+  const { pathname } = useLocation()
+  const rootRef = useRef(null)
+  useEffect(() => {
+    const root = rootRef.current
+    if (!root) return undefined
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const sync = () => root.classList.toggle('is-paused', motion.matches || document.hidden || Boolean(document.activeElement?.matches?.('input, textarea, select, [contenteditable]:not([contenteditable="false"])')))
+    document.addEventListener('focusin', sync)
+    document.addEventListener('focusout', sync)
+    document.addEventListener('visibilitychange', sync)
+    motion.addEventListener('change', sync)
+    sync()
+    return () => {
+      document.removeEventListener('focusin', sync)
+      document.removeEventListener('focusout', sync)
+      document.removeEventListener('visibilitychange', sync)
+      motion.removeEventListener('change', sync)
+    }
+  }, [pathname])
+  // Decorative falling leaves belong to the primary home only; secondary scenes
+  // retain the background wash without an animated branch over their controls.
+  if (pathname !== '/home' && pathname !== '/') return null
 
   return (
-    <div className={`bamboo-breeze-root ${isDark ? 'is-dark' : 'is-light'}`} aria-hidden="true">
+    <div ref={rootRef} className={`bamboo-breeze-root reference-bamboo ${isDark ? 'is-dark' : 'is-light'}`} aria-hidden="true">
       {/* ── 左上角主水墨竹枝（悬挂俯视，仿板桥墨竹）── */}
       <div className="bamboo-branch-wrapper">
         <svg
@@ -103,20 +126,8 @@ export default function BambooBreeze() {
         </svg>
       </div>
 
-      {/* ── 随风飘落的轻盈竹叶粒子（2~3 片自然漫落）── */}
-      <div className="falling-leaf leaf-1" />
-      <div className="falling-leaf leaf-2" />
-      <div className="falling-leaf leaf-3" />
-
-      {/* ── 夜间模式特有：寒夜月影流萤（金黄微光浮动）── */}
-      {isDark && (
-        <div className="fireflies-layer">
-          <span className="firefly firefly-1" />
-          <span className="firefly firefly-2" />
-          <span className="firefly firefly-3" />
-          <span className="firefly firefly-4" />
-        </div>
-      )}
+      {/* Falling leaves and fireflies are owned by InkParticleField only.
+          Avoid a second CSS particle system drifting over the reading area. */}
     </div>
   )
 }

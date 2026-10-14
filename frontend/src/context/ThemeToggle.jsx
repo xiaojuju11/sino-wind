@@ -1,32 +1,11 @@
 import React from 'react'
+import { CompassOutline, StarOutline } from 'antd-mobile-icons'
 import { useTheme } from './useTheme.js'
 import './themeToggle.less'
 
-/**
- * 宋风矢量金乌日轮（纯矢量描边，杜绝位图与字库乱码）
- */
-function SunGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="4.3" fill="currentColor" fillOpacity="0.18" />
-      <path d="M12 2.2v2.4M12 19.4v2.4M2.2 12h2.4M19.4 12h2.4" />
-      <path d="M5.05 5.05l1.7 1.7M17.25 17.25l1.7 1.7M5.05 18.95l1.7-1.7M17.25 6.75l1.7-1.7" />
-    </svg>
-  )
-}
-
-/**
- * 宋风矢量素娥清月（月牙 + 双点星辰）
- */
-function MoonGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M20.5 13.05A8.8 8.8 0 1 1 11.2 3.7 6.8 6.8 0 0 0 20.5 13.05z" fill="currentColor" fillOpacity="0.22" />
-      <circle cx="18" cy="6.2" r="0.9" fill="currentColor" stroke="none" />
-      <circle cx="20.2" cy="9.2" r="0.65" fill="currentColor" stroke="none" />
-    </svg>
-  )
-}
+// Official vector marks: compass for daylight, star for night.
+function SunGlyph() { return <CompassOutline aria-hidden="true" /> }
+function MoonGlyph() { return <StarOutline aria-hidden="true" /> }
 
 /**
  * 日月模式切换器（彻底解决图标颠倒、重叠与错位问题）
