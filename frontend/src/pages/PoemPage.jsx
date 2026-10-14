@@ -1,4 +1,5 @@
 import '../styles/poem.less'
+import '../styles/poemMetre.less'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { SearchBar, Toast } from 'antd-mobile'
@@ -14,6 +15,9 @@ import {
 } from 'antd-mobile-icons'
 import axios from '../http'
 import ThemeToggle from '../context/ThemeToggle.jsx'
+import RadarChart from '../components/RadarChart.jsx'
+import TonePattern from '../components/TonePattern.jsx'
+import { buildMetreReport, scoreDimensions } from '../utils/poemMetre.js'
 
 const BASE = import.meta.env.BASE_URL
 const asset = (name) => `${BASE}assets/${name}`
@@ -361,6 +365,25 @@ export default function PoemPage() {
 
   const lines = useMemo(() => poem?.paragraphs?.filter(Boolean) || [], [poem])
 
+  // ── 格律算法：平水韵平仄判定 + 押韵校验（纯前端算法，不依赖接口）──
+  // 换一首诗时 poem 变化 → 重算 → 雷达图弹簧自动弹性形变到新分值
+  const metreReport = useMemo(() => {
+    if (!lines.length) return null
+    return buildMetreReport(lines, {
+      title: poem?.title,
+      dynasty: poem?.dynasty,
+      author: poem?.author,
+    })
+  }, [lines, poem?.title, poem?.dynasty, poem?.author])
+
+  const radarData = useMemo(() => {
+    if (!metreReport?.ok) return null
+    return scoreDimensions(metreReport, { title: poem?.title, author: poem?.author })
+  }, [metreReport, poem?.title, poem?.author])
+
+  // 雷达图五个维度的悬停联动（悬停标签时高亮对应维度行）
+  const [activeDimension, setActiveDimension] = useState(null)
+
   return (
     <div className="poem-root" style={{ backgroundImage: `url(${asset('home/bg-paper.jpg')})` }}>
       {/* 顶部：返回 + 标题 + 日月一键切换 */}
@@ -565,6 +588,71 @@ export default function PoemPage() {
           </div>
         </div>
       </section>
+
+      {/* 格律雅析：五维雷达（纯数学极坐标）+ 平仄声律谱（平水韵算法） */}
+      {metreReport?.ok && radarData?.ok && (
+        <section className="poem-metre">
+          <div className="poem-metre__head">
+            <span className="poem-metre__mark">律</span>
+            <span className="poem-metre__title">格律雅析</span>
+            <span className="poem-metre__form">{metreReport.regulatedForm} · {metreReport.lineLength} 言 · {metreReport.lineCount} 句</span>
+          </div>
+
+          <div className="poem-metre__body">
+            <div className="poem-metre__radar">
+              <RadarChart
+                dimensions={radarData.dimensions}
+                activeKey={activeDimension}
+                onHoverDimension={setActiveDimension}
+                size={224}
+              />
+            </div>
+
+            <ul className="poem-metre__dims">
+              {radarData.dimensions.map((d) => (
+                <li
+                  key={d.key}
+                  className={`poem-metre__dim${activeDimension === d.key ? ' is-active' : ''}`}
+                  onPointerEnter={() => setActiveDimension(d.key)}
+                  onPointerLeave={() => setActiveDimension(null)}
+                >
+                  <span className="poem-metre__dim-label">{d.label}</span>
+                  <span className="poem-metre__dim-bar">
+                    <i style={{ width: `${d.score}%` }} />
+                  </span>
+                  <span className="poem-metre__dim-score">{d.score}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <p className="poem-metre__rationale">{radarData.rationale}</p>
+
+          {/* 展开明细：为什么是这个分 */}
+          <details className="poem-metre__details">
+            <summary>评分依据明细（可展开）</summary>
+            {radarData.dimensions.map((d) => (
+              <div key={d.key} className="poem-metre__detail">
+                <div className="poem-metre__detail-title">{d.label} · {d.score} 分</div>
+                <ul>
+                  {d.contributions.map((c, i) => (
+                    <li key={i} className={c.ok ? 'is-ok' : 'is-weak'}>
+                      {c.label}：{c.value}
+                      <em>（权重 {Math.round(c.weight * 100)}%）</em>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </details>
+
+          {/* 平仄声律谱 */}
+          <div className="poem-metre__tones">
+            <div className="poem-metre__tones-title">平仄声律谱 · 平水韵</div>
+            <TonePattern report={metreReport} />
+          </div>
+        </section>
+      )}
 
       {/* 功能按钮群 */}
       <section className="poem-actions">
