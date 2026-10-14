@@ -73,7 +73,7 @@ export default function MinePage() {
     }
   }
 
-  const { theme, toggleTheme, isDark } = useTheme()
+  const { toggleTheme, isDark } = useTheme()
 
   // 雅士修持 4 大数据（四维修持）支持点击联动与跳转
   const stats = [
@@ -166,6 +166,7 @@ export default function MinePage() {
         </div>
 
         {/* 四列修持数据看板（支持快捷下钻） */}
+        <p className='scholar-motto'>飞花修持积分：{userInfo.merit_points ?? 0}</p>
         <div className='scholar-stats'>
           {stats.map((item, idx) => (
             <div key={idx} className='scholar-stats__item' onClick={item.onClick}>

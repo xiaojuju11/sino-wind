@@ -149,6 +149,7 @@ async function getUserInfo(ctx) {
       appraise_count: res.appraise_count,
       debate_count: res.debate_count,
       poem_count: res.poem_count,
+      merit_points: res.merit_points ?? 0,
       rank_level: res.rank_level
     }
     ctx.body = data

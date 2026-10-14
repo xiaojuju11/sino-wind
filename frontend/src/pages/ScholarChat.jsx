@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react'
 import '../styles/scholarChat.less'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { LeftOutline, SendOutline, SoundOutline, EditSOutline } from 'antd-mobile-icons'
+import { LeftOutline, SoundOutline, EditSOutline } from 'antd-mobile-icons'
 import { Toast, DotLoading } from 'antd-mobile'
 import axios from '../http'
 import ThemeToggle from '../context/ThemeToggle'
+import FeihuaPanel from '../components/FeihuaPanel'
+import { receiveScholarStream } from '../utils/scholarStream'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -160,61 +162,94 @@ export default function ScholarChat() {
   })
   const [inputText, setInputText] = useState('')
   const [loading, setLoading] = useState(false)
+  const [gameOpen, setGameOpen] = useState(false)
+  const activeRequest = useRef(null)
+  const stopRequest = () => {
+    const request = activeRequest.current
+    if (!request) return
+    request.controller.abort()
+    clearInterval(request.timer)
+    request.resolve?.()
+    activeRequest.current = null
+  }
+  useEffect(() => {
+    setGameOpen(false)
+    setLoading(false)
+    const welcome = poemCtx
+      ? `${sageInfo.welcome}\n\n【雅集案头】：正与君品读《${poemCtx.title}》，愿共论诗中微意。`
+      : sageInfo.welcome
+    setMessages([{ id: 'msg_welcome', role: 'ai', content: welcome, time: getShichenTime() }])
+    return stopRequest
+    // The selected sage defines a new conversation; previous network work is cancelled.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sageKey])
   const chatScrollRef = useRef(null)
 
   // 滚动到底部
   useEffect(() => {
     chatScrollRef.current?.scrollTo({
       top: chatScrollRef.current.scrollHeight,
-      behavior: 'smooth'
+      behavior: loading ? 'auto' : 'smooth'
     })
   }, [messages, loading])
 
-  // 发送消息
+  // One reader and one animation clock per request. Navigation cancels both.
   const handleSend = async (customContent) => {
     const text = (customContent || inputText).trim()
-    if (!text || loading) return
-
-    const userMsg = {
-      id: `usr_${Date.now()}`,
-      role: 'user',
-      content: text,
-      time: getShichenTime()
-    }
-
-    setMessages((prev) => [...prev, userMsg])
+    if (!text || activeRequest.current || gameOpen) return
+    if (text.length > 2000) { Toast.show({ content: '请将论道内容控制在两千字以内' }); return }
+    const userMsg = { id: crypto.randomUUID(), role: 'user', content: text, time: getShichenTime() }
+    const aiId = crypto.randomUUID()
+    const request = { controller: new AbortController(), queue: [], position: 0, finished: false, timer: null, resolve: null }
+    const painted = new Promise(resolve => { request.resolve = resolve })
+    activeRequest.current = request
+    setMessages(prev => [...prev, userMsg, { id: aiId, role: 'ai', content: '', streaming: true, time: getShichenTime() }])
     if (!customContent) setInputText('')
     setLoading(true)
-
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    request.timer = setInterval(() => {
+      if (activeRequest.current !== request) return
+      const length = request.queue.length - request.position
+      if (length) {
+        const take = reducedMotion ? length : Math.max(1, Math.min(6, Math.ceil(length / 45)))
+        const fresh = request.queue.slice(request.position, request.position + take).join('')
+        request.position += take
+        setMessages(prev => prev.map(m => m.id === aiId ? { ...m, content: m.content + fresh } : m))
+      }
+      if (request.finished && request.position >= request.queue.length) {
+        clearInterval(request.timer); request.resolve()
+      }
+    }, 24)
+    const timeout = setTimeout(() => request.controller.abort(), 40000)
     try {
-      const res = await axios.post('/api/deepseek/chat', {
-        sageId: sageKey,
-        message: text,
-        customPrompt: navSage?.prompt
+      const history = messages.filter(m => m.content && !m.failed).slice(-8).map(m => ({ role: m.role === 'ai' ? 'assistant' : 'user', content: m.content }))
+      await receiveScholarStream(axios.getUri({ url: '/api/deepseek/chat/stream' }), { sageId: sageKey, message: text, history }, request.controller.signal, (event, data) => {
+        if (activeRequest.current !== request) return
+        if (event === 'delta' && typeof data.text === 'string') request.queue.push(...Array.from(data.text).slice(0, Math.max(0, 2000 - request.queue.length)))
+        if (event === 'replace' && typeof data.text === 'string') {
+          request.queue = Array.from(data.text); request.position = 0
+          setMessages(prev => prev.map(m => m.id === aiId ? { ...m, content: '' } : m))
+        }
+        if (event === 'meta') setMessages(prev => prev.map(m => m.id === aiId ? { ...m, degraded: Boolean(data.degraded) } : m))
+        if (event === 'done' && data.counted) window.dispatchEvent(new Event('userInfoUpdated'))
       })
-
-      const replyContent = res?.data?.message || '先贤微笑捋须，深以为然。'
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `ai_${Date.now()}`,
-          role: 'ai',
-          content: replyContent,
-          time: getShichenTime()
-        }
-      ])
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `ai_${Date.now()}`,
-          role: 'ai',
-          content: '墨迹暂凝，砚台微干。且请君稍候片刻，再行畅叙。',
-          time: getShichenTime()
-        }
-      ])
+    } catch (error) {
+      if (activeRequest.current === request) {
+        if (request.controller.signal.aborted) request.queue.length = request.position
+        const message = request.controller.signal.aborted ? '本次对席已停止，可重新畅论。' : error.message
+        setMessages(prev => prev.map(m => m.id === aiId ? { ...m, failed: true, error: message } : m))
+      }
     } finally {
-      setLoading(false)
+      clearTimeout(timeout)
+      if (activeRequest.current === request) {
+        request.finished = true
+        await painted
+        if (activeRequest.current === request) {
+          activeRequest.current = null
+          setMessages(prev => prev.map(m => m.id === aiId ? { ...m, streaming: false } : m))
+          setLoading(false)
+        }
+      }
     }
   }
 
@@ -263,7 +298,7 @@ export default function ScholarChat() {
   }
 
   return (
-    <div className="scholar-chat-root">
+    <div className={`scholar-chat-root${gameOpen ? " is-game" : ""}`}>
       {/* 1. 顶部清雅导航栏 */}
       <header className="scholar-nav">
         <button type="button" className="scholar-nav__back" onClick={() => navigate(-1)}>
@@ -328,7 +363,8 @@ export default function ScholarChat() {
 
       {/* 4. 消息流区域 */}
       <main className="scholar-messages-container" ref={chatScrollRef}>
-        {messages.map((item) => (
+        {gameOpen && <FeihuaPanel key={sageKey} sageId={sageKey} onClose={() => setGameOpen(false)} />}
+        {!gameOpen && messages.map((item) => (
           <div
             key={item.id}
             className={`scholar-msg-row scholar-msg-row--${item.role}`}
@@ -342,7 +378,12 @@ export default function ScholarChat() {
               )}
 
               <div className={`scholar-msg-bubble scholar-msg-bubble--${item.role}`}>
-                <div className="scholar-msg-content">{item.content}</div>
+                <div className="scholar-msg-content" aria-busy={Boolean(item.streaming)}>
+                  {item.streaming ? <>{Array.from(item.content).slice(0, -3).join('')}<span className="scholar-ink-fresh" key={item.content.length}>{Array.from(item.content).slice(-3).join('')}</span></> : item.content}
+                  {item.streaming && <span className="scholar-ink-caret" aria-hidden="true" />}
+                  {item.degraded && <small className="scholar-stream-note">离线情境对答</small>}
+                  {item.error && <small className="scholar-stream-note" role="status">{item.error}</small>}
+                </div>
                 {item.role === 'ai' && (
                   <button
                     type="button"
@@ -372,7 +413,7 @@ export default function ScholarChat() {
           </div>
         ))}
 
-        {loading && (
+        {loading && !gameOpen && (
           <div className="scholar-loading-row">
             <span className="scholar-loading-text">
               先贤研墨思辨中 <DotLoading color="#8A2B2B" />
@@ -382,8 +423,10 @@ export default function ScholarChat() {
       </main>
 
       {/* 5. 底部宣纸输入与操作栏 */}
-      <footer className="scholar-footer">
+      {!gameOpen && <footer className="scholar-footer">
         <div className="scholar-footer__quick-tools">
+          {['libai', 'sushi'].includes(sageKey) && <button type="button" className="scholar-tool-btn" disabled={loading} onClick={() => setGameOpen(true)}><EditSOutline /> 飞花令</button>}
+          {loading && <button type="button" className="scholar-tool-btn" onClick={() => activeRequest.current?.controller.abort()}>停止研墨</button>}
           <button
             type="button"
             className="scholar-tool-btn"
@@ -419,7 +462,7 @@ export default function ScholarChat() {
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
+              if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing && !e.isComposing) {
                 e.preventDefault()
                 handleSend()
               }
@@ -436,7 +479,7 @@ export default function ScholarChat() {
             <span>畅论</span>
           </button>
         </div>
-      </footer>
+      </footer>}
     </div>
   )
 }
