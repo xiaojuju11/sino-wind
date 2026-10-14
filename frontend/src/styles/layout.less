@@ -79,7 +79,19 @@
     }
   }
 
-  // 器物图标：切图作为 mask，颜色由 currentColor 决定
+  // 底部导航 Iconfont 国风矢量图标：颜色随 currentColor 自然联动，激活态自动变朱砂红/泥金
+  &__icon-font {
+    font-size: 0.52rem;
+    line-height: 1;
+    color: currentColor;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 0.52rem;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  // 器物图标兼容兜底（切图作为 mask，颜色由 currentColor 决定）
   &__icon {
     width: 0.6rem;
     height: 0.48rem;
