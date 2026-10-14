@@ -1,5 +1,5 @@
 import './index.less'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AddOutline } from 'antd-mobile-icons'
 import { Toast } from 'antd-mobile'
 import axios from '../../http'
@@ -13,16 +13,24 @@ import axios from '../../http'
  * 兜底标注：服务端或前端兜底数据带 degraded，此处按「待考」呈现，不编造评价分数。
  */
 
-const FLOW_MARK = '【流变考略】'
-
-/** 器物考释与流变路线同在一段详释里，按 §4.4 既有的【流变考略】标记拆成两卡 */
+/** 器物考释与流变路线智能拆分：兼容多种流变考略标识 */
 function splitDescription(description) {
   const text = typeof description === 'string' ? description.trim() : ''
-  const index = text.indexOf(FLOW_MARK)
-  if (index < 0) return { interpretation: text, flow: '' }
+  const regex = /(?:【流变考略】|\[流变考略\]|流变考略[：:]?)/
+  const match = text.match(regex)
+  if (!match) {
+    const arrowIdx = text.search(/(?:唐代|宋代|明代|清代|当代).*?[➔\->→]/)
+    if (arrowIdx > 0) {
+      return {
+        interpretation: text.slice(0, arrowIdx).trim(),
+        flow: text.slice(arrowIdx).trim()
+      }
+    }
+    return { interpretation: text, flow: '' }
+  }
   return {
-    interpretation: text.slice(0, index).trim(),
-    flow: text.slice(index + FLOW_MARK.length).trim()
+    interpretation: text.slice(0, match.index).trim(),
+    flow: text.slice(match.index + match[0].length).trim()
   }
 }
 
@@ -49,15 +57,64 @@ export default function RecognitionResult({ recognitionResult, pending = false }
   const { interpretation, flow } = splitDescription(data.description)
   const hasAudio = Boolean(data.audio_url)
 
+  // 离开页面时停止所有音频
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause()
+      }
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel()
+      }
+    }
+  }, [])
+
+  // 本地浏览器古雅朗诵兜底（确保设备静音拦截或跨域异常时 100% 有声音）
+  const playWithSpeechSynthesis = () => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel()
+      const textToRead = `${data.name || '此物'}。${interpretation}。${flow}`
+      const utter = new SpeechSynthesisUtterance(textToRead)
+      utter.lang = 'zh-CN'
+      utter.rate = 0.85
+      utter.pitch = 0.96
+      utter.onstart = () => setIsPlaying(true)
+      utter.onend = () => setIsPlaying(false)
+      utter.onerror = () => setIsPlaying(false)
+      window.speechSynthesis.speak(utter)
+    } else {
+      setIsPlaying(false)
+    }
+  }
+
   const handleVoicePlay = () => {
-    if (!hasAudio) return
     if (isPlaying) {
-      audioRef.current?.pause()
+      if (audioRef.current) audioRef.current.pause()
+      if (typeof window !== 'undefined' && window.speechSynthesis) {
+        window.speechSynthesis.cancel()
+      }
       setIsPlaying(false)
       return
     }
-    const playing = audioRef.current?.play()
-    playing?.then(() => setIsPlaying(true)).catch(() => { setIsPlaying(false); Toast.show({ content: '音频暂不可播放' }) })
+    if (hasAudio && audioRef.current) {
+      // 优先播放 Coze 生成的高清文人 MP3 语音
+      audioRef.current.currentTime = 0
+      const playPromise = audioRef.current.play()
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true)
+          })
+          .catch((err) => {
+            console.warn('[Audio Play blocked or failed, fallback to SpeechSynthesis]:', err)
+            playWithSpeechSynthesis()
+          })
+      } else {
+        setIsPlaying(true)
+      }
+    } else {
+      playWithSpeechSynthesis()
+    }
   }
 
   return (
@@ -112,13 +169,13 @@ export default function RecognitionResult({ recognitionResult, pending = false }
           <div className='object-recognition-result__voice-row'>
             <button
               type='button'
-              className={`object-recognition-result__voice${hasAudio ? '' : ' is-disabled'}`}
+              className='object-recognition-result__voice'
               onClick={handleVoicePlay}
-              disabled={!hasAudio}
-              aria-label='播放古风讲解语音'
+              aria-label='播放古风文人讲解语音'
+              title='点击播放或暂停'
             >
               <i className='iconfont icon-yinliang-F' aria-hidden='true' />
-              <span>{hasAudio ? (isPlaying ? '试听中…' : '听讲解') : '无语音讲解'}</span>
+              <span>{isPlaying ? '暂停讲解' : (hasAudio ? '听文人讲解' : '听品鉴吟诵')}</span>
             </button>
           </div>
         </div>
@@ -134,16 +191,38 @@ export default function RecognitionResult({ recognitionResult, pending = false }
       <audio
         ref={audioRef}
         src={data.audio_url || undefined}
-        preload='none'
+        preload='auto'
+        crossOrigin='anonymous'
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
         onEnded={() => setIsPlaying(false)}
-        onError={() => setIsPlaying(false)}
+        onError={(e) => {
+          console.warn('[Audio Playback Error, triggering fallback]:', e)
+          setIsPlaying(false)
+        }}
       />
     </div>
   )
 }
 
-/** 加载态：宣纸灰骨架占位（AC-A1 的 Loading 动画，避免与版式脱节的圆形转圈） */
+/** 加载态：两宋宣纸灰骨架占位 + 动态考释阶段提示 */
 export function RecognitionSkeleton() {
+  const [stepIndex, setStepIndex] = useState(0)
+
+  const steps = [
+    '【1/4 辨物】大模型正在考释画卷器形与材质…',
+    '【2/4 溯源】文史大模型翻阅典籍，推演唐宋明演变脉络…',
+    '【3/4 赋词】两宋先贤拟文人品鉴长文，评定雅士品位…',
+    '【4/4 雅诵】生成专属文人品鉴讲解音频…',
+  ]
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setStepIndex((prev) => (prev < steps.length - 1 ? prev + 1 : prev))
+    }, 4500)
+    return () => clearInterval(timer)
+  }, [])
+
   return (
     <div className='object-recognition-skeleton' role='status' aria-live='polite'>
       <div className='object-recognition-skeleton__card'>
@@ -156,7 +235,10 @@ export function RecognitionSkeleton() {
         <span className='object-recognition-skeleton__line' />
         <span className='object-recognition-skeleton__line' />
       </div>
-      <p className='object-recognition-skeleton__hint'>正在考释器物源流…</p>
+      <div className='object-recognition-skeleton__step-box'>
+        <span className='object-recognition-skeleton__pulse' />
+        <p className='object-recognition-skeleton__hint'>{steps[stepIndex]}</p>
+      </div>
     </div>
   )
 }

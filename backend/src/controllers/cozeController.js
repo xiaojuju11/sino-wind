@@ -76,16 +76,19 @@ async function recognition(ctx) {
       timeout: COZE_TIMEOUT, signal: AbortSignal.timeout(COZE_TIMEOUT), maxContentLength: 10 * 1024 * 1024
     })
     data = parseResult(response.data)
-  } catch {
+  } catch (err) {
+    console.error('❌ [Coze Recognition Upstream Error]:', err?.message, err?.response?.data || '')
     // 超时、DNS / 网络异常、上游不可解析：一律降级为内置文博库兜底，不向页面抛错
     ctx.body = fallbackBody()
     return
   }
   try {
-    const [result] = await db.execute('UPDATE users SET appraise_count = COALESCE(appraise_count, 0) + 1 WHERE id = ?', [ctx.userId])
-    if (result.affectedRows !== 1) { ctx.status = 401; ctx.body = { code: 0, message: '请重新入席' }; return }
+    if (ctx.userId) {
+      await db.execute('UPDATE users SET appraise_count = COALESCE(appraise_count, 0) + 1 WHERE id = ?', [ctx.userId])
+    }
     ctx.body = { code: 1, data }
-  } catch {
+  } catch (dbErr) {
+    console.warn('⚠️ [Coze Appraise Count Update Warning]:', dbErr?.message)
     // 计数失败不丢弃已拿到的识别结果，只提示未计入书斋看板
     ctx.body = { code: 1, data, notice: '识物记录暂未计入书斋看板' }
   }
