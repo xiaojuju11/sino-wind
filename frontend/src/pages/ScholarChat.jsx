@@ -9,6 +9,7 @@ import FeihuaPanel from '../components/FeihuaPanel'
 import { receiveScholarStream } from '../utils/scholarStream'
 import { cachedLetters, cacheLetter, saveLocalTurn, leaveScholar, shichen, scholarScope } from '../utils/scholarLetters'
 import '../styles/scholarEcosystem.less'
+import ScholarArtifactDrawer from '../components/ScholarArtifactDrawer'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -167,6 +168,7 @@ export default function ScholarChat() {
   const [gameOpen, setGameOpen] = useState(false)
   const [hydrating, setHydrating] = useState(true)
   const [replyLetter, setReplyLetter] = useState(null)
+  const [artifactOpen, setArtifactOpen] = useState(false)
   const activeRequest = useRef(null)
   const stopRequest = () => {
     const request = activeRequest.current
@@ -178,6 +180,7 @@ export default function ScholarChat() {
   }
   useEffect(() => {
     let current = true
+    let restored = false
     const scope = scholarScope()
     setHydrating(true); setReplyLetter(null)
     setGameOpen(false)
@@ -198,13 +201,14 @@ export default function ScholarChat() {
         if (localStorage.getItem('token')) axios.post(`/api/deepseek/scholar/letters/${encodeURIComponent(sageKey)}/read`, { replyId: row.reply.id }).catch(() => {})
       }
       setHydrating(false)
+      restored = true
     }
     const cached = cachedLetters().find(l => l.sageId === sageKey)
     if (localStorage.getItem('token')) axios.get(`/api/deepseek/scholar/letters/${encodeURIComponent(sageKey)}`, { timeout: 10000 })
       .then(res => { if (current && scope === scholarScope()) { cacheLetter(res.data.data); restore(res.data.data) } })
       .catch(() => restore(cached))
     else restore(cached)
-    const leave = () => { if (scope === scholarScope()) leaveScholar(sageKey) }
+    const leave = () => { if (restored && scope === scholarScope()) leaveScholar(sageKey) }
     window.addEventListener('pagehide', leave)
     return () => { current = false; stopRequest(); window.removeEventListener('pagehide', leave); leave() }
     // The selected sage defines a new conversation; previous network work is cancelled.
@@ -221,7 +225,7 @@ export default function ScholarChat() {
   }, [messages, loading])
 
   // One reader and one animation clock per request. Navigation cancels both.
-  const handleSend = async (customContent) => {
+  const handleSend = async (customContent, artifactId) => {
     const text = (customContent || inputText).trim()
     if (!text || activeRequest.current || gameOpen || hydrating) return
     if (text.length > 2000) { Toast.show({ content: '请将论道内容控制在两千字以内' }); return }
@@ -251,7 +255,7 @@ export default function ScholarChat() {
     const timeout = setTimeout(() => request.controller.abort(), 40000)
     try {
       const history = messages.filter(m => m.content && !m.failed).slice(-8).map(m => ({ role: m.role === 'ai' ? 'assistant' : 'user', content: m.content }))
-      await receiveScholarStream(axios.getUri({ url: '/api/deepseek/chat/stream' }), { sageId: sageKey, message: text, history, requestId: userMsg.id }, request.controller.signal, (event, data) => {
+      await receiveScholarStream(axios.getUri({ url: '/api/deepseek/chat/stream' }), { sageId: sageKey, message: text, history, requestId: userMsg.id, ...(artifactId ? { artifactId } : {}) }, request.controller.signal, (event, data) => {
         if (activeRequest.current !== request) return
         if (event === 'delta' && typeof data.text === 'string') request.queue.push(...Array.from(data.text).slice(0, Math.max(0, 2000 - request.queue.length)))
         if (event === 'replace' && typeof data.text === 'string') {
@@ -325,12 +329,15 @@ export default function ScholarChat() {
 
   // 快捷转引物溯古今
   const handleCiteShiwu = () => {
-    const quoteText = '太白兄，吾今日在今世见一保温杯，颇类古之执壶与汤瓶，兄以为今古器物之趣有何相通？'
-    handleSend(quoteText)
+    if (!loading && !hydrating) setArtifactOpen(true)
   }
 
   return (
     <div className={`scholar-chat-root${gameOpen ? " is-game" : ""}`}>
+      {artifactOpen && <ScholarArtifactDrawer onClose={() => setArtifactOpen(false)} onPick={item => {
+        setArtifactOpen(false)
+        handleSend(`${sageInfo.name}先生，吾日前识得「${item.name}」，记录暂考为「${item.dynasty || '年代待考'}」${item.degraded ? '，此项仍为内置资料推演' : ''}。愿请先生从所属时代的器用与风雅辨析其来历；若晚于先生之世，亦请说明为跨时推论，不知此物与古今生活有何相通？`, item.id)
+      }} />}
       {/* 1. 顶部清雅导航栏 */}
       <header className="scholar-nav">
         <button type="button" className="scholar-nav__back" onClick={() => navigate(-1)}>
@@ -464,6 +471,7 @@ export default function ScholarChat() {
           <button
             type="button"
             className="scholar-tool-btn"
+            disabled={loading || hydrating}
             onClick={handleCiteShiwu}
           >
             <span className="scholar-tool-seal">物</span>

@@ -3,9 +3,11 @@ import { CloseOutline, DownlandOutline, SendOutline } from 'antd-mobile-icons'
 import axios from '../http'
 import { createScholarCertificate } from '../utils/scholarCertificate'
 import '../styles/scholarEcosystem.less'
+import { useScholarSheet } from '../utils/useScholarSheet'
 
 const SAGE_NAMES = { libai: '李白', sushi: '苏轼', liqingzhao: '李清照', wangyangming: '王阳明', dufu: '杜甫' }
 export default function ScholarArchive({ onClose }) {
+  const sheet = useScholarSheet(onClose)
   const [data, setData] = useState(null), [page, setPage] = useState(1)
   const [notice, setNotice] = useState(''), [busy, setBusy] = useState(false), [preview, setPreview] = useState(null)
   const sequence = useRef(0), alive = useRef(true)
@@ -40,7 +42,7 @@ export default function ScholarArchive({ onClose }) {
     try { await navigator.share({ title: '云山竹简 · 飞花文牒', files: [file] }) }
     catch (e) { if (e.name !== 'AbortError') setNotice('分享未完成，可下载后分享') }
   }
-  return <div className='scholar-sheet-backdrop'><section className='scholar-sheet' role='dialog' aria-modal='true' aria-label='翰林藏牒阁'>
+  return <div className='scholar-sheet-backdrop'><section ref={sheet} className='scholar-sheet' role='dialog' aria-modal='true' aria-label='翰林藏牒阁'>
     <header><h2>翰林藏牒阁</h2><button onClick={onClose} aria-label='合卷'><CloseOutline /></button></header>
     {!localStorage.getItem('token') ? <p>请先登录，登录后的已完成对局将自动入阁。</p> : <>
       <p>{data?.rank || '修持文阶'} · {data?.meritPoints ?? 0}分 · 已藏{data?.total ?? 0}牒</p>

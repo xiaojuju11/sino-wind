@@ -42,6 +42,7 @@ async function run() {
   const other = { userId: userId + 999999, params: { sageId: 'libai' } }; await api.detail(other); assert.equal(other.body.data.turns.length, 0)
   console.log('PASS 信札归档去重、四轮离席、并发仅一封、个性赠言、未读持久化与账户隔离')
   assert.ok(engine.poems.length >= 150)
+  assert.deepEqual(engine.rhymeGroups('花'), ['下平声六麻'])
   assert.ok(engine.poems.every(p => engine.rhymeGroups(p.line).length), '每条题库句末都有韵部或有明确多音部候选')
   assert.ok(engine.poems.filter(p => engine.KEYWORDS.some(k => p.line.includes(k)) && engine.rhymeGroups(p.line).length).length >= 150)
   assert.equal(new Set(engine.poems.map(p => engine.normalize(p.line))).size, engine.poems.length)

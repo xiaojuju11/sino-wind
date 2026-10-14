@@ -30,5 +30,9 @@ router.get('/scholar/letters', verifyToken(), ecosystem.list)
 router.get('/scholar/letters/:sageId', verifyToken(), ecosystem.detail)
 router.post('/scholar/letters/:sageId/leave', verifyToken(), ecosystem.leave)
 router.post('/scholar/letters/:sageId/read', verifyToken(), ecosystem.read)
+const artifacts = require('../controllers/scholarArtifactController')
+router.get('/scholar/artifacts', verifyToken(), artifacts.list)
+router.post('/scholar/artifacts', verifyToken(), artifacts.save)
+router.delete('/scholar/artifacts/:id', verifyToken(), artifacts.remove)
 
 module.exports = router

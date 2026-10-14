@@ -33,4 +33,30 @@
 - 新增 feihuaCorpus.js。王阳明《泛海》《杂诗三首·其二》核对《王阳明集》卷19：https://zh.wikisource.org/wiki/王陽明集/卷19 。题库部分作品只摘选，非全集。
 - 八齐原字表缺啼、蹄、溪常用字形，依据《钦定叶韵汇辑》卷05的嗁/啼、蹏/蹄、谿/溪说明补充，并在pingshui.json记录来源：https://zh.wikisource.org/wiki/欽定叶韻彚輯_(四庫全書本)/卷05 。每个题库末字均有韵部，保留多音字显式选韵机制。
 - 验证：五席本人作品优先、483句规范去重、可应令150+句、30句常见名篇回归、原SSE/并发积分测试、ESLint、生产构建通过。
-- **验收待确认**：“人教版85%覆盖率”缺教材学段/版本/分母清单，尚不能核验；已向刘霞询问。30句样本通过不等同于教材全集85%。
+- **验收待确认**：“人教版85%覆盖率”缺教材学段/版本/分母清单，尚不能核验。刘霞已确认队长没有清单，要求先完成其余闭环，最后列为待办。30句样本通过不等同于教材全集85%。
+
+## 子任务四：识物入藏与携物入席
+
+- 本次主线此前只有appraise_count而没有藏品明细，新增scholar_artifacts；再次运行 `node backend/scripts/init-scholar-ecosystem.js` 即可幂等建表。
+- `/api/deepseek/scholar/artifacts`：GET分页查询本人宝鉴、POST保存识物研习资料；DELETE `/:id` 仅移除本人记录。保存按钮在识物结果卡片，pending期间禁止入藏，兜底记录保留待考标识且不保存虚构分数。同一UUID重试不重复入藏。
+- 书斋宝鉴可回看考释与确认移除；ScholarChat“引物溯古今”打开同一藏品抽屉，选中后生成与先贤姓名/藏品名称/暂考年代关联的发语。服务端按artifactId再次读取本人真实保存记录，其他账户返回404，不信任前端传来的器物档案。
+- 器物资料作为用户研究资料进入既有SSE管道，不作为系统指令；提示先贤区分自身时代、后世器物与跨时推论。断流、取消、降级标识仍沿用既有行为。
+- 验证：真实HTTP测试覆盖未登录、非法参数、重复保存、跨账户编号冲突/查询/删除、携物上下文进入模型参数、完整流归档和回柬。
+- **真实DeepSeek实测**：2026-10-14以临时账户保存公开常识测试资料“宋代建盏”，调用实际deepseekChatStream；source=deepseek、done=true、archiveSaved=true，首段1268ms、总耗时2654ms、186字。这是单次本机样本，不是性能保证；测试数据已清理。此次未重新验收Coze视觉工作流的识别准确性。
+- **浏览器实测**：真实React组件+真实临时数据库账号；上游模型/识物响应使用确定性测试替身并有醒目标识。已验证：动态未读回柬与旧对话恢复、携物发语及流式回显、6分文阶、过期文牒2x重绘/实际下载、李清照飞花令入口及偏好、识物保存后书斋可见、320px深色宝鉴。浏览器无error日志；修正抽屉3px横向溢出；补齐焦点限制、Escape关闭、关闭后焦点恢复和底页滚动锁定。
+- **审查修正**：浏览器行令暴露底本将“花”误列四纸，依《钦定叶韵汇辑》卷11六麻校正，新增断言“花仅下平六麻”，补充来源在pingshui.json。避免React开发严格模式的预清理误触发离席回柬。识物音频play失败加入Promise捕获，不产生未处理异常。
+
+## 本次最终验证与交付
+
+```text
+node backend/scripts/test-scholar-engines.js
+node backend/scripts/test-scholar-ecosystem.js
+node backend/scripts/test-scholar-ecosystem-http.js
+cd frontend
+npx eslint src/pages/ScholarChat.jsx src/pages/LetterList.jsx src/pages/MinePage.jsx src/components/FeihuaPanel.jsx src/components/ScholarArchive.jsx src/components/ScholarArtifactDrawer.jsx src/components/recognitionResult/Index.jsx src/utils/scholarLetters.js src/utils/useScholarSheet.js src/utils/scholarCertificate.js
+npm run build
+```
+
+前三项已分别提交推送：ab08afd（藏牒阁）、d50da10（信札）、ffe51c6（五席题库）。第四项以随后Git提交记录为准。开发记录和AI使用表随每次提交更新。
+
+余项：队长提供教材版本与篇目分母后，再验证并补齐“85%覆盖率”。部署环境需运行本次幂等迁移；已有对局无需重复导入。系统分享取决于浏览器支持，未支持时转为下载，不保证每个系统均能弹出原生分享面板。

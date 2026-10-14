@@ -1,5 +1,8 @@
 import './index.less'
 import { useRef, useState } from 'react'
+import { AddOutline } from 'antd-mobile-icons'
+import { Toast } from 'antd-mobile'
+import axios from '../../http'
 
 /**
  * 物溯古今 · 识别结果（成员 A / TRD v3.0 §2.2、§3.1、§4.4）
@@ -29,6 +32,19 @@ export default function RecognitionResult({ recognitionResult, pending = false }
   const notice = recognitionResult?.notice
   const audioRef = useRef(null)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [saving, setSaving] = useState(false), [saved, setSaved] = useState(false)
+  const artifactId = useRef(null), saveLock = useRef(false)
+  const saveArtifact = async () => {
+    if (saveLock.current || saved || pending) return
+    if (!localStorage.getItem('token')) { Toast.show({ content: '请先登录再收入宝鉴' }); return }
+    saveLock.current = true; setSaving(true)
+    artifactId.current ||= crypto.randomUUID()
+    try {
+      await axios.post('/api/deepseek/scholar/artifacts', { id: artifactId.current, name: data.name || '待考器物', dynasty: data.dynasty || '', description: data.description || '本次记录未附考释。', score: data.score, degraded }, { timeout: 10000 })
+      setSaved(true); Toast.show({ content: '已收入宝鉴，可前往知音携物入席' })
+    } catch { Toast.show({ content: '尚未保存，请稍后重试' }) }
+    finally { saveLock.current = false; setSaving(false) }
+  }
 
   const { interpretation, flow } = splitDescription(data.description)
   const hasAudio = Boolean(data.audio_url)
@@ -40,8 +56,8 @@ export default function RecognitionResult({ recognitionResult, pending = false }
       setIsPlaying(false)
       return
     }
-    audioRef.current?.play()
-    setIsPlaying(true)
+    const playing = audioRef.current?.play()
+    playing?.then(() => setIsPlaying(true)).catch(() => { setIsPlaying(false); Toast.show({ content: '音频暂不可播放' }) })
   }
 
   return (
@@ -111,6 +127,9 @@ export default function RecognitionResult({ recognitionResult, pending = false }
       <p className='object-recognition-result__statement'>
         本功能为国风趣味科普推演与文脉流变研习，非严谨考古鉴定工具。
       </p>
+      <button type='button' className='object-recognition-result__voice' disabled={pending || saving || saved} onClick={saveArtifact}>
+        <AddOutline /> {saved ? '已收入宝鉴' : saving ? '正在入藏…' : pending ? '待考释结束后入藏' : '收入宝鉴'}
+      </button>
 
       <audio
         ref={audioRef}
