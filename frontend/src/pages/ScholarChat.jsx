@@ -296,8 +296,35 @@ function ScholarChatSession() {
     }
   }
 
+  const [isSpeaking, setIsSpeaking] = useState(false)
+  const stopVoice = () => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel()
+    }
+    setIsSpeaking(false)
+  }
+
+  // 离开页面、切换先贤、或者页面隐藏时彻底停止先贤诵音
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.hidden) stopVoice()
+    }
+    window.addEventListener('pagehide', stopVoice)
+    document.addEventListener('visibilitychange', handleVisibility)
+    return () => {
+      stopVoice()
+      window.removeEventListener('pagehide', stopVoice)
+      document.removeEventListener('visibilitychange', handleVisibility)
+    }
+  }, [sageKey])
+
   // 雅乐与先贤诵音：纯浏览器古琴合成 + 沉稳名士语调
   const playVoice = (text) => {
+    if (isSpeaking) {
+      stopVoice()
+      Toast.show({ content: '诵音已止' })
+      return
+    }
     try {
       const AudioCtx = window.AudioContext || window.webkitAudioContext
       if (AudioCtx) {
@@ -324,12 +351,16 @@ function ScholarChatSession() {
         utterance.lang = 'zh-CN'
         utterance.rate = 0.85
         utterance.pitch = 0.9
+        utterance.onend = () => setIsSpeaking(false)
+        utterance.onerror = () => setIsSpeaking(false)
+        setIsSpeaking(true)
         window.speechSynthesis.speak(utterance)
         Toast.show({ content: '先贤诵音绕梁…' })
       } else {
         Toast.show({ content: '琴韵已绕梁' })
       }
     } catch {
+      setIsSpeaking(false)
       Toast.show({ content: '琴韵已绕梁' })
     }
   }
@@ -352,7 +383,14 @@ function ScholarChatSession() {
       }} />}
       {/* 1. 顶部清雅导航栏 */}
       <header className="scholar-nav">
-        <button type="button" className="scholar-nav__back" onClick={() => navigate(-1)}>
+        <button
+          type="button"
+          className="scholar-nav__back"
+          onClick={() => {
+            stopVoice()
+            navigate(-1)
+          }}
+        >
           <LeftOutline />
         </button>
         <div className="scholar-nav__center">
@@ -365,12 +403,12 @@ function ScholarChatSession() {
         <div className="scholar-nav__right">
           <button
             type="button"
-            className="scholar-nav__action"
+            className={`scholar-nav__action ${isSpeaking ? 'is-speaking' : ''}`}
             onClick={() => {
               const lastAiMsg = [...messages].reverse().find(m => m.role === 'ai')
               playVoice(lastAiMsg ? lastAiMsg.content : sageInfo.welcome)
             }}
-            aria-label="聆听诵音"
+            aria-label={isSpeaking ? '停止诵音' : '聆听诵音'}
           >
             <SoundOutline />
           </button>
@@ -568,5 +606,12 @@ function ScholarChatSession() {
 
 export default function ScholarChat() {
   const scope = useScholarScope()
+  useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel()
+      }
+    }
+  }, [])
   return <ScholarChatSession key={scope} />
 }
