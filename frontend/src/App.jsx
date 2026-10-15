@@ -33,6 +33,7 @@ export default function App() {
         <Route path='/accountSetting' element={<AccountSetting/>}></Route>
         <Route path='/chat/:id' element={<ScholarChat/>}></Route>
         <Route path='/ai-chat' element={<ScholarChat/>}></Route>
+        <Route path='/scholar-chat/:id' element={<ScholarChat/>}></Route>
         {/* 古诗词鉴赏大卷轴与书斋诗笺 */}
         <Route path='/poem' element={<PoemPage/>}></Route>
         <Route path='/poem-collection' element={<PoemCollection/>}></Route>
