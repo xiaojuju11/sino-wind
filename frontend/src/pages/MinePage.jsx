@@ -12,21 +12,15 @@ import ScholarArtifactDrawer from '../components/ScholarArtifactDrawer'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
 
-import { scholarScope, syncLocalLetters } from '../utils/scholarLetters'
+import { scholarScope, syncLocalLetters, cachedLetters, loadLetters, shichen } from '../utils/scholarLetters'
 import { guestSummary, guestArchiveCount, importGuestArchive, guestGames } from '../utils/scholarAssets'
+
+import { readYayanNotebook, finishShuzhaiSession, unreadReplyCount } from '../utils/shuzhaiFlow'
+import '../styles/shuzhaiFlow.less'
 
 const BASE = import.meta.env.BASE_URL
 
-// 两宋白话精选雅言（雅译锦囊核心研习札记）
-const PRESET_YAYAN = [
-  { ancient: '且慢行', modern: '等一下 / 莫要心急', note: '宋人常用于劝友留步或缓行' },
-  { ancient: '休得胡言', modern: '别开玩笑 / 莫要信口开河', note: '宋代市民白话常用口头语' },
-  { ancient: '甚善，深契吾心', modern: '太好了 / 深得我意', note: '士大夫赞赏之辞' },
-  { ancient: '同去同去', modern: '咱们一块儿去吧', note: '宋元白话中极为传神的邀约' },
-  { ancient: '万水千山，且尽一杯', modern: '前路迢迢，先干了这杯', note: '送别饯行必道雅言' },
-  { ancient: '人间有味是清欢', modern: '平淡自然的滋味最是长久', note: '东坡居士论生活之味' },
-  { ancient: '见怪不怪，其怪自败', modern: '见着奇怪的事泰然处之即可', note: '宋代普贤院白话谚语' }
-]
+const SAGE_NAMES = { libai: '李白', sushi: '苏轼', liqingzhao: '李清照', dufu: '杜甫', wangyangming: '王阳明', xinqiji: '辛弃疾', group_zhulin: '竹林雅集' }
 
 function MinePageSession() {
   const navigate = useNavigate()
@@ -41,7 +35,13 @@ function MinePageSession() {
   const [visibleLogout, setVisibleLogout] = useState(false)
   const [visibleAvatarViewer, setVisibleAvatarViewer] = useState(false)
   const [visibleYayanDrawer, setVisibleYayanDrawer] = useState(false)
-  const [notifyEnabled, setNotifyEnabled] = useState(true)
+  const [notebook, setNotebook] = useState(readYayanNotebook)
+  const [inboxOpen, setInboxOpen] = useState(false)
+  const [letters, setLetters] = useState(cachedLetters)
+  const [inboxBusy, setInboxBusy] = useState(false)
+  const [inboxNotice, setInboxNotice] = useState('')
+  const refreshInbox = useRef(() => {})
+  const signedIn = scholarScope().startsWith('user:')
 
   // Display real assets only. A failed request never becomes a mock statistic.
   useEffect(() => {
@@ -80,6 +80,38 @@ function MinePageSession() {
     finally { setImporting(false); setGuestCount(guestArchiveCount()) }
   }
 
+  useEffect(() => {
+    let current = true, generation = 0
+    const scope = scholarScope()
+    const refresh = async () => {
+      const version = ++generation
+      setInboxBusy(true)
+      try {
+        const rows = await loadLetters()
+        if (current && version === generation && scope === scholarScope()) { setLetters(rows); setInboxNotice('') }
+      } catch {
+        if (current && version === generation && scope === scholarScope()) { setLetters(cachedLetters()); setInboxNotice('云端回柬暂未载入，当前展示本机已存记录') }
+      } finally { if (current && version === generation) setInboxBusy(false) }
+    }
+    const local = () => { if (current) setLetters(cachedLetters()) }
+    const notebookChanged = () => { if (current) { setNotebook(readYayanNotebook()); local() } }
+    refreshInbox.current = refresh
+    refresh()
+    window.addEventListener('focus', refresh)
+    window.addEventListener('scholarLettersUpdated', local)
+    window.addEventListener('storage', notebookChanged)
+    return () => { current = false; generation++; window.removeEventListener('focus', refresh); window.removeEventListener('scholarLettersUpdated', local); window.removeEventListener('storage', notebookChanged) }
+  }, [])
+  const openNotebook = () => { setNotebook(readYayanNotebook()); setVisibleYayanDrawer(true) }
+  const openAccount = () => {
+    if (!signedIn) { Toast.show({ content: '请先入席，再管理个人账号' }); navigate('/login'); return }
+    navigate('/accountSetting')
+  }
+  const openPoems = () => {
+    if (!signedIn) { Toast.show({ content: '登录后可查看本人的诗笺收藏' }); navigate('/login'); return }
+    navigate('/poem-collection')
+  }
+
   // 退出登录操作选项
   const logoutActions = [
     { text: '整装离席（确认退出）', key: 'confirm', danger: true }
@@ -88,9 +120,11 @@ function MinePageSession() {
   const handleLogoutAction = (action) => {
     if (action.key === 'confirm') {
       setVisibleLogout(false)
-      localStorage.removeItem('token')
-      Toast.show({ content: '已整装离席，期君再聚', icon: 'success' })
-      navigate('/login')
+      try {
+        finishShuzhaiSession()
+        Toast.show({ content: '已整装离席，藏品与信札妥善保留', icon: 'success' })
+        navigate('/login', { replace: true })
+      } catch { Toast.show({ content: '离席尚未完成，请重试' }) }
     }
   }
 
@@ -108,7 +142,7 @@ function MinePageSession() {
     {
       num: userInfo.poem_count ?? '—',
       label: '诗词温故',
-      onClick: () => navigate('/poem-collection')
+      onClick: openPoems
     },
     {
       num: userInfo.debate_count ?? '—',
@@ -118,19 +152,21 @@ function MinePageSession() {
     {
       num: userInfo.yayan_count ?? '—',
       label: '雅言研习',
-      onClick: () => setVisibleYayanDrawer(true)
+      onClick: openNotebook
     },
   ]
 
   stats.push({ num: rankData?.total ?? (scholarScope() === 'guest' ? guestGames().length : '—'), label: '飞花归档', onClick: () => setArchiveOpen(true) })
 
-  // 复制雅言
-  const handleCopyYayan = (text) => {
-    navigator.clipboard?.writeText(text).then(() => {
-      Toast.show({ content: `「${text}」已收录入袖`, icon: 'success' })
-    }).catch(() => {
-      Toast.show({ content: `「${text}」` })
-    })
+  // Clipboard may be absent or blocked; keep a selectable fallback instead of false success.
+  const handleCopyYayan = async (text) => {
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable')
+      await navigator.clipboard.writeText(text)
+      Toast.show({ content: '雅言已复制', icon: 'success' })
+    } catch {
+      Modal.show({ title: '长按文字取用', content: <textarea className='shuzhai-flow-copy' aria-label='可手动复制的雅言' readOnly value={text} onFocus={event => event.currentTarget.select()} />, closeOnAction: true, actions: [{ key: 'close', text: '收好' }] })
+    }
   }
 
   // 关于弹窗
@@ -223,10 +259,10 @@ function MinePageSession() {
         {scholarScope().startsWith('user:') && guestCount > 0 && <button type='button' disabled={importing} onClick={importGuest}>{importing ? '收入中…' : `确认将本机游客的${guestCount}份信札/藏品收入当前账户`}</button>}
         <div className='scholar-stats'>
           {stats.map((item, idx) => (
-            <div key={idx} className='scholar-stats__item' onClick={item.onClick}>
+            <button type='button' key={idx} className='scholar-stats__item' onClick={item.onClick}>
               <div className='scholar-stats__num'>{item.num}</div>
-              <div className='scholar-stats__label'>{item.label}</div>
-            </div>
+              <span className='scholar-stats__label'>{item.label}</span>
+            </button>
           ))}
         </div>
       </section>
@@ -254,41 +290,41 @@ function MinePageSession() {
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
-          <div className='shuzhai-list-item' onClick={() => setArtifactsOpen(true)}>
+          <button type='button' className='shuzhai-list-item' onClick={() => setArtifactsOpen(true)}>
             <i className='iconfont icon-zhanpin' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>物溯宝鉴（已鉴藏品）</span>
               <span className='shuzhai-list-item__desc'>已考证之今物与古器原型</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
-          </div>
+          </button>
 
-          <div className='shuzhai-list-item' onClick={() => navigate('/poem-collection')}>
+          <button type='button' className='shuzhai-list-item' onClick={openPoems}>
             <i className='iconfont icon-shoucang' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>我的诗笺</span>
               <span className='shuzhai-list-item__desc'>收录的古诗词与摘录笔记</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
-          </div>
+          </button>
 
-          <div className='shuzhai-list-item' onClick={() => navigate('/letters')}>
+          <button type='button' className='shuzhai-list-item' onClick={() => navigate('/letters')}>
             <i className='iconfont icon-message' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>知音鸿雁（往来信札）</span>
               <span className='shuzhai-list-item__desc'>与李白、苏轼等千古知己交谈归档</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
-          </div>
+          </button>
 
-          <div className='shuzhai-list-item' onClick={() => setVisibleYayanDrawer(true)}>
+          <button type='button' className='shuzhai-list-item' onClick={openNotebook}>
             <i className='iconfont icon-ziliao' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>雅译锦囊</span>
               <span className='shuzhai-list-item__desc'>今人白话化两宋雅言之研习札记</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
-          </div>
+          </button>
         </div>
       </section>
 
@@ -311,14 +347,14 @@ function MinePageSession() {
               （同一 theme 状态、同一 toggleTheme），且用的是通知铃铛图标、语义不符。
               按要求只保留「墨色雅意」作为唯一的日月切换入口。 */}
 
-          <div className='shuzhai-list-item' onClick={() => navigate('/accountSetting')}>
+          <button type='button' className='shuzhai-list-item' onClick={openAccount}>
             <i className='iconfont icon-zhanghao' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>账号设置</span>
               <span className='shuzhai-list-item__desc'>头像换新、修改昵称与账号管理</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
-          </div>
+          </button>
 
           {/* 墨色雅意：日月主题切换的唯一入口 */}
           <div className='shuzhai-list-item shuzhai-list-item--theme'>
@@ -330,29 +366,23 @@ function MinePageSession() {
             <ThemeToggle className='shuzhai-theme-toggle' />
           </div>
 
-          <div className='shuzhai-list-item' onClick={() => {
-            const next = !notifyEnabled
-            setNotifyEnabled(next)
-            Toast.show({ content: next ? '岁时节气与知音回信通知已开启' : '岁时通知已静息', icon: 'success' })
-          }}>
+          <button type='button' className='shuzhai-list-item' onClick={() => { setInboxOpen(true); refreshInbox.current() }}>
             <i className='iconfont icon-tongzhi' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>消息通知</span>
-              <span className='shuzhai-list-item__desc'>
-                {notifyEnabled ? '岁时节气与知音回信提醒（已开启）' : '岁时节气与知音回信提醒（已静息）'}
-              </span>
+              <span className='shuzhai-list-item__desc'>{unreadReplyCount(letters) ? `${unreadReplyCount(letters)}封未读回柬 · 展读知音来信` : '展读知音回柬与往来书札'}</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
-          </div>
+          </button>
 
-          <div className='shuzhai-list-item' onClick={handleShowAbout}>
+          <button type='button' className='shuzhai-list-item' onClick={handleShowAbout}>
             <i className='iconfont icon-zhinan' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>关于云山竹简</span>
               <span className='shuzhai-list-item__desc'>国风两宋美学研习平台 · v2.0 崇雅版</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
-          </div>
+          </button>
         </div>
       </section>
 
@@ -361,13 +391,13 @@ function MinePageSession() {
         <button
           type='button'
           className='shuzhai-logout-btn'
-          onClick={() => setVisibleLogout(true)}
-          aria-label='整装离席'
+          onClick={() => signedIn ? setVisibleLogout(true) : navigate('/login')}
+          aria-label={signedIn ? '整装离席' : '登录入席'}
         >
-          <span className='shuzhai-logout-btn__seal'>离席</span>
-          <span className='shuzhai-logout-btn__text'>整装离席 · 束卷归隐</span>
+          <span className='shuzhai-logout-btn__seal' aria-hidden='true'>{signedIn ? '离席' : '入席'}</span>
+          <span className='shuzhai-logout-btn__text'>{signedIn ? '整装离席 · 束卷归隐' : '登录入席 · 留存风雅'}</span>
         </button>
-        <p className='shuzhai-logout-sub'>青山不改 · 绿水长流 · 期君再聚</p>
+        <p className='shuzhai-logout-sub'>{signedIn ? '青山不改 · 藏品与信札妥善保留' : '入席后同步本人藏品、诗笺与修持'}</p>
       </div>
 
       {archiveOpen && <ScholarArchive onClose={() => setArchiveOpen(false)} />}
@@ -376,10 +406,26 @@ function MinePageSession() {
       <ActionSheet
         visible={visibleLogout}
         actions={logoutActions}
+        extra='仅退出当前账号，云端资产与本机待同步原稿均保留。'
         cancelText='留步细品'
         onClose={() => setVisibleLogout(false)}
         onAction={handleLogoutAction}
       />
+
+      <Popup visible={inboxOpen} position='bottom' onMaskClick={() => setInboxOpen(false)} onClose={() => setInboxOpen(false)} className='yayan-popup'>
+        <section className='yayan-box' aria-label='书斋回柬中枢'>
+          <header className='yayan-box__header'><h2 className='yayan-box__title'>知音回柬</h2><button type='button' className='yayan-box__close' aria-label='收起知音回柬' onClick={() => setInboxOpen(false)}><CloseOutline /></button></header>
+          <p>这里展读站内留柬，不代表已开启浏览器或系统推送。</p>
+          {inboxNotice && <p role='status'>{inboxNotice}</p>}
+          {inboxBusy && <p role='status'>飞鸽寻笺中…</p>}
+          <button type='button' className='shuzhai-flow-refresh' disabled={inboxBusy} onClick={() => refreshInbox.current()}>刷新来信</button>
+          {!inboxBusy && !letters.some(row => row.reply) && <div className='shuzhai-flow-empty'><p>暂未收到回柬，与先贤完成四轮对席后离席，可收到一封留柬。</p><button type='button' onClick={() => { setInboxOpen(false); navigate('/letters') }}>前往知音对席</button></div>}
+          {letters.filter(row => row.reply).sort((a, b) => b.reply.at - a.reply.at).map(row => <article className='yayan-box__item' key={row.sageId}>
+            <div className='yayan-box__content'><h3>{SAGE_NAMES[row.sageId] || row.sageId} · {row.reply.unread ? '未读' : '已阅'}</h3><p>{row.reply.text}</p><small>{shichen(row.reply.at)} · {row.reply.kind}</small></div>
+            <button type='button' className='yayan-box__copy-btn' onClick={() => { setInboxOpen(false); navigate(`/chat/${encodeURIComponent(row.sageId)}`) }}>展笺续谈</button>
+          </article>)}
+        </section>
+      </Popup>
 
       {/* 头像大图查看器 */}
       <ImageViewer
@@ -392,6 +438,7 @@ function MinePageSession() {
       <Popup
         visible={visibleYayanDrawer}
         position='bottom'
+        onMaskClick={() => setVisibleYayanDrawer(false)}
         onClose={() => setVisibleYayanDrawer(false)}
         className='yayan-popup'
       >
@@ -399,21 +446,25 @@ function MinePageSession() {
           <div className='yayan-box__header'>
             <div className='yayan-box__title'>
               <span>雅译锦囊</span>
-              <span className='yayan-box__seal'>两宋白话</span>
+              <span className='yayan-box__seal'>本机摘录</span>
             </div>
             <button type='button' className='yayan-box__close' aria-label='关闭雅译锦囊' onClick={() => setVisibleYayanDrawer(false)}><CloseOutline /></button>
           </div>
           <p className='yayan-box__sub'>
-            收录两宋市井与文人日常白话雅言对照，随取随用，感受千年鲜活墨香。
+            展读首页“摘录入卷”留下的雅言。本机记录由此浏览器保存，尚未同步到个人云端。
           </p>
           <div className='yayan-box__list'>
-            {PRESET_YAYAN.map((item, idx) => (
-              <div key={idx} className='yayan-box__item'>
+            {notebook.error && <p role='status'>{notebook.error}</p>}
+            {!notebook.error && notebook.records.length === 0 && <div className='shuzhai-flow-empty'><p>墨卷尚空，去雅集译一句，再点“摘录入卷”即可在此展读。</p><button type='button' onClick={() => { setVisibleYayanDrawer(false); navigate('/home') }}>前往雅集摘录</button></div>}
+            <button type='button' className='shuzhai-flow-refresh' onClick={() => setNotebook(readYayanNotebook())}>刷新本机摘录</button>
+            {notebook.records.map(item => (
+              <div key={item.key} className='yayan-box__item'>
                 <div className='yayan-box__content'>
                   <div className='yayan-box__ancient'>「{item.ancient}」</div>
-                  <div className='yayan-box__modern'>释义：{item.modern} · <span style={{ opacity: 0.8 }}>{item.note}</span></div>
+                  <div className='yayan-box__modern'>白话：{item.modern || '未附白话原文'}{item.explanation && <p>{item.explanation}</p>}<small>{item.offline ? '离线典范摘录' : '雅言摘录'}{item.author ? ` · ${item.author}` : ''}{item.createdAt ? ` · ${item.createdAt}` : ''}</small></div>
                 </div>
                 <button
+                  type='button'
                   className='yayan-box__copy-btn'
                   onClick={() => handleCopyYayan(item.ancient)}
                 >
