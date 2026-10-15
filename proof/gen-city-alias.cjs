@@ -61,6 +61,21 @@ const end = t.indexOf('}', start) + 1
 if (start < 0) { console.log('  ❌ 未找到 CITY_ALIAS'); process.exit(1) }
 
 const merged = { ...auto, ...ALIAS }   // 人工映射覆盖自动
+
+// ⚠️ 自指修正（必须固化，否则重跑会覆盖人工修正 —— 本次实际发生过：
+//   重跑后 南京→开封、西安→辽源 等 8 处错误复活）。
+// 规则：别名键本身若已是一个城市名，则删除该别名 —— 查表时 CITY_CHRONICLE
+// 会直接命中自身；留着会造成「输入城市名却展开到另一个城市」，比搜不到更糟。
+// 成因：沿革轴里别城的古称会与某城的今名撞车，如开封轴有「金元·南京」、
+//       辽源轴有「西安县」，自动提取时按「名称最短」选中了错误的一方。
+const CITY_KEYS = new Set(Object.keys(CH))
+let selfFixed = 0
+for (const k of Object.keys(merged)) {
+  if (CITY_KEYS.has(k) && k !== '咸阳') { delete merged[k]; selfFixed++ }
+}
+merged['咸阳'] = '西安'   // 唯一的例外：秦咸阳与汉长安同处一地，属合理映射
+console.log('  已移除自指别名（键本身是城名）:', selfFixed)
+
 const keys = Object.keys(merged).sort((a, b) => a.localeCompare(b, 'zh'))
 const lines = []
 for (let i = 0; i < keys.length; i += 6) {
@@ -76,3 +91,26 @@ ${lines.join('\n')}
 t = t.slice(0, start) + block + t.slice(end)
 fs.writeFileSync(P, t, 'utf8')
 console.log('\n  已写回 CITY_ALIAS，共', keys.length, '条')
+
+// ── 补充：省名/单字简称 → 省会 映射（不可由沿革轴自动推导，须显式维护）──
+// 用户会直接输入省名（如「四川」）来找一省之地，而沿革轴是按城市组织的。
+// 目标须全部存在于 CITY_CHRONICLE，否则搜省名会拿到空结果。
+const PROVINCE_CAPITAL = {
+  北京: '北京', 天津: '天津', 上海: '上海', 重庆: '重庆',
+  河北: '石家庄', 山西: '太原', 内蒙古: '呼和浩特', 辽宁: '沈阳', 吉林: '长春',
+  黑龙江: '哈尔滨', 江苏: '南京', 浙江: '杭州', 安徽: '合肥', 福建: '福州',
+  江西: '南昌', 山东: '济南', 河南: '郑州', 湖北: '武汉', 湖南: '长沙',
+  广东: '广州', 广西: '南宁', 海南: '海口', 四川: '成都', 贵州: '贵阳',
+  云南: '昆明', 西藏: '拉萨', 陕西: '西安', 甘肃: '兰州', 青海: '西宁',
+  宁夏: '银川', 新疆: '乌鲁木齐', 台湾: '台北', 香港: '香港', 澳门: '澳门',
+  京: '北京', 津: '天津', 蜀: '成都', 蓉: '成都', 渝: '重庆', 粤: '广州',
+  湘: '长沙', 鄂: '武汉', 豫: '郑州', 鲁: '济南', 苏: '南京', 浙: '杭州',
+  皖: '合肥', 闽: '福州', 赣: '南昌', 冀: '石家庄', 晋: '太原', 陕: '西安',
+  甘: '兰州', 青: '西宁', 云: '昆明', 贵: '贵阳', 桂: '南宁', 琼: '海口',
+  辽: '沈阳', 吉: '长春', 黑: '哈尔滨', 新: '乌鲁木齐', 藏: '拉萨',
+  蒙: '呼和浩特', 宁: '银川',
+}
+// 校验：目标必须存在，否则搜省名会空
+const missing = Object.entries(PROVINCE_CAPITAL).filter(([, cap]) => !CH[cap])
+if (missing.length) console.log('  ⚠️ 省名映射目标缺失:', missing.map(([p, c]) => p + '→' + c).join(' '))
+else console.log('  ✅ 省名映射目标齐全:', Object.keys(PROVINCE_CAPITAL).length, '条')
