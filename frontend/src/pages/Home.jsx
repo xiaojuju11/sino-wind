@@ -1,5 +1,5 @@
 import ReferenceCorners from '../components/ReferenceCorners'
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect, useMemo } from 'react'
 import '../styles/home.less'
 import { Toast, ActionSheet } from 'antd-mobile'
 import { DownOutline, RightOutline, UpOutline, CompassOutline, EditSOutline, CheckCircleOutline, DownCircleOutline, ShopbagOutline, FileOutline } from 'antd-mobile-icons'
@@ -9,6 +9,7 @@ import InkSpreadZone from '../components/InkSpreadZone.jsx'
 import axios from '../http'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
+import { TOP_ANCIENT_CITIES, autoDetectUserCity } from '../utils/ancientCities'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -77,16 +78,6 @@ const YAYAN_PRESET = {
   explanation: '清风怡情，信步幽林，极尽萧散之趣。',
 }
 
-// 漫游古今经典城邑库
-const ANCIENT_CITIES = [
-  { name: '杭州', ancient: '临安', temp: '24°', weather: '晴和', desc: '天朗气清，惠风和畅。', wuhou: '菊有黄华', text: '临安（杭州）· 水光潋滟晴方好' },
-  { name: '开封', ancient: '汴京', temp: '19°', weather: '微风', desc: '烟柳画桥，风帘翠幕，参差十万人家。', wuhou: '草木黄落', text: '汴京（开封）· 烟柳画桥风帘幕' },
-  { name: '西安', ancient: '长安', temp: '18°', weather: '清爽', desc: '春风得意马蹄疾，一日看尽长安花。', wuhou: '鸿雁来宾', text: '长安（西安）· 春风得意马蹄疾' },
-  { name: '洛阳', ancient: '洛邑', temp: '20°', weather: '晴朗', desc: '洛阳地脉花最宜，牡丹尤为天下奇。', wuhou: '玄鸟归去', text: '洛阳（洛邑）· 地脉花宜满城香' },
-  { name: '苏州', ancient: '姑苏', temp: '21°', weather: '薄雾', desc: '月落乌啼霜满天，江枫渔火对愁眠。', wuhou: '寒蝉鸣止', text: '姑苏（苏州）· 江枫渔火对愁眠' },
-  { name: '南京', ancient: '金陵', temp: '23°', weather: '和煦', desc: '江南佳丽地，金陵帝王州。', wuhou: '水始涸', text: '金陵（南京）· 江南佳丽帝王州' },
-]
-
 export default function Home() {
   const navigate = useNavigate()
   // 题头元素引用：水墨粒子引擎的手势监听直接挂在这里（不新增遮挡层）
@@ -113,11 +104,22 @@ export default function Home() {
   const [yayanOffline, setYayanOffline] = useState(false)
 
   // ② 时令天象（动态换算与漫游古今城邑）
-  const [currentCity, setCurrentCity] = useState(ANCIENT_CITIES[0])
+  const [currentCity, setCurrentCity] = useState(TOP_ANCIENT_CITIES[0])
   const [visibleCitySheet, setVisibleCitySheet] = useState(false)
   const curShichen = getTraditionalTime()
   const ganzhi = getGanzhi()
   const dateText = getDateText()
+
+  // 🏮 自动感知用户当前时空驻足之地（IP免打扰探知 + 智能古风雅称换算）
+  useEffect(() => {
+    let active = true
+    autoDetectUserCity().then((detected) => {
+      if (active && detected) {
+        setCurrentCity(detected)
+      }
+    })
+    return () => { active = false }
+  }, [])
 
   // 白话雅译请求（接口与字段保持不变）
   const handleTranslate = async (textToTranslate) => {
@@ -169,6 +171,22 @@ export default function Home() {
       Toast.show({ content: '已收录' })
     }
   }
+
+  // 漫游古今城邑候选项（包含当下实时定位与两宋名都精选）
+  const cityActions = useMemo(() => {
+    return [
+      {
+        text: `📍 自动感知：${currentCity.ancient}（${currentCity.name}）· 当下驻足`,
+        key: '__current_auto_location__',
+        description: `实时物候：${currentCity.wuhou} · 天象 ${currentCity.weather} ${currentCity.temp}`
+      },
+      ...TOP_ANCIENT_CITIES.map((c) => ({
+        text: c.text,
+        key: c.name,
+        description: `两宋名都 · 物候：${c.wuhou} · 气温 ${c.temp}`
+      }))
+    ]
+  }, [currentCity])
 
   return (
     <div className="home-root reference-polish">
@@ -420,14 +438,15 @@ export default function Home() {
       {/* ── 漫游古今城邑抽屉 ── */}
       <ActionSheet
         visible={visibleCitySheet}
-        actions={ANCIENT_CITIES.map((c) => ({
-          text: c.text,
-          key: c.ancient,
-          description: `物候：${c.wuhou} · 气温 ${c.temp}`
-        }))}
+        actions={cityActions}
         onClose={() => setVisibleCitySheet(false)}
         onAction={(action) => {
-          const matched = ANCIENT_CITIES.find((c) => c.ancient === action.key)
+          if (action.key === '__current_auto_location__') {
+            Toast.show({ content: `已驻足于当前属地：${currentCity.ancient}（${currentCity.name}）` })
+            setVisibleCitySheet(false)
+            return
+          }
+          const matched = TOP_ANCIENT_CITIES.find((c) => c.name === action.key)
           if (matched) {
             setCurrentCity(matched)
             Toast.show({ content: `已漫游至${matched.ancient}：${matched.desc}` })
