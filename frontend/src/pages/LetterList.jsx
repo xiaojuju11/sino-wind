@@ -113,7 +113,7 @@ function LetterListSession() {
 
   return (
     <div className="letter-root reference-polish">
-      <InkWashBackground />
+      <InkWashBackground atmosphereOnly={true} />
       {/* 1. 顶部水墨意境题头 */}
       <header className="letter-header">
         <button className='letter-header__search' type='button' onClick={() => { setSearchOpen(v => !v); setSearchText('') }} aria-label='检索知音' aria-expanded={searchOpen}><SearchOutline /></button>
@@ -128,7 +128,7 @@ function LetterListSession() {
       {/* 2. 顶部水平知己画卷（横向滑动 + 迎请新友按钮） */}
       <section className="letter-gallery-section">
         <div className="letter-gallery-scroll">
-          {displayed.filter(item => item.id !== 'group_zhulin').slice(0, 4).map((item) => {
+          {displayed.filter(item => item.id !== 'group_zhulin').map((item) => {
             const scene = getScholarScene(item.id, item.name)
             return (
             <button type='button'
