@@ -1,4 +1,4 @@
-// ⚠️ 本文件由 proof/_gen-poem-fallback.cjs 生成，请勿手改。
+// ⚠️ 本文件由 proof/gen-poem-fallback.cjs 生成，请勿手改。
 // 数据源：src/data/feihuaCorpus.js 的作品原文（公有领域），保留原诗文序与出处。
 // 用途：poemController 搜索的本地兜底库。上游诗泉部署实例的检索端点不可用
 //   （/api/search 与 /api/poems/search 等 8 种变体实测均 400/404），故搜索依赖本库。
