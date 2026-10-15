@@ -21,8 +21,8 @@ function MoonCrescentGlyph() { return <StarOutline aria-hidden="true" /> }
 // ════════════════════════════════════════════════════
 //  传统时辰换算（TRD v3.0：动态算法换算十二时辰）
 // ════════════════════════════════════════════════════
-function getTraditionalTime() {
-  const hours = new Date().getHours()
+function getTraditionalTime(date = new Date()) {
+  const hours = date.getHours()
   const shichenList = [
     { name: '子时', range: '23:00-01:00', desc: '夜半人静，月照竹影' },
     { name: '丑时', range: '01:00-03:00', desc: '鸡鸣破晓，万籁俱寂' },
@@ -142,9 +142,17 @@ export default function Home() {
   const [cityQuery, setCityQuery] = useState('')
   const [locatedBy, setLocatedBy] = useState('')   // '' | 'gps' | 'ip' | 'default' | 'manual'
   const [weather, setWeather] = useState(null)      // 真实气温，null = 取数中/失败
-  const curShichen = getTraditionalTime()
-  const ganzhi = getGanzhi()
-  const dateText = getDateText()
+
+  // 当前时间：原文这三个值只在首次渲染时算一次，时间会冻在打开页面的那一刻
+  // （实测：21:55 仍显示 21:53）。改为状态 + 每分钟推进，时间/时辰/物候都会跟着走。
+  const [now, setNow] = useState(() => new Date())
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 30000)
+    return () => clearInterval(id)
+  }, [])
+  const curShichen = getTraditionalTime(now)
+  const ganzhi = getGanzhi(now)
+  const dateText = getDateText(now)
 
   // 定位：GPS → IP 归属 → 默认北京（失败不阻断页面）
   useEffect(() => {
