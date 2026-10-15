@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Toast } from 'antd-mobile'
-import { UserOutline, LockOutline, EyeOutline, EyeInvisibleOutline } from 'antd-mobile-icons'
+import { EyeOutline, EyeInvisibleOutline } from 'antd-mobile-icons'
 import { useNavigate } from 'react-router-dom'
 import axios from '../http'
 import '../styles/login.less'
@@ -44,10 +44,10 @@ export default function Login({ user = {}, agreed = false }) {
   }
   return (
     <form className="auth-login" onSubmit={submit} noValidate aria-busy={loading}>
-      <label className="auth-field"><span className="auth-field-icon" aria-hidden="true"><UserOutline /></span><span className="auth-sr-only">手机号或信箱</span>
+      <label className="auth-field"><span className="auth-field-icon" aria-hidden="true"><i className="iconfont icon-zhanghao" /></span><span className="auth-sr-only">手机号或信箱</span>
         <input name="username" autoComplete="username" type="text" inputMode="email" placeholder="请输入手机号" value={phone} onChange={(e) => setPhone(e.target.value)} disabled={loading} aria-describedby={error ? 'login-error' : undefined} />
       </label>
-      <div className="auth-field"><span className="auth-field-icon" aria-hidden="true"><LockOutline /></span>
+      <div className="auth-field"><span className="auth-field-icon" aria-hidden="true"><i className="iconfont icon-mima" /></span>
         <label className="auth-sr-only" htmlFor="login-password">通行密押</label>
         <input id="login-password" name="password" autoComplete="current-password" type={visible ? 'text' : 'password'} placeholder="请输入密码" value={password} onChange={(e) => setPassword(e.target.value)} disabled={loading} />
         <button type="button" className="auth-eye" aria-label={visible ? '隐藏密码' : '显示密码'} aria-pressed={visible} onClick={() => setVisible(!visible)}>{visible ? <EyeOutline /> : <EyeInvisibleOutline />}</button>

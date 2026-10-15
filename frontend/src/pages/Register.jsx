@@ -1,4 +1,4 @@
-import { UserOutline, PhonebookOutline, CheckShieldOutline, LockOutline, EyeOutline, EyeInvisibleOutline } from 'antd-mobile-icons'
+import { EyeOutline, EyeInvisibleOutline } from 'antd-mobile-icons'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Toast } from 'antd-mobile'
 import axios from '../http'
@@ -63,20 +63,20 @@ export default function Register({ changeActiveTab, agreed = false }) {
   }
   return (
     <form className="auth-register" onSubmit={submit} noValidate aria-busy={loading}>
-      <label className="auth-field"><span className="auth-field-icon" aria-hidden="true"><UserOutline /></span><span className="auth-sr-only">拟定雅号</span>
+      <label className="auth-field"><span className="auth-field-icon" aria-hidden="true"><i className="iconfont icon-wode" /></span><span className="auth-sr-only">拟定雅号</span>
         <input name="nickname" autoComplete="nickname" maxLength={50} placeholder="拟定雅号" value={form.nickname} onChange={update('nickname')} disabled={loading} />
       </label>
-      <label className="auth-field"><span className="auth-field-icon" aria-hidden="true"><PhonebookOutline /></span><span className="auth-sr-only">手机号或信箱</span>
+      <label className="auth-field"><span className="auth-field-icon" aria-hidden="true"><i className="iconfont icon-zhanghao" /></span><span className="auth-sr-only">手机号或信箱</span>
         <input name="username" autoComplete="username" inputMode="email" placeholder="请输入手机号" value={form.phone} onChange={update('phone')} disabled={loading} />
       </label>
       <div className="auth-field auth-captcha-field"><label className="auth-sr-only" htmlFor="register-captcha">图形验真码</label>
-        <span className="auth-field-icon" aria-hidden="true"><CheckShieldOutline /></span>
+        <span className="auth-field-icon" aria-hidden="true"><i className="iconfont icon-anquan" /></span>
         <input id="register-captcha" autoComplete="off" maxLength={4} placeholder="请输入验证码" value={form.captchaCode} onChange={update('captchaCode')} disabled={loading || captchaLoading} />
         <button type="button" className="auth-captcha" disabled={loading || captchaLoading} onClick={() => { setError(''); loadCaptcha() }} aria-label="刷新图形验证码" title="点击刷新">
           {captchaLoading ? '绘制中…' : captcha ? <img src={captcha.image} alt="图形验证码，点击刷新" /> : '获取验真码'}
         </button>
       </div>
-      <div className="auth-field"><span className="auth-field-icon" aria-hidden="true"><LockOutline /></span><label className="auth-sr-only" htmlFor="register-password">设置通行密押</label>
+      <div className="auth-field"><span className="auth-field-icon" aria-hidden="true"><i className="iconfont icon-mima" /></span><label className="auth-sr-only" htmlFor="register-password">设置通行密押</label>
         <input id="register-password" name="password" autoComplete="new-password" type={visible ? 'text' : 'password'} placeholder="请设置密码" value={form.password} onChange={update('password')} disabled={loading} />
         <button type="button" className="auth-eye" aria-label={visible ? '隐藏密码' : '显示密码'} aria-pressed={visible} onClick={() => setVisible(!visible)}>{visible ? <EyeOutline /> : <EyeInvisibleOutline />}</button>
       </div>
