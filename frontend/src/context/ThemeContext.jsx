@@ -8,6 +8,7 @@ import {
   THEME_STORAGE_KEY
 } from './useTheme.js'
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { useTheme }
 
 export const ThemeProvider = ({ children }) => {

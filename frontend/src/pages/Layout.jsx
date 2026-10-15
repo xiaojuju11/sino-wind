@@ -1,6 +1,5 @@
 import '../styles/layout.less'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-import { MailOpenOutline } from 'antd-mobile-icons'
 
 // 🏮 公共底部导航（三栏：雅集 / 知音 / 书斋）
 // 全量遵循项目图标铁律：使用用户定制 Iconfont 字体图标，纯矢量渲染，零位图死图片

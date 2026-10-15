@@ -4,6 +4,7 @@ import { LeftOutline, SearchOutline, FileOutline, RightOutline, HeartOutline, Cl
 import { Toast, Modal } from 'antd-mobile'
 import axios from '../http'
 import ThemeToggle from '../context/ThemeToggle'
+import EmptyState from '../components/EmptyState'
 import '../styles/poemCollection.less'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
@@ -165,13 +166,16 @@ export default function PoemCollection() {
       {/* 3. 诗卷瀑布流列表 */}
       <main className='collection-list'>
         {filteredPoems.length === 0 ? (
-          <div className='collection-empty'>
-            <FileOutline className='collection-empty__icon' />
-            <p className='collection-empty__text'>暂无相关诗笺墨迹</p>
-            <button className='collection-empty__btn' onClick={() => navigate('/poem')}>
-              前往古诗词天地探寻名篇
-            </button>
-          </div>
+          <EmptyState
+            seal={searchKey ? '未寻' : '案虚'}
+            title={searchKey ? '未寻得匹配诗笺' : '案头尚虚 · 暂无诗笺'}
+            desc={searchKey ? '换个关键字搜搜，如作者雅号、名句或词牌' : '浮生偷闲，何不移步古诗天地，展卷品读千古名作？'}
+            actionText={searchKey ? '清空搜索词' : '前往展卷品读'}
+            onAction={() => {
+              if (searchKey) setSearchKey('')
+              else navigate('/poem')
+            }}
+          />
         ) : (
           filteredPoems.map(poem => (
             <article

@@ -16,6 +16,7 @@ import {
 } from 'antd-mobile-icons'
 import axios from '../http'
 import ThemeToggle from '../context/ThemeToggle.jsx'
+import EmptyState from '../components/EmptyState'
 import RadarChart from '../components/RadarChart.jsx'
 import TonePattern from '../components/TonePattern.jsx'
 import InkSpreadZone from '../components/InkSpreadZone.jsx'
@@ -437,7 +438,16 @@ export default function PoemPage() {
           <ReferenceCorners />
           {searching && <div className="poem-results__loading">墨迹研开中……</div>}
           {!searching && results.length === 0 && (
-            <div className="poem-results__empty">未寻得相关诗篇，换一关键字再试</div>
+            <EmptyState
+              seal="未寻"
+              title="未寻得相关诗篇"
+              desc="可试搜先贤雅号、词牌或名句（如「苏轼」、「明月」、「将进酒」）"
+              actionText="清空搜索词"
+              onAction={() => {
+                setKeyword('')
+                setResults(null)
+              }}
+            />
           )}
           {!searching &&
             results.map((item) => (

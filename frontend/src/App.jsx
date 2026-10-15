@@ -13,6 +13,7 @@ import LetterList from './pages/LetterList'
 import ScholarChat from './pages/ScholarChat'
 import PoemPage from './pages/PoemPage'
 import PoemCollection from './pages/PoemCollection'
+import NotFoundPage from './pages/NotFoundPage'
 
 export default function App() {
   return (
@@ -35,6 +36,8 @@ export default function App() {
         {/* 古诗词鉴赏大卷轴与书斋诗笺 */}
         <Route path='/poem' element={<PoemPage/>}></Route>
         <Route path='/poem-collection' element={<PoemCollection/>}></Route>
+        {/* 全局 404 迷津问渡路由兜底 */}
+        <Route path='*' element={<NotFoundPage/>}></Route>
       </Routes>
     </BrowserRouter>
   )

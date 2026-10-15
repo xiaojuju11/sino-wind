@@ -1,0 +1,34 @@
+{
+  "name": "云山竹简 · 华风雅集",
+  "short_name": "华风雅集",
+  "description": "国风两宋美学研习平台 · 考据古今器物流变，对席先贤论道，行飞花雅令",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FAF7F0",
+  "theme_color": "#8A2B2B",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "categories": ["education", "books", "culture"],
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

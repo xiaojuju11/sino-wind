@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Toast } from 'antd-mobile'
-import { MessageOutline } from 'antd-mobile-icons'
 import Login from './Login'
 import Register from './Register'
 import ThemeToggle from '../context/ThemeToggle'
@@ -52,10 +51,16 @@ export default function AuthPage() {
         <footer className="auth-footer">
           <p className="auth-divider"><span>第三方账号登录</span></p>
           <div className="auth-social">
-            {['微信', 'QQ', 'Apple'].map((name) =>
+            {[
+              { name: '微信', icon: 'icon-weixin' },
+              { name: 'QQ', icon: 'icon-QQ' },
+              { name: 'Apple', icon: 'icon-mac' }
+            ].map(({ name, icon }) => (
               <button type="button" key={name} aria-label={name + '登录（暂未开放）'} onClick={() => unavailable(name + '登录')}>
-                <MessageOutline aria-hidden="true" /><span>{name}</span>
-              </button>)}
+                <i className={`iconfont ${icon}`} aria-hidden="true" />
+                <span>{name}</span>
+              </button>
+            ))}
           </div>
           <div className="auth-consent">
             <label><input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} aria-label="同意用户协议与隐私政策" /><span>我已阅读并同意</span></label>

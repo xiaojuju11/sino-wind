@@ -23,13 +23,6 @@ const InkSpreadZone = forwardRef(function InkSpreadZone(
   const dropsRef = useRef([])
   const animIdRef = useRef(null)
 
-  // 暴露给父组件的主动触发方法（例如点击印章时在指定位置炸开朱砂印泥）
-  useImperativeHandle(ref, () => ({
-    triggerBleed: (x, y, customColor = color, intensity = 1) => {
-      addInkBlot(x, y, customColor, intensity)
-    },
-  }))
-
   // 墨水扩散粒子实体
   function addInkBlot(cx, cy, blotColor, intensity = 1) {
     const isCinnabar = blotColor === 'cinnabar' || blotColor === 'seal'
@@ -81,6 +74,13 @@ const InkSpreadZone = forwardRef(function InkSpreadZone(
       })
     }
   }
+
+  // 暴露给父组件的主动触发方法（例如点击印章时在指定位置炸开朱砂印泥）
+  useImperativeHandle(ref, () => ({
+    triggerBleed: (x, y, customColor = color, intensity = 1) => {
+      addInkBlot(x, y, customColor, intensity)
+    },
+  }))
 
   useEffect(() => {
     const canvas = canvasRef.current
