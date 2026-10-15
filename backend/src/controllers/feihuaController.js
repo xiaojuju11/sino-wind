@@ -10,6 +10,35 @@ function allowStart(ip) {
   if (!entry || now - entry.time > 60000) { limits.set(ip, { time: now, count: 1 }); return true }
   return ++entry.count <= 10
 }
+// 该用户此前各局用过的句子（用于跨局去重）。
+// 任务书要求「严禁双方重复报同一句诗」；引擎只在单局内去重，故开局时把历史注入。
+// 取最近 20 局、上限 800 条，兼顾效果与 state（JSON 列）体积。
+// 注：仅对【登录用户】生效 —— 访客的 guestKey 是开局后才生成的，无法在开局时回查历史；
+//     访客仍受单局去重保护。
+const normLine = (s) => (typeof s === 'string' ? s.normalize('NFKC').replace(/[\s，。！？、；：,.!?;:“”‘’「」『』]/gu, '') : '')
+async function loadPlayedLines(userId) {
+  if (!userId) return []
+  try {
+    const [rows] = await db.execute(
+      'SELECT state FROM feihua_games WHERE user_id=? ORDER BY created_at DESC LIMIT 20',
+      [userId],
+    )
+    const lines = new Set()
+    for (const row of rows) {
+      const st = typeof row.state === 'string' ? JSON.parse(row.state) : row.state
+      for (const t of st?.turns || []) {
+        if (t?.role === 'user' && typeof t.line === 'string') lines.add(normLine(t.line))
+        if (lines.size >= 800) break
+      }
+      if (lines.size >= 800) break
+    }
+    return [...lines]
+  } catch {
+    // 历史读取失败不应阻断开局
+    return []
+  }
+}
+
 async function start(ctx) {
   if (!allowStart(ctx.ip)) { ctx.status = 429; ctx.body = { code: 0, message: '开局过于频繁，请稍候' }; return }
   let state
@@ -20,7 +49,8 @@ async function start(ctx) {
       if (!user) { ctx.status = 401; ctx.body = { code: 0, message: '请重新入席' }; return }
       nickname = user.nickname
     }
-    state = engine.createGame({ ...ctx.request.body, nickname }, Date.now())
+    const playedLines = await loadPlayedLines(ctx.userId)
+    state = engine.createGame({ ...ctx.request.body, nickname, playedLines }, Date.now())
   } catch (e) { ctx.status = 400; ctx.body = { code: 0, message: e.message }; return }
   const id = randomUUID(), guestKey = ctx.userId ? null : randomBytes(32).toString('hex')
   try {
