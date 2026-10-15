@@ -12,6 +12,8 @@ import '../styles/referencePolish.less'
 
 const BASE = import.meta.env.BASE_URL
 
+// 现代天气日轮图标
+function SunWheelGlyph() { return <CompassOutline aria-hidden="true" /> }
 
 // ════════════════════════════════════════════════════
 //  传统时辰换算（TRD v3.0：动态算法换算十二时辰）
