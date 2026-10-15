@@ -2027,3 +2027,129 @@
     box-shadow: inset 0 1px 1px 0 rgba(232, 208, 176, 0.18);
   }
 }
+
+// ── 地理位置（2026-10-15 新增）：定位来源小字，附在城市名后不占新行 ──
+.home-almanac__loc {
+  flex: none;
+  margin-left: 0.06rem;
+  font-size: 0.18rem;
+  font-style: normal;
+  color: var(--gf-ink-light);
+  opacity: 0.8;
+}
+
+// ── 城邑搜索抽屉 ──
+.home-citysheet {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0.3rem 0.32rem 0.24rem;
+  background: var(--gf-bg-paper);
+  color: var(--gf-ink-primary, #2b2b2b);
+}
+
+.home-citysheet__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.2rem;
+
+  strong {
+    font-size: 0.34rem;
+    letter-spacing: 0.04em;
+  }
+
+  button {
+    padding: 0.06rem 0.18rem;
+    font-size: 0.22rem;
+    color: var(--gf-ink-secondary);
+    background: transparent;
+    border: 1px solid color-mix(in srgb, var(--gf-border-card, #d8c9a8) 90%, transparent);
+    border-radius: 999px;
+  }
+}
+
+.home-citysheet__search {
+  display: flex;
+  align-items: center;
+  gap: 0.12rem;
+  padding: 0.14rem 0.2rem;
+  margin-bottom: 0.18rem;
+  background: var(--gf-gold-light, #FAF4E5);
+  border: 1px solid color-mix(in srgb, var(--gf-gold, #cea559) 45%, transparent);
+  border-radius: 0.24rem;
+
+  svg {
+    flex: 0 0 auto;
+    font-size: 0.28rem;
+    color: var(--gf-ink-secondary);
+  }
+
+  input {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 0.26rem;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    outline: none;
+
+    &::placeholder {
+      color: var(--gf-ink-secondary);
+      opacity: 0.6;
+    }
+  }
+}
+
+.home-citysheet__list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.home-citysheet__empty {
+  padding: 0.6rem 0;
+  font-size: 0.24rem;
+  text-align: center;
+  color: var(--gf-ink-secondary);
+}
+
+.home-citysheet__item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.16rem;
+  width: 100%;
+  padding: 0.2rem 0.12rem;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dashed color-mix(in srgb, var(--gf-border-card, #d8c9a8) 80%, transparent);
+
+  &.is-current {
+    background: color-mix(in srgb, var(--gf-gold-light, #FAF4E5) 80%, transparent);
+  }
+}
+
+.home-citysheet__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.28rem;
+  overflow-wrap: anywhere;
+}
+
+.home-citysheet__prov {
+  flex: 0 0 auto;
+  font-size: 0.2rem;
+  color: var(--gf-ink-secondary);
+}
+
+.home-citysheet__foot {
+  flex: 0 0 auto;
+  margin: 0.18rem 0 0;
+  font-size: 0.18rem;
+  text-align: center;
+  color: var(--gf-ink-secondary);
+  opacity: 0.72;
+}

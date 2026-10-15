@@ -1,8 +1,8 @@
 import ReferenceCorners from '../components/ReferenceCorners'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import '../styles/home.less'
-import { Toast, ActionSheet } from 'antd-mobile'
-import { DownOutline, RightOutline, UpOutline, CompassOutline, EditSOutline, CheckCircleOutline, DownCircleOutline, StarOutline, ShopbagOutline, FileOutline } from 'antd-mobile-icons'
+import { Toast, Popup } from 'antd-mobile'
+import { DownOutline, RightOutline, UpOutline, CompassOutline, EditSOutline, CheckCircleOutline, DownCircleOutline, StarOutline, ShopbagOutline, FileOutline, SearchOutline } from 'antd-mobile-icons'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../context/useTheme'
 import InkParticleField from '../components/InkParticleField.jsx'
@@ -10,6 +10,8 @@ import InkSpreadZone from '../components/InkSpreadZone.jsx'
 import axios from '../http'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
+import { CITIES, searchCities } from '../utils/geoCities.js'
+import { currentTerm, seasonLine, fetchWeather, locate } from '../utils/almanac.js'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -79,7 +81,10 @@ const YAYAN_PRESET = {
 }
 
 // 漫游古今经典城邑库
-const ANCIENT_CITIES = [
+// 2026-10-15：位置数据由写死的 6 城改为全国城邑库（utils/geoCities.js，339 城含经纬度
+// 与有据可考的古称），并按浏览器/IP 定位自动选中所在城邑。原 6 城保留为精品覆盖
+// （它们带专属诗句与物候），其余城邑按季节取句、按节气取物候。
+const CLASSIC_CITIES = [
   { name: '杭州', ancient: '临安', temp: '24°', weather: '晴和', desc: '天朗气清，惠风和畅。', wuhou: '菊有黄华', text: '临安（杭州）· 水光潋滟晴方好' },
   { name: '开封', ancient: '汴京', temp: '19°', weather: '微风', desc: '烟柳画桥，风帘翠幕，参差十万人家。', wuhou: '草木黄落', text: '汴京（开封）· 烟柳画桥风帘幕' },
   { name: '西安', ancient: '长安', temp: '18°', weather: '清爽', desc: '春风得意马蹄疾，一日看尽长安花。', wuhou: '鸿雁来宾', text: '长安（西安）· 春风得意马蹄疾' },
@@ -87,6 +92,21 @@ const ANCIENT_CITIES = [
   { name: '苏州', ancient: '姑苏', temp: '21°', weather: '薄雾', desc: '月落乌啼霜满天，江枫渔火对愁眠。', wuhou: '寒蝉鸣止', text: '姑苏（苏州）· 江枫渔火对愁眠' },
   { name: '南京', ancient: '金陵', temp: '23°', weather: '和煦', desc: '江南佳丽地，金陵帝王州。', wuhou: '水始涸', text: '金陵（南京）· 江南佳丽帝王州' },
 ]
+
+// 城邑 → 展示字段：原 6 城用其专属内容，其余城按季节取句（保持「古称（今名）· 诗句」格式）
+function cityView(city) {
+  const classic = CLASSIC_CITIES.find((c) => c.name === city.name)
+  const line = seasonLine(new Date(), city.name)
+  const label = city.ancient ? `${city.ancient}（${city.name}）` : city.name
+  if (classic) return { ...classic }
+  return {
+    name: city.name,
+    ancient: city.ancient || '',
+    desc: `${line.line}——${line.author}《${line.title}》`,
+    wuhou: currentTerm().hou,
+    text: `${label} · ${line.line}`,
+  }
+}
 
 export default function Home() {
   const navigate = useNavigate()
@@ -115,11 +135,56 @@ export default function Home() {
   const [yayanOffline, setYayanOffline] = useState(false)
 
   // ② 时令天象（动态换算与漫游古今城邑）
-  const [currentCity, setCurrentCity] = useState(ANCIENT_CITIES[0])
+  // currentCity 初值「临安（杭州）」，随后由定位结果替换
+  const [currentCity, setCurrentCity] = useState(() => cityView({ name: '杭州', ancient: '临安', lat: 30.2741, lng: 120.1551 }))
+  const [cityCoords, setCityCoords] = useState({ lat: 30.2741, lng: 120.1551 })
   const [visibleCitySheet, setVisibleCitySheet] = useState(false)
+  const [cityQuery, setCityQuery] = useState('')
+  const [locatedBy, setLocatedBy] = useState('')   // '' | 'gps' | 'ip' | 'default' | 'manual'
+  const [weather, setWeather] = useState(null)      // 真实气温，null = 取数中/失败
   const curShichen = getTraditionalTime()
   const ganzhi = getGanzhi()
   const dateText = getDateText()
+
+  // 定位：GPS → IP 归属 → 默认北京（失败不阻断页面）
+  useEffect(() => {
+    const ac = new AbortController()
+    let alive = true
+    locate(ac.signal).then(({ city, source }) => {
+      if (!alive) return
+      setCurrentCity(cityView(city))
+      setCityCoords({ lat: city.lat, lng: city.lng })
+      setLocatedBy(source)
+    }).catch(() => {})
+    return () => { alive = false; ac.abort() }
+  }, [])
+
+  // 真实气温：随选中城邑的经纬度取数
+  useEffect(() => {
+    const ac = new AbortController()
+    let alive = true
+    setWeather(null)
+    fetchWeather(cityCoords.lat, cityCoords.lng, ac.signal).then((w) => { if (alive) setWeather(w) })
+    return () => { alive = false; ac.abort() }
+  }, [cityCoords])
+
+  // 城邑搜索（今名与古称都能搜到）
+  const cityOptions = useMemo(() => searchCities(cityQuery).slice(0, 80), [cityQuery])
+
+  // 选中城邑：更新展示 + 切到该城经纬度（触发真实气温重取）
+  const pickCity = (city) => {
+    setCurrentCity(cityView(city))
+    setCityCoords({ lat: city.lat, lng: city.lng })
+    setLocatedBy('manual')
+    setVisibleCitySheet(false)
+    setCityQuery('')
+    Toast.show({ content: `已漫游至${city.ancient ? `${city.ancient}（${city.name}）` : city.name}` })
+  }
+
+  // 气温/天气显示：真实数据优先，取数中或失败回落到城邑内置值（原 6 城有值）
+  const wx = weather
+    ? { temp: weather.tempText, weather: weather.weather }
+    : { temp: currentCity.temp || '—', weather: currentCity.weather || '' }
 
   // 白话雅译请求（接口与字段保持不变）
   const handleTranslate = async (textToTranslate) => {
@@ -324,7 +389,8 @@ export default function Home() {
               <span className="home-almanac__sun" aria-hidden="true">
                 <SunWheelGlyph />
               </span>
-              <span className="home-almanac__temp">{currentCity.temp}</span>
+              {/* 真实气温（Open-Meteo，按选中城邑经纬度取数） */}
+              <span className="home-almanac__temp">{wx.temp}</span>
             </div>
             <p
               className="home-almanac__city"
@@ -333,7 +399,10 @@ export default function Home() {
               role="button"
               tabIndex={0}
             >
-              {currentCity.ancient}（{currentCity.name}）
+              {currentCity.ancient ? `${currentCity.ancient}（${currentCity.name}）` : currentCity.name}
+              {/* 定位来源以极小字附在城市名后，不新占一行（保持左右两栏对称） */}
+              {locatedBy === 'gps' && <em className="home-almanac__loc">已定位</em>}
+              {locatedBy === 'ip' && <em className="home-almanac__loc">网络定位</em>}
               <DownOutline className="home-almanac__caret" />
             </p>
             <p className="home-almanac__date">{dateText}</p>
@@ -430,25 +499,46 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 漫游古今城邑抽屉 ── */}
-      <ActionSheet
+      {/* ── 漫游古今城邑抽屉（全国城邑，可搜今名或古称）── */}
+      <Popup
         visible={visibleCitySheet}
-        actions={ANCIENT_CITIES.map((c) => ({
-          text: c.text,
-          key: c.ancient,
-          description: `物候：${c.wuhou} · 气温 ${c.temp}`
-        }))}
-        onClose={() => setVisibleCitySheet(false)}
-        onAction={(action) => {
-          const matched = ANCIENT_CITIES.find((c) => c.ancient === action.key)
-          if (matched) {
-            setCurrentCity(matched)
-            Toast.show({ content: `已漫游至${matched.ancient}：${matched.desc}` })
-          }
-          setVisibleCitySheet(false)
-        }}
-        cancelText="留驻当下"
-      />
+        onMaskClick={() => setVisibleCitySheet(false)}
+        onClose={() => { setVisibleCitySheet(false); setCityQuery('') }}
+        bodyStyle={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px', maxHeight: '72vh', display: 'flex', flexDirection: 'column' }}
+      >
+        <div className="home-citysheet">
+          <div className="home-citysheet__head">
+            <strong>漫游古今城邑</strong>
+            <button type="button" onClick={() => { setVisibleCitySheet(false); setCityQuery('') }} aria-label="收起">收起</button>
+          </div>
+          <label className="home-citysheet__search">
+            <SearchOutline aria-hidden="true" />
+            <input
+              value={cityQuery}
+              onChange={(e) => setCityQuery(e.target.value)}
+              placeholder="输入今名或古称，如「成都」「锦官城」"
+              autoComplete="off"
+            />
+          </label>
+          <div className="home-citysheet__list">
+            {cityOptions.length === 0 && <p className="home-citysheet__empty">未寻得此城，换个名字试试</p>}
+            {cityOptions.map((c) => (
+              <button
+                key={`${c.province}-${c.name}`}
+                type="button"
+                className={`home-citysheet__item${c.name === currentCity.name ? ' is-current' : ''}`}
+                onClick={() => pickCity(c)}
+              >
+                <span className="home-citysheet__name">
+                  {c.ancient ? `${c.ancient}（${c.name}）` : c.name}
+                </span>
+                <span className="home-citysheet__prov">{c.province}</span>
+              </button>
+            ))}
+          </div>
+          <p className="home-citysheet__foot">共收录 {CITIES.length} 城 · 古称仅列有史料可考者</p>
+        </div>
+      </Popup>
     </div>
   )
 }
