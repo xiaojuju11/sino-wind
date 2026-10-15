@@ -1,3 +1,4 @@
+import { useScholarScope } from '../utils/useScholarScope'
 import ReferenceCorners from '../components/ReferenceCorners'
 import React, { useState, useEffect } from 'react'
 import '../styles/letterList.less'
@@ -68,7 +69,7 @@ const PRESET_CONVERSATIONS = [
   }
 ]
 
-export default function LetterList() {
+function LetterListSession() {
   const navigate = useNavigate()
   const [conversations, setConversations] = useState(() => {
     try {
@@ -90,7 +91,8 @@ export default function LetterList() {
     window.addEventListener('focus', refresh); window.addEventListener('storage', local); window.addEventListener('scholarLettersUpdated', local)
     return () => { current = false; clearTimeout(timer); window.removeEventListener('focus', refresh); window.removeEventListener('storage', local); window.removeEventListener('scholarLettersUpdated', local) }
   }, [])
-  const displayed = conversations.map(item => {
+  const historical = letters.filter(row => !conversations.some(item => item.id === row.sageId) && (row.rounds > 0 || row.lastMsg)).map(row => ({ id: row.sageId, name: '自定知音', title: row.sageId, dynasty: '旧', avatar: `${BASE}assets/guancang/sage_wangyangming.png` }))
+  const displayed = [...conversations, ...historical].map(item => {
     const row = letters.find(l => l.sageId === item.id)
     return { ...item, lastMsg: row?.reply?.unread ? `知音回柬：${row.reply.text}` : row?.lastMsg || '尚未对席，展卷与先贤初叙', time: shichen(row?.reply?.unread ? row.reply.at : row?.at), unread: row?.reply?.unread ? 1 : 0, at: Math.max(row?.at || 0, row?.reply?.at || 0) }
   }).filter(item => `${item.name} ${item.title} ${item.lastMsg}`.includes(searchText.trim())).sort((a, b) => b.at - a.at)
@@ -168,6 +170,7 @@ export default function LetterList() {
       <section className="letter-list-section">
         <ReferenceCorners />
         {notice && <p role='status'>{notice}</p>}
+        <button type='button' onClick={() => loadLetters().then(rows => { setLetters(rows); setNotice('信札已刷新') }).catch(() => setNotice('云端暂未开卷，本机原稿保留'))}>刷新真实信札</button>
         <div className="letter-list-header">
           <span className="letter-list-title">尺素往来（{conversations.length} 席）</span>
           <span className="letter-list-tip">点击展开长谈</span>
@@ -218,4 +221,9 @@ export default function LetterList() {
       />
     </div>
   )
+}
+
+export default function LetterList() {
+  const scope = useScholarScope()
+  return <LetterListSession key={scope} />
 }
