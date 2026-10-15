@@ -2027,3 +2027,474 @@
     box-shadow: inset 0 1px 1px 0 rgba(232, 208, 176, 0.18);
   }
 }
+
+// ── 地理位置（2026-10-15 新增）：定位来源小字，附在城市名后不占新行 ──
+.home-almanac__loc {
+  flex: none;
+  margin-left: 0.06rem;
+  font-size: 0.18rem;
+  font-style: normal;
+  color: var(--gf-ink-light);
+  opacity: 0.8;
+}
+
+// ── 城邑搜索抽屉 ──
+.home-citysheet {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0.3rem 0.32rem 0.24rem;
+  background: var(--gf-bg-paper);
+  color: var(--gf-ink-primary, #2b2b2b);
+}
+
+.home-citysheet__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.2rem;
+
+  strong {
+    font-size: 0.34rem;
+    letter-spacing: 0.04em;
+  }
+
+  button {
+    padding: 0.06rem 0.18rem;
+    font-size: 0.22rem;
+    color: var(--gf-ink-secondary);
+    background: transparent;
+    border: 1px solid color-mix(in srgb, var(--gf-border-card, #d8c9a8) 90%, transparent);
+    border-radius: 999px;
+  }
+}
+
+.home-citysheet__search {
+  display: flex;
+  align-items: center;
+  gap: 0.12rem;
+  padding: 0.14rem 0.2rem;
+  margin-bottom: 0.18rem;
+  background: var(--gf-gold-light, #FAF4E5);
+  border: 1px solid color-mix(in srgb, var(--gf-gold, #cea559) 45%, transparent);
+  border-radius: 0.24rem;
+
+  svg {
+    flex: 0 0 auto;
+    font-size: 0.28rem;
+    color: var(--gf-ink-secondary);
+  }
+
+  input {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 0.26rem;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    outline: none;
+
+    &::placeholder {
+      color: var(--gf-ink-secondary);
+      opacity: 0.6;
+    }
+  }
+}
+
+.home-citysheet__list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.home-citysheet__empty {
+  padding: 0.6rem 0;
+  font-size: 0.24rem;
+  text-align: center;
+  color: var(--gf-ink-secondary);
+}
+
+.home-citysheet__item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.16rem;
+  width: 100%;
+  padding: 0.2rem 0.12rem;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dashed color-mix(in srgb, var(--gf-border-card, #d8c9a8) 80%, transparent);
+
+  &.is-current {
+    background: color-mix(in srgb, var(--gf-gold-light, #FAF4E5) 80%, transparent);
+  }
+}
+
+.home-citysheet__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.28rem;
+  overflow-wrap: anywhere;
+}
+
+.home-citysheet__prov {
+  flex: 0 0 auto;
+  font-size: 0.2rem;
+  color: var(--gf-ink-secondary);
+}
+
+.home-citysheet__foot {
+  flex: 0 0 auto;
+  margin: 0.18rem 0 0;
+  font-size: 0.18rem;
+  text-align: center;
+  color: var(--gf-ink-secondary);
+  opacity: 0.72;
+}
+
+// ════════════════════════════════════════════════════
+//  《九州地名志 · 城邑春秋》
+// ════════════════════════════════════════════════════
+.home-chronicle {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0.3rem 0.32rem 0.24rem;
+  background: var(--gf-bg-paper);
+  color: var(--gf-ink-primary);
+}
+
+.home-chronicle__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.2rem;
+
+  strong {
+    font-size: 0.32rem;
+    letter-spacing: 0.03em;
+  }
+
+  button {
+    padding: 0.06rem 0.18rem;
+    font-size: 0.22rem;
+    color: var(--gf-ink-secondary);
+    background: transparent;
+    border: 1px solid color-mix(in srgb, var(--gf-border-card, #d8c9a8) 90%, transparent);
+    border-radius: 999px;
+  }
+}
+
+.home-chronicle__search {
+  display: flex;
+  align-items: center;
+  gap: 0.12rem;
+  flex: 0 0 auto;
+  padding: 0.14rem 0.2rem;
+  margin-bottom: 0.18rem;
+  background: var(--gf-gold-light, #FAF4E5);
+  border: 1px solid color-mix(in srgb, var(--gf-gold, #cea559) 45%, transparent);
+  border-radius: 0.24rem;
+
+  svg {
+    flex: 0 0 auto;
+    font-size: 0.28rem;
+    color: var(--gf-ink-secondary);
+  }
+
+  input {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 0.26rem;
+    color: inherit;
+    background: transparent;
+    border: 0;
+    outline: none;
+
+    &::placeholder {
+      color: var(--gf-ink-secondary);
+      opacity: 0.6;
+    }
+  }
+}
+
+.home-chronicle__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.home-chronicle__hint {
+  padding: 0.5rem 0;
+  font-size: 0.24rem;
+  text-align: center;
+  color: var(--gf-ink-secondary);
+  opacity: 0.8;
+}
+
+.home-chronicle__title {
+  margin: 0 0 0.16rem;
+  font-size: 0.34rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+
+  &-sub {
+    margin-left: 0.12rem;
+    font-size: 0.2rem;
+    font-style: normal;
+    font-weight: 400;
+    color: var(--gf-ink-secondary);
+    opacity: 0.8;
+  }
+}
+
+// 朝代演进轴：竖线 + 节点
+.home-chronicle__axis {
+  margin: 0;
+  padding: 0 0 0 0.06rem;
+  list-style: none;
+}
+
+.home-chronicle__node {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.1rem;
+  padding: 0 0 0.34rem 0.3rem;
+  font-size: 0.26rem;
+  line-height: 1.6;
+
+  // 竖线（末节点不画）
+  &.home-chronicle__node::before {
+    content: '';
+    position: absolute;
+    left: 0.05rem;
+    top: 0.14rem;
+    bottom: 0;
+    width: 1px;
+    background: color-mix(in srgb, var(--gf-gold) 55%, transparent);
+  }
+
+  // 节点圆点
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.08rem;
+    width: 0.11rem;
+    height: 0.11rem;
+    border-radius: 50%;
+    background: var(--gf-cinnabar);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--gf-gold) 60%, transparent);
+  }
+
+  &:last-child::before {
+    display: none;
+  }
+}
+
+.home-chronicle__era {
+  flex: 0 0 auto;
+  min-width: 1.1rem;
+  font-size: 0.22rem;
+  color: var(--gf-ink-secondary);
+}
+
+.home-chronicle__place {
+  flex: 0 0 auto;
+  font-size: 0.3rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--gf-cinnabar);
+}
+
+.home-chronicle__note {
+  flex: 1 1 60%;
+  min-width: 0;
+  font-size: 0.24rem;
+  color: var(--gf-ink-primary);
+  overflow-wrap: anywhere;
+}
+
+// 未收录城邑：典雅提示 + 推荐
+.home-chronicle__void {
+  padding: 0.2rem 0 0;
+  text-align: center;
+}
+
+.home-chronicle__void-tip {
+  margin: 0 0 0.24rem;
+  font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+  font-size: 0.32rem;
+  line-height: 1.7;
+  color: var(--gf-cinnabar);
+}
+
+.home-chronicle__void-sub {
+  margin: 0 0 0.16rem;
+  font-size: 0.24rem;
+  color: var(--gf-ink-secondary);
+}
+
+.home-chronicle__reco {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.14rem;
+
+  button {
+    padding: 0.08rem 0.24rem;
+    font-size: 0.26rem;
+    color: var(--gf-ink-primary);
+    background: var(--gf-gold-light, #FAF4E5);
+    border: 1px solid color-mix(in srgb, var(--gf-gold) 55%, transparent);
+    border-radius: 999px;
+  }
+}
+
+.home-chronicle__commit {
+  flex: 0 0 auto;
+  width: 100%;
+  margin-top: 0.22rem;
+  padding: 0.22rem 0;
+  font-family: inherit;
+  font-size: 0.3rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #FBF8F1;
+  background: var(--gf-cinnabar);
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 60%, transparent);
+  border-radius: 0.2rem;
+
+  &:disabled {
+    opacity: 0.45;
+  }
+}
+
+// ════════════════════════════════════════════════════
+//  《十二时辰养生与雅事》
+// ════════════════════════════════════════════════════
+.home-shichen {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0.3rem 0 0.24rem;
+  background: var(--gf-bg-paper);
+  color: var(--gf-ink-primary);
+}
+
+.home-shichen__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.32rem;
+  margin-bottom: 0.16rem;
+
+  strong {
+    font-size: 0.32rem;
+    letter-spacing: 0.03em;
+  }
+
+  button {
+    padding: 0.06rem 0.18rem;
+    font-size: 0.22rem;
+    color: var(--gf-ink-secondary);
+    background: transparent;
+    border: 1px solid color-mix(in srgb, var(--gf-border-card, #d8c9a8) 90%, transparent);
+    border-radius: 999px;
+  }
+}
+
+.home-shichen__now {
+  padding: 0 0.32rem;
+  margin: 0 0 0.2rem;
+  font-size: 0.26rem;
+  color: var(--gf-ink-secondary);
+
+  b {
+    font-size: 0.3rem;
+    color: var(--gf-cinnabar);
+  }
+
+  em {
+    margin-left: 0.1rem;
+    font-size: 0.22rem;
+    font-style: normal;
+    opacity: 0.8;
+  }
+}
+
+// 横向滑动条：一屏可见约两张卡
+.home-shichen__strip {
+  display: flex;
+  gap: 0.18rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  padding: 0.06rem 0.32rem 0.2rem;
+}
+
+.home-shichen__card {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.06rem;
+  width: 3.2rem;
+  padding: 0.24rem 0.22rem;
+  scroll-snap-align: start;
+  background: color-mix(in srgb, var(--gf-bg-card) 92%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gf-border-card, #d8c9a8) 90%, transparent);
+  border-radius: 0.2rem;
+
+  &.is-now {
+    border-color: color-mix(in srgb, var(--gf-cinnabar) 60%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--gf-gold) 45%, transparent);
+  }
+}
+
+.home-shichen__alias {
+  font-size: 0.3rem;
+  font-weight: 600;
+  color: var(--gf-cinnabar);
+  letter-spacing: 0.06em;
+}
+
+.home-shichen__name {
+  font-size: 0.24rem;
+  color: var(--gf-ink-primary);
+}
+
+.home-shichen__range {
+  font-size: 0.2rem;
+  color: var(--gf-ink-secondary);
+  opacity: 0.85;
+}
+
+.home-shichen__life {
+  margin-top: 0.06rem;
+  font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+  font-size: 0.26rem;
+  line-height: 1.6;
+  color: var(--gf-ink-primary);
+}
+
+.home-shichen__health,
+.home-shichen__affair {
+  font-size: 0.22rem;
+  line-height: 1.6;
+  color: var(--gf-ink-secondary);
+  overflow-wrap: anywhere;
+}
+
+.home-shichen__foot {
+  padding: 0 0.32rem;
+  margin: 0;
+  font-size: 0.18rem;
+  text-align: center;
+  color: var(--gf-ink-secondary);
+  opacity: 0.72;
+}

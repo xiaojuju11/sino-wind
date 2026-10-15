@@ -23,8 +23,11 @@ export const TOP_ANCIENT_CITIES = [
   { name: '九江', ancient: '浔阳', province: '江西', temp: '20°', weather: '薄岚', desc: '浔阳江头夜送客，枫叶荻花秋瑟瑟。', wuhou: '荻花枫冷', text: '浔阳（九江）· 匡庐烟雨入浔阳' },
 ]
 
-// 2. 全国主要城市古称精细映射库（百余城覆盖，自动去行政化）
-const CITY_DICT = {
+// 2. 全国主要城市古称精细映射库（65 城，逐城精编诗句与物候雅称，自动去行政化）
+// 2026-10-15 合并说明：本表与 geoCities.js（361 城坐标/古称）、almanac.js（真实气温、
+// 节气物候）协同 —— 本表的 desc 与 wuhou（如绍兴「兰渚流觞」）作为【精品覆盖】优先呈现；
+// 未收录的城邑回落到按季节取句、按节气取物候。故导出供 Home.jsx 整合使用。
+export const CITY_DICT = {
   // 华东
   '杭州': { ancient: '临安', desc: '水光潋滟晴方好，山色空蒙雨亦奇。', wuhou: '菊有黄华' },
   '宁波': { ancient: '明州', desc: '海外杂货，海舶之利，云集明州。', wuhou: '秋海澄明' },
