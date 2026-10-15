@@ -143,7 +143,7 @@ export default function Home() {
   const [visibleCitySheet, setVisibleCitySheet] = useState(false)
   const [cityQuery, setCityQuery] = useState('')
   const [locatedBy, setLocatedBy] = useState('')   // '' | 'gps' | 'ip' | 'default' | 'manual'
-  const [weather, setWeather] = useState(null)      // 真实气温，null = 取数中/失败
+  const [weather, setWeather] = useState(undefined)   // 真实气温：undefined=取数中，对象=成功，null=失败
 
   // ②-1 《九州地名志 · 城邑春秋》弹窗：搜城邑 → 看朝代演进轴 → 一键留驻此时空
   const [chronicleOpen, setChronicleOpen] = useState(false)
@@ -179,10 +179,11 @@ export default function Home() {
   // 定位已合并到下方单一 effect（autoDetectUserCity 优先 → locate() 兜底）
 
   // 真实气温：随选中城邑的经纬度取数
+  // 三态：undefined=取数中（显示「…」）｜对象=成功｜null=失败（显示「—」）
   useEffect(() => {
     const ac = new AbortController()
     let alive = true
-    setWeather(null)
+    setWeather(undefined)
     fetchWeather(cityCoords.lat, cityCoords.lng, ac.signal).then((w) => { if (alive) setWeather(w) })
     return () => { alive = false; ac.abort() }
   }, [cityCoords])
@@ -200,10 +201,15 @@ export default function Home() {
     Toast.show({ content: `已漫游至${city.ancient ? `${city.ancient}（${city.name}）` : city.name}` })
   }
 
-  // 气温/天气显示：真实数据优先，取数中或失败回落到城邑内置值（原 6 城有值）
-  const wx = weather
-    ? { temp: weather.tempText, weather: weather.weather }
-    : { temp: currentCity.temp || '—', weather: currentCity.weather || '' }
+  // 气温/天气显示
+  // ⚠️ 取数中或失败时**不回落到城邑内置的写死值**（如 '18°'）——
+  // 那是字符串常量而非实时气温，展示出来等于报假数据（用户会误以为是当前气温）。
+  // 三态：weather === undefined → 取数中（「…」）；为对象 → 真实气温；为 null → 失败（「—」）
+  const wx = weather === undefined
+    ? { temp: '…', weather: '' }
+    : weather
+      ? { temp: weather.tempText, weather: weather.weather }
+      : { temp: '—', weather: '' }
 
   // ──《九州地名志 · 城邑春秋》──
   // 当前检索到的演进轴（未收录则为 null，走典雅提示分支）

@@ -73,7 +73,8 @@ let selfFixed = 0
 for (const k of Object.keys(merged)) {
   if (CITY_KEYS.has(k) && k !== '咸阳') { delete merged[k]; selfFixed++ }
 }
-merged['咸阳'] = '西安'   // 唯一的例外：秦咸阳与汉长安同处一地，属合理映射
+merged['咸阳'] = '西安'
+Object.assign(merged, COURTESY_ALIAS)   // 唯一的例外：秦咸阳与汉长安同处一地，属合理映射
 console.log('  已移除自指别名（键本身是城名）:', selfFixed)
 
 const keys = Object.keys(merged).sort((a, b) => a.localeCompare(b, 'zh'))
@@ -114,3 +115,19 @@ const PROVINCE_CAPITAL = {
 const missing = Object.entries(PROVINCE_CAPITAL).filter(([, cap]) => !CH[cap])
 if (missing.length) console.log('  ⚠️ 省名映射目标缺失:', missing.map(([p, c]) => p + '→' + c).join(' '))
 else console.log('  ✅ 省名映射目标齐全:', Object.keys(PROVINCE_CAPITAL).length, '条')
+
+// ── 补充：CITY_DICT 里的别称（非沿革轴地名，无法自动提取，须显式维护）──
+// 这些是各城最通行的雅称（江城→武汉、羊城→广州…），用户很可能直接输入，
+// 但它们不出现在沿革轴的城名里，故自动提取覆盖不到。
+const COURTESY_ALIAS = {
+  东瓯: '温州', 禾城: '嘉兴', 柯城: '衢州', 梁溪: '无锡', 闽都: '福州',
+  鹭岛: '厦门', 昌南: '景德镇', 历下: '济南', 琴岛: '青岛', 江城: '武汉',
+  襄樊: '襄阳', 巴陵: '岳阳', 羊城: '广州', 鹏城: '深圳', 巴渝: '重庆',
+  筑城: '贵阳', 妙香国: '大理白族自治州', 秦川: '咸阳', 梁州: '汉中',
+  青唐: '西宁', 沽上: '天津', 常山: '石家庄', 清苑: '保定', 三山浦: '大连',
+  冰城: '哈尔滨', 青城: '呼和浩特',
+}
+// 校验目标存在
+const _miss = Object.entries(COURTESY_ALIAS).filter(([, v]) => !CH[v])
+if (_miss.length) console.log('  ⚠️ 别称映射目标缺失:', _miss.map((x) => x[0] + '→' + x[1]).join(' '))
+else console.log('  ✅ 别称映射目标齐全:', Object.keys(COURTESY_ALIAS).length, '条')
