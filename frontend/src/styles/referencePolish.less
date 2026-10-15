@@ -111,8 +111,15 @@
 .reference-polish.scholar-chat-root {
   height: 100dvh;
   .scholar-nav { background: transparent; box-shadow: none; border: 0; padding: .25rem .3rem .14rem; }.scholar-nav__name { font-size: .4rem; }.scholar-nav__back,.scholar-nav__action { border: 1px solid color-mix(in srgb,var(--ref-gold) 35%,transparent); border-radius: 50%; .reference-paper(); width: .64rem; height: .64rem; }.scholar-nav__status { font-size: .23rem; }
-  .scholar-hero-banner { background: transparent; border: 0; padding: .05rem .35rem; min-height: 5.6rem; }.scholar-hero-banner__content { min-height: 5.6rem; display: block; }.scholar-hero-banner__portrait-box { position: absolute; left: .35rem; top: 0; width: 3.2rem; height: 4.5rem; margin: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }.scholar-hero-banner__portrait { object-fit: contain; }.scholar-hero-banner__info { position: absolute; bottom: 0; left: 0; right: 0; align-items: center; text-align: center; }.scholar-hero-banner__motto { font-size: .38rem; font-style: normal; line-height: 1.6; font-family: STKaiti,KaiTi,serif; }.scholar-hero-banner__seal { font-size: .2rem; margin-top: .04rem; align-self: center; }
-  .scholar-capsules-bar { background: transparent; border: 0; padding: .08rem .3rem .15rem; }.scholar-capsules-scroll { display: grid; grid-template-columns: 1fr 1fr; gap: .1rem; overflow: visible; }.scholar-capsule { border: 1px solid var(--ref-gold); border-radius: 3px; padding: .12rem .15rem; white-space: normal; text-align: left; font-size: .24rem; line-height: 1.5; min-height: .6rem; }
+  .scholar-hero-banner { height: auto; min-height: 0; }
+  .scholar-hero-banner__content { min-height: 0; height: auto; }
+  .scholar-hero-banner__portrait-box { position: static; width: .9rem; height: .9rem; }
+  .scholar-hero-banner__portrait { object-fit: cover; }
+  .scholar-hero-banner__info { position: static; text-align: left; align-items: flex-start; }
+  .scholar-hero-banner__motto { font-size: .26rem; }
+  .scholar-capsules-bar { background: transparent; border: 0; padding: 0; }
+  .scholar-capsules-scroll { display: grid; grid-template-columns: 1fr 1fr; gap: .1rem; overflow: visible; }
+  .scholar-capsule { border: 1px solid var(--ref-gold); border-radius: 3px; padding: .1rem .12rem; white-space: normal; text-align: left; font-size: .24rem; line-height: 1.4; min-height: .52rem; }
   .scholar-messages-container { background: transparent; padding: .18rem .25rem; min-height: 2rem; }.scholar-msg-bubble--ai { .reference-frame(); font-size: .32rem; }.scholar-msg-bubble--user { background: var(--gf-bamboo); color: #f7f1df; font-size: .32rem; }.scholar-msg-avatar { border: 1px solid var(--ref-gold); }.scholar-msg-time { font-size: .2rem; color: var(--gf-ink-secondary); }
   .scholar-footer { .reference-frame(); border-radius: 9px 9px 0 0; padding: .13rem .22rem max(.17rem,env(safe-area-inset-bottom)); }.scholar-footer__quick-tools { gap: .14rem; }.scholar-tool-btn { font-size: .22rem; }.scholar-input-bar { background: transparent; }.scholar-textarea { border: 3px double color-mix(in srgb,var(--ref-gold) 70%,transparent); background: var(--gf-bg-card); border-radius: 7px; font-size: .29rem; }.scholar-send-btn { background: var(--gf-seal); border: 3px double var(--ref-gold); border-radius: 5px; font-size: .3rem; min-width: 1.2rem; }
   &.is-game { .scholar-hero-banner,.scholar-capsules-bar { display: none; } }
@@ -122,31 +129,59 @@
   .collection-header { padding-top: .5rem; }.collection-header__title { font-family: STKaiti,KaiTi,serif; font-size: .7rem; }.collection-search-box,.collection-list { .reference-frame(); }.collection-list { padding: .18rem .25rem; }.poem-card { border: 0; border-bottom: 1px solid var(--ref-gold); background: transparent; box-shadow: none; border-radius: 0; }.poem-card__title { font-size: .37rem; }.poem-card__excerpt { font-size: .28rem; }
 }
 .reference-polish.scholar-chat-root.has-sage-scene {
-  > .scholar-scene { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; background: var(--gf-bg-paper); }
-  .scholar-scene__art { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center top; }
-  .scholar-scene__shade { position: absolute; inset: 0; background: linear-gradient(to bottom, color-mix(in srgb,var(--gf-bg-paper) 50%,transparent) 0,transparent 12% 35%,color-mix(in srgb,var(--gf-bg-paper) 12%,transparent) 55%); }
-  .scholar-nav { padding-top: max(.25rem,env(safe-area-inset-top)); }
-  .scholar-nav__center { padding: 4px 10px; border-radius: 5px; background: color-mix(in srgb,var(--gf-bg-paper) 82%,transparent); }
-  .scholar-nav__status { font-size: max(10px,.23rem); color: var(--gf-ink-secondary); }
-  .scholar-hero-banner { height: clamp(180px,34dvh,310px); min-height: 0; }
-  .scholar-hero-banner__content { min-height: 0; height: 100%; }
+  > .scholar-scene {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+    background: var(--gf-bg-paper);
+  }
+  .scholar-scene__art {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center top;
+    opacity: 0.16;
+    filter: blur(0.3px);
+  }
+  .scholar-scene__shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--gf-bg-paper) 30%, transparent) 0%,
+      color-mix(in srgb, var(--gf-bg-paper) 75%, transparent) 25%,
+      var(--gf-bg-paper) 65%
+    );
+  }
+  .scholar-nav__center {
+    padding: 2px 10px;
+    border-radius: 5px;
+    background: color-mix(in srgb, var(--gf-bg-paper) 85%, transparent);
+  }
+  .scholar-nav__status { font-size: max(10px, .23rem); color: var(--gf-bamboo); }
+  .scholar-hero-banner { height: auto; min-height: 0; }
+  .scholar-hero-banner__content { min-height: 0; height: auto; }
   .scholar-hero-banner__bg { display: none; }
-  .scholar-hero-banner__info { background: color-mix(in srgb,var(--gf-bg-paper) 86%,transparent); padding: .1rem .15rem; border-radius: 4px; }
-  .scholar-hero-banner__motto { font-size: max(15px,.38rem); }
-  .scholar-hero-banner__seal { color: var(--gf-accent-text,var(--gf-seal)); border-color: currentColor; }
-  .scholar-msg-sound-btn { color: var(--gf-accent-text,var(--gf-seal)); font-size: 10px; }
-  .scholar-msg-bubble--ai { background: color-mix(in srgb,var(--gf-bg-card) 94%,transparent); }
+  .scholar-hero-banner__info { position: static; background: transparent; padding: 0; }
+  .scholar-hero-banner__motto { font-size: max(13px, .27rem); }
+  .scholar-hero-banner__seal { color: var(--gf-accent-text, var(--gf-seal)); border-color: currentColor; }
+  .scholar-msg-sound-btn { color: var(--gf-accent-text, var(--gf-seal)); font-size: 11px; }
+  .scholar-msg-bubble--ai { background: var(--gf-bg-card, #FAF7F0); }
   .scholar-msg-avatar { position: relative; overflow: hidden; }
-  .scholar-msg-avatar .scholar-msg-portrait { position: absolute; width: 800%; height: auto; max-width: none; left: var(--face-left); top: var(--face-top); }
-  .scholar-msg-time { background: color-mix(in srgb,var(--gf-bg-paper) 90%,transparent); border-radius: 3px; padding: 2px 5px; font-size: max(10px,.23rem); }
-  &.is-game .scholar-scene { opacity: .45; }
+  .scholar-msg-time { background: color-mix(in srgb, var(--gf-bg-paper) 90%, transparent); border-radius: 3px; padding: 2px 5px; font-size: max(10px, .23rem); }
+  &.is-game .scholar-scene { opacity: .25; }
 }
 [data-theme='dark'] .reference-polish.scholar-chat-root.has-sage-scene {
-  .scholar-scene__art { filter: brightness(.48) saturate(.6); }
-  .scholar-scene__shade { background: linear-gradient(to bottom,#07121f26,#07121f10 30%,#07121f96 58%,#07121f80); }
-}
-@media (max-height: 650px) {
-  .reference-polish.scholar-chat-root.has-sage-scene .scholar-hero-banner { height: 18dvh; min-height: 88px; }
+  .scholar-scene__art {
+    opacity: 0.12;
+    filter: brightness(.42) saturate(.6);
+  }
+  .scholar-scene__shade {
+    background: linear-gradient(to bottom, rgba(16, 24, 32, 0.35) 0%, rgba(16, 24, 32, 0.8) 25%, #0b1119 65%);
+  }
 }
 .layout:has(.reference-polish) {
   background: transparent;
@@ -219,7 +254,7 @@
 .reference-invite.invite-drawer .invite-drawer__confirm-btn { min-height: 44px; font-size: max(16px,.37rem); }
 @media (max-width: 350px) {
   .reference-polish.letter-root .letter-card__title { display: none; }
-  .reference-polish.scholar-chat-root .scholar-hero-banner { min-height: 2rem; }.reference-polish.scholar-chat-root .scholar-hero-banner__content { min-height: 2rem; }.reference-polish.scholar-chat-root .scholar-hero-banner__portrait-box { height: 2rem; width: 1.8rem; }
+  .reference-polish.scholar-chat-root .scholar-hero-banner { height: auto; min-height: 0; }.reference-polish.scholar-chat-root .scholar-hero-banner__content { min-height: 0; height: auto; }.reference-polish.scholar-chat-root .scholar-hero-banner__portrait-box { height: 42px; width: 42px; }
 }
 
 @import "./referenceFidelity.less";
