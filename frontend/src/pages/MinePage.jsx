@@ -338,9 +338,16 @@ export default function MinePage() {
 
       {/* 5. 整装离席退出按钮 */}
       <div className='shuzhai-logout-wrap'>
-        <button className='shuzhai-logout-btn' onClick={() => setVisibleLogout(true)}>
-          整 装 离 席
+        <button
+          type='button'
+          className='shuzhai-logout-btn'
+          onClick={() => setVisibleLogout(true)}
+          aria-label='整装离席'
+        >
+          <span className='shuzhai-logout-btn__seal'>离席</span>
+          <span className='shuzhai-logout-btn__text'>整装离席 · 束卷归隐</span>
         </button>
+        <p className='shuzhai-logout-sub'>青山不改 · 绿水长流 · 期君再聚</p>
       </div>
 
       {archiveOpen && <ScholarArchive onClose={() => setArchiveOpen(false)} />}

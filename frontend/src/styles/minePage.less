@@ -321,30 +321,98 @@
       }
     }
   }
-
-  // 4. 整装离席按键
+  // 4. 整装离席按键（两宋文人告别雅聚之仪）
   .shuzhai-logout-wrap {
-    text-align: center;
-    padding: 10px 0 20px;
-    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 0 28px;
 
     .shuzhai-logout-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
       width: 100%;
+      max-width: 280px;
       height: 44px;
-      background: transparent;
-      border: 1.5px solid @color-seal;
-      color: var(--gf-accent-text, @color-seal);
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 3px;
+      padding: 0 20px;
+      background: var(--gf-card-bg, rgba(250, 247, 240, 0.88));
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--gf-border-subtle, fade(@color-seal, 26%));
       border-radius: 22px;
+      box-shadow: 0 2px 8px rgba(138, 43, 43, 0.06);
       cursor: pointer;
-      transition: all 0.2s ease;
+      position: relative;
+      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        inset: 2px;
+        border-radius: 20px;
+        border: 1px dashed fade(@color-gold, 28%);
+        pointer-events: none;
+      }
+
+      &__seal {
+        font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        line-height: 1;
+        padding: 3px 6px;
+        border-radius: 4px;
+        background: fade(@color-seal, 12%);
+        color: var(--gf-seal-color, @color-seal);
+        border: 1px solid fade(@color-seal, 35%);
+        flex-shrink: 0;
+        box-shadow: 0 1px 3px rgba(138, 43, 43, 0.1);
+      }
+
+      &__text {
+        font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+        font-size: 14.5px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        color: var(--gf-ink-primary, @color-text-main);
+        transition: color 0.2s ease;
+      }
+
+      &:hover {
+        border-color: var(--gf-seal-color, @color-seal);
+        box-shadow: 0 4px 14px rgba(138, 43, 43, 0.12);
+        transform: translateY(-1px);
+
+        .shuzhai-logout-btn__text {
+          color: var(--gf-seal-color, @color-seal);
+        }
+      }
 
       &:active {
-        background-color: var(--gf-seal, @color-seal);
-        color: #fff;
+        transform: scale(0.97) translateY(0);
+        background: fade(@color-seal, 8%);
+        border-color: var(--gf-seal-color, @color-seal);
+
+        .shuzhai-logout-btn__seal {
+          background: var(--gf-seal-color, @color-seal);
+          color: #fff;
+        }
+
+        .shuzhai-logout-btn__text {
+          color: var(--gf-seal-color, @color-seal);
+        }
       }
+    }
+
+    .shuzhai-logout-sub {
+      margin-top: 10px;
+      font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      color: var(--gf-ink-muted, @color-text-sub);
+      opacity: 0.72;
     }
   }
 }
