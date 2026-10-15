@@ -1,5 +1,6 @@
 const axios = require('axios')
 const db = require('../config/db')
+const { searchPoemsDeepSeek } = require('./deepseekController')
 // 搜索兜底诗词库（84 首经典作品 / 248 联，取自 feihuaCorpus 原文，保留原诗文序与出处）。
 // 原实现只有 2 首（静夜思/春晓），导致搜「山」「水」「酒」直接返回空结果。
 const fallback = require('../data/poemFallback')
@@ -166,10 +167,34 @@ async function random(ctx) {
 async function search(ctx) {
   const q = ctx.query.q ?? ctx.query.keyword
   if (typeof q !== 'string' || !q.trim() || q.length > 100) { ctx.status = 400; ctx.body = { code: 0, message: '请输入 1–100 字的关键词' }; return }
+  const cleanQ = q.trim()
+
+  // 1. 优先调用 DeepSeek 大模型进行全息古诗词智能检索
   try {
-    const value = await query('search', q.trim())
+    const aiResults = await searchPoemsDeepSeek(cleanQ)
+    if (Array.isArray(aiResults) && aiResults.length > 0) {
+      ctx.body = {
+        code: 1,
+        message: 'DeepSeek 智能寻诗成功',
+        source: 'deepseek-ai',
+        degraded: false,
+        data: aiResults.map(present),
+        dataNotice: '由 DeepSeek 智能诗词引擎甄选'
+      }
+      return
+    }
+  } catch (err) {
+    console.warn('DeepSeek 搜诗异常，回退兜底检索:', err.message)
+  }
+
+  // 2. DeepSeek 未命中或异常时，走常规 query 或本地兜底
+  try {
+    const value = await query('search', cleanQ)
     ctx.body = { code: 1, message: '搜索成功', ...value, data: value.data.map(present), dataNotice }
-  } catch { ctx.status = 429; ctx.body = { code: 0, message: '诗泉请求繁忙，请稍后再试' } }
+  } catch {
+    const localList = searchFallback(cleanQ)
+    ctx.body = { code: 1, message: '搜索成功（典范库）', source: 'local-fallback', degraded: true, data: localList.map(present), dataNotice }
+  }
 }
 async function collect(ctx) {
   const body = ctx.request.body || {}, input = body.poem || body

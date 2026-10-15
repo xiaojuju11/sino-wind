@@ -674,6 +674,72 @@ async function appreciatePoem(ctx) {
   }
 }
 
+/**
+ * 智能搜诗：基于 DeepSeek 大模型按诗名/作者/名句/意象主题全息检索正统古诗词
+ */
+async function searchPoemsDeepSeek(keyword) {
+  const client = getClient()
+  if (!client || !keyword || !keyword.trim()) return null
+  try {
+    const completion = await client.chat.completions.create({
+      model: 'deepseek-chat',
+      response_format: { type: 'json_object' },
+      messages: [
+        {
+          role: 'system',
+          content: `你是一位精通中华典籍的古典诗词专家。请根据用户提供的检索关键词（可能是诗词名、作者名、经典名句、词牌、节令意象或主题如“明月”、“思乡”、“将进酒”等），精准检索并甄选 3 到 6 首最匹配、流传度最广的正统中华古典诗词。
+每首诗请务必输出真实正统的经典文本，严禁虚构杜撰。请严格返回标准 json 格式数据：
+{
+  "poems": [
+    {
+      "title": "诗词标题（如：静夜思 或 水调歌头·明月几时有）",
+      "author": "作者姓名（如：李白、苏轼）",
+      "dynasty": "朝代（如：唐、宋）",
+      "content": [
+        "第一句诗词，",
+        "第二句诗词。",
+        "第三句诗词，",
+        "第四句诗词。"
+      ],
+      "appreciation": "50-80字简要意境鉴赏与审美意蕴。"
+    }
+  ]
+}`
+        },
+        {
+          role: 'user',
+          content: `请检索与以下关键词最契合的经典古诗词：${keyword.trim()}`
+        }
+      ],
+      timeout: 18000
+    })
+
+    const parsed = JSON.parse(completion.choices[0].message.content)
+    const list = Array.isArray(parsed?.poems) ? parsed.poems : (Array.isArray(parsed) ? parsed : [])
+    if (!list.length) return null
+
+    return list.map((item, idx) => {
+      const paragraphs = Array.isArray(item.content)
+        ? item.content.filter(Boolean)
+        : String(item.content || '').split(/[\r\n]+/).filter(Boolean)
+      return {
+        id: `ds_${Date.now()}_${idx}`,
+        title: item.title || '无题',
+        author: item.author || '先贤',
+        dynasty: item.dynasty || '古代',
+        content: paragraphs,
+        paragraphs,
+        snippet: paragraphs.join('').slice(0, 80),
+        appreciation: item.appreciation || '',
+        bgArt: ''
+      }
+    })
+  } catch (err) {
+    console.warn('DeepSeek 诗词搜索异常，回退本地/上游:', err.message)
+    return null
+  }
+}
+
 const deepseekChatStream = require('../utils/scholarSSE').createScholarStream({ getClient, sages, generateSageReply, sanitizeSageReply, db, saveTurn: require('../utils/scholarLetters').saveTurn, loadArtifact: require('./scholarArtifactController').loadArtifact })
 
 module.exports = {
@@ -681,6 +747,8 @@ module.exports = {
   deepseekChat,
   translateYayan,
   soulScholar,
-  appreciatePoem
+  appreciatePoem,
+  searchPoemsDeepSeek
 }
+
 

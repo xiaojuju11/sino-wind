@@ -115,6 +115,7 @@ export default function PoemPage() {
   const [keyword, setKeyword] = useState('')
   const [results, setResults] = useState(null)
   const [searching, setSearching] = useState(false)
+  const [searchSource, setSearchSource] = useState('')
   const [showAppreciation, setShowAppreciation] = useState(false)
   const [stamp, setStamp] = useState(false)
   const [collecting, setCollecting] = useState(false)
@@ -297,18 +298,19 @@ export default function PoemPage() {
     loadRandom()
   }, [loadRandom])
 
-  // 关键词搜索
+  // 关键词搜索（支持 DeepSeek 智能搜诗与本地典范库检索）
   const handleSearch = async (value) => {
-    const q = (value || '').trim()
-    setKeyword(q)
+    const q = (value !== undefined ? value : keyword || '').trim()
     if (!q) {
-      setResults(null)
+      Toast.show({ content: '请先输入想寻访的诗词、名句或先贤' })
       return
     }
+    setKeyword(q)
     setSearching(true)
     try {
       const res = await axios.get('/api/poem/search', { params: { q } })
       const list = res?.data?.data
+      setSearchSource(res?.data?.source || '')
       setResults(Array.isArray(list) ? list : [])
     } catch {
       setResults([])
@@ -415,35 +417,70 @@ export default function PoemPage() {
       </header>
       <p className='poem-reference-sub'>读千年风雅 与君共此山河</p>
 
-      {/* 顶部搜索框 */}
-      <div className="poem-search">
-        <SearchBar
-          icon={<SearchOutline />}
-          placeholder="检索诗名、作者或佳句，如「明月」"
-          value={keyword}
-          onChange={setKeyword}
-          onSearch={handleSearch}
-          onClear={() => {
-            setKeyword('')
-            setResults(null)
-          }}
-        />
+      {/* 顶部搜索框：集成 DeepSeek 智能寻诗与国风搜索图标按钮 */}
+      <div className="poem-search-wrapper">
+        <div className="poem-search">
+          <SearchBar
+            className="poem-search__bar"
+            icon={<SearchOutline className="poem-search__leading-icon" />}
+            placeholder="AI 寻诗：搜诗名、名句、先贤或意境…"
+            value={keyword}
+            onChange={setKeyword}
+            onSearch={handleSearch}
+            onClear={() => {
+              setKeyword('')
+              setResults(null)
+              setSearchSource('')
+            }}
+          />
+          <button
+            type="button"
+            className={`poem-search__btn ${searching ? 'is-searching' : ''}`}
+            onClick={() => handleSearch(keyword)}
+            aria-label="寻诗"
+            title="点击发起 DeepSeek 智能寻诗"
+          >
+            <SearchOutline className="poem-search__btn-icon" />
+            <span className="poem-search__btn-text">{searching ? '研墨中' : '寻诗'}</span>
+          </button>
+        </div>
+        <div className="poem-search__hint">
+          <span className="poem-search__badge">AI 智能寻诗</span>
+          <span className="poem-search__tips">支持搜诗题、名句、作者或意境（如「明月」「将进酒」「清欢」）</span>
+        </div>
       </div>
 
       {/* 搜索结果 */}
       {results !== null && (
         <section className="poem-results">
           <ReferenceCorners />
-          {searching && <div className="poem-results__loading">墨迹研开中……</div>}
+          <div className="poem-results__header">
+            <span className="poem-results__count">
+              寻得 {results.length} 篇诗卷
+            </span>
+            {searchSource === 'deepseek-ai' && (
+              <span className="poem-results__ai-tag">
+                <span className="poem-results__ai-dot" />
+                DeepSeek 智能甄选
+              </span>
+            )}
+          </div>
+          {searching && (
+            <div className="poem-results__loading">
+              <span className="poem-results__spinner" />
+              <span>DeepSeek 正在研墨寻篇中……</span>
+            </div>
+          )}
           {!searching && results.length === 0 && (
             <EmptyState
               seal="未寻"
               title="未寻得相关诗篇"
-              desc="可试搜先贤雅号、词牌或名句（如「苏轼」、「明月」、「将进酒」）"
+              desc="可试搜先贤雅号、词牌、名句或意境（如「苏轼」、「明月」、「将进酒」）"
               actionText="清空搜索词"
               onAction={() => {
                 setKeyword('')
                 setResults(null)
+                setSearchSource('')
               }}
             />
           )}
@@ -452,11 +489,20 @@ export default function PoemPage() {
               <div className="poem-results__item" key={item.id || item.title} onClick={() => handlePickResult(item)}>
                 <img className='poem-results__art' data-sage-art={Boolean(!item.bgArt && getScholarScene('', item.author))} src={item.bgArt || getScholarScene('', item.author)?.src || `${import.meta.env.BASE_URL}assets/home/bg-poem.jpg`} alt='' loading='lazy' />
                 <div className="poem-results__main">
-                  <div className="poem-results__title">{item.title}</div>
+                  <div className="poem-results__title-row">
+                    <span className="poem-results__title">{item.title}</span>
+                    <span className="poem-results__dynasty">{item.dynasty || '古代'}</span>
+                  </div>
                   <div className="poem-results__meta">
-                    {item.dynasty} · {item.author}
+                    先贤 · {item.author}
                   </div>
                   {snippetOf(item) && <div className="poem-results__snippet">{snippetOf(item)}</div>}
+                  {item.appreciation && (
+                    <div className="poem-results__ai-note">
+                      <span className="poem-results__ai-note-label">诗意：</span>
+                      {item.appreciation}
+                    </div>
+                  )}
                 </div>
                 <RightOutline className="poem-results__arrow" />
               </div>

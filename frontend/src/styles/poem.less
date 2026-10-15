@@ -108,18 +108,29 @@
 }
 
 
-// ── 搜索栏（antd-mobile SearchBar 国风化）────────
-.poem-search {
+// ── 搜索栏（集成 DeepSeek 智能寻诗与国风搜索按钮）────────
+.poem-search-wrapper {
   margin-top: 0.24rem;
+}
+
+.poem-search {
+  display: flex;
+  align-items: center;
+  gap: 0.14rem;
+
+  &__bar {
+    flex: 1;
+    min-width: 0;
+  }
 
   .adm-search-bar {
     // LESS 自定义属性插值需用 ~"@{var}" 转义，否则 #{...} 会原样输出成非法值
     --background: ~"@{color-card}";
     --border-radius: ~"@{radius-card}";
-    --height: 0.86rem;
+    --height: 0.88rem;
     --placeholder-color: ~"@{color-text-sub}";
-    --icon-color: ~"@{color-seal}";
-    --font-size: 0.3rem;
+    --icon-color: var(--gf-seal, @color-seal);
+    --font-size: 0.28rem;
     padding: 0;
     border: 1px solid fade(@color-gold, 45%);
     box-shadow: 0 0.06rem 0.18rem fade(#3a2f1d, 6%);
@@ -134,30 +145,135 @@
     font-size: 0.3rem;
     color: var(--gf-accent-text, @color-seal);
   }
+
+  &__btn {
+    flex: none;
+    height: 0.88rem;
+    padding: 0 0.26rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.08rem;
+    background: var(--gf-seal, @color-seal);
+    color: #fff;
+    border: 1px solid fade(#7d1f20, 60%);
+    border-radius: @radius-card;
+    box-shadow: 0 0.06rem 0.16rem fade(@color-seal, 32%);
+    cursor: pointer;
+    font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+    font-size: 0.29rem;
+    letter-spacing: 0.04rem;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+
+    &:active {
+      transform: scale(0.96);
+      opacity: 0.9;
+    }
+
+    &.is-searching {
+      opacity: 0.8;
+      cursor: wait;
+    }
+  }
+
+  &__btn-icon {
+    font-size: 0.32rem;
+  }
+
+  &__btn-text {
+    line-height: 1;
+  }
+
+  &__hint {
+    display: flex;
+    align-items: center;
+    gap: 0.12rem;
+    margin-top: 0.12rem;
+    padding: 0 0.04rem;
+  }
+
+  &__badge {
+    display: inline-block;
+    padding: 0.02rem 0.1rem;
+    background: fade(@color-seal, 12%);
+    border: 1px solid fade(@color-seal, 30%);
+    color: var(--gf-seal, @color-seal);
+    font-size: 0.2rem;
+    border-radius: 2px;
+    font-family: 'STKaiti', 'KaiTi', serif;
+    letter-spacing: 0.02rem;
+    flex: none;
+  }
+
+  &__tips {
+    font-size: 0.22rem;
+    color: var(--gf-ink-muted, #726A62);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 // ── 搜索结果列表 ─────────────────────────────────
 .poem-results {
   .gu-frame(0.16rem);
-  margin-top: 0.18rem;
-  max-height: 5.2rem;
+  margin-top: 0.2rem;
+  max-height: 6rem;
   overflow-y: auto;
   background: fade(@color-card, 96%);
   border-radius: @radius-card;
 
-  &__item {
+  &__header {
     display: flex;
     align-items: center;
-    gap: 0.12rem;
-    padding: 0.22rem 0.24rem;
+    justify-content: space-between;
+    padding: 0.18rem 0.24rem 0.12rem;
+    border-bottom: 1px solid fade(@color-gold, 35%);
+  }
+
+  &__count {
+    font-size: 0.24rem;
+    color: var(--gf-text-sub, @color-text-sub);
+    font-family: 'STKaiti', 'KaiTi', serif;
+  }
+
+  &__ai-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.08rem;
+    font-size: 0.22rem;
+    color: var(--gf-seal, @color-seal);
+    font-family: 'STKaiti', 'KaiTi', serif;
+    padding: 0.02rem 0.1rem;
+    background: fade(@color-seal, 10%);
+    border: 1px solid fade(@color-seal, 25%);
+    border-radius: 2px;
+  }
+
+  &__ai-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gf-seal, @color-seal);
+    box-shadow: 0 0 4px fade(@color-seal, 60%);
+    animation: poem-ai-pulse 1.8s ease-in-out infinite;
+  }
+
+  &__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.16rem;
+    padding: 0.24rem;
     cursor: pointer;
+    transition: background-color 0.18s ease;
 
     & + & {
-      border-top: 1px dashed @color-divider;
+      border-top: 1px dashed fade(@color-gold, 30%);
     }
 
     &:active {
-      background: fade(@color-gold, 10%);
+      background: fade(@color-gold, 12%);
     }
   }
 
@@ -166,10 +282,27 @@
     min-width: 0;
   }
 
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.12rem;
+  }
+
   &__title {
     font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
     font-size: 0.34rem;
+    font-weight: 700;
     color: var(--gf-accent-text, @color-seal);
+  }
+
+  &__dynasty {
+    display: inline-block;
+    padding: 0.02rem 0.08rem;
+    font-size: 0.2rem;
+    border: 1px solid fade(@color-gold, 60%);
+    border-radius: 2px;
+    color: var(--gf-text-sub, @color-text-sub);
+    transform: scale(0.92);
   }
 
   &__meta {
@@ -189,19 +322,58 @@
     overflow: hidden;
   }
 
+  &__ai-note {
+    margin-top: 0.08rem;
+    padding: 0.08rem 0.12rem;
+    background: fade(@color-gold, 14%);
+    border-radius: 4px;
+    font-size: 0.22rem;
+    line-height: 1.45;
+    color: var(--gf-ink-primary, #2E2A24);
+  }
+
+  &__ai-note-label {
+    color: var(--gf-seal, @color-seal);
+    font-weight: 600;
+  }
+
   &__arrow {
     flex: none;
     font-size: 0.32rem;
     color: fade(@color-text-sub, 70%);
+    margin-top: 0.08rem;
   }
 
   &__empty,
   &__loading {
-    padding: 0.4rem 0.24rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.14rem;
+    padding: 0.5rem 0.24rem;
     text-align: center;
     font-size: 0.28rem;
     color: fade(@color-text-sub, 85%);
+    font-family: 'STKaiti', 'KaiTi', serif;
   }
+
+  &__spinner {
+    width: 0.28rem;
+    height: 0.28rem;
+    border: 2px solid fade(@color-seal, 25%);
+    border-top-color: var(--gf-seal, @color-seal);
+    border-radius: 50%;
+    animation: poem-spin 0.8s linear infinite;
+  }
+}
+
+@keyframes poem-ai-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes poem-spin {
+  to { transform: rotate(360deg); }
 }
 
 // ── 宣纸诗卷主体 ─────────────────────────────────
