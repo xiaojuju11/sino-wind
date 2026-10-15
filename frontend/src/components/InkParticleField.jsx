@@ -32,12 +32,18 @@ const MODES = [
   { key: 'snow', label: '飞雪' },
 ]
 
-export default function InkParticleField({ interactionTarget }) {
+export default function InkParticleField({ interactionTarget, defaultShowHud = false }) {
   const { isDark } = useTheme()
   const canvasRef = useRef(null)
   const engineRef = useRef(null)
   const [mode, setMode] = useState('auto')
-  const [showHud, setShowHud] = useState(true)
+  // 默认关闭全屏浮窗条，让水墨粒子随自然节气静谧流淌；仅在传参或显式开启时呈现
+  const [showHud, setShowHud] = useState(() => {
+    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('debug_hud')) {
+      return true
+    }
+    return defaultShowHud
+  })
   const [reduced, setReduced] = useState(false)
   const [ready, setReady] = useState(false)
 
