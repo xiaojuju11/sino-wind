@@ -12,6 +12,8 @@ import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
 import { CITIES, searchCities } from '../utils/geoCities.js'
 import { currentTerm, seasonLine, fetchWeather, locate } from '../utils/almanac.js'
+import { SHICHEN, shichenOf } from '../utils/shichen.js'
+import { cityChronicle, NOT_FOUND_TIP, RECOMMEND_CITIES } from '../utils/cityChronicle.js'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -20,25 +22,11 @@ function SunWheelGlyph() { return <CompassOutline aria-hidden="true" /> }
 function MoonCrescentGlyph() { return <StarOutline aria-hidden="true" /> }
 // ════════════════════════════════════════════════════
 //  传统时辰换算（TRD v3.0：动态算法换算十二时辰）
+//  2026-10-15：表已迁到 utils/shichen.js（补齐十二时辰雅称与养生雅事，
+//  供《十二时辰养生与雅事》弹窗使用），此处委托给它，避免两处表不一致。
 // ════════════════════════════════════════════════════
 function getTraditionalTime(date = new Date()) {
-  const hours = date.getHours()
-  const shichenList = [
-    { name: '子时', range: '23:00-01:00', desc: '夜半人静，月照竹影' },
-    { name: '丑时', range: '01:00-03:00', desc: '鸡鸣破晓，万籁俱寂' },
-    { name: '寅时', range: '03:00-05:00', desc: '平旦晨曦，云蒸霞蔚' },
-    { name: '卯时', range: '05:00-07:00', desc: '日出扶桑，晓雾轻拂' },
-    { name: '辰时', range: '07:00-09:00', desc: '食时晨光，烟柳凝翠' },
-    { name: '巳时', range: '09:00-11:00', desc: '隅中日照，琴韵悠扬' },
-    { name: '午时', range: '11:00-13:00', desc: '日中当空，竹影婆娑' },
-    { name: '未时', range: '13:00-15:00', desc: '日昳微风，烹茶品茗' },
-    { name: '申时', range: '15:00-17:00', desc: '哺时斜照，书声朗朗' },
-    { name: '酉时', range: '17:00-19:00', desc: '日入暮霞，烟波浩渺' },
-    { name: '戌时', range: '19:00-21:00', desc: '黄昏掌灯，抚琴长啸' },
-    { name: '亥时', range: '21:00-23:00', desc: '人定归心，掩卷幽思' },
-  ]
-  const idx = Math.floor(((hours + 1) % 24) / 2)
-  return shichenList[idx]
+  return shichenOf(date)
 }
 
 // ── 干支纪年 / 纪月（五虎遁：正月起寅，月干随年干推演）──
@@ -143,6 +131,26 @@ export default function Home() {
   const [locatedBy, setLocatedBy] = useState('')   // '' | 'gps' | 'ip' | 'default' | 'manual'
   const [weather, setWeather] = useState(null)      // 真实气温，null = 取数中/失败
 
+  // ②-1 《九州地名志 · 城邑春秋》弹窗：搜城邑 → 看朝代演进轴 → 一键留驻此时空
+  const [chronicleOpen, setChronicleOpen] = useState(false)
+  const [chronicleQuery, setChronicleQuery] = useState('')
+  // ②-2 《十二时辰养生与雅事》弹窗
+  const [shichenOpen, setShichenOpen] = useState(false)
+  // 打开时自动滑到「当前时辰」那张卡（亥时在最右，不滑过去看不见）。
+  // 用直接设置 scrollLeft 而非 scrollIntoView —— 后者会被 Popup 的打开动画打断，
+  // 且会连带滚动祖先容器（实测无效：scrollLeft 仍为 12）。
+  const shichenStripRef = useRef(null)
+  useEffect(() => {
+    if (!shichenOpen) return
+    const timer = setTimeout(() => {
+      const strip = shichenStripRef.current
+      const el = strip?.querySelector('.home-shichen__card.is-now')
+      if (!strip || !el) return
+      strip.scrollLeft = el.offsetLeft - (strip.clientWidth - el.offsetWidth) / 2
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [shichenOpen])
+
   // 当前时间：原文这三个值只在首次渲染时算一次，时间会冻在打开页面的那一刻
   // （实测：21:55 仍显示 21:53）。改为状态 + 每分钟推进，时间/时辰/物候都会跟着走。
   const [now, setNow] = useState(() => new Date())
@@ -193,6 +201,28 @@ export default function Home() {
   const wx = weather
     ? { temp: weather.tempText, weather: weather.weather }
     : { temp: currentCity.temp || '—', weather: currentCity.weather || '' }
+
+  // ──《九州地名志 · 城邑春秋》──
+  // 当前检索到的演进轴（未收录则为 null，走典雅提示分支）
+  const chronicle = useMemo(() => cityChronicle(chronicleQuery), [chronicleQuery])
+
+  /**
+   * 留驻此时空：把主页时令卡片切到该城邑 ——
+   * 左栏天气温度重取、右栏古称与诗句联动刷新
+   */
+  const commitCity = (name) => {
+    const target = String(name || '').trim()
+    if (!target) return
+    const rec = CITIES.find((c) => c[0] === target || c[0].startsWith(target))
+    if (!rec) { Toast.show({ content: '城外云深，暂未收录此邑' }); return }
+    const city = { name: rec[0], ancient: rec[4] || '', lat: rec[2], lng: rec[3] }
+    setCurrentCity(cityView(city))
+    setCityCoords({ lat: city.lat, lng: city.lng })
+    setLocatedBy('manual')
+    setChronicleOpen(false)
+    setChronicleQuery('')
+    Toast.show({ content: `已留驻${city.ancient ? `${city.ancient}（${city.name}）` : city.name}` })
+  }
 
   // 白话雅译请求（接口与字段保持不变）
   const handleTranslate = async (textToTranslate) => {
@@ -380,7 +410,7 @@ export default function Home() {
           <button
             type="button"
             className="home-almanac__roam"
-            onClick={() => setVisibleCitySheet(true)}
+            onClick={() => { setChronicleOpen(true); setChronicleQuery(currentCity.name) }}
             aria-label="漫游古今城邑"
           >
             <CompassOutline className="home-almanac__roam-icon" />
@@ -402,7 +432,7 @@ export default function Home() {
             </div>
             <p
               className="home-almanac__city"
-              onClick={() => setVisibleCitySheet(true)}
+              onClick={() => { setChronicleOpen(true); setChronicleQuery(currentCity.name) }}
               style={{ cursor: 'pointer' }}
               role="button"
               tabIndex={0}
@@ -418,10 +448,18 @@ export default function Home() {
 
           <div className="home-almanac__col">
             <span className="home-almanac__label">古代 · 时令</span>
-            <p className="home-almanac__shichen">
+            {/* 时辰可点：打开《十二时辰养生与雅事》 */}
+            <p
+              className="home-almanac__shichen"
+              onClick={() => setShichenOpen(true)}
+              style={{ cursor: 'pointer' }}
+              role="button"
+              tabIndex={0}
+            >
               {curShichen.name}
               <DownOutline className="home-almanac__caret" />
-              <em className="home-almanac__shichen-suffix">· 日映</em>
+              {/* 修正历史 bug：后缀原写死「日映」且不随时间变；现按真实时间显示雅称（亥时→人定） */}
+              <em className="home-almanac__shichen-suffix">· {curShichen.alias}</em>
             </p>
             <p className="home-almanac__ganzhi">
               {ganzhi.year} {ganzhi.month} {curShichen.name}
@@ -545,6 +583,112 @@ export default function Home() {
             ))}
           </div>
           <p className="home-citysheet__foot">共收录 {CITIES.length} 城 · 古称仅列有史料可考者</p>
+        </div>
+      </Popup>
+
+      {/* ── 《九州地名志 · 城邑春秋》：搜城邑 → 朝代演进轴 → 留驻此时空 ── */}
+      <Popup
+        visible={chronicleOpen}
+        onMaskClick={() => setChronicleOpen(false)}
+        onClose={() => { setChronicleOpen(false); setChronicleQuery('') }}
+        bodyStyle={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}
+      >
+        <div className="home-chronicle">
+          <div className="home-chronicle__head">
+            <strong>九州地名志 · 城邑春秋</strong>
+            <button type="button" onClick={() => { setChronicleOpen(false); setChronicleQuery('') }} aria-label="收起">收起</button>
+          </div>
+
+          <label className="home-chronicle__search">
+            <SearchOutline aria-hidden="true" />
+            <input
+              value={chronicleQuery}
+              onChange={(e) => setChronicleQuery(e.target.value)}
+              placeholder="输入今夕城邑（如：西安、南京、杭州、北京、洛阳、成都……）"
+              autoComplete="off"
+            />
+          </label>
+
+          <div className="home-chronicle__body">
+            {!chronicleQuery.trim() && (
+              <p className="home-chronicle__hint">输入一座城邑，展卷看它的前世今生</p>
+            )}
+
+            {chronicleQuery.trim() && chronicle && (
+              <>
+                <p className="home-chronicle__title">
+                  {chronicle.key}
+                  <em className="home-chronicle__title-sub">历代沿革</em>
+                </p>
+                <ol className="home-chronicle__axis">
+                  {chronicle.timeline.map(([era, place, note], i) => (
+                    <li key={`${era}-${place}`} className="home-chronicle__node">
+                      <span className="home-chronicle__era">{era}</span>
+                      <span className="home-chronicle__place">〔{place}〕</span>
+                      <span className="home-chronicle__note">—— {note}</span>
+                      {i < chronicle.timeline.length - 1 && <i className="home-chronicle__link" aria-hidden="true" />}
+                    </li>
+                  ))}
+                </ol>
+              </>
+            )}
+
+            {chronicleQuery.trim() && !chronicle && (
+              <div className="home-chronicle__void">
+                <p className="home-chronicle__void-tip">「{NOT_FOUND_TIP}」</p>
+                <p className="home-chronicle__void-sub">此邑暂未入志，且先探江南名邑：</p>
+                <div className="home-chronicle__reco">
+                  {RECOMMEND_CITIES.map((c) => (
+                    <button key={c} type="button" onClick={() => setChronicleQuery(c)}>{c}</button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <button
+            type="button"
+            className="home-chronicle__commit"
+            disabled={!chronicle}
+            onClick={() => commitCity(chronicle ? chronicle.key : '')}
+          >
+            留驻此时空 · 切换时令
+          </button>
+        </div>
+      </Popup>
+
+      {/* ── 《十二时辰养生与雅事》：滑动体验十二时辰 ── */}
+      <Popup
+        visible={shichenOpen}
+        onMaskClick={() => setShichenOpen(false)}
+        onClose={() => setShichenOpen(false)}
+        bodyStyle={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}
+      >
+        <div className="home-shichen">
+          <div className="home-shichen__head">
+            <strong>十二时辰养生与雅事</strong>
+            <button type="button" onClick={() => setShichenOpen(false)} aria-label="收起">收起</button>
+          </div>
+          <p className="home-shichen__now">
+            此刻 · <b>{curShichen.alias} · {curShichen.name}</b>
+            <em>{curShichen.range}</em>
+          </p>
+          <div className="home-shichen__strip" ref={shichenStripRef}>
+            {SHICHEN.map((s) => (
+              <article
+                key={s.name}
+                className={`home-shichen__card${s.name === curShichen.name ? ' is-now' : ''}`}
+              >
+                <span className="home-shichen__alias">{s.alias}</span>
+                <span className="home-shichen__name">{s.name}</span>
+                <span className="home-shichen__range">{s.range}</span>
+                <span className="home-shichen__life">{s.life}</span>
+                <span className="home-shichen__health">养：{s.health}</span>
+                <span className="home-shichen__affair">雅：{s.affair}</span>
+              </article>
+            ))}
+          </div>
+          <p className="home-shichen__foot">左右滑动，遍览十二时辰 · 今人所行，古人亦有节候</p>
         </div>
       </Popup>
     </div>
