@@ -89,7 +89,7 @@ export default function AiChat() {
       })
       const aiMessage = msg.current.createMessage(Date.now(), 'ai', res.data.message, new Date().toLocaleString())
       msg.current.addMessage(aiMessage)
-    } catch (err) {
+    } catch {
       msg.current.addMessage(
         msg.current.createMessage(Date.now(), 'ai', '墨迹未干，请稍后再试……', new Date().toLocaleString())
       )

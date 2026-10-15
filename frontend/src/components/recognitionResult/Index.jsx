@@ -96,9 +96,10 @@ export default function RecognitionResult({ recognitionResult, pending = false }
 
   // 页面离开时彻底停止所有音频与合成语音
   useEffect(() => {
+    const audioEl = audioRef.current
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause()
+      if (audioEl) {
+        audioEl.pause()
       }
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel()
@@ -117,8 +118,8 @@ export default function RecognitionResult({ recognitionResult, pending = false }
     window.speechSynthesis.cancel()
 
     // 剔除技术符号与标记，确保吟诵宛如名士当面徐徐道来
-    const cleanInterp = (interpretation || '').replace(/[【】\[\]➔\->→]/g, ' ')
-    const cleanFlow = (flow || '').replace(/[➔\->→]/g, '，流变为：')
+    const cleanInterp = (interpretation || '').replace(/[【】[\]➔→-]/g, ' ')
+    const cleanFlow = (flow || '').replace(/[➔→-]/g, '，流变为：')
     const textToRead = `${data.name || '此物'}，源自${data.dynasty || '古代'}。${cleanInterp}。文人流变脉络：${cleanFlow}`
 
     const utter = new SpeechSynthesisUtterance(textToRead)
@@ -346,20 +347,20 @@ export default function RecognitionResult({ recognitionResult, pending = false }
   )
 }
 
+const RECOGNITION_SKELETON_STEPS = [
+  '【1/4 辨物】文博大模型正在考释画卷器形与金石材质…',
+  '【2/4 溯源】文史算法翻阅《广韵》《考工记》，推演唐宋明流变…',
+  '【3/4 赋词】两宋先贤拟文人品鉴长文，评定雅士品位…',
+  '【4/4 雅诵】以器载道，先贤雅音赋魂吟诵…',
+]
+
 /** 加载态：两宋宣纸灰骨架占位 + 动态考释阶段提示 */
 export function RecognitionSkeleton() {
   const [stepIndex, setStepIndex] = useState(0)
 
-  const steps = [
-    '【1/4 辨物】文博大模型正在考释画卷器形与金石材质…',
-    '【2/4 溯源】文史算法翻阅《广韵》《考工记》，推演唐宋明流变…',
-    '【3/4 赋词】两宋先贤拟文人品鉴长文，评定雅士品位…',
-    '【4/4 雅诵】以器载道，先贤雅音赋魂吟诵…',
-  ]
-
   useEffect(() => {
     const timer = setInterval(() => {
-      setStepIndex((prev) => (prev < steps.length - 1 ? prev + 1 : prev))
+      setStepIndex((prev) => (prev < RECOGNITION_SKELETON_STEPS.length - 1 ? prev + 1 : prev))
     }, 4500)
     return () => clearInterval(timer)
   }, [])
@@ -378,7 +379,7 @@ export function RecognitionSkeleton() {
       </div>
       <div className='object-recognition-skeleton__step-box'>
         <span className='object-recognition-skeleton__pulse' />
-        <p className='object-recognition-skeleton__hint'>{steps[stepIndex]}</p>
+        <p className='object-recognition-skeleton__hint'>{RECOGNITION_SKELETON_STEPS[stepIndex]}</p>
       </div>
     </div>
   )
