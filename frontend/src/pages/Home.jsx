@@ -2,9 +2,8 @@ import ReferenceCorners from '../components/ReferenceCorners'
 import React, { useRef, useState } from 'react'
 import '../styles/home.less'
 import { Toast, ActionSheet } from 'antd-mobile'
-import { DownOutline, RightOutline, UpOutline, CompassOutline, EditSOutline, CheckCircleOutline, DownCircleOutline, StarOutline, ShopbagOutline, FileOutline } from 'antd-mobile-icons'
+import { DownOutline, RightOutline, UpOutline, CompassOutline, EditSOutline, CheckCircleOutline, DownCircleOutline, ShopbagOutline, FileOutline } from 'antd-mobile-icons'
 import { useNavigate } from 'react-router-dom'
-import { useTheme } from '../context/useTheme'
 import InkParticleField from '../components/InkParticleField.jsx'
 import InkSpreadZone from '../components/InkSpreadZone.jsx'
 import axios from '../http'
@@ -13,9 +12,7 @@ import '../styles/referencePolish.less'
 
 const BASE = import.meta.env.BASE_URL
 
-// Use the installed official vector library for day/night marks.
-function SunWheelGlyph() { return <CompassOutline aria-hidden="true" /> }
-function MoonCrescentGlyph() { return <StarOutline aria-hidden="true" /> }
+
 // ════════════════════════════════════════════════════
 //  传统时辰换算（TRD v3.0：动态算法换算十二时辰）
 // ════════════════════════════════════════════════════
@@ -90,7 +87,6 @@ const ANCIENT_CITIES = [
 
 export default function Home() {
   const navigate = useNavigate()
-  const { toggleTheme, isDark } = useTheme()
   // 题头元素引用：水墨粒子引擎的手势监听直接挂在这里（不新增遮挡层）
   const heroRef = useRef(null)
   const heroInkZoneRef = useRef(null)
@@ -185,17 +181,6 @@ export default function Home() {
         <InkSpreadZone ref={heroInkZoneRef} targetRef={heroRef} color="ink" />
 
         <div className="home-hero__actions">
-          <button
-            type="button"
-            className="home-hero__icon-btn home-hero__icon-btn--theme"
-            onClick={toggleTheme}
-            aria-label={isDark ? '当前月下墨境 · 点击切换为晓色晨宣' : '当前晓色晨宣 · 点击切换为月下墨境'}
-            title={isDark ? '切换为晓色晨宣' : '切换为月下墨境'}
-          >
-            <span className="home-hero__glyph">
-              {isDark ? <MoonCrescentGlyph /> : <SunWheelGlyph />}
-            </span>
-          </button>
           <button
             type="button"
             className="home-hero__icon-btn"

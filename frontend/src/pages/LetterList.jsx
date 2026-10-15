@@ -4,7 +4,6 @@ import '../styles/letterList.less'
 import { useNavigate } from 'react-router-dom'
 import { AddOutline, SearchOutline, CloseOutline } from 'antd-mobile-icons'
 import InviteDrawer from '../components/InviteDrawer'
-import ThemeToggle from '../context/ThemeToggle'
 import { cachedLetters, loadLetters, shichen } from '../utils/scholarLetters'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
@@ -115,7 +114,6 @@ export default function LetterList() {
       <InkWashBackground />
       {/* 1. 顶部水墨意境题头 */}
       <header className="letter-header">
-        <ThemeToggle className="letter-header__theme" />
         <button className='letter-header__search' type='button' onClick={() => { setSearchOpen(v => !v); setSearchText('') }} aria-label='检索知音' aria-expanded={searchOpen}><SearchOutline /></button>
         <div className="letter-header__title-wrap">
           <h1 className="letter-header__title">知己信札</h1>

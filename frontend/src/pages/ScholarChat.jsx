@@ -4,7 +4,6 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { LeftOutline, SoundOutline, EditSOutline, FileOutline, MessageOutline, CompassOutline, RightOutline } from 'antd-mobile-icons'
 import { Toast, DotLoading } from 'antd-mobile'
 import axios from '../http'
-import ThemeToggle from '../context/ThemeToggle'
 import FeihuaPanel from '../components/FeihuaPanel'
 import { receiveScholarStream } from '../utils/scholarStream'
 import { cachedLetters, cacheLetter, saveLocalTurn, leaveScholar, shichen, scholarScope } from '../utils/scholarLetters'
@@ -363,7 +362,6 @@ export default function ScholarChat() {
           <span className="scholar-nav__status"><span className='scholar-status-dot' aria-hidden='true' />{sageInfo.status}</span>
         </div>
         <div className="scholar-nav__right">
-          <ThemeToggle className="scholar-nav__theme" />
           <button
             type="button"
             className="scholar-nav__action"

@@ -15,7 +15,6 @@ import {
   SoundOutline,
 } from 'antd-mobile-icons'
 import axios from '../http'
-import ThemeToggle from '../context/ThemeToggle.jsx'
 import EmptyState from '../components/EmptyState'
 import RadarChart from '../components/RadarChart.jsx'
 import TonePattern from '../components/TonePattern.jsx'
@@ -413,7 +412,6 @@ export default function PoemPage() {
         </div>
         <h1 className="poem-header__title">古诗词鉴赏</h1>
         <span className='poem-header__seal'>云山竹简</span>
-        <ThemeToggle className="poem-header__theme" />
       </header>
       <p className='poem-reference-sub'>读千年风雅 与君共此山河</p>
 
