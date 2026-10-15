@@ -170,48 +170,39 @@ export async function autoDetectUserCity() {
     // ignore
   }
 
-  // 2. 尝试国内极速免授权 IP 地理定位 API
-  try {
-    const controller = new AbortController()
-    const timer = setTimeout(() => controller.abort(), 2500)
-    const resp = await fetch('https://whois.pconline.com.cn/ipJson.jsp?json=true', {
-      signal: controller.signal
-    })
-    clearTimeout(timer)
-    if (resp.ok) {
-      const json = await resp.json()
-      const cityName = json.city || json.pro || ''
-      if (cityName) {
-        const matched = matchAncientCity(cityName)
-        localStorage.setItem('gufeng_detected_city_cache', JSON.stringify({ timestamp: Date.now(), data: matched }))
-        return matched
-      }
+  // 2. 尝试免授权 IP 地理定位（HTTPS + CORS:*，支持中文）
+  const IP_PROVIDERS = [
+    {
+      url: 'https://ipwho.is/?lang=zh-CN',
+      pick: (j) => (j && j.success !== false ? (j.city || j.region || '') : '')
+    },
+    {
+      url: 'https://ipinfo.io/json',
+      pick: (j) => (j ? (j.city || j.region || '') : '')
     }
-  } catch {
-    // 接口稍缓或跨域阻断时继续往下尝试
+  ]
+
+  for (const p of IP_PROVIDERS) {
+    try {
+      const controller = new AbortController()
+      const timer = setTimeout(() => controller.abort(), 2500)
+      const resp = await fetch(p.url, { signal: controller.signal })
+      clearTimeout(timer)
+      if (!resp.ok) continue
+      const rawJson = await resp.json()
+      const cityName = p.pick(rawJson)
+      // 校验城名是否可读（排查乱码/非预期特殊字符），避免脏数据写入 12 小时缓存
+      const readable = cityName && !/[\uFFFD]|[^\u4e00-\u9fa5A-Za-z0-9·\-\s]/.test(cityName)
+      if (!readable) continue
+
+      const matched = matchAncientCity(cityName)
+      localStorage.setItem('gufeng_detected_city_cache', JSON.stringify({ timestamp: Date.now(), data: matched }))
+      return matched
+    } catch {
+      // 接口超时或网络异常，继续尝试下一个备选服务
+    }
   }
 
-  // 3. 备选方案：尝试海外/备用 IP 解析
-  try {
-    const controller = new AbortController()
-    const timer = setTimeout(() => controller.abort(), 2000)
-    const resp = await fetch('http://ip-api.com/json/?lang=zh-CN', {
-      signal: controller.signal
-    })
-    clearTimeout(timer)
-    if (resp.ok) {
-      const json = await resp.json()
-      const cityName = json.city || json.regionName || ''
-      if (cityName) {
-        const matched = matchAncientCity(cityName)
-        localStorage.setItem('gufeng_detected_city_cache', JSON.stringify({ timestamp: Date.now(), data: matched }))
-        return matched
-      }
-    }
-  } catch {
-    // ignore
-  }
-
-  // 4. 终极默认：江南临安（杭州）
+  // 3. 终极默认：江南临安（杭州）
   return TOP_ANCIENT_CITIES[0]
 }
