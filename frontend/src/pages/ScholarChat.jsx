@@ -1,3 +1,4 @@
+import { useScholarScope } from '../utils/useScholarScope'
 import React, { useState, useRef, useEffect } from 'react'
 import '../styles/scholarChat.less'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
@@ -6,7 +7,7 @@ import { Toast, DotLoading } from 'antd-mobile'
 import axios from '../http'
 import FeihuaPanel from '../components/FeihuaPanel'
 import { receiveScholarStream } from '../utils/scholarStream'
-import { cachedLetters, cacheLetter, saveLocalTurn, leaveScholar, shichen, scholarScope } from '../utils/scholarLetters'
+import { cachedLetters, loadLetterDetail, markLetterRead, saveLocalTurn, leaveScholar, shichen, scholarScope } from '../utils/scholarLetters'
 import '../styles/scholarEcosystem.less'
 import ScholarArtifactDrawer from '../components/ScholarArtifactDrawer'
 import InkWashBackground from '../components/InkWashBackground'
@@ -91,7 +92,7 @@ function getShichenTime() {
   return `${shichenNames[idx]}二刻`
 }
 
-export default function ScholarChat() {
+function ScholarChatSession() {
   const { id } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
@@ -115,7 +116,7 @@ export default function ScholarChat() {
   // 同步用户在“我的”页面中的头像与昵称
   const [userProfile, setUserProfile] = useState(() => {
     try {
-      const cached = JSON.parse(localStorage.getItem('userInfo') || '{}')
+      const cached = JSON.parse(localStorage.getItem(`scholar-profile:v1:${scholarScope()}`) || '{}')
       return {
         avatar: cached.avatar || `${BASE}assets/shuzhai/avatar_yunshan.png`,
         nickname: cached.nickname || '云山居士'
@@ -129,17 +130,18 @@ export default function ScholarChat() {
   })
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('token'), scope = scholarScope()
+    let current = true
     if (token) {
       axios.get('/api/auth/info')
         .then((res) => {
-          if (res.data) {
+          if (res.data && current && scope === scholarScope()) {
             setUserProfile({
               avatar: res.data.avatar || `${BASE}assets/shuzhai/avatar_yunshan.png`,
               nickname: res.data.nickname || '云山居士'
             })
             try {
-              localStorage.setItem('userInfo', JSON.stringify(res.data))
+              localStorage.setItem(`scholar-profile:v1:${scope}`, JSON.stringify({ avatar: res.data.avatar, nickname: res.data.nickname }))
             } catch {
               // ignore
             }
@@ -147,6 +149,7 @@ export default function ScholarChat() {
         })
         .catch(() => {})
     }
+    return () => { current = false }
   }, [])
 
   // 动态融合诗篇上下文胶囊
@@ -203,17 +206,13 @@ export default function ScholarChat() {
       ])])
       if (row?.reply?.unread) {
         setReplyLetter(row.reply)
-        cacheLetter({ ...row, reply: { ...row.reply, unread: false } })
-        if (localStorage.getItem('token')) axios.post(`/api/deepseek/scholar/letters/${encodeURIComponent(sageKey)}/read`, { replyId: row.reply.id }).catch(() => {})
+        markLetterRead(sageKey, row.reply.id).catch(() => {})
       }
       setHydrating(false)
       restored = true
     }
     const cached = cachedLetters().find(l => l.sageId === sageKey)
-    if (localStorage.getItem('token')) axios.get(`/api/deepseek/scholar/letters/${encodeURIComponent(sageKey)}`, { timeout: 10000 })
-      .then(res => { if (current && scope === scholarScope()) { cacheLetter(res.data.data); restore(res.data.data) } })
-      .catch(() => restore(cached))
-    else restore(cached)
+    loadLetterDetail(sageKey).then(restore).catch(() => { restore(cached); if (current) Toast.show({ content: '云端旧笺暂未载入，本机原稿保留' }) })
     const leave = () => { if (restored && scope === scholarScope()) leaveScholar(sageKey) }
     window.addEventListener('pagehide', leave)
     return () => { current = false; stopRequest(); window.removeEventListener('pagehide', leave); leave() }
@@ -263,6 +262,7 @@ export default function ScholarChat() {
       const history = messages.filter(m => m.content && !m.failed).slice(-8).map(m => ({ role: m.role === 'ai' ? 'assistant' : 'user', content: m.content }))
       await receiveScholarStream(axios.getUri({ url: '/api/deepseek/chat/stream' }), { sageId: sageKey, message: text, history, requestId: userMsg.id, ...(artifactId ? { artifactId } : {}) }, request.controller.signal, (event, data) => {
         if (activeRequest.current !== request) return
+        if (scope !== scholarScope()) { stopRequest(); window.dispatchEvent(new Event('scholarSessionChanged')); return }
         if (event === 'delta' && typeof data.text === 'string') request.queue.push(...Array.from(data.text).slice(0, Math.max(0, 2000 - request.queue.length)))
         if (event === 'replace' && typeof data.text === 'string') {
           request.queue = Array.from(data.text); request.position = 0
@@ -270,9 +270,10 @@ export default function ScholarChat() {
         }
         if (event === 'meta') setMessages(prev => prev.map(m => m.id === aiId ? { ...m, degraded: Boolean(data.degraded) } : m))
         if (event === 'done' && scope === scholarScope()) {
-          saveLocalTurn(sageKey, { id: userMsg.id, question: text, answer: request.queue.join(''), at: Date.now(), degraded: Boolean(data.degraded) })
+          const savedLocally = saveLocalTurn(sageKey, { id: userMsg.id, question: text, answer: request.queue.join(''), at: Date.now(), degraded: Boolean(data.degraded), archiveSaved: Boolean(data.archiveSaved) })
           if (data.counted) window.dispatchEvent(new Event('userInfoUpdated'))
-          if (localStorage.getItem('token') && !data.archiveSaved) Toast.show({ content: '本次对话已存本机，服务端信札暂未归档' })
+          if (!savedLocally) Toast.show({ content: data.archiveSaved ? '本机空间不足，记录已保存云端' : '本机记录未保存，请先复制本次对答，勿关闭页面' })
+          else if (localStorage.getItem('token') && !data.archiveSaved) Toast.show({ content: '本次对话已存本机，服务端信札暂未归档' })
         }
       })
     } catch (error) {
@@ -347,7 +348,7 @@ export default function ScholarChat() {
       <InkWashBackground atmosphereOnly={hasScene} />
       {artifactOpen && <ScholarArtifactDrawer onClose={() => setArtifactOpen(false)} onPick={item => {
         setArtifactOpen(false)
-        handleSend(`${sageInfo.name}先生，吾日前识得「${item.name}」，记录暂考为「${item.dynasty || '年代待考'}」${item.degraded ? '，此项仍为内置资料推演' : ''}。愿请先生从所属时代的器用与风雅辨析其来历；若晚于先生之世，亦请说明为跨时推论，不知此物与古今生活有何相通？`, item.id)
+        handleSend(`${sageInfo.name}先生，吾日前识得「${item.name}」，记录暂考为「${item.dynasty || '年代待考'}」${item.degraded ? '，此项仍为内置资料推演' : ''}。${scholarScope() === 'guest' ? `本机考释资料：${item.description.slice(0, 800)}。` : ''}愿请先生从所属时代的器用与风雅辨析其来历；若晚于先生之世，亦请说明为跨时推论，不知此物与古今生活有何相通？`, scholarScope() === 'guest' ? undefined : item.id)
       }} />}
       {/* 1. 顶部清雅导航栏 */}
       <header className="scholar-nav">
@@ -563,4 +564,9 @@ export default function ScholarChat() {
       </footer>}
     </div>
   )
+}
+
+export default function ScholarChat() {
+  const scope = useScholarScope()
+  return <ScholarChatSession key={scope} />
 }

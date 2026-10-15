@@ -28,4 +28,33 @@ async function read(ctx) {
     ctx.body = { code: 1 }
   } catch { ctx.status = 503; ctx.body = { code: 0, message: '回柬暂未标记已阅' } }
 }
-module.exports = { list, detail, leave, read }
+// Local records are personal archive material, never evidence for competitive points.
+async function sync(ctx) {
+  const turns = ctx.request.body?.turns
+  if (!Array.isArray(turns) || turns.length > 100 || turns.some(t => !t || !letters.validSage(t.sageId) || typeof t.id !== 'string' || !/^[0-9a-f-]{36}$/i.test(t.id) || typeof t.question !== 'string' || !t.question.trim() || t.question.length > 2000 || typeof t.answer !== 'string' || !t.answer.trim() || t.answer.length > 4000 || !Number.isSafeInteger(t.at) || t.at < 946684800000 || t.at > Date.now() + 60000)) {
+    ctx.status = 400; ctx.body = { code: 0, message: '本机信札参数无效，每次最多补传100轮' }; return
+  }
+  try {
+    const [[user]] = await db.execute('SELECT id FROM users WHERE id=?', [ctx.userId])
+    if (!user) { ctx.status = 401; ctx.body = { code: 0, message: '请重新入席' }; return }
+  } catch { ctx.status = 503; ctx.body = { code: 0, message: '账户暂未确认，本机原稿保留' }; return }
+  const accepted = []
+  for (const t of [...turns].sort((a, b) => a.at - b.at)) {
+    const saved = await letters.saveTurn({ userId: ctx.userId, sageId: t.sageId, requestId: t.id, question: t.question, answer: t.answer, degraded: true, at: t.at })
+    if (!saved) { ctx.status = 409; ctx.body = { code: 0, message: '部分信札尚未入库，本机原稿保留，可重试', accepted }; return }
+    accepted.push(t.id)
+  }
+  ctx.body = { code: 1, data: { accepted, pointsAwarded: 0 } }
+}
+async function summary(ctx) {
+  try {
+    const [[user]] = await db.execute('SELECT * FROM users WHERE id=?', [ctx.userId])
+    if (!user) { ctx.status = 401; ctx.body = { code: 0, message: '请重新入席' }; return }
+    const [[artifacts]] = await db.execute('SELECT COUNT(*) n FROM scholar_artifacts WHERE user_id=?', [ctx.userId])
+    const [[turns]] = await db.execute('SELECT COUNT(*) n FROM scholar_turns WHERE user_id=?', [ctx.userId])
+    const [[poems]] = await db.execute('SELECT COUNT(*) n FROM user_poems WHERE user_id=?', [ctx.userId])
+    const count = value => Math.max(0, Number(value) || 0)
+    ctx.body = { code: 1, data: { nickname: user.nickname, avatar: user.avatar, appraise_count: count(artifacts.n), artifact_count: count(artifacts.n), debate_count: count(turns.n), poem_count: count(poems.n), yayan_count: count(user.yayan_count) } }
+  } catch { ctx.status = 503; ctx.body = { code: 0, message: '修持档案暂未就绪，请重试' } }
+}
+module.exports = { list, detail, leave, read, sync, summary }
