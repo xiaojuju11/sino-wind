@@ -1,16 +1,15 @@
 import './index.less'
 import { useEffect, useRef, useState } from 'react'
-import { AddOutline } from 'antd-mobile-icons'
 import { Toast } from 'antd-mobile'
 import axios from '../../http'
 
 /**
- * 物溯古今 · 识别结果（成员 A / TRD v3.0 §2.2、§3.1、§4.4）
- * 三大卡片：金石鉴赏（古物名称 / 朝代印章 / 品位鉴值）
- *          器物考释（详释：今物名称 ➔ 古代器物原型）
- *          文人品鉴心得（流变路线 + 语音试听播放器）
- * 字段口径（§3.1 ④）：{ name, dynasty, description, score, audio_url }
- * 兜底标注：服务端或前端兜底数据带 degraded，此处按「待考」呈现，不编造评价分数。
+ * 物溯古今 · 识别结果（郑小君 · 视觉体系与前端雅言吟诵闭环）
+ * 核心卡片：
+ *   1. 金石鉴赏：古物名称 / 朝代印章 / 专属博古鉴藏朱批印章（品位分值与雅级）
+ *   2. 器物考释：详释今物名称 ➔ 古代器物原型
+ *   3. 文人品鉴心得：流变路线 + 【先贤雅音吟诵器】（Web Speech API 毫秒级原生驱动，水墨声波微澜动效）
+ *   4. 收入宝鉴：一键收入文士个人书斋物溯宝鉴
  */
 
 /** 器物考释与流变路线智能拆分：兼容多种流变考略标识 */
@@ -34,59 +33,126 @@ function splitDescription(description) {
   }
 }
 
+/** 依据品位鉴值得出品评雅级标签 */
+function getScoreRank(score) {
+  if (typeof score !== 'number' || !Number.isFinite(score)) return { tag: '待考', desc: '文脉推演中' }
+  if (score >= 90) return { tag: '神品', desc: '天工开物 · 极尽高古典雅' }
+  if (score >= 80) return { tag: '妙品', desc: '格调清奇 · 深契文人雅怀' }
+  if (score >= 70) return { tag: '能品', desc: '器以载道 · 匠心工巧可鉴' }
+  if (score > 0) return { tag: '逸品', desc: '别出机杼 · 独具古今流韵' }
+  return { tag: '待考', desc: '典库推演中' }
+}
+
 export default function RecognitionResult({ recognitionResult, pending = false }) {
   const data = recognitionResult?.data || {}
   const degraded = Boolean(recognitionResult?.degraded)
   const notice = recognitionResult?.notice
   const audioRef = useRef(null)
+
+  // 语音播放控制状态
   const [isPlaying, setIsPlaying] = useState(false)
-  const [saving, setSaving] = useState(false), [saved, setSaved] = useState(false)
-  const artifactId = useRef(null), saveLock = useRef(false)
-  const saveArtifact = async () => {
-    if (saveLock.current || saved || pending) return
-    if (!localStorage.getItem('token')) { Toast.show({ content: '请先登录再收入宝鉴' }); return }
-    saveLock.current = true; setSaving(true)
-    artifactId.current ||= crypto.randomUUID()
-    try {
-      await axios.post('/api/deepseek/scholar/artifacts', { id: artifactId.current, name: data.name || '待考器物', dynasty: data.dynasty || '', description: data.description || '本次记录未附考释。', score: data.score, degraded }, { timeout: 10000 })
-      setSaved(true); Toast.show({ content: '已收入宝鉴，可前往知音携物入席' })
-    } catch { Toast.show({ content: '尚未保存，请稍后重试' }) }
-    finally { saveLock.current = false; setSaving(false) }
-  }
+  const [voiceMode, setVoiceMode] = useState('male') // 'male' (名士雅韵) | 'female' (清词婉约)
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const artifactId = useRef(null)
+  const saveLock = useRef(false)
 
   const { interpretation, flow } = splitDescription(data.description)
-  const hasAudio = Boolean(data.audio_url)
+  const hasAudioUrl = Boolean(data.audio_url && /^https?:\/\//.test(data.audio_url))
+  const rank = getScoreRank(data.score)
 
-  // 离开页面时停止所有音频
+  // 收入宝鉴功能
+  const saveArtifact = async () => {
+    if (saveLock.current || saved || pending) return
+    if (!localStorage.getItem('token')) {
+      Toast.show({ content: '请先登录，方可收入书斋物溯宝鉴' })
+      return
+    }
+    saveLock.current = true
+    setSaving(true)
+    artifactId.current ||= crypto.randomUUID()
+    try {
+      await axios.post(
+        '/api/deepseek/scholar/artifacts',
+        {
+          id: artifactId.current,
+          name: data.name || '待考器物',
+          dynasty: data.dynasty || '',
+          description: data.description || '本次记录未附考释。',
+          score: data.score,
+          degraded
+        },
+        { timeout: 10000 }
+      )
+      setSaved(true)
+      Toast.show({ content: '已收入书斋物溯宝鉴，可前往知音携物入席', icon: 'success' })
+    } catch {
+      Toast.show({ content: '尚未保存，请稍候重试' })
+    } finally {
+      saveLock.current = false
+      setSaving(false)
+    }
+  }
+
+  // 页面离开时彻底停止所有音频与合成语音
   useEffect(() => {
     return () => {
       if (audioRef.current) {
         audioRef.current.pause()
       }
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel()
       }
     }
   }, [])
 
-  // 本地浏览器古雅朗诵兜底（确保设备静音拦截或跨域异常时 100% 有声音）
-  const playWithSpeechSynthesis = () => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel()
-      const textToRead = `${data.name || '此物'}。${interpretation}。${flow}`
-      const utter = new SpeechSynthesisUtterance(textToRead)
-      utter.lang = 'zh-CN'
-      utter.rate = 0.85
-      utter.pitch = 0.96
-      utter.onstart = () => setIsPlaying(true)
-      utter.onend = () => setIsPlaying(false)
-      utter.onerror = () => setIsPlaying(false)
-      window.speechSynthesis.speak(utter)
+  // Web Speech 雅言吟诵引擎（调校中文字符、语速、音调）
+  const playWithSpeechSynthesis = (targetVoiceMode = voiceMode) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      Toast.show({ content: '当前浏览器未开启语音合成能力' })
+      setIsPlaying(false)
+      return
+    }
+
+    window.speechSynthesis.cancel()
+
+    // 剔除技术符号与标记，确保吟诵宛如名士当面徐徐道来
+    const cleanInterp = (interpretation || '').replace(/[【】\[\]➔\->→]/g, ' ')
+    const cleanFlow = (flow || '').replace(/[➔\->→]/g, '，流变为：')
+    const textToRead = `${data.name || '此物'}，源自${data.dynasty || '古代'}。${cleanInterp}。文人流变脉络：${cleanFlow}`
+
+    const utter = new SpeechSynthesisUtterance(textToRead)
+    utter.lang = 'zh-CN'
+
+    // 获取系统已安装的中文配音
+    const voices = window.speechSynthesis.getVoices()
+    const zhVoices = voices.filter(v => v.lang.includes('zh') || v.lang.includes('cmn') || v.lang.includes('CN'))
+
+    if (targetVoiceMode === 'male') {
+      // 名士雅韵：沉雄从容、语速稍缓、抑扬顿挫
+      utter.rate = 0.84
+      utter.pitch = 0.90
+      const maleVoice = zhVoices.find(v => /Yunxi|Kangkang|Danny|Male|男/i.test(v.name)) || zhVoices[0]
+      if (maleVoice) utter.voice = maleVoice
     } else {
+      // 清词婉约：温润空灵、轻柔徐缓
+      utter.rate = 0.88
+      utter.pitch = 1.06
+      const femaleVoice = zhVoices.find(v => /Xiaoxiao|Yaoyao|Huihui|Female|女/i.test(v.name)) || zhVoices[0]
+      if (femaleVoice) utter.voice = femaleVoice
+    }
+
+    utter.onstart = () => setIsPlaying(true)
+    utter.onend = () => setIsPlaying(false)
+    utter.onerror = (e) => {
+      console.warn('[Web Speech synthesis error]:', e)
       setIsPlaying(false)
     }
+
+    window.speechSynthesis.speak(utter)
   }
 
+  // 播放/暂停总控
   const handleVoicePlay = () => {
     if (isPlaying) {
       if (audioRef.current) audioRef.current.pause()
@@ -96,17 +162,16 @@ export default function RecognitionResult({ recognitionResult, pending = false }
       setIsPlaying(false)
       return
     }
-    if (hasAudio && audioRef.current) {
-      // 优先播放 Coze 生成的高清文人 MP3 语音
+
+    // 若有上游外部音频直链，优先播放音频直链；否则 100% 呼起 Web Speech 雅音引擎
+    if (hasAudioUrl && audioRef.current) {
       audioRef.current.currentTime = 0
       const playPromise = audioRef.current.play()
       if (playPromise !== undefined) {
         playPromise
-          .then(() => {
-            setIsPlaying(true)
-          })
+          .then(() => setIsPlaying(true))
           .catch((err) => {
-            console.warn('[Audio Play blocked or failed, fallback to SpeechSynthesis]:', err)
+            console.warn('[Audio Play blocked, fallback to Web Speech]:', err)
             playWithSpeechSynthesis()
           })
       } else {
@@ -117,15 +182,23 @@ export default function RecognitionResult({ recognitionResult, pending = false }
     }
   }
 
+  // 切换音色模式
+  const handleToggleVoiceMode = (mode) => {
+    setVoiceMode(mode)
+    if (isPlaying) {
+      playWithSpeechSynthesis(mode)
+    }
+  }
+
   return (
     <div className='object-recognition-result'>
       {(degraded || pending) && (
         <p className='object-recognition-result__notice'>
-          {pending ? '仍在等待真实工作流，先行展示内置文博库兜底推演。' : notice}
+          {pending ? '仍在等待真实工作流，先行呈现典库文脉推演。' : notice}
         </p>
       )}
 
-      {/* ── 金石鉴赏 ── */}
+      {/* ── ① 金石鉴赏：名物考据 + 朱批博古鉴藏章 ── */}
       <section className='object-recognition-card'>
         <h2 className='object-recognition-card__title'>
           <i className='iconfont icon-zhanpin' aria-hidden='true' />
@@ -136,16 +209,31 @@ export default function RecognitionResult({ recognitionResult, pending = false }
             <h3>{data.name || '待考'}</h3>
             {data.dynasty && <span className='object-recognition-result__dynasty'>{data.dynasty}</span>}
           </div>
-          <p className='object-recognition-result__score'>
-            品位鉴值：
-            {degraded
-              ? '待考（兜底推演未评分）'
-              : `${typeof data.score === 'number' ? data.score : 0} 分`}
-          </p>
+
+          {/* 专属国风朱批博古鉴藏印章 */}
+          <div className='scholar-appraise-seal'>
+            <div className='scholar-appraise-seal__inner'>
+              <div className='scholar-appraise-seal__badge'>
+                <span className='scholar-appraise-seal__label'>品位鉴值</span>
+                <span className='scholar-appraise-seal__value'>
+                  {degraded ? '待考' : `${typeof data.score === 'number' ? data.score : 0}`}
+                </span>
+                {!degraded && <span className='scholar-appraise-seal__unit'>分</span>}
+              </div>
+              <div className='scholar-appraise-seal__rank'>
+                <div className='scholar-appraise-seal__tag'>{rank.tag}</div>
+                <div className='scholar-appraise-seal__desc'>{rank.desc}</div>
+              </div>
+              <div className='scholar-appraise-seal__stamp'>
+                <span>博古</span>
+                <span>珍赏</span>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ── 器物考释 ── */}
+      {/* ── ② 器物考释：今昔文脉渊源 ── */}
       <section className='object-recognition-card'>
         <h2 className='object-recognition-card__title'>
           <i className='iconfont icon-shuben' aria-hidden='true' />
@@ -156,7 +244,7 @@ export default function RecognitionResult({ recognitionResult, pending = false }
         </div>
       </section>
 
-      {/* ── 文人品鉴心得与流变 ── */}
+      {/* ── ③ 文人品鉴心得：流变脉络 + 【先贤雅音吟诵器】 ── */}
       <section className='object-recognition-card'>
         <h2 className='object-recognition-card__title'>
           <i className='iconfont icon-zhinan' aria-hidden='true' />
@@ -166,41 +254,94 @@ export default function RecognitionResult({ recognitionResult, pending = false }
           <p className='object-recognition-result__text'>
             {flow || '本次考释未附流变路线。'}
           </p>
-          <div className='object-recognition-result__voice-row'>
-            <button
-              type='button'
-              className='object-recognition-result__voice'
-              onClick={handleVoicePlay}
-              aria-label='播放古风文人讲解语音'
-              title='点击播放或暂停'
-            >
-              <i className='iconfont icon-yinliang-F' aria-hidden='true' />
-              <span>{isPlaying ? '暂停讲解' : (hasAudio ? '听文人讲解' : '听品鉴吟诵')}</span>
-            </button>
+
+          {/* 先贤雅音吟诵模块（全中文原生 Web Speech，水墨声波微澜动效） */}
+          <div className='scholar-voice-deck'>
+            <div className='scholar-voice-deck__header'>
+              <div className='scholar-voice-deck__title-wrap'>
+                <i className='iconfont icon-yinliang-F' aria-hidden='true' />
+                <span className='scholar-voice-deck__title'>先贤雅音吟诵</span>
+              </div>
+              {/* 音色切换 */}
+              <div className='scholar-voice-deck__timbre-toggle'>
+                <button
+                  type='button'
+                  className={`scholar-voice-deck__timbre-btn ${voiceMode === 'male' ? 'is-active' : ''}`}
+                  onClick={() => handleToggleVoiceMode('male')}
+                >
+                  名士雅韵
+                </button>
+                <button
+                  type='button'
+                  className={`scholar-voice-deck__timbre-btn ${voiceMode === 'female' ? 'is-active' : ''}`}
+                  onClick={() => handleToggleVoiceMode('female')}
+                >
+                  清词婉约
+                </button>
+              </div>
+            </div>
+
+            <div className='scholar-voice-deck__player-row'>
+              <button
+                type='button'
+                className={`scholar-voice-btn ${isPlaying ? 'is-playing' : ''}`}
+                onClick={handleVoicePlay}
+                aria-label='播放古风文人讲解语音'
+                title='点击播放或暂停'
+              >
+                <span className='scholar-voice-btn__ink-ring' aria-hidden='true' />
+                <i className={`iconfont ${isPlaying ? 'icon-jieshu' : 'icon-yinliang-F'}`} aria-hidden='true' />
+                <span className='scholar-voice-btn__text'>
+                  {isPlaying ? '暂停吟诵' : '听先贤雅诵'}
+                </span>
+              </button>
+
+              {/* 水墨声波律动动态频谱 */}
+              <div className={`ink-soundwave ${isPlaying ? 'is-animating' : ''}`} aria-hidden='true'>
+                <span className='ink-soundwave__bar bar-1' />
+                <span className='ink-soundwave__bar bar-2' />
+                <span className='ink-soundwave__bar bar-3' />
+                <span className='ink-soundwave__bar bar-4' />
+                <span className='ink-soundwave__bar bar-5' />
+              </div>
+
+              <span className='scholar-voice-deck__status'>
+                {isPlaying
+                  ? `【${voiceMode === 'male' ? '先贤沉雄' : '清词空灵'}】徐徐道来…`
+                  : '以器载道 · 名士亲解'}
+              </span>
+            </div>
           </div>
         </div>
       </section>
 
+      {/* ── 底部操作区：入藏文士物溯宝鉴 ── */}
       <p className='object-recognition-result__statement'>
-        本功能为国风趣味科普推演与文脉流变研习，非严谨考古鉴定工具。
+        本功能为两宋文风趣味科普推演与物脉流变研习，非严谨考古鉴定工具。
       </p>
-      <button type='button' className='object-recognition-result__voice' disabled={pending || saving || saved} onClick={saveArtifact}>
-        <AddOutline /> {saved ? '已收入宝鉴' : saving ? '正在入藏…' : pending ? '待考释结束后入藏' : '收入宝鉴'}
+
+      <button
+        type='button'
+        className={`object-recognition-result__save-btn ${saved ? 'is-saved' : ''}`}
+        disabled={pending || saving || saved}
+        onClick={saveArtifact}
+      >
+        <i className='iconfont icon-shoucang' aria-hidden='true' />
+        <span>{saved ? '已入藏物溯宝鉴' : saving ? '正在镌录入藏…' : pending ? '考释完毕后方可入藏' : '收入物溯宝鉴'}</span>
       </button>
 
-      <audio
-        ref={audioRef}
-        src={data.audio_url || undefined}
-        preload='auto'
-        crossOrigin='anonymous'
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-        onEnded={() => setIsPlaying(false)}
-        onError={(e) => {
-          console.warn('[Audio Playback Error, triggering fallback]:', e)
-          setIsPlaying(false)
-        }}
-      />
+      {hasAudioUrl && (
+        <audio
+          ref={audioRef}
+          src={data.audio_url}
+          preload='auto'
+          crossOrigin='anonymous'
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+          onEnded={() => setIsPlaying(false)}
+          onError={() => setIsPlaying(false)}
+        />
+      )}
     </div>
   )
 }
@@ -210,10 +351,10 @@ export function RecognitionSkeleton() {
   const [stepIndex, setStepIndex] = useState(0)
 
   const steps = [
-    '【1/4 辨物】大模型正在考释画卷器形与材质…',
-    '【2/4 溯源】文史大模型翻阅典籍，推演唐宋明演变脉络…',
+    '【1/4 辨物】文博大模型正在考释画卷器形与金石材质…',
+    '【2/4 溯源】文史算法翻阅《广韵》《考工记》，推演唐宋明流变…',
     '【3/4 赋词】两宋先贤拟文人品鉴长文，评定雅士品位…',
-    '【4/4 雅诵】生成专属文人品鉴讲解音频…',
+    '【4/4 雅诵】以器载道，先贤雅音赋魂吟诵…',
   ]
 
   useEffect(() => {

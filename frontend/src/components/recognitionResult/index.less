@@ -1,13 +1,12 @@
 @import '../../styles/variables.less';
 
 // ════════════════════════════════════════════════════
-//  物溯古今 · 识别结果 + 加载骨架（成员 A 独占）
+//  物溯古今 · 识别结果 + 雅言吟诵器 + 加载骨架
+//  郑小君（视觉体系与前端雅言吟诵闭环）
 //  基准视口 390px，1rem = clientWidth / 10
-//  命名空间：全部规则嵌套在 .object-recognition-result / .object-recognition-skeleton 内
-//  日月主题：var(--gf-*) 取 ../context/theme.less，后面的 Less 令牌作浅色回退值
 // ════════════════════════════════════════════════════
 
-// ── 回纹描金外框（本模块自持）──
+// ── 回纹描金外框 ──
 .gu-frame(@len: 0.22rem) {
   position: relative;
   border: 1px solid fade(@color-gold, 48%);
@@ -40,13 +39,13 @@
 .object-recognition-result {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.32rem;
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
 
   // 兜底提示：只说明降级事实，不做恐吓式红色报错
   &__notice {
     margin: 0;
-    padding: 0.2rem 0.26rem;
+    padding: 0.2rem 0.28rem;
     border-left: 2px solid @color-gold;
     border-radius: 0.12rem;
     background-color: fade(@color-gold, 12%);
@@ -60,11 +59,12 @@
     align-items: center;
     gap: 0.2rem;
     flex-wrap: wrap;
+    margin-bottom: 0.24rem;
 
     h3 {
       margin: 0;
       font-family: 'Songti SC', 'STSong', 'SimSun', 'Noto Serif SC', serif;
-      font-size: 0.56rem;
+      font-size: 0.54rem;
       font-weight: 700;
       letter-spacing: 0.02em;
       color: var(--gf-accent-text, @color-seal);
@@ -73,77 +73,333 @@
 
   // 朝代印章（印面文字恒为象牙白）
   &__dynasty {
-    padding: 0.08rem 0.16rem;
+    padding: 0.08rem 0.18rem;
     border-radius: @radius-seal;
     background-color: var(--gf-seal, @color-seal);
-    color: @color-card;
-    font-size: 0.3rem;
-    letter-spacing: 0.04em;
+    color: #FAF7F0;
+    font-size: 0.28rem;
+    letter-spacing: 0.06em;
     box-shadow: inset 0 0 0 1px fade(@color-gold, 55%);
-  }
-
-  &__score {
-    margin: 0.22rem 0 0;
-    font-size: 0.32rem;
-    color: var(--gf-text-sub, @color-text-sub);
   }
 
   &__text {
     margin: 0;
-    font-size: 0.36rem;
-    line-height: 1.75;
+    font-size: 0.34rem;
+    line-height: 1.8;
     color: var(--gf-text-main, @color-text-main);
     white-space: pre-wrap;
-  }
-
-  &__voice-row {
-    display: flex;
-    margin-top: 0.28rem;
-  }
-
-  // 语音试听播放器（印章式按钮）
-  &__voice {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.12rem;
-    min-height: 0.9rem;
-    padding: 0 0.3rem;
-    border-radius: @radius-seal;
-    border: 1px solid fade(@color-gold, 70%);
-    background-color: var(--gf-seal, @color-seal);
-    color: @color-card;
-    font-size: 0.34rem;
-    font-family: inherit;
-    letter-spacing: 0.04em;
-    cursor: pointer;
-    box-shadow: inset 0 0 0 2px fade(@color-gold, 40%);
-    transition: transform 0.2s ease;
-
-    .iconfont {
-      font-size: 0.36rem;
-    }
-
-    &:active {
-      transform: scale(0.98);
-    }
-
-    &.is-disabled,
-    &:disabled {
-      background-color: var(--gf-bg-sunk, @color-bg-sunk);
-      color: var(--gf-text-sub, @color-text-sub);
-      border-color: fade(@color-gold, 35%);
-      box-shadow: none;
-      cursor: not-allowed;
-    }
+    text-align: justify;
+    letter-spacing: 0.015em;
   }
 
   &__statement {
-    margin: 0;
+    margin: 0.1rem 0 0;
     text-align: center;
-    font-size: 0.28rem;
+    font-size: 0.26rem;
     line-height: 1.6;
     color: var(--gf-text-sub, @color-text-sub);
   }
+
+  // 收入物溯宝鉴印章大按钮
+  &__save-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.16rem;
+    min-height: 1.04rem;
+    width: 100%;
+    margin-top: 0.12rem;
+    padding: 0 0.36rem;
+    border-radius: @radius-seal;
+    border: 1px solid fade(@color-gold, 80%);
+    background: linear-gradient(135deg, var(--gf-seal, @color-seal) 0%, #6E1B1B 100%);
+    color: #FAF7F0;
+    font-size: 0.36rem;
+    font-weight: 600;
+    font-family: 'STKaiti', 'KaiTi', serif;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    box-shadow: 
+      inset 0 0 0 2px fade(@color-gold, 40%),
+      0 6px 16px -2px rgba(138, 43, 43, 0.28);
+    transition: all 0.22s ease;
+
+    .iconfont {
+      font-size: 0.42rem;
+      color: @color-gold;
+    }
+
+    &:active {
+      transform: scale(0.985);
+      box-shadow: inset 0 0 0 2px fade(@color-gold, 60%);
+    }
+
+    &.is-saved {
+      background: linear-gradient(135deg, #4A5B4C 0%, #364438 100%);
+      border-color: #7D9D80;
+      box-shadow: inset 0 0 0 1px #9FC5A3;
+      cursor: default;
+
+      .iconfont {
+        color: #C5E0C7;
+      }
+    }
+
+    &:disabled:not(.is-saved) {
+      background: var(--gf-bg-sunk, @color-bg-sunk);
+      color: var(--gf-text-sub, @color-text-sub);
+      border-color: fade(@color-gold, 30%);
+      box-shadow: none;
+      cursor: not-allowed;
+
+      .iconfont {
+        color: var(--gf-text-sub, @color-text-sub);
+      }
+    }
+  }
+}
+
+// ── 专属朱批博古鉴藏印章 ──────────────────────────────
+.scholar-appraise-seal {
+  position: relative;
+  margin-top: 0.2rem;
+  padding: 0.22rem 0.26rem;
+  border-radius: 0.14rem;
+  border: 1px dashed fade(@color-seal, 32%);
+  background: color-mix(in srgb, var(--gf-seal, @color-seal) 6%, var(--gf-bg-card, #FAF7F0));
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.2rem;
+  }
+
+  &__badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.4rem;
+    padding: 0.1rem 0.16rem;
+    border-radius: 0.08rem;
+    background-color: var(--gf-seal, @color-seal);
+    color: #FAF7F0;
+    box-shadow: inset 0 0 0 1px fade(@color-gold, 60%);
+  }
+
+  &__label {
+    font-size: 0.22rem;
+    color: fade(#FAF7F0, 85%);
+    letter-spacing: 0.04em;
+  }
+
+  &__value {
+    font-family: 'Songti SC', 'STSong', serif;
+    font-size: 0.54rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: @color-gold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  }
+
+  &__unit {
+    font-size: 0.22rem;
+    color: fade(#FAF7F0, 80%);
+  }
+
+  &__rank {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  &__tag {
+    font-family: 'STKaiti', 'KaiTi', serif;
+    font-size: 0.38rem;
+    font-weight: 700;
+    color: var(--gf-accent-text, @color-seal);
+    letter-spacing: 0.04em;
+  }
+
+  &__desc {
+    margin-top: 0.04rem;
+    font-size: 0.26rem;
+    color: var(--gf-text-sub, @color-text-sub);
+    line-height: 1.4;
+  }
+
+  &__stamp {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 0.94rem;
+    height: 0.94rem;
+    border-radius: 0.08rem;
+    border: 1.5px solid var(--gf-accent-text, @color-seal);
+    color: var(--gf-accent-text, @color-seal);
+    font-family: 'STKaiti', 'KaiTi', serif;
+    font-size: 0.26rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 0.02em;
+    transform: rotate(5deg);
+    box-shadow: inset 0 0 0 1px fade(@color-seal, 30%);
+    opacity: 0.88;
+  }
+}
+
+// ── 先贤雅音吟诵器 (Web Speech + 水墨声波) ─────────────
+.scholar-voice-deck {
+  margin-top: 0.32rem;
+  padding: 0.24rem 0.28rem;
+  border-radius: 0.14rem;
+  border: 1px solid fade(@color-gold, 45%);
+  background: color-mix(in srgb, var(--gf-bg-sunk, #F3EFE6) 65%, transparent);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.22rem;
+    padding-bottom: 0.14rem;
+    border-bottom: 1px dashed fade(@color-gold, 35%);
+  }
+
+  &__title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.12rem;
+    color: var(--gf-accent-text, @color-seal);
+
+    .iconfont {
+      font-size: 0.34rem;
+    }
+  }
+
+  &__title {
+    font-family: 'STKaiti', 'KaiTi', serif;
+    font-size: 0.34rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  &__timbre-toggle {
+    display: flex;
+    gap: 0.12rem;
+  }
+
+  &__timbre-btn {
+    padding: 0.06rem 0.16rem;
+    border-radius: 0.2rem;
+    border: 1px solid fade(@color-gold, 45%);
+    background: transparent;
+    color: var(--gf-text-sub, @color-text-sub);
+    font-size: 0.24rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &.is-active {
+      background: var(--gf-seal, @color-seal);
+      color: #FAF7F0;
+      border-color: var(--gf-seal, @color-seal);
+      box-shadow: inset 0 0 0 1px fade(@color-gold, 45%);
+    }
+  }
+
+  &__player-row {
+    display: flex;
+    align-items: center;
+    gap: 0.22rem;
+    flex-wrap: wrap;
+  }
+
+  &__status {
+    font-size: 0.26rem;
+    color: var(--gf-text-sub, @color-text-sub);
+    font-family: 'STKaiti', 'KaiTi', serif;
+  }
+}
+
+// 雅音主按钮
+.scholar-voice-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.12rem;
+  height: 0.84rem;
+  padding: 0 0.28rem;
+  border-radius: @radius-seal;
+  border: 1px solid fade(@color-gold, 70%);
+  background-color: var(--gf-seal, @color-seal);
+  color: #FAF7F0;
+  font-size: 0.32rem;
+  font-family: 'STKaiti', 'KaiTi', serif;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1.5px fade(@color-gold, 40%);
+  transition: all 0.2s ease;
+
+  .iconfont {
+    font-size: 0.34rem;
+    color: @color-gold;
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &.is-playing {
+    background: #6E1B1B;
+    border-color: @color-gold;
+
+    .scholar-voice-btn__ink-ring {
+      position: absolute;
+      inset: -4px;
+      border-radius: inherit;
+      border: 1.5px solid fade(@color-seal, 60%);
+      animation: ink-pulse-ring 1.8s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+      pointer-events: none;
+    }
+  }
+}
+
+// 水墨声波律动动画
+.ink-soundwave {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.08rem;
+  height: 0.5rem;
+  padding: 0 0.08rem;
+
+  &__bar {
+    width: 0.06rem;
+    height: 0.16rem;
+    border-radius: 0.04rem;
+    background-color: var(--gf-accent-text, @color-seal);
+    transition: height 0.2s ease;
+  }
+
+  &.is-animating {
+    .bar-1 { animation: ink-wave-dance 1.1s ease-in-out infinite alternate; }
+    .bar-2 { animation: ink-wave-dance 0.9s ease-in-out infinite alternate 0.2s; }
+    .bar-3 { animation: ink-wave-dance 1.3s ease-in-out infinite alternate 0.4s; }
+    .bar-4 { animation: ink-wave-dance 0.8s ease-in-out infinite alternate 0.1s; }
+    .bar-5 { animation: ink-wave-dance 1.0s ease-in-out infinite alternate 0.3s; }
+  }
+}
+
+@keyframes ink-wave-dance {
+  0% { height: 0.14rem; opacity: 0.5; }
+  50% { height: 0.46rem; opacity: 1; }
+  100% { height: 0.22rem; opacity: 0.7; }
+}
+
+@keyframes ink-pulse-ring {
+  0% { transform: scale(0.98); opacity: 0.8; }
+  100% { transform: scale(1.18); opacity: 0; }
 }
 
 // ── 三大卡片 ─────────────────────────────────────────
@@ -170,7 +426,7 @@
     color: var(--gf-text-main, @color-text-main);
 
     .iconfont {
-      font-size: 0.4rem;
+      font-size: 0.42rem;
       color: var(--gf-accent-text, @color-seal);
     }
   }
@@ -199,23 +455,24 @@
     display: block;
     height: 0.3rem;
     margin-bottom: 0.18rem;
-    border-radius: 0.08rem;
+    border-radius: 0.06rem;
     background: linear-gradient(
       90deg,
-      var(--gf-bg-sunk, @color-bg-sunk) 0%,
-      var(--gf-bg-card, @color-card) 50%,
-      var(--gf-bg-sunk, @color-bg-sunk) 100%
+      fade(@color-bg-sunk, 85%) 25%,
+      fade(@color-card, 60%) 37%,
+      fade(@color-bg-sunk, 85%) 63%
     );
-    background-size: 200% 100%;
-    animation: recognition-shimmer 1.4s linear infinite;
+    background-size: 400% 100%;
+    animation: skeleton-shimmer 1.4s ease infinite;
 
     &--title {
-      width: 42%;
-      height: 0.42rem;
+      width: 40%;
+      height: 0.38rem;
+      margin-bottom: 0.28rem;
     }
 
     &--short {
-      width: 58%;
+      width: 65%;
       margin-bottom: 0;
     }
   }
@@ -223,77 +480,45 @@
   &__step-box {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 0.16rem;
-    padding: 0.16rem 0.24rem;
-    border-radius: 0.2rem;
-    background-color: fade(@color-gold, 10%);
-    border: 1px dashed fade(@color-gold, 40%);
+    padding: 0.24rem 0.32rem;
+    border-radius: @radius-card;
+    border: 1px dashed fade(@color-gold, 65%);
+    background: color-mix(in srgb, var(--gf-bg-card, #FAF7F0) 90%, var(--gf-gold) 10%);
   }
 
   &__pulse {
-    width: 0.18rem;
-    height: 0.18rem;
+    width: 0.22rem;
+    height: 0.22rem;
     border-radius: 50%;
-    background-color: var(--gf-seal, @color-seal);
-    animation: ink-dot-pulse 1.2s infinite ease-in-out;
+    background-color: var(--gf-accent-text, @color-seal);
+    box-shadow: 0 0 0 0 fade(@color-seal, 70%);
+    animation: pulse-ring 1.6s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+    flex-shrink: 0;
   }
 
   &__hint {
     margin: 0;
-    text-align: center;
-    font-size: 0.28rem;
-    font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
-    color: var(--gf-accent-text, @color-seal);
+    font-family: 'STKaiti', 'KaiTi', 'SimSun', serif;
+    font-size: 0.32rem;
+    color: var(--gf-text-main, @color-text-main);
     letter-spacing: 0.02em;
-    animation: text-switch-fade 0.4s ease;
+    line-height: 1.5;
   }
 }
 
-@keyframes ink-dot-pulse {
-  0%, 100% {
-    transform: scale(0.8);
-    opacity: 0.4;
-  }
-  50% {
-    transform: scale(1.3);
-    opacity: 1;
-    box-shadow: 0 0 0.1rem fade(@color-seal, 60%);
-  }
+@keyframes skeleton-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
 }
 
-@keyframes text-switch-fade {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes recognition-shimmer {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: -200% 0;
-  }
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 fade(@color-seal, 70%); }
+  70% { box-shadow: 0 0 0 0.18rem fade(@color-seal, 0%); }
+  100% { box-shadow: 0 0 0 0 fade(@color-seal, 0%); }
 }
 
 @keyframes recognition-fade-in {
-  0% {
-    opacity: 0;
-    transform: translateY(0.24rem);
-    filter: blur(4px);
-  }
-  60% {
-    filter: blur(1px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-  }
+  from { opacity: 0; transform: translateY(0.12rem); }
+  to { opacity: 1; transform: translateY(0); }
 }
