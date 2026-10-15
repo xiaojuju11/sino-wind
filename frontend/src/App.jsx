@@ -28,11 +28,12 @@ export default function App() {
           <Route path='/letters' element={<LetterList/>}></Route>
           <Route path='/ai' element={<Navigate to='/letters' replace />}></Route>
           <Route path='/mine' element={<MinePage/>}></Route>
-          <Route path='/recognition' element={<Recognition/>}></Route>
         </Route>
+        <Route path='/recognition' element={<Recognition/>}></Route>
         <Route path='/accountSetting' element={<AccountSetting/>}></Route>
         <Route path='/chat/:id' element={<ScholarChat/>}></Route>
         <Route path='/ai-chat' element={<ScholarChat/>}></Route>
+        <Route path='/scholar-chat/:id' element={<ScholarChat/>}></Route>
         {/* 古诗词鉴赏大卷轴与书斋诗笺 */}
         <Route path='/poem' element={<PoemPage/>}></Route>
         <Route path='/poem-collection' element={<PoemCollection/>}></Route>

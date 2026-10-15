@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react'
 import './index.less'
 import { useNavigate } from 'react-router-dom'
-import ThemeToggle from '../../context/ThemeToggle'
 
 /**
  * 图片采集器（成员 A / TRD v3.0 §2.2）
@@ -151,7 +150,6 @@ export default function ImageCaptureAndProcess({ onRecognition, children }) {
         </button>
         <h1 className='image-capture-header__title'>物溯古今 · 拍照识器</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.12rem' }}>
-          <ThemeToggle className='image-capture-header__theme' />
           <i className='image-capture-header__seal' aria-hidden='true'>华风</i>
         </div>
       </header>

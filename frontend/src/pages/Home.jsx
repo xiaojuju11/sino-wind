@@ -3,8 +3,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import '../styles/home.less'
 import { Toast, Popup } from 'antd-mobile'
 import { DownOutline, RightOutline, UpOutline, CompassOutline, EditSOutline, CheckCircleOutline, DownCircleOutline, StarOutline, ShopbagOutline, FileOutline, SearchOutline } from 'antd-mobile-icons'
+import { CITY_DICT, autoDetectUserCity } from '../utils/ancientCities'   // 郑小君的逐城精编诗文 + IP 感知
 import { useNavigate } from 'react-router-dom'
-import { useTheme } from '../context/useTheme'
 import InkParticleField from '../components/InkParticleField.jsx'
 import InkSpreadZone from '../components/InkSpreadZone.jsx'
 import axios from '../http'
@@ -17,9 +17,9 @@ import { cityChronicle, NOT_FOUND_TIP, RECOMMEND_CITIES } from '../utils/cityChr
 
 const BASE = import.meta.env.BASE_URL
 
-// Use the installed official vector library for day/night marks.
+// 现代天气日轮图标
 function SunWheelGlyph() { return <CompassOutline aria-hidden="true" /> }
-function MoonCrescentGlyph() { return <StarOutline aria-hidden="true" /> }
+
 // ════════════════════════════════════════════════════
 //  传统时辰换算（TRD v3.0：动态算法换算十二时辰）
 //  2026-10-15：表已迁到 utils/shichen.js（补齐十二时辰雅称与养生雅事，
@@ -81,11 +81,26 @@ const CLASSIC_CITIES = [
   { name: '南京', ancient: '金陵', temp: '23°', weather: '和煦', desc: '江南佳丽地，金陵帝王州。', wuhou: '水始涸', text: '金陵（南京）· 江南佳丽帝王州' },
 ]
 
-// 城邑 → 展示字段：原 6 城用其专属内容，其余城按季节取句（保持「古称（今名）· 诗句」格式）
+// 城邑 → 展示字段
+// 优先级：郑小君的逐城精编（CITY_DICT，含「兰渚流觞」这类物候雅称）
+//      → 原 6 城精品覆盖（CLASSIC_CITIES）
+//      → 按季节取句 + 按节气取物候（其余 290+ 城）
+// 坐标、古称、真实气温一律来自 geoCities.js / almanac.js，不受本表影响。
 function cityView(city) {
+  const curated = CITY_DICT[city.name]
   const classic = CLASSIC_CITIES.find((c) => c.name === city.name)
   const line = seasonLine(new Date(), city.name)
   const label = city.ancient ? `${city.ancient}（${city.name}）` : city.name
+  if (curated) {
+    const ancient = city.ancient || curated.ancient || ''
+    return {
+      name: city.name,
+      ancient,
+      desc: curated.desc,
+      wuhou: curated.wuhou,
+      text: `${ancient ? `${ancient}（${city.name}）` : city.name} · ${curated.desc.slice(0, 12)}`,
+    }
+  }
   if (classic) return { ...classic }
   return {
     name: city.name,
@@ -98,7 +113,6 @@ function cityView(city) {
 
 export default function Home() {
   const navigate = useNavigate()
-  const { toggleTheme, isDark } = useTheme()
   // 题头元素引用：水墨粒子引擎的手势监听直接挂在这里（不新增遮挡层）
   const heroRef = useRef(null)
   const heroInkZoneRef = useRef(null)
@@ -162,18 +176,7 @@ export default function Home() {
   const ganzhi = getGanzhi(now)
   const dateText = getDateText(now)
 
-  // 定位：GPS → IP 归属 → 默认北京（失败不阻断页面）
-  useEffect(() => {
-    const ac = new AbortController()
-    let alive = true
-    locate(ac.signal).then(({ city, source }) => {
-      if (!alive) return
-      setCurrentCity(cityView(city))
-      setCityCoords({ lat: city.lat, lng: city.lng })
-      setLocatedBy(source)
-    }).catch(() => {})
-    return () => { alive = false; ac.abort() }
-  }, [])
+  // 定位已合并到下方单一 effect（autoDetectUserCity 优先 → locate() 兜底）
 
   // 真实气温：随选中城邑的经纬度取数
   useEffect(() => {
@@ -223,6 +226,46 @@ export default function Home() {
     setChronicleQuery('')
     Toast.show({ content: `已留驻${city.ancient ? `${city.ancient}（${city.name}）` : city.name}` })
   }
+
+  // 🏮 自动感知驻足之地（合并说明 2026-10-15）
+  // 原有两个并行实现互相竞争：郑小君的 autoDetectUserCity()（IP + 12h 缓存，
+  // 带古称与精编诗文）与我的 locate()（GPS → IP → 默认北京，带真实经纬度）。
+  // 合并为一条链路：以 autoDetectUserCity 作首选（含缓存，首屏不闪），
+  // 命中则用其城名配我的经纬度并套用 cityView 的精品文案；
+  // 未命中或失败再走 locate() 的 GPS/IP 链路。
+  // 关键：无论走哪条，都必须同步 cityCoords —— 否则真实气温会一直用初值杭州。
+  useEffect(() => {
+    const ac = new AbortController()
+    let alive = true
+    ;(async () => {
+      let city = null
+      let source = 'default'
+      try {
+        const detected = await autoDetectUserCity()
+        // 防御：autoDetectUserCity 内部的 pconline 接口返回 GBK，若按 UTF-8 解码
+        // 会得到乱码城市名（实测 city = "�Ž���"，正确应为「九江市」），
+        // 且该乱码会被缓存 12 小时。此处校验城名是否可读：
+        // 含替换符或非中日韩字符即视为脏数据，直接弃用并走 locate() 兜底。
+        const readable = detected?.name && !/[\uFFFD]|[^\u4e00-\u9fa5A-Za-z0-9·\-\s]/.test(detected.name)
+        if (readable) {
+          // 按名回填经纬度（他的库是名称型，我的库是坐标型）
+          const rec = CITIES.find((c) => c[0] === detected.name || c[0].startsWith(detected.name))
+          if (rec) { city = { name: rec[0], ancient: rec[4] || detected.ancient || '', lat: rec[2], lng: rec[3] }; source = 'ip' }
+        }
+      } catch { /* 继续走 locate() 兜底 */ }
+      if (!city) {
+        const r = await locate(ac.signal)
+        if (!alive) return
+        city = r.city
+        source = r.source
+      }
+      if (!alive) return
+      setCurrentCity(cityView(city))
+      setCityCoords({ lat: city.lat, lng: city.lng })
+      setLocatedBy(source)
+    })()
+    return () => { alive = false; ac.abort() }
+  }, [])
 
   // 白话雅译请求（接口与字段保持不变）
   const handleTranslate = async (textToTranslate) => {
@@ -288,17 +331,6 @@ export default function Home() {
         <InkSpreadZone ref={heroInkZoneRef} targetRef={heroRef} color="ink" />
 
         <div className="home-hero__actions">
-          <button
-            type="button"
-            className="home-hero__icon-btn home-hero__icon-btn--theme"
-            onClick={toggleTheme}
-            aria-label={isDark ? '当前月下墨境 · 点击切换为晓色晨宣' : '当前晓色晨宣 · 点击切换为月下墨境'}
-            title={isDark ? '切换为晓色晨宣' : '切换为月下墨境'}
-          >
-            <span className="home-hero__glyph">
-              {isDark ? <MoonCrescentGlyph /> : <SunWheelGlyph />}
-            </span>
-          </button>
           <button
             type="button"
             className="home-hero__icon-btn"

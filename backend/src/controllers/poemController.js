@@ -1,9 +1,25 @@
 const axios = require('axios')
 const db = require('../config/db')
-const fallback = [
-  { id: 'local-jingyesi', title: '静夜思', author: '李白', dynasty: '唐', content: ['床前明月光，疑是地上霜。', '举头望明月，低头思故乡。'], appreciation: '月色触发乡思，语言自然，情感深切。（本地简析）' },
-  { id: 'local-chunxiao', title: '春晓', author: '孟浩然', dynasty: '唐', content: ['春眠不觉晓，处处闻啼鸟。', '夜来风雨声，花落知多少。'], appreciation: '从鸟鸣与风雨写春日清晨，含蓄表达惜春之情。（本地简析）' }
-]
+const { searchPoemsDeepSeek } = require('./deepseekController')
+// 搜索兜底诗词库（84 首经典作品 / 248 联，取自 feihuaCorpus 原文，保留原诗文序与出处）。
+// 原实现只有 2 首（静夜思/春晓），导致搜「山」「水」「酒」直接返回空结果。
+const fallback = require('../data/poemFallback')
+// 兜底搜索：按 标题/作者/正文 命中关键词，命中数多的排前面（确定性排序，便于测试与体验一致）
+function searchFallback(keyword) {
+  const kw = typeof keyword === 'string' ? keyword.trim() : ''
+  if (!kw) return fallback.slice(0, 50)
+  const scored = []
+  for (const p of fallback) {
+    const inTitle = p.title.includes(kw) ? 3 : 0
+    const inAuthor = p.author.includes(kw) ? 2 : 0
+    const body = p.fullText || p.content.join('')
+    const inBody = body.includes(kw) ? 1 : 0
+    const score = inTitle + inAuthor + inBody
+    if (score > 0) scored.push({ p, score })
+  }
+  scored.sort((a, b) => b.score - a.score || a.p.title.localeCompare(b.p.title, 'zh'))
+  return scored.slice(0, 50).map(x => x.p)
+}
 const cache = new Map(), pending = new Map()
 const ttl = 60000
 
@@ -35,6 +51,13 @@ function normalize(poem) {
 /** 真正打上游；上游异常不抛出，返回内置兜底（degraded:true） */
 async function fetchUpstream(kind, keyword = '') {
   try {
+    // 搜索端点：**仍未找到上游可用的关键词检索接口**，暂保持原路径 /api/search。
+    //   已排除的可能性（2026-10-15 实测）：
+    //     · /api/search?q=…        → 400（对任何参数组合都 400）
+    //     · /api/poems?q=…         → 200 但【完全忽略 q】，传与不传返回同一批 20 条
+    //     · /api/poems/search?q=…  → 400
+    //   结论：不可用 /api/poems 冒充搜索端点（会导致"搜什么都返回同一批诗"，比降级更糟）。
+    //   待确认上游真正的检索契约后再修；在此之前搜索继续走本地兜底（degraded:true）。
     const response = await axios.get('https://poetry.palemoky.com' + (kind === 'random' ? '/api/poems/random' : '/api/search'), {
       params: { lang: 'zh-Hans', ...(kind === 'search' ? { q: keyword } : {}) }, timeout: 4000, signal: AbortSignal.timeout(4000), maxContentLength: 2 * 1024 * 1024
     })
@@ -44,7 +67,7 @@ async function fetchUpstream(kind, keyword = '') {
     if (!Array.isArray(list)) throw Error('Invalid upstream search')
     return { data: list.slice(0, 50).map(normalize), source: 'shiquan', degraded: false }
   } catch {
-    return { data: kind === 'random' ? fallback[Math.floor(Math.random() * fallback.length)] : fallback.filter(p => [p.title, p.author, ...p.content].join('').includes(keyword)), source: 'local-fallback', degraded: true }
+    return { data: kind === 'random' ? fallback[Math.floor(Math.random() * fallback.length)] : searchFallback(keyword), source: 'local-fallback', degraded: true }
   }
 }
 
@@ -144,10 +167,34 @@ async function random(ctx) {
 async function search(ctx) {
   const q = ctx.query.q ?? ctx.query.keyword
   if (typeof q !== 'string' || !q.trim() || q.length > 100) { ctx.status = 400; ctx.body = { code: 0, message: '请输入 1–100 字的关键词' }; return }
+  const cleanQ = q.trim()
+
+  // 1. 优先调用 DeepSeek 大模型进行全息古诗词智能检索
   try {
-    const value = await query('search', q.trim())
+    const aiResults = await searchPoemsDeepSeek(cleanQ)
+    if (Array.isArray(aiResults) && aiResults.length > 0) {
+      ctx.body = {
+        code: 1,
+        message: 'DeepSeek 智能寻诗成功',
+        source: 'deepseek-ai',
+        degraded: false,
+        data: aiResults.map(present),
+        dataNotice: '由 DeepSeek 智能诗词引擎甄选'
+      }
+      return
+    }
+  } catch (err) {
+    console.warn('DeepSeek 搜诗异常，回退兜底检索:', err.message)
+  }
+
+  // 2. DeepSeek 未命中或异常时，走常规 query 或本地兜底
+  try {
+    const value = await query('search', cleanQ)
     ctx.body = { code: 1, message: '搜索成功', ...value, data: value.data.map(present), dataNotice }
-  } catch { ctx.status = 429; ctx.body = { code: 0, message: '诗泉请求繁忙，请稍后再试' } }
+  } catch {
+    const localList = searchFallback(cleanQ)
+    ctx.body = { code: 1, message: '搜索成功（典范库）', source: 'local-fallback', degraded: true, data: localList.map(present), dataNotice }
+  }
 }
 async function collect(ctx) {
   const body = ctx.request.body || {}, input = body.poem || body

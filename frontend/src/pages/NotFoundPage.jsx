@@ -2,7 +2,6 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { LeftOutline } from 'antd-mobile-icons'
 import InkWashBackground from '../components/InkWashBackground'
-import ThemeToggle from '../context/ThemeToggle'
 import EmptyState from '../components/EmptyState'
 import '../styles/notFound.less'
 
@@ -27,7 +26,7 @@ export default function NotFoundPage() {
           <LeftOutline />
         </button>
         <span className='not-found-header__seal'>云山竹简</span>
-        <ThemeToggle className='not-found-header__theme' />
+        <span style={{ width: 38 }} aria-hidden='true' />
       </header>
 
       <main className='not-found-body'>

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { LeftOutline, SearchOutline, FileOutline, RightOutline, HeartOutline, CloseOutline } from 'antd-mobile-icons'
 import { Toast, Modal } from 'antd-mobile'
 import axios from '../http'
-import ThemeToggle from '../context/ThemeToggle'
 import EmptyState from '../components/EmptyState'
 import '../styles/poemCollection.less'
 import InkWashBackground from '../components/InkWashBackground'
@@ -140,7 +139,6 @@ export default function PoemCollection() {
         </div>
         <div className='collection-header__actions'>
           <span className='collection-header__count'>共 {poems.length} 卷</span>
-          <ThemeToggle className='collection-header__theme' />
         </div>
       </header>
 

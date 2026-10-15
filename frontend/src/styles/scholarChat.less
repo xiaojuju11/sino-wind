@@ -80,19 +80,30 @@
   }
 }
 
+// 消息流顶部先贤入席流（跟随消息自然滑动，彻底杜绝遮挡对话）
+.scholar-chat-header-flow {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-bottom: 0.16rem;
+}
+
 // 顶部知己水墨立绘横幅
 .scholar-hero-banner {
   flex: none;
   position: relative;
-  background: linear-gradient(180deg, #FAF7F0 0%, #EDE6D8 100%);
-  border-bottom: 1px solid fade(@color-gold, 60%);
-  padding: 0.18rem 0.32rem;
+  background: color-mix(in srgb, var(--gf-bg-card, #FAF7F0) 94%, transparent);
+  border: 1px solid fade(@color-gold, 45%);
+  border-radius: 8px;
+  padding: 0.2rem 0.24rem;
   overflow: hidden;
+  box-shadow: 0 0.04rem 0.16rem fade(#3a2f1d, 6%);
 
   &__content {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 0.2rem;
     position: relative;
     z-index: 2;
   }
@@ -102,21 +113,43 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.08rem;
+    gap: 0.06rem;
+  }
+
+  &__names {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+    flex-wrap: wrap;
+  }
+
+  &__name {
+    font-family: 'Kaiti SC', 'STKaiti', serif;
+    font-size: 0.36rem;
+    font-weight: 700;
+    color: var(--gf-ink-primary, #1b1c1f);
+  }
+
+  &__tag {
+    padding: 0.02rem 0.08rem;
+    background: @color-seal;
+    color: #fff;
+    font-size: 0.2rem;
+    border-radius: 2px;
   }
 
   &__motto {
     margin: 0;
     font-family: 'Kaiti SC', 'STKaiti', serif;
-    font-size: 0.32rem;
-    line-height: 1.4;
-    color: var(--gf-ink-primary, #2A2421);
+    font-size: 0.28rem;
+    line-height: 1.45;
+    color: var(--gf-ink-secondary, #524B46);
     font-style: italic;
   }
 
   &__seal {
     align-self: flex-start;
-    padding: 0.02rem 0.1rem;
+    padding: 0.02rem 0.08rem;
     border: 1px solid @color-seal;
     color: @color-seal;
     font-size: 0.2rem;
@@ -125,12 +158,11 @@
 
   &__portrait-box {
     flex: none;
-    width: 1.6rem;
-    height: 1.6rem;
-    margin-left: 0.2rem;
+    width: 1.2rem;
+    height: 1.2rem;
     border-radius: 50%;
-    border: 2px solid fade(@color-gold, 80%);
-    box-shadow: 0 0.06rem 0.2rem fade(#3a2f1d, 15%);
+    border: 1.5px solid fade(@color-gold, 80%);
+    box-shadow: 0 0.04rem 0.12rem fade(#3a2f1d, 12%);
     background: #fff;
     overflow: hidden;
   }
@@ -145,39 +177,84 @@
 // 4 大灵感胶囊横向栏
 .scholar-capsules-bar {
   flex: none;
-  background: var(--gf-bg-paper, #F7F4EB);
-  border-bottom: 1px solid fade(@color-gold, 35%);
-  padding: 0.12rem 0.24rem;
+  background: color-mix(in srgb, var(--gf-bg-card, #FAF7F0) 92%, transparent);
+  border: 1px solid fade(@color-gold, 40%);
+  border-radius: 8px;
+  padding: 0.16rem 0.2rem;
+  box-shadow: 0 0.04rem 0.12rem fade(#3a2f1d, 5%);
 }
 
-.scholar-capsules-scroll {
+.scholar-capsules-heading {
   display: flex;
   align-items: center;
-  gap: 0.16rem;
-  overflow-x: auto;
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
+  justify-content: space-between;
+  margin-bottom: 0.12rem;
+  font-size: 0.22rem;
+  color: var(--gf-ink-secondary, #726A62);
+  font-family: 'Kaiti SC', 'STKaiti', serif;
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 0.06rem;
+    color: @color-seal;
+    font-weight: 700;
+  }
+
+  &__tip {
+    font-size: 0.18rem;
+    opacity: 0.7;
   }
 }
 
+.scholar-capsules-scroll {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.1rem;
+}
+
 .scholar-capsule {
-  flex: none;
-  padding: 0.08rem 0.22rem;
-  background: var(--gf-bg-card, #FAF7F0);
-  border: 1px solid fade(@color-gold, 70%);
-  border-radius: 0.26rem;
-  font-size: 0.23rem;
+  display: flex;
+  align-items: center;
+  gap: 0.08rem;
+  padding: 0.12rem 0.14rem;
+  background: color-mix(in srgb, var(--gf-bg-paper, #F7F4EB) 70%, transparent);
+  border: 1px solid fade(@color-gold, 60%);
+  border-radius: 4px;
+  font-size: 0.22rem;
   color: var(--gf-ink-primary, #2A2421);
   font-family: inherit;
   cursor: pointer;
-  white-space: nowrap;
+  text-align: left;
+  line-height: 1.35;
   transition: all 0.15s ease;
 
   &:hover, &:active {
     background: fade(@color-seal, 10%);
     border-color: @color-seal;
     color: @color-seal;
+  }
+
+  &__icon {
+    font-size: 0.26rem;
+    flex: none;
+    color: @color-seal;
+    display: flex;
+    align-items: center;
+  }
+
+  &__label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__arrow {
+    font-size: 0.2rem;
+    flex: none;
+    opacity: 0.5;
   }
 }
 

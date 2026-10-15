@@ -224,37 +224,153 @@ async function translateYayan(ctx) {
   }
 
   // 离线精彩典范库（命中或无 Key 兜底）
+  // 由 4 条扩到 20 条：覆盖高频白话场景。原库过小，配合「未命中恒返回第一条」的
+  // 旧选择逻辑，用户试几次就会反复看到同一句。
   const offlineMatches = [
     {
-      keywords: ['心情', '开心', '放松', '散步', '休息', '今天'],
+      keywords: ['心情', '开心', '放松', '散步', '休息', '今天', '舒服', '惬意'],
       ancient: '偷得浮生半日闲，竹杖芒鞋轻胜马。',
       author: '苏轼',
       explanation: '清风怡情，信步幽林，极尽潇散自得之趣。'
     },
     {
-      keywords: ['迷茫', '难过', '烦', '挫折', '失败', '压力'],
+      keywords: ['迷茫', '难过', '烦', '挫折', '失败', '压力', '累', '撑不住'],
       ancient: '莫听穿林打叶声，何妨吟啸且徐行。',
       author: '苏轼',
       explanation: '风雨任平生，不为外物所累，泰然自若处世。'
     },
     {
-      keywords: ['想念', '朋友', '知己', '友情', '聚会'],
+      keywords: ['想念', '朋友', '知己', '友情', '聚会', '分别', '送别'],
       ancient: '海内存知己，天涯若比邻。',
       author: '王勃',
       explanation: '四海虽阔，心意相通便如在咫尺之间。'
     },
     {
-      keywords: ['努力', '奋斗', '梦想', '目标', '赚钱'],
+      keywords: ['努力', '奋斗', '梦想', '目标', '赚钱', '拼', '上进'],
       ancient: '大鹏一日同风起，扶摇直上九万里。',
       author: '李白',
       explanation: '凌云之志坚若磐石，待天风一至，展翅九霄。'
+    },
+    {
+      keywords: ['加班', '熬夜', '工作', '上班', '忙', '疲惫'],
+      ancient: '夜阑卧听风吹雨，铁马冰河入梦来。',
+      author: '陆游',
+      explanation: '夜深犹怀壮志，身闲而心未歇。'
+    },
+    {
+      keywords: ['恋爱', '喜欢', '暗恋', '心动', '思念', '想他', '想她'],
+      ancient: '只缘感君一回顾，使我思君朝与暮。',
+      author: '佚名',
+      explanation: '一顾之缘，竟成朝暮难忘之思。'
+    },
+    {
+      keywords: ['孤单', '孤独', '一个人', '寂寞', '没人懂'],
+      ancient: '举杯邀明月，对影成三人。',
+      author: '李白',
+      explanation: '独酌无侣，邀月与影，寂中自有旷达。'
+    },
+    {
+      keywords: ['回家', '故乡', '老家', '想家', '回去'],
+      ancient: '露从今夜白，月是故乡明。',
+      author: '杜甫',
+      explanation: '月本无异，因思乡而觉故乡之月独明。'
+    },
+    {
+      keywords: ['春天', '花开', '踏青', '天气好', '阳光'],
+      ancient: '等闲识得东风面，万紫千红总是春。',
+      author: '朱熹',
+      explanation: '东风过处，万象皆春，生机自不可遏。'
+    },
+    {
+      keywords: ['下雨', '雨天', '阴天', '潮湿'],
+      ancient: '好雨知时节，当春乃发生。',
+      author: '杜甫',
+      explanation: '雨之善者，恰逢其时，润物而无声。'
+    },
+    {
+      keywords: ['雪', '冬天', '很冷', '下雪', '严寒'],
+      ancient: '孤舟蓑笠翁，独钓寒江雪。',
+      author: '柳宗元',
+      explanation: '万径俱寂，寒江独钓，孤高而不改其守。'
+    },
+    {
+      keywords: ['秋天', '落叶', '萧瑟', '感伤', '时光'],
+      ancient: '自古逢秋悲寂寥，我言秋日胜春朝。',
+      author: '刘禹锡',
+      explanation: '秋非只寂寥，天高气爽，自有胜春之致。'
+    },
+    {
+      keywords: ['喝酒', '聚餐', '庆祝', '干杯', '小酌'],
+      ancient: '人生得意须尽欢，莫使金樽空对月。',
+      author: '李白',
+      explanation: '得意之时当尽欢，莫负良辰与清樽。'
+    },
+    {
+      keywords: ['人生', '感慨', '回头看', '岁月', '初见'],
+      ancient: '人生若只如初见，何事秋风悲画扇。',
+      author: '纳兰性德',
+      explanation: '若情始终如初相见，何来秋风弃扇之叹。'
+    },
+    {
+      keywords: ['知足', '平淡', '简单', '幸福', '小确幸'],
+      ancient: '人间有味是清欢。',
+      author: '苏轼',
+      explanation: '世味万千，唯清淡之欢最堪长久。'
+    },
+    {
+      keywords: ['学习', '读书', '考试', '进步', '成长'],
+      ancient: '问渠那得清如许，为有源头活水来。',
+      author: '朱熹',
+      explanation: '渠水澄澈，只因源头活水常新不竭。'
+    },
+    {
+      keywords: ['离别', '再见', '不舍', '告别', '走了'],
+      ancient: '劝君更尽一杯酒，西出阳关无故人。',
+      author: '王维',
+      explanation: '一杯未尽，前路已无故人，珍重此别。'
+    },
+    {
+      keywords: ['等你', '等待', '盼望', '希望', '未来'],
+      ancient: '长风破浪会有时，直挂云帆济沧海。',
+      author: '李白',
+      explanation: '时运终至，长风破浪，直济沧海。'
+    },
+    {
+      keywords: ['后悔', '遗憾', '错过', '可惜', '如果'],
+      ancient: '此情可待成追忆，只是当时已惘然。',
+      author: '李商隐',
+      explanation: '当时惘然不觉，回首方知已是追忆。'
+    },
+    {
+      keywords: ['坚持', '不放弃', '熬', '苦难', '磨砺'],
+      ancient: '千磨万击还坚劲，任尔东西南北风。',
+      author: '郑燮',
+      explanation: '历千磨万击而愈坚，风从何来皆不足惧。'
     }
   ]
 
+  // 离线兜底选择器：按关键词命中数取最优；全不命中时按白话文本做稳定散列，
+  // 避免「无论说什么都得到同一句」的重复感（同一句白话始终得到同一结果，便于测试）。
+  // 原实现为 `offlineMatches.find(...) || offlineMatches[0]`，未命中时恒返回第一条；
+  // 且 catch 分支把「偷得浮生半日闲」写死 —— 库又只有 4 条，用户试几次就看到重复。
+  function pickOffline(value) {
+    let best = null
+    let bestScore = 0
+    for (const item of offlineMatches) {
+      const score = item.keywords.reduce((n, k) => n + (value.includes(k) ? 1 : 0), 0)
+      if (score > bestScore) { bestScore = score; best = item }
+    }
+    if (best) return best
+    let h = 0
+    for (const ch of value) h = (h * 31 + ch.codePointAt(0)) >>> 0
+    return offlineMatches[h % offlineMatches.length]
+  }
+
   const client = getClient()
   if (!client) {
-    const matched = offlineMatches.find(item => item.keywords.some(k => text.includes(k))) || offlineMatches[0]
-    ctx.body = { code: 1, data: { modern: text, ...matched } }
+    const matched = pickOffline(text)
+    // 只取三个对外字段，避免把内部 keywords 匹配表一并泄给前端
+    ctx.body = { code: 1, data: { modern: text, ancient: matched.ancient, author: matched.author, explanation: matched.explanation } }
     if (ctx.userId) {
       try { await db.execute('UPDATE users SET yayan_count = COALESCE(yayan_count, 0) + 1 WHERE id = ?', [ctx.userId]) } catch {}
     }
@@ -280,24 +396,28 @@ async function translateYayan(ctx) {
       ]
     })
     const res = JSON.parse(completion.choices[0].message.content)
+    // 模型返回缺字段时，用离线库里与本次白话最匹配的一条补齐（不再写死「偷得浮生半日闲」）
+    const spare = pickOffline(text)
     ctx.body = {
       code: 1,
       data: {
         modern: text,
-        ancient: res.ancient || '偷得浮生半日闲，竹杖芒鞋轻胜马。',
-        author: res.author || '苏轼',
-        explanation: res.explanation || '清风怡情，信步幽林，极尽潇散之趣。'
+        ancient: res.ancient || spare.ancient,
+        author: res.author || spare.author,
+        explanation: res.explanation || spare.explanation
       }
     }
   } catch (error) {
     console.error('白话雅译异常:', error.message)
+    // 模型调用失败时同样走离线典范库（原实现把同一句写死，用户会反复看到同一句）
+    const spare = pickOffline(text)
     ctx.body = {
       code: 1,
       data: {
         modern: text,
-        ancient: '偷得浮生半日闲，竹杖芒鞋轻胜马。',
-        author: '苏轼',
-        explanation: '清风怡情，信步幽林，极尽潇散之趣。'
+        ancient: spare.ancient,
+        author: spare.author,
+        explanation: spare.explanation
       }
     }
   }
@@ -554,6 +674,72 @@ async function appreciatePoem(ctx) {
   }
 }
 
+/**
+ * 智能搜诗：基于 DeepSeek 大模型按诗名/作者/名句/意象主题全息检索正统古诗词
+ */
+async function searchPoemsDeepSeek(keyword) {
+  const client = getClient()
+  if (!client || !keyword || !keyword.trim()) return null
+  try {
+    const completion = await client.chat.completions.create({
+      model: 'deepseek-chat',
+      response_format: { type: 'json_object' },
+      messages: [
+        {
+          role: 'system',
+          content: `你是一位精通中华典籍的古典诗词专家。请根据用户提供的检索关键词（可能是诗词名、作者名、经典名句、词牌、节令意象或主题如“明月”、“思乡”、“将进酒”等），精准检索并甄选 3 到 6 首最匹配、流传度最广的正统中华古典诗词。
+每首诗请务必输出真实正统的经典文本，严禁虚构杜撰。请严格返回标准 json 格式数据：
+{
+  "poems": [
+    {
+      "title": "诗词标题（如：静夜思 或 水调歌头·明月几时有）",
+      "author": "作者姓名（如：李白、苏轼）",
+      "dynasty": "朝代（如：唐、宋）",
+      "content": [
+        "第一句诗词，",
+        "第二句诗词。",
+        "第三句诗词，",
+        "第四句诗词。"
+      ],
+      "appreciation": "50-80字简要意境鉴赏与审美意蕴。"
+    }
+  ]
+}`
+        },
+        {
+          role: 'user',
+          content: `请检索与以下关键词最契合的经典古诗词：${keyword.trim()}`
+        }
+      ],
+      timeout: 18000
+    })
+
+    const parsed = JSON.parse(completion.choices[0].message.content)
+    const list = Array.isArray(parsed?.poems) ? parsed.poems : (Array.isArray(parsed) ? parsed : [])
+    if (!list.length) return null
+
+    return list.map((item, idx) => {
+      const paragraphs = Array.isArray(item.content)
+        ? item.content.filter(Boolean)
+        : String(item.content || '').split(/[\r\n]+/).filter(Boolean)
+      return {
+        id: `ds_${Date.now()}_${idx}`,
+        title: item.title || '无题',
+        author: item.author || '先贤',
+        dynasty: item.dynasty || '古代',
+        content: paragraphs,
+        paragraphs,
+        snippet: paragraphs.join('').slice(0, 80),
+        appreciation: item.appreciation || '',
+        bgArt: ''
+      }
+    })
+  } catch (err) {
+    console.warn('DeepSeek 诗词搜索异常，回退本地/上游:', err.message)
+    return null
+  }
+}
+
 const deepseekChatStream = require('../utils/scholarSSE').createScholarStream({ getClient, sages, generateSageReply, sanitizeSageReply, db, saveTurn: require('../utils/scholarLetters').saveTurn, loadArtifact: require('./scholarArtifactController').loadArtifact })
 
 module.exports = {
@@ -561,6 +747,8 @@ module.exports = {
   deepseekChat,
   translateYayan,
   soulScholar,
-  appreciatePoem
+  appreciatePoem,
+  searchPoemsDeepSeek
 }
+
 

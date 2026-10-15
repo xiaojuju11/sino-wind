@@ -1,5 +1,6 @@
+import { useScholarScope } from '../utils/useScholarScope'
 import ReferenceCorners from '../components/ReferenceCorners'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import '../styles/minePage.less'
 import { ActionSheet, Toast, ImageViewer, Popup, Modal } from 'antd-mobile'
 import { RightOutline, CloseOutline } from 'antd-mobile-icons'
@@ -10,6 +11,9 @@ import ScholarArchive from '../components/ScholarArchive'
 import ScholarArtifactDrawer from '../components/ScholarArtifactDrawer'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
+
+import { scholarScope, syncLocalLetters } from '../utils/scholarLetters'
+import { guestSummary, guestArchiveCount, importGuestArchive, guestGames } from '../utils/scholarAssets'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -24,9 +28,14 @@ const PRESET_YAYAN = [
   { ancient: '见怪不怪，其怪自败', modern: '见着奇怪的事泰然处之即可', note: '宋代普贤院白话谚语' }
 ]
 
-export default function MinePage() {
+function MinePageSession() {
   const navigate = useNavigate()
   const [userInfo, setUserInfo] = useState({})
+  const [rankData, setRankData] = useState(null)
+  const [assetNotice, setAssetNotice] = useState('')
+  const [guestCount, setGuestCount] = useState(guestArchiveCount)
+  const [importing, setImporting] = useState(false)
+  const refreshAssets = useRef(() => {})
   const [archiveOpen, setArchiveOpen] = useState(false)
   const [artifactsOpen, setArtifactsOpen] = useState(false)
   const [visibleLogout, setVisibleLogout] = useState(false)
@@ -34,36 +43,42 @@ export default function MinePage() {
   const [visibleYayanDrawer, setVisibleYayanDrawer] = useState(false)
   const [notifyEnabled, setNotifyEnabled] = useState(true)
 
-  // 1. 获取用户信息与修持数据（带优雅的古风兜底默认值）
+  // Display real assets only. A failed request never becomes a mock statistic.
   useEffect(() => {
-    const fetchInfo = () => {
-      const token = localStorage.getItem('token')
-      if (token) {
-        axios.get('/api/auth/info', {
-          headers: { Authorization: `Bearer ${token}` }
-        }).then(res => {
-          if (res.data) setUserInfo(res.data)
-        }).catch(() => {
-          // 后端若未启动或token过期则走默认设计稿展示
-        })
+    let alive = true, generation = 0, timer
+    const fetchInfo = async () => {
+      const current = ++generation, scope = scholarScope()
+      const valid = () => alive && current === generation && scope === scholarScope()
+      setGuestCount(guestArchiveCount())
+      if (!scope.startsWith('user:')) {
+        setUserInfo(guestSummary()); setRankData(null); setAssetNotice('游客记录仅保留本机；登录后可确认收入本人账户，竞技积分以服务器结算为准。')
+        return
       }
+      try { await syncLocalLetters() } catch { /* The summary may still be readable; local pending originals are retained. */ }
+      if (!valid()) return
+      const results = await Promise.allSettled([
+        axios.get('/api/deepseek/scholar/summary', { timeout: 10000 }),
+        axios.get('/api/deepseek/feihua/records', { params: { page: 1, pageSize: 1 }, timeout: 10000 })
+      ])
+      if (!valid()) return
+      setUserInfo(results[0].status === 'fulfilled' ? results[0].value.data.data : {})
+      setRankData(results[1].status === 'fulfilled' ? results[1].value.data.data : null)
+      setAssetNotice(results.some(r => r.status === 'rejected') ? '部分修持档案尚未载入，请重试。' : '')
+      setGuestCount(guestArchiveCount())
     }
-
+    const schedule = () => { clearTimeout(timer); timer = setTimeout(fetchInfo, 100) }
+    refreshAssets.current = fetchInfo
     fetchInfo()
-
-    const handleUpdate = (e) => {
-      if (e.detail?.avatar) {
-        setUserInfo(prev => ({ ...prev, avatar: e.detail.avatar }))
-      }
-      if (e.detail?.nickname) {
-        setUserInfo(prev => ({ ...prev, nickname: e.detail.nickname }))
-      }
-      fetchInfo()
-    }
-
-    window.addEventListener('userInfoUpdated', handleUpdate)
-    return () => window.removeEventListener('userInfoUpdated', handleUpdate)
+    for (const event of ['userInfoUpdated', 'scholarAssetsUpdated', 'focus', 'storage']) window.addEventListener(event, schedule)
+    return () => { alive = false; generation++; clearTimeout(timer); for (const event of ['userInfoUpdated', 'scholarAssetsUpdated', 'focus', 'storage']) window.removeEventListener(event, schedule) }
   }, [])
+  const importGuest = async () => {
+    if (importing) return
+    setImporting(true)
+    try { await importGuestArchive(); setAssetNotice('本机游客信札与藏品已收入当前账户；不兑换竞技积分。'); refreshAssets.current() }
+    catch (error) { setAssetNotice(error.message || '补传未完成，本机原稿保留，请重试') }
+    finally { setImporting(false); setGuestCount(guestArchiveCount()) }
+  }
 
   // 退出登录操作选项
   const logoutActions = [
@@ -83,29 +98,31 @@ export default function MinePage() {
   // 原先此处还解构了 { theme, toggleTheme, isDark }，但 theme 从未被使用（ESLint 报错），
   // 而 toggleTheme / isDark 仅服务于已删除的「日月交替」重复行 —— 故一并清理。
 
-  // 雅士修持 4 大数据（四维修持）支持点击联动与跳转
+  // Five asset sources; competitive records and ranks are read-only API results.
   const stats = [
     {
-      num: userInfo.appraise_count || 48,
-      label: '识物考源',
-      onClick: () => navigate('/recognition')
+      num: userInfo.appraise_count ?? '—',
+      label: '鉴宝印记',
+      onClick: () => setArtifactsOpen(true)
     },
     {
-      num: userInfo.poem_count || 126,
+      num: userInfo.poem_count ?? '—',
       label: '诗词温故',
       onClick: () => navigate('/poem-collection')
     },
     {
-      num: userInfo.debate_count || 89,
+      num: userInfo.debate_count ?? '—',
       label: '知音鸿雁',
       onClick: () => navigate('/letters')
     },
     {
-      num: userInfo.yayan_count || 34,
+      num: userInfo.yayan_count ?? '—',
       label: '雅言研习',
       onClick: () => setVisibleYayanDrawer(true)
     },
   ]
+
+  stats.push({ num: rankData?.total ?? (scholarScope() === 'guest' ? guestGames().length : '—'), label: '飞花归档', onClick: () => setArchiveOpen(true) })
 
   // 复制雅言
   const handleCopyYayan = (text) => {
@@ -192,7 +209,7 @@ export default function MinePage() {
               <h2 className='scholar-name'>{userInfo.nickname || '云山居士'}</h2>
               <span className='scholar-badge'>
                 <i className='iconfont icon-wode scholar-badge__icon'></i>
-                {userInfo.scholar_rank || '白衣布衣'}
+                {rankData?.rank || (scholarScope() === 'guest' ? '游客研习' : '文阶待载入')}
               </span>
             </div>
             <p className='scholar-motto'>读千年风雅 与君共此山河</p>
@@ -200,7 +217,10 @@ export default function MinePage() {
         </div>
 
         {/* 四列修持数据看板（支持快捷下钻） */}
-        <p className='scholar-motto'>飞花修持积分：{userInfo.merit_points ?? 0}</p>
+        <p className='scholar-motto'>飞花修持积分：{rankData?.meritPoints ?? (scholarScope() === 'guest' ? 0 : '—')} · 宝鉴藏品：{userInfo.artifact_count ?? '—'}</p>
+        {assetNotice && <p className='scholar-motto' role='status'>{assetNotice}</p>}
+        {scholarScope().startsWith('user:') && <button type='button' onClick={() => refreshAssets.current()}>刷新修持档案</button>}
+        {scholarScope().startsWith('user:') && guestCount > 0 && <button type='button' disabled={importing} onClick={importGuest}>{importing ? '收入中…' : `确认将本机游客的${guestCount}份信札/藏品收入当前账户`}</button>}
         <div className='scholar-stats'>
           {stats.map((item, idx) => (
             <div key={idx} className='scholar-stats__item' onClick={item.onClick}>
@@ -338,9 +358,16 @@ export default function MinePage() {
 
       {/* 5. 整装离席退出按钮 */}
       <div className='shuzhai-logout-wrap'>
-        <button className='shuzhai-logout-btn' onClick={() => setVisibleLogout(true)}>
-          整 装 离 席
+        <button
+          type='button'
+          className='shuzhai-logout-btn'
+          onClick={() => setVisibleLogout(true)}
+          aria-label='整装离席'
+        >
+          <span className='shuzhai-logout-btn__seal'>离席</span>
+          <span className='shuzhai-logout-btn__text'>整装离席 · 束卷归隐</span>
         </button>
+        <p className='shuzhai-logout-sub'>青山不改 · 绿水长流 · 期君再聚</p>
       </div>
 
       {archiveOpen && <ScholarArchive onClose={() => setArchiveOpen(false)} />}
@@ -399,4 +426,9 @@ export default function MinePage() {
       </Popup>
     </div>
   )
+}
+
+export default function MinePage() {
+  const scope = useScholarScope()
+  return <MinePageSession key={scope} />
 }

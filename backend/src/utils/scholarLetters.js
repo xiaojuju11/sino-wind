@@ -9,19 +9,33 @@ const STYLES = {
   dufu: '子美拂笺，惟愿君安。文章之外，更念苍生；且惜眼前灯火。'
 }
 const makeReply = (sageId, question) => `${STYLES[sageId] || '山水相逢，墨香不散。愿足下珍重，改日续谈。'}\n\n君前言「${Array.from(question).slice(0, 48).join('')}」，余意未尽，待君再叙。`
-async function saveTurn({ userId, sageId, requestId, question, answer, degraded }) {
+async function saveTurn(parameters) {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try { return await saveTurnOnce(parameters) }
+    catch (error) {
+      if (!['ER_LOCK_DEADLOCK', 'ER_LOCK_WAIT_TIMEOUT'].includes(error.code) || attempt === 2) { console.error('信札归档失败', error.code || error.name); return false }
+      await new Promise(resolve => setTimeout(resolve, 20 * (attempt + 1)))
+    }
+  }
+  return false
+}
+async function saveTurnOnce({ userId, sageId, requestId, question, answer, degraded, at }) {
   if (!userId || !validSage(sageId)) return false
   let connection
   try {
     connection = await db.getConnection(); await connection.beginTransaction()
-    const now = new Date()
+    const now = at === undefined ? new Date() : new Date(at)
     // Lock the summary row before inserting: completion and leave serialize per sage.
     await connection.execute('INSERT IGNORE INTO scholar_conversations(user_id,sage_id,last_message,updated_at) VALUES (?,?,?,?)', [userId, sageId, '', now])
     await connection.execute('SELECT rounds FROM scholar_conversations WHERE user_id=? AND sage_id=? FOR UPDATE', [userId, sageId])
     const [added] = await connection.execute('INSERT IGNORE INTO scholar_turns(user_id,request_id,sage_id,question,answer,degraded,created_at) VALUES (?,?,?,?,?,?,?)', [userId, requestId, sageId, question.slice(0, 2000), answer.slice(0, 4000), degraded ? 1 : 0, now])
-    if (added.affectedRows) await connection.execute('UPDATE scholar_conversations SET rounds=rounds+1,last_message=?,updated_at=? WHERE user_id=? AND sage_id=?', [answer.slice(0, 4000), now, userId, sageId])
+    if (added.affectedRows) await connection.execute('UPDATE scholar_conversations SET rounds=rounds+1,last_message=IF(updated_at<=?, ?, last_message),updated_at=GREATEST(updated_at,?) WHERE user_id=? AND sage_id=?', [now, answer.slice(0, 4000), now, userId, sageId])
+    else {
+      const [[existing]] = await connection.execute('SELECT sage_id,question,answer FROM scholar_turns WHERE user_id=? AND request_id=?', [userId, requestId])
+      if (!existing || existing.sage_id !== sageId || existing.question !== question.slice(0, 2000) || existing.answer !== answer.slice(0, 4000)) { await connection.rollback(); return false }
+    }
     await connection.commit(); return true
-  } catch { if (connection) await connection.rollback().catch(() => {}); return false }
+  } catch (error) { if (connection) await connection.rollback().catch(() => {}); throw error }
   finally { connection?.release() }
 }
 async function leave(userId, sageId) {
