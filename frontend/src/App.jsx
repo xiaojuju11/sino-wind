@@ -28,8 +28,8 @@ export default function App() {
           <Route path='/letters' element={<LetterList/>}></Route>
           <Route path='/ai' element={<Navigate to='/letters' replace />}></Route>
           <Route path='/mine' element={<MinePage/>}></Route>
-          <Route path='/recognition' element={<Recognition/>}></Route>
         </Route>
+        <Route path='/recognition' element={<Recognition/>}></Route>
         <Route path='/accountSetting' element={<AccountSetting/>}></Route>
         <Route path='/chat/:id' element={<ScholarChat/>}></Route>
         <Route path='/ai-chat' element={<ScholarChat/>}></Route>
