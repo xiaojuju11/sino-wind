@@ -10,6 +10,7 @@ import axios from '../http'
 import ScholarArchive from '../components/ScholarArchive'
 import ScholarArtifactDrawer from '../components/ScholarArtifactDrawer'
 import InkWashBackground from '../components/InkWashBackground'
+import EmptyState from '../components/EmptyState'
 import '../styles/referencePolish.less'
 
 import { scholarScope, syncLocalLetters } from '../utils/scholarLetters'
@@ -17,16 +18,27 @@ import { guestSummary, guestArchiveCount, importGuestArchive, guestGames } from 
 
 const BASE = import.meta.env.BASE_URL
 
-// 两宋白话精选雅言（雅译锦囊核心研习札记）
-const PRESET_YAYAN = [
-  { ancient: '且慢行', modern: '等一下 / 莫要心急', note: '宋人常用于劝友留步或缓行' },
-  { ancient: '休得胡言', modern: '别开玩笑 / 莫要信口开河', note: '宋代市民白话常用口头语' },
-  { ancient: '甚善，深契吾心', modern: '太好了 / 深得我意', note: '士大夫赞赏之辞' },
-  { ancient: '同去同去', modern: '咱们一块儿去吧', note: '宋元白话中极为传神的邀约' },
-  { ancient: '万水千山，且尽一杯', modern: '前路迢迢，先干了这杯', note: '送别饯行必道雅言' },
-  { ancient: '人间有味是清欢', modern: '平淡自然的滋味最是长久', note: '东坡居士论生活之味' },
-  { ancient: '见怪不怪，其怪自败', modern: '见着奇怪的事泰然处之即可', note: '宋代普贤院白话谚语' }
-]
+// 与首页摘录使用同一份本机存档；读取异常不覆盖原始数据。
+function readYayanExcerpts() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('gufeng_yayan_list') || '[]')
+    if (!Array.isArray(saved)) throw new Error('Invalid yayan archive')
+    const asText = value => typeof value === 'string' ? value : ''
+    return {
+      items: saved.filter(item => item && typeof item.ancient === 'string' && item.ancient.trim()).map(item => ({
+        ancient: item.ancient,
+        modern: asText(item.modern),
+        author: asText(item.author),
+        explanation: asText(item.explanation),
+        createdAt: asText(item.createdAt),
+        source: item.offline === true ? '离线范例摘录' : item.offline === false ? '在线雅译摘录' : '首页摘录（来源未标注）',
+      })),
+      error: false,
+    }
+  } catch {
+    return { items: [], error: true }
+  }
+}
 
 function MinePageSession() {
   const navigate = useNavigate()
@@ -40,7 +52,24 @@ function MinePageSession() {
   const [visibleLogout, setVisibleLogout] = useState(false)
   const [visibleAvatarViewer, setVisibleAvatarViewer] = useState(false)
   const [visibleYayanDrawer, setVisibleYayanDrawer] = useState(false)
+  const [yayanExcerpts, setYayanExcerpts] = useState(readYayanExcerpts)
   const [notifyEnabled, setNotifyEnabled] = useState(true)
+
+  const openYayanDrawer = () => {
+    setYayanExcerpts(readYayanExcerpts())
+    setVisibleYayanDrawer(true)
+  }
+
+  useEffect(() => {
+    if (!visibleYayanDrawer) return
+    const refresh = () => setYayanExcerpts(readYayanExcerpts())
+    window.addEventListener('storage', refresh)
+    window.addEventListener('focus', refresh)
+    return () => {
+      window.removeEventListener('storage', refresh)
+      window.removeEventListener('focus', refresh)
+    }
+  }, [visibleYayanDrawer])
 
   // Display real assets only. A failed request never becomes a mock statistic.
   useEffect(() => {
@@ -123,7 +152,7 @@ function MinePageSession() {
     {
       num: userInfo.yayan_count ?? '—',
       label: '雅言研习',
-      onClick: () => setVisibleYayanDrawer(true)
+      onClick: openYayanDrawer
     },
   ]
 
@@ -295,7 +324,7 @@ function MinePageSession() {
             <RightOutline className='shuzhai-list-item__arrow' />
           </div>
 
-          <div className='shuzhai-list-item' onClick={() => setVisibleYayanDrawer(true)}>
+          <div className='shuzhai-list-item' onClick={openYayanDrawer}>
             <i className='iconfont icon-ziliao' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>雅译锦囊</span>
@@ -418,14 +447,22 @@ function MinePageSession() {
             <button type='button' className='yayan-box__close' aria-label='关闭雅译锦囊' onClick={() => setVisibleYayanDrawer(false)}><CloseOutline /></button>
           </div>
           <p className='yayan-box__sub'>
-            收录两宋市井与文人日常白话雅言对照，随取随用，感受千年鲜活墨香。
+            我的摘录 · 共 {yayanExcerpts.items.length} 则。来自首页「摘录入卷」，仅保存在本机浏览器；来源标记随原稿保留。
           </p>
           <div className='yayan-box__list'>
-            {PRESET_YAYAN.map((item, idx) => (
+            {yayanExcerpts.error ? (
+              <EmptyState seal='待续' title='未能读取本机雅言摘录' desc='存档暂不可读，原稿未作改动，请稍后重试。' actionText='重新读取' onAction={() => setYayanExcerpts(readYayanExcerpts())} />
+            ) : yayanExcerpts.items.length === 0 ? (
+              <EmptyState seal='待题' title='尚无雅言摘录' desc='前往首页雅译，点「摘录入卷」，便可在此回看。' actionText='前往雅集' onAction={() => { setVisibleYayanDrawer(false); navigate('/') }} />
+            ) : yayanExcerpts.items.map((item, idx) => (
               <div key={idx} className='yayan-box__item'>
                 <div className='yayan-box__content'>
                   <div className='yayan-box__ancient'>「{item.ancient}」</div>
-                  <div className='yayan-box__modern'>释义：{item.modern} · <span style={{ opacity: 0.8 }}>{item.note}</span></div>
+                  {item.modern && <div className='yayan-box__modern'>今语：{item.modern}</div>}
+                  {item.explanation && <div className='yayan-box__modern'>释义：{item.explanation}</div>}
+                  <div className='yayan-box__modern'>
+                    来源：{item.source}{item.author && ` · 署名：${item.author}`}{item.createdAt && ` · 摘录于 ${item.createdAt}`}
+                  </div>
                 </div>
                 <button
                   className='yayan-box__copy-btn'

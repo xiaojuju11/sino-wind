@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { JWT_SECRET } = require('../utils/jwt.js')
-const { findUserByPhone, createUser, findUserById, updateUserInfo } = require('../models/userModel.js')
+const { findUserByPhone, createUser, findUserById, updateUserInfo, updateUserPassword } = require('../models/userModel.js')
 const { generateCaptcha, verifyCaptcha } = require('../utils/captcha.js')
 
 
@@ -168,13 +168,14 @@ async function getUserInfo(ctx) {
 async function updateUser(ctx) {
   const id = ctx.userId
   const params = ctx.request.body
-  
-  console.log('Update user params:', params)
-  console.log('User ID:', id)
+  // koa-router is case-insensitive and accepts a trailing slash by default.
+  const field = /\/updateavatar\/?$/i.test(ctx.path) ? 'avatar' : 'nickname'
+  if (!params || typeof params !== 'object' || Array.isArray(params) || Object.keys(params).length !== 1 || typeof params[field] !== 'string' || !params[field].trim() || params[field].length > (field === 'nickname' ? 50 : 2048)) {
+    ctx.status = 400; ctx.body = { code: 0, message: '仅可修改有效的头像或昵称' }; return
+  }
 
   try {
-    const res = await updateUserInfo(params, id)
-    console.log('Update result:', res)
+    const res = await updateUserInfo({ [field]: params[field].trim() }, id)
     
     if (res.affectedRows) {
       ctx.body = {
@@ -202,9 +203,13 @@ async function updateUser(ctx) {
 // 更新密码
 async function updatePassword(ctx) {
   const id = ctx.userId
-  const { oldPassword, newPassword } = ctx.request.body
+  const { oldPassword, newPassword } = ctx.request.body || {}
+  if (typeof oldPassword !== 'string' || !oldPassword || typeof newPassword !== 'string' || newPassword.length < 6 || Buffer.byteLength(newPassword, 'utf8') > 72) {
+    ctx.status = 400; ctx.body = { code: 0, message: '请提供旧密码，新密码须至少6位且不超过72字节' }; return
+  }
   try {
     const user = await findUserById(id)
+    if (!user) { ctx.status = 401; ctx.body = { code: 0, message: '请重新登录' }; return }
     const ok = await bcrypt.compare(oldPassword, user.password_hash)
     if (!ok) {
       ctx.status = 400
@@ -212,7 +217,7 @@ async function updatePassword(ctx) {
       return
     }
     const password_hash = await bcrypt.hash(newPassword, 10)
-    const res = await updateUserInfo({ password_hash }, id)
+    const res = await updateUserPassword(password_hash, id)
     if (res.affectedRows) {
       ctx.body = {
         code: 1,

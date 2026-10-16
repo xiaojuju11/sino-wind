@@ -2,6 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import { DownlandOutline, CloseOutline } from 'antd-mobile-icons'
 import axios from '../http'
 import { downloadScholarCertificate } from '../utils/scholarCertificate'
+import { rememberGuestGame } from '../utils/scholarAssets'
+
+function archiveGuestSettlement(game, guestKey) {
+  if (!guestKey || game.status !== 'finished' || !game.settled) return ''
+  try { rememberGuestGame(game); return '' }
+  catch { return '本局已结算，但本机文牒未保存，请释放存储后重新进入重试，或立即导出文牒' }
+}
 
 export default function FeihuaPanel({ sageId, onClose }) {
   const [rules, setRules] = useState(null), [game, setGame] = useState(null)
@@ -21,6 +28,8 @@ export default function FeihuaPanel({ sageId, onClose }) {
           if (live.current) {
             offset.current = res.data.data.serverNow - Date.now()
             setGame(res.data.data)
+            const archiveNotice = archiveGuestSettlement(res.data.data, guest.current)
+            if (archiveNotice) setNotice(archiveNotice)
           }
         }).catch(() => { if (live.current) { sessionStorage.removeItem(`feihua:${sageId}`); setNotice('上次对局已失效，可重新开局') } })
       }
@@ -31,7 +40,7 @@ export default function FeihuaPanel({ sageId, onClose }) {
     offset.current = data.serverNow - Date.now()
     if (data.guestKey) guest.current = data.guestKey
     try { sessionStorage.setItem(`feihua:${sageId}`, JSON.stringify({ id: data.id, version: data.version, guestKey: guest.current })) } catch { /* optional local recovery */ }
-    setGame(data); setNotice(data.feedback || '')
+    setGame(data); setNotice(archiveGuestSettlement(data, guest.current) || data.feedback || '')
     if (data.settled) window.dispatchEvent(new Event('userInfoUpdated'))
   }
   const send = async (action) => {
@@ -67,13 +76,13 @@ export default function FeihuaPanel({ sageId, onClose }) {
   }
   return <section className='feihua-panel' aria-label='飞花令对弈'>
     <div className='feihua-heading'><h2>飞花令 · 对席</h2><button type='button' onClick={onClose} aria-label='返回对话'><CloseOutline /></button></div>
-    <p>三十息应令，同韵续句，双方不可重复。先贤从公开经典题库应答；胜得三分、和局一分，败局不计分。未登录可体验，积分不入书斋。</p>
+    <p>三十息应令，双方不可重复。自由换韵时先贤优先同韵；指定韵部时双方须严格同韵。胜得三分、和局一分，败局不计分。未登录可体验并保存本机文牒，积分不入书斋。</p>
     <p>{rules?.sages?.[sageId]?.name} · {rules?.sages?.[sageId]?.style}。跨朝代引句以题库作者署名为准。</p>
     {!game || game.status === 'finished' ? <div className='feihua-controls'>
       <label>令字<select value={keyword} onChange={e => { setKeyword(e.target.value); setRhyme('') }}>{[...new Set([...(rules?.sages?.[sageId]?.keywords || []), ...(rules?.keywords || ['月'])])].map(k => <option key={k}>{k}</option>)}</select></label>
-      <label>平水韵<select value={rhyme} onChange={e => setRhyme(e.target.value)}><option value=''>首句定韵</option>{(rules?.availableRhymes?.[keyword] || []).map(r => <option key={r}>{r}</option>)}</select></label>
+      <label>平水韵<select value={rhyme} onChange={e => setRhyme(e.target.value)}><option value=''>自由换韵</option>{(rules?.availableRhymes?.[keyword] || []).map(r => <option key={r}>{r}</option>)}</select></label>
       <button type='button' onClick={start} disabled={busy || !rules}>{game ? '再开一局' : '开席行令'}</button>
-    </div> : <div className='feihua-round'><strong>令：{game.keyword} · {game.rhyme || '首句定韵'}</strong><span role='timer' aria-label='剩余秒数'>{seconds}秒</span></div>}
+    </div> : <div className='feihua-round'><strong>令：{game.keyword} · {game.rhyme || '自由换韵'}</strong><span role='timer' aria-label='剩余秒数'>{seconds}秒</span></div>}
     {notice && <p role='status'>{notice}</p>}
     {game?.turns.map((t, i) => <blockquote key={i}><b>{t.role === 'user' ? '雅士' : rules?.sages?.[game.sageId]?.name || '先贤'}：</b>{t.line}<small>〔{t.author}《{t.title}》〕</small></blockquote>)}
     {game?.status === 'playing' && <form onSubmit={e => { e.preventDefault(); send('submit') }}>
@@ -89,7 +98,7 @@ export default function FeihuaPanel({ sageId, onClose }) {
       }}><DownlandOutline /> 导出2倍高清文牒</button>
     </div>}
     <details><summary>规则与经典题库（{rules?.poems.length || 0}句）</summary>
-      <p>首个有效句确定韵部，此后句末须同部。多音字不猜读音，请开局指定韵部。不含令字、重句或错韵即负；未收录句不判负但计时继续。六轮完整唱和判和局；先贤无可应之句则雅士胜。离开页面不暂停，未结算不发积分。每局十五分钟后过期。</p>
+      <p>未指定韵部时，每句韵脚须被平水韵收录，可自由换韵，先贤优先同韵应答；指定韵部时双方均须同部，先贤无合规句则雅士胜。不含令字、重句或指定模式下错韵即负；未收录句不判负但计时继续。六轮完整唱和判和局。离开页面不暂停，未结算不发积分。每局十五分钟后过期。</p>
       <p>韵表：<a href={rules?.source || 'https://zh.wikisource.org/zh-hans/平水韵'} target='_blank' rel='noreferrer'>平水韵106部</a>。仅校验本题库原句与句末韵部，不宣称自动鉴定全体诗词或多音字语境。</p>
       {rules?.poems.map(p => <p key={p.line}>{p.line} — {p.author}《{p.title}》</p>)}
     </details>

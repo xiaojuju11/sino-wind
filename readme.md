@@ -205,6 +205,13 @@ sino-wind/
    *(终端输出 `Day 1 数据库结构初始化完成` 即表示用户修持字段与 `user_poems` 表构建成功)*
 
 ### 5.3 后端服务启动 (`backend`)
+
+启动前在 `backend/.env.local` 配置数据库、AI 服务和必填的 `JWT_SECRET`。JWT 密钥须为至少32字符的独立随机值，不能使用旧版公开默认值；配置缺失或不安全时服务将拒绝启动。可在 `backend` 目录运行下列命令生成密钥，再写入被 Git 忽略的 `.env.local`；生产环境请通过部署平台独立配置，勿提交密钥：
+
+```bash
+node -e "console.log(require('node:crypto').randomBytes(48).toString('hex'))"
+```
+
 ```bash
 cd backend
 npm install
@@ -225,6 +232,8 @@ npm run dev
 npm run build
 ```
 *(全站 1015+ 模块极速转换，编译零警告错误)*
+
+本地回归：在 `frontend` 目录执行 `npm test`、`npm run lint`、`npm run build`；在 `backend` 目录执行 `npm test`。默认后端测试使用隔离文件与模拟 AI/数据库，不会修改业务数据库；需要真实数据库的历史联调脚本仍在 `backend/scripts/`，按各脚本说明单独执行。
 
 ---
 

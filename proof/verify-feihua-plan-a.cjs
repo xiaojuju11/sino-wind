@@ -1,6 +1,6 @@
 ﻿// 验证方案 1B + 2B：逐句押韵合规（可自由换韵）+ 先贤优先同韵、无则放宽 + 跨局去重
 const path = require('path')
-const B = 'D:/sino-wind-taskB/backend/src'
+const B = path.resolve(__dirname, '../backend/src')
 const engine = require(path.join(B, 'utils/feihuaEngine.js'))
 const ok = (l, c) => console.log(`  ${c ? '✅' : '❌'} ${l}`)
 

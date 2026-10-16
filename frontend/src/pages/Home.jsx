@@ -143,6 +143,7 @@ export default function Home() {
   const [visibleCitySheet, setVisibleCitySheet] = useState(false)
   const [cityQuery, setCityQuery] = useState('')
   const [locatedBy, setLocatedBy] = useState('')   // '' | 'gps' | 'ip' | 'default' | 'manual'
+  const locationRequest = useRef(null)
   const [weather, setWeather] = useState(null)      // 真实气温，null = 取数中/失败
 
   // ②-1 《九州地名志 · 城邑春秋》弹窗：搜城邑 → 看朝代演进轴 → 一键留驻此时空
@@ -192,6 +193,7 @@ export default function Home() {
 
   // 选中城邑：更新展示 + 切到该城经纬度（触发真实气温重取）
   const pickCity = (city) => {
+    locationRequest.current?.abort()
     setCurrentCity(cityView(city))
     setCityCoords({ lat: city.lat, lng: city.lng })
     setLocatedBy('manual')
@@ -218,6 +220,7 @@ export default function Home() {
     if (!target) return
     const rec = CITIES.find((c) => c[0] === target || c[0].startsWith(target))
     if (!rec) { Toast.show({ content: '城外云深，暂未收录此邑' }); return }
+    locationRequest.current?.abort()
     const city = { name: rec[0], ancient: rec[4] || '', lat: rec[2], lng: rec[3] }
     setCurrentCity(cityView(city))
     setCityCoords({ lat: city.lat, lng: city.lng })
@@ -236,12 +239,14 @@ export default function Home() {
   // 关键：无论走哪条，都必须同步 cityCoords —— 否则真实气温会一直用初值杭州。
   useEffect(() => {
     const ac = new AbortController()
+    locationRequest.current = ac
     let alive = true
     ;(async () => {
       let city = null
       let source = 'default'
       try {
-        const detected = await autoDetectUserCity()
+        const detected = await autoDetectUserCity(ac.signal)
+        if (!alive || ac.signal.aborted) return
         // 防御：autoDetectUserCity 内部的 pconline 接口返回 GBK，若按 UTF-8 解码
         // 会得到乱码城市名（实测 city = "�Ž���"，正确应为「九江市」），
         // 且该乱码会被缓存 12 小时。此处校验城名是否可读：
@@ -253,18 +258,19 @@ export default function Home() {
           if (rec) { city = { name: rec[0], ancient: rec[4] || detected.ancient || '', lat: rec[2], lng: rec[3] }; source = 'ip' }
         }
       } catch { /* 继续走 locate() 兜底 */ }
+      if (!alive || ac.signal.aborted) return
       if (!city) {
         const r = await locate(ac.signal)
-        if (!alive) return
+        if (!alive || ac.signal.aborted) return
         city = r.city
         source = r.source
       }
-      if (!alive) return
+      if (!alive || ac.signal.aborted) return
       setCurrentCity(cityView(city))
       setCityCoords({ lat: city.lat, lng: city.lng })
       setLocatedBy(source)
     })()
-    return () => { alive = false; ac.abort() }
+    return () => { alive = false; ac.abort(); if (locationRequest.current === ac) locationRequest.current = null }
   }, [])
 
   // 白话雅译请求（接口与字段保持不变）
@@ -314,7 +320,7 @@ export default function Home() {
       localStorage.setItem('gufeng_yayan_list', JSON.stringify(saved))
       Toast.show({ content: '已摘录入墨隐书斋 · 雅译锦囊', icon: 'success' })
     } catch {
-      Toast.show({ content: '已收录' })
+      Toast.show({ content: '摘录未保存，本机存储不可用，请稍后重试', icon: 'fail' })
     }
   }
 

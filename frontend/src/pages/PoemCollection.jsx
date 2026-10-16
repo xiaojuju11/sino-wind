@@ -1,76 +1,52 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { LeftOutline, SearchOutline, FileOutline, RightOutline, HeartOutline, CloseOutline } from 'antd-mobile-icons'
+import { LeftOutline, SearchOutline, FileOutline, RightOutline, CloseOutline } from 'antd-mobile-icons'
 import { Toast, Modal } from 'antd-mobile'
 import axios from '../http'
 import EmptyState from '../components/EmptyState'
 import '../styles/poemCollection.less'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
+import { useScholarScope } from '../utils/useScholarScope'
 
-// 古典兜底名篇（若后端未连接或新用户暂无收藏时展示）
-const defaultPoems = [
-  {
-    id: 1,
-    title: '水调歌头·明月几时有',
-    author: '苏轼',
-    dynasty: '宋代',
-    seal: '东坡',
-    content: '明月几时有？把酒问青天。不知天上宫阙，今夕是何年。我欲乘风归去，又恐琼楼玉宇，高处不胜寒。起舞弄清影，何似在人间。',
-    appreciation: '丙辰中秋，欢饮达旦，大醉，作此篇，兼怀子由。东坡借明月抒发对人间生活的无限热爱与豁达心境。',
-    created_at: '2026-10-11'
-  },
-  {
-    id: 2,
-    title: '将进酒',
-    author: '李白',
-    dynasty: '唐代',
-    seal: '太白',
-    content: '君不见黄河之水天上来，奔流到海不复回。君不见高堂明镜悲白发，朝如青丝暮成雪。人生得意须尽欢，莫使金樽空对月。天生我材必有用，千金散尽还复来。',
-    appreciation: '全诗极具浪漫主义豪情，笔势雄奇，音节起伏跌宕，将诗仙李白狂放不羁与高绝自信展现得淋漓尽致。',
-    created_at: '2026-10-11'
-  },
-  {
-    id: 3,
-    title: '定风波·莫听穿林打叶声',
-    author: '苏轼',
-    dynasty: '宋代',
-    seal: '雪堂',
-    content: '莫听穿林打叶声，何妨吟啸且徐行。竹杖芒鞋轻胜马，谁怕？一蓑烟雨任平生。料峭春风吹酒醒，微冷，山头斜照却相迎。回首向来萧瑟处，归去，也无风雨也无晴。',
-    appreciation: '通过途中遇雨的生活小事，表达苏轼在人生逆境中从容超脱、随遇而安的豁达风骨。',
-    created_at: '2026-10-10'
-  },
-  {
-    id: 4,
-    title: '如梦令·常记溪亭日暮',
-    author: '李清照',
-    dynasty: '宋代',
-    seal: '易安',
-    content: '常记溪亭日暮，沉醉不知归路。兴尽晚回舟，误入藕花深处。争渡，争渡，惊起一滩鸥鹭。',
-    appreciation: '易安居士早年词作代表，词风活泼清新，生动展现少女时代泛舟嬉游的纯真与烂漫。',
-    created_at: '2026-10-09'
-  }
-]
-
-export default function PoemCollection() {
+function PoemCollectionSession({ scope }) {
   const navigate = useNavigate()
-  const [poems, setPoems] = useState(defaultPoems)
+  const [sessionToken] = useState(() => localStorage.getItem('token'))
+  const [poems, setPoems] = useState([])
+  const [status, setStatus] = useState(scope.startsWith('user:') ? 'loading' : 'guest')
+  const [reload, setReload] = useState(0)
+  const [removingId, setRemovingId] = useState(null)
+  const removeLock = useRef(false)
+  const mounted = useRef(true)
   const [searchKey, setSearchKey] = useState('')
   const [activePoem, setActivePoem] = useState(null)
 
-  // 1. 获取用户收藏的诗笺列表
+  // 仅服务端真实收藏；空数组、读取失败和游客各自呈现状态。
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      axios.get('/api/poem/my-list').then(res => {
-        if (res.data?.data && Array.isArray(res.data.data) && res.data.data.length > 0) {
-          setPoems(res.data.data)
-        }
-      }).catch(() => {
-        // 后端接口未就绪时保留设计稿经典诗卷兜底
-      })
+    let alive = true
+    mounted.current = true
+    const token = sessionToken
+    const valid = () => alive && token === localStorage.getItem('token')
+    const load = async () => {
+      if (!token || token !== localStorage.getItem('token') || !scope.startsWith('user:')) {
+        setPoems([])
+        setStatus('guest')
+        return
+      }
+      setStatus('loading')
+      try {
+        const res = await axios.get('/api/poem/my-list', { timeout: 10000 })
+        if (!valid()) return
+        if (res.data?.code !== 1 || !Array.isArray(res.data.data)) throw new Error('Invalid collection response')
+        setPoems(res.data.data)
+        setStatus('ready')
+      } catch {
+        if (valid()) setStatus('error')
+      }
     }
-  }, [])
+    load()
+    return () => { alive = false; mounted.current = false }
+  }, [scope, reload, sessionToken])
 
   // 过滤搜索
   const filteredPoems = poems.filter(item => {
@@ -107,19 +83,41 @@ export default function PoemCollection() {
   // 移除诗笺操作（服务端数据库同步与修持计数核销）
   const handleRemovePoem = (e, poemId) => {
     e.stopPropagation()
+    const token = sessionToken
+    if (!token || token !== localStorage.getItem('token') || !scope.startsWith('user:')) {
+      Toast.show({ content: '请先登录入席，再管理诗笺', icon: 'fail' })
+      return
+    }
     Modal.confirm({
       title: '退卷归架',
       content: '确定要将此诗笺从您的书斋珍藏中移出吗？',
       confirmText: '移出',
       cancelText: '保留',
       onConfirm: async () => {
+        if (!mounted.current || removeLock.current) return
+        if (token !== localStorage.getItem('token')) {
+          Toast.show({ content: '入席身份已变更，请重新打开诗笺', icon: 'fail' })
+          return
+        }
+        removeLock.current = true
+        setRemovingId(poemId)
         try {
-          const res = await axios.post('/api/poem/remove', { id: poemId })
+          const res = await axios.post('/api/poem/remove', { id: poemId }, { timeout: 10000 })
+          if (token !== localStorage.getItem('token')) return
+          // code:1 包括服务端确认已不存在（removed:false）的幂等成功。
+          if (res.data?.code !== 1) throw new Error('Removal not confirmed')
+          window.dispatchEvent(new Event('userInfoUpdated'))
+          if (!mounted.current) return
           setPoems(prev => prev.filter(p => p.id !== poemId))
+          setActivePoem(prev => prev?.id === poemId ? null : prev)
           Toast.show({ content: res.data?.message || '已成功退卷归架', icon: 'success' })
         } catch {
-          setPoems(prev => prev.filter(p => p.id !== poemId))
-          Toast.show({ content: '已移出诗笺', icon: 'success' })
+          if (mounted.current && token === localStorage.getItem('token')) {
+            Toast.show({ content: '移出失败，诗笺已保留，请稍后重试', icon: 'fail' })
+          }
+        } finally {
+          removeLock.current = false
+          if (mounted.current) setRemovingId(null)
         }
       }
     })
@@ -138,7 +136,9 @@ export default function PoemCollection() {
           <span className='collection-header__seal'>墨隐珍藏</span>
         </div>
         <div className='collection-header__actions'>
-          <span className='collection-header__count'>共 {poems.length} 卷</span>
+          <span className='collection-header__count'>
+            {status === 'ready' ? `共 ${poems.length} 卷` : status === 'loading' ? '载入中…' : status === 'error' ? '暂未获取' : '入席后查看'}
+          </span>
         </div>
       </header>
 
@@ -163,7 +163,13 @@ export default function PoemCollection() {
 
       {/* 3. 诗卷瀑布流列表 */}
       <main className='collection-list'>
-        {filteredPoems.length === 0 ? (
+        {status === 'loading' ? (
+          <EmptyState seal='展卷' title='正在载入诗笺…' desc='正在读取您的珍藏，请稍候。' />
+        ) : status === 'error' ? (
+          <EmptyState seal='待续' title='诗笺暂未获取' desc='读取失败，请稍后重试。' actionText='重新载入 · 重试' onAction={() => setReload(value => value + 1)} />
+        ) : status === 'guest' ? (
+          <EmptyState seal='待席' title='登录入席后查看诗笺' desc='登录后即可查看与管理您的诗词珍藏。' actionText='前往入席' onAction={() => navigate('/login')} />
+        ) : filteredPoems.length === 0 ? (
           <EmptyState
             seal={searchKey ? '未寻' : '案虚'}
             title={searchKey ? '未寻得匹配诗笺' : '案头尚虚 · 暂无诗笺'}
@@ -200,10 +206,11 @@ export default function PoemCollection() {
                 <div className='poem-card__actions'>
                   <button
                     className='poem-card__del-btn'
+                    disabled={removingId !== null}
                     onClick={(e) => handleRemovePoem(e, poem.id)}
                     title='移出珍藏'
                   >
-                    移出
+                    {removingId === poem.id ? '移出中…' : '移出'}
                   </button>
                   <span className='poem-card__read-more'>
                     细品 <RightOutline />
@@ -259,4 +266,9 @@ export default function PoemCollection() {
       )}
     </div>
   )
+}
+
+export default function PoemCollection() {
+  const scope = useScholarScope()
+  return <PoemCollectionSession key={scope} scope={scope} />
 }
