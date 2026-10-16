@@ -1,4 +1,7 @@
 @import '../../styles/variables.less';
+// 统一按钮规范（双色 + 柔圆角 + 外阴影）：与采集页共用同一套 mixin，
+// 保证「拍照 / 上传 / 收入宝鉴 / 发音 / 音色」观感一致
+@import '../../styles/buttons.less';
 
 // ════════════════════════════════════════════════════
 //  物溯古今 · 识别结果 + 雅言吟诵器 + 加载骨架
@@ -102,43 +105,24 @@
 
   // 收入物溯宝鉴印章大按钮
   &__save-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.16rem;
+    .btn-base();
+    .btn-primary();
+
     min-height: 1.04rem;
     width: 100%;
     margin-top: 0.12rem;
     padding: 0 0.36rem;
-    border-radius: @radius-seal;
-    border: 1px solid fade(@color-gold, 80%);
-    background: linear-gradient(135deg, var(--gf-seal, @color-seal) 0%, #6E1B1B 100%);
-    color: #FAF7F0;
     font-size: 0.36rem;
-    font-weight: 600;
     font-family: 'STKaiti', 'KaiTi', serif;
     letter-spacing: 0.06em;
-    cursor: pointer;
-    box-shadow: 
-      inset 0 0 0 2px fade(@color-gold, 40%),
-      0 6px 16px -2px rgba(138, 43, 43, 0.28);
-    transition: all 0.22s ease;
 
     .iconfont {
       font-size: 0.42rem;
-      color: @color-gold;
     }
 
-    &:active {
-      transform: scale(0.985);
-      box-shadow: inset 0 0 0 2px fade(@color-gold, 60%);
-    }
-
+    // 已入藏：转为竹青实底（双色里的第二色，仅完成态出现）
     &.is-saved {
-      background: linear-gradient(135deg, #4A5B4C 0%, #364438 100%);
-      border-color: #7D9D80;
-      box-shadow: inset 0 0 0 1px #9FC5A3;
-      cursor: default;
+      .btn-success();
 
       .iconfont {
         color: #C5E0C7;
@@ -146,7 +130,7 @@
     }
 
     &:disabled:not(.is-saved) {
-      background: var(--gf-bg-sunk, @color-bg-sunk);
+      background-color: var(--gf-bg-sunk, @color-bg-sunk);
       color: var(--gf-text-sub, @color-text-sub);
       border-color: fade(@color-gold, 30%);
       box-shadow: none;
@@ -292,21 +276,13 @@
   }
 
   &__timbre-btn {
-    padding: 0.06rem 0.16rem;
-    border-radius: 0.2rem;
-    border: 1px solid fade(@color-gold, 45%);
-    background: transparent;
-    color: var(--gf-text-sub, @color-text-sub);
-    font-size: 0.24rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    .btn-base();
+    .btn-ghost();
 
-    &.is-active {
-      background: var(--gf-seal, @color-seal);
-      color: #FAF7F0;
-      border-color: var(--gf-seal, @color-seal);
-      box-shadow: inset 0 0 0 1px fade(@color-gold, 45%);
-    }
+    padding: 0.06rem 0.18rem;
+    font-size: 0.24rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
   }
 
   &__player-row {
@@ -325,35 +301,20 @@
 
 // 雅音主按钮
 .scholar-voice-btn {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.12rem;
+  .btn-base();
+  .btn-primary();
+
   height: 0.84rem;
   padding: 0 0.28rem;
-  border-radius: @radius-seal;
-  border: 1px solid fade(@color-gold, 70%);
-  background-color: var(--gf-seal, @color-seal);
-  color: #FAF7F0;
   font-size: 0.32rem;
   font-family: 'STKaiti', 'KaiTi', serif;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  box-shadow: inset 0 0 0 1.5px fade(@color-gold, 40%);
-  transition: all 0.2s ease;
 
   .iconfont {
     font-size: 0.34rem;
-    color: @color-gold;
-  }
-
-  &:active {
-    transform: scale(0.96);
   }
 
   &.is-playing {
-    background: #6E1B1B;
-    border-color: @color-gold;
+    background-color: #6E1B1B;
 
     .scholar-voice-btn__ink-ring {
       position: absolute;
