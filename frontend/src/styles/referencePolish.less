@@ -64,7 +64,7 @@
   .home-poem-card { min-height: 3.05rem; }.home-poem-title { font-size: .34rem; max-width: 74%; }.home-poem-verses { font-size: .35rem; }
 }
 .reference-polish.letter-root {
-  padding: .28rem .36rem 2rem; min-height: 100dvh;
+  padding: .28rem .36rem calc(3.4rem + env(safe-area-inset-bottom)); min-height: 100dvh;
   .letter-header { padding: 2.3rem .12rem .4rem; text-align: left; }
   .letter-header__theme { top: .15rem; right: .1rem; }.letter-header__title-wrap { justify-content: flex-start; gap: .24rem; }
   .letter-header__title { font-size: .9rem; line-height: 1.1; letter-spacing: .08rem; }.letter-header__seal { .reference-seal(); }
@@ -74,14 +74,15 @@
   .letter-gallery-scroll { gap: .24rem; padding: .07rem .08rem .24rem; align-items: start; }
   .letter-gallery-item { flex: 0 0 1.45rem; width: 1.45rem; cursor: pointer; }.letter-gallery-avatar-box { width: 1.4rem; height: 1.4rem; border: 1px solid var(--ref-gold); padding: 0; }
   .letter-gallery-avatar { width: 100%; height: 100%; object-fit: cover; object-position: center 31%; }
-  .letter-gallery-avatar-box--add { border: 1px dashed var(--gf-ink-primary); background: transparent; }.letter-add-icon { font-size: .7rem; }
+  .letter-gallery-avatar-box--add { border: 1px dashed var(--ref-gold); background: color-mix(in srgb, var(--ref-gold) 12%, transparent); color: var(--gf-seal, #8A2B2B); }.letter-add-icon { font-size: .62rem; }
   .letter-gallery-name { font-size: max(12px,.32rem); margin-top: .1rem; }
   .letter-list-section { .reference-frame(); padding: .12rem .25rem .18rem; }.letter-list-header { padding: .08rem 0; color: var(--gf-ink-muted); font-size: .19rem; }
   .letter-list { gap: 0; }.letter-card { background: transparent; box-shadow: none; border: 0; border-radius: 0; padding: .23rem 0; min-height: 1.48rem; border-bottom: 1px solid color-mix(in srgb,var(--ref-gold) 25%,transparent); gap: .22rem; }
   .letter-card:last-child { border-bottom: 0; }.letter-card__avatar-wrap { width: 1.37rem; height: 1.37rem; flex: 0 0 1.37rem; }.letter-card__avatar { border: 1px solid var(--ref-gold); object-position: center 31%; }
-  .letter-card__dynasty { display: none; }.letter-card__top { align-items: center; }.letter-card__names { display: block; min-width: 0; }.letter-card__name { font-size: max(16px,.42rem); }.letter-card__title { font-size: max(11px,.28rem); color: var(--gf-ink-secondary); margin-left: .05rem; }
+  .letter-card__dynasty { display: flex; align-items: center; justify-content: center; position: absolute; bottom: -0.04rem; right: -0.04rem; width: 0.38rem; height: 0.38rem; border-radius: 50%; background: var(--gf-seal, #8A2B2B); color: #fff; font-size: 0.2rem; border: 1.5px solid #FAF7F0; box-shadow: 0 1px 3px rgba(0,0,0,0.15); font-family: STKaiti, KaiTi, serif; }
+  .letter-card__group-seal { display: inline-flex; align-items: center; justify-content: center; padding: 0.02rem 0.12rem; margin-left: 0.08rem; font-size: 0.2rem; line-height: 1.2; color: #fff; background: var(--gf-seal, #8A2B2B); border-radius: 3px; box-shadow: 0 1px 3px rgba(138,43,43,0.25); font-family: STKaiti, KaiTi, serif; }.letter-card__top { align-items: center; }.letter-card__names { display: block; min-width: 0; }.letter-card__name { font-size: max(16px,.42rem); }.letter-card__title { font-size: max(11px,.28rem); color: var(--gf-ink-secondary); margin-left: .05rem; }
   .letter-card__time { font-size: max(10px,.25rem); white-space: nowrap; }.letter-card__snippet { font-size: max(13px,.34rem); line-height: 1.6; margin-top: .1rem; }.letter-card__badge { background: var(--gf-seal); }
-  .letter-list-section { margin-bottom: 2.5rem; }
+  .letter-list-section { margin-bottom: calc(3rem + env(safe-area-inset-bottom)); }
 }
 .reference-polish.shuzhai-root {
   padding: .35rem .35rem 1rem;
