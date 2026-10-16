@@ -138,7 +138,7 @@ function ScholarChatSession() {
     capsules: ['〔经史〕请与我畅谈经史子集', '〔茶道〕茶道与修身之道', '〔心境〕如何保持内心宁静', '〔题咏〕作诗一首赠吾']
   }
   const [failedScene, setFailedScene] = useState('')
-  const scene = getScholarScene(sageKey, sageInfo.name)
+  const scene = presetSage ? getScholarScene(sageKey, sageInfo.name) : null
   const hasScene = Boolean(scene && failedScene !== sageKey)
 
   // 同步用户在“我的”页面中的头像与昵称
@@ -452,13 +452,15 @@ function ScholarChatSession() {
             <section className="scholar-hero-banner">
               <div className="scholar-hero-banner__bg" />
               <div className="scholar-hero-banner__content">
-                <div className="scholar-hero-banner__portrait-box">
-                  <img
-                    src={sageKey === 'libai' ? `${BASE}assets/guancang/sage-libai-full-v2.png` : (hasScene && scene.src ? scene.src : sageInfo.portrait)}
-                    alt={sageInfo.name}
-                    className="scholar-hero-banner__portrait"
-                  />
-                </div>
+                {!hasScene && (
+                  <div className="scholar-hero-banner__portrait-box">
+                    <img
+                      src={sageInfo.portrait}
+                      alt={sageInfo.name}
+                      className="scholar-hero-banner__portrait"
+                    />
+                  </div>
+                )}
                 <div className="scholar-hero-banner__info">
                   <div className="scholar-hero-banner__names">
                     <span className="scholar-hero-banner__name">{sageInfo.name}</span>
@@ -567,15 +569,6 @@ function ScholarChatSession() {
         <div className="scholar-footer__quick-tools">
           {['libai', 'sushi', 'liqingzhao', 'wangyangming', 'dufu'].includes(sageKey) && <button type="button" className="scholar-tool-btn" disabled={loading || hydrating} onClick={() => setGameOpen(true)}><EditSOutline /> 飞花令</button>}
           {loading && <button type="button" className="scholar-tool-btn" onClick={() => activeRequest.current?.controller.abort()}>停止研墨</button>}
-          <button
-            type="button"
-            className="scholar-tool-btn"
-            disabled={loading || hydrating}
-            onClick={handleCiteShiwu}
-          >
-            <span className="scholar-tool-seal">物</span>
-            引物溯古今
-          </button>
           <button
             type="button"
             className="scholar-tool-btn"

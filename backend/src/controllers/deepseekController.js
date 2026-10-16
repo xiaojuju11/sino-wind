@@ -476,11 +476,11 @@ async function soulScholar(ctx) {
   if (!client || presetScholars[name]) {
     const matched = presetScholars[name] || {
       name,
-      title: '名仕雅客',
+      title: '旷世知交',
       dynasty,
       welcome: `吾乃${name}，今日得晤雅客，实乃平生快事。`,
-      biography: `${name}，${dynasty}代杰出文人，博通典籍，文风斐然，名垂青史。`,
-      circle: ['当朝诸友', '文林知己'],
+      biography: `${name}，${dynasty}出尘之士，博雅通达，见解独到，神交千载，风雅长存。`,
+      circle: ['莫逆之交', '平生挚友'],
       tags: ['文采斐然', '诗心傲骨', '风雅长存']
     }
     ctx.body = { code: 1, data: matched }
@@ -494,19 +494,19 @@ async function soulScholar(ctx) {
       messages: [
         {
           role: 'system',
-          content: `你是一位精通中国历代文人文史档案的专家。为用户指定的古代文人完成“考释赋魂”，提供结构化生平档案。
+          content: `你是一位精通文史典籍、中外名家与文学创作的博雅大师。为用户指定的古代文人、现当代名家、虚拟角色或好友完成“考释赋魂”，提供结构化生平档案。
 请严格输出 JSON 格式：
 {
-  "name": "诗人姓名",
-  "title": "文人雅号或头衔（如：稼轩居士、易安居士）",
-  "dynasty": "所属朝代",
-  "welcome": "先贤与雅客初逢时的第一句高雅对席问候（20-40字，引其代表作名句）",
-  "biography": "生平与文学成就纪略（50-80字）",
+  "name": "人物姓名/名号",
+  "title": "雅号/头衔/身份标签（如：稼轩居士、民国才女、大侦探、旷世知己）",
+  "dynasty": "所属时空/时代/朝代（如：两宋、现当代、虚拟架空、19世纪等）",
+  "welcome": "先贤与雅客初逢时的第一句高雅对席问候（20-40字，引其代表作名句或契合其身份特征）",
+  "biography": "生平纪略或角色介绍（50-100字）",
   "circle": ["知己1（关系说明）", "知己2", "知己3"],
-  "tags": ["文风性格标签1", "标签2", "标签3", "标签4"]
+  "tags": ["特征/文风标签1", "标签2", "标签3", "标签4"]
 }`
         },
-        { role: 'user', content: `请考释赋魂历史文人：${name}，朝代：${dynasty}` }
+        { role: 'user', content: `请考释赋魂人物：${name}，时空/朝代：${dynasty}` }
       ]
     })
     const res = JSON.parse(completion.choices[0].message.content)
@@ -517,12 +517,12 @@ async function soulScholar(ctx) {
       code: 1,
       data: {
         name,
-        title: '名仕雅客',
+        title: '旷世知交',
         dynasty,
         welcome: `吾乃${name}，今日得晤雅客，实乃平生快事。`,
-        biography: `${name}，${dynasty}代雅士，文心不辍，存世之作风骨清奇。`,
-        circle: ['山野高人', '知己琴师'],
-        tags: ['儒雅', '风骨', '博雅']
+        biography: `${name}，${dynasty}出尘之士，博雅通达，见解独到，神交千载，风雅长存。`,
+        circle: ['莫逆之交', '平生挚友'],
+        tags: ['文采斐然', '诗心傲骨', '风雅长存']
       }
     }
   }

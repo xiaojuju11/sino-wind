@@ -174,7 +174,8 @@ function LetterListSession() {
       <section className="letter-gallery-section">
         <div className="letter-gallery-scroll">
           {displayed.filter(item => item.id !== 'group_zhulin').map((item) => {
-            const scene = getScholarScene(item.id, item.name)
+            const isCustom = item.id?.startsWith('sage_')
+            const scene = isCustom ? null : getScholarScene(item.id, item.name)
             return (
             <button type='button'
               key={item.id}
@@ -219,7 +220,8 @@ function LetterListSession() {
 
         <div className="letter-list">
           {displayed.map((item) => {
-            const scene = getScholarScene(item.id, item.name)
+            const isCustom = item.id?.startsWith('sage_')
+            const scene = isCustom ? null : getScholarScene(item.id, item.name)
             return (
             <div
               key={item.id}
