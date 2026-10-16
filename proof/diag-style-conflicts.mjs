@@ -3,8 +3,10 @@
 //       **几何或视觉关键属性**，且值不同、无 !important
 //       → 后果：改基础样式不生效，必须同时改精修层
 import fs from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import path from 'node:path'
 
-const SRC = 'D:/sino-wind-taskB/frontend/src/'
+const SRC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../frontend/src') + '/'
 const files = {
   layout: 'styles/layout.less',
   home: 'styles/home.less',

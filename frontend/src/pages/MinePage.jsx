@@ -217,8 +217,8 @@ function MinePageSession() {
 
         {/* 五列修持数据看板（支持快捷下钻） */}
         <div className='scholar-stats'>
-          {stats.map((item, idx) => (
-            <button key={idx} type='button' className='scholar-stats__item' onClick={item.onClick}>
+          {stats.map((item) => (
+            <button key={item.label} type='button' className='scholar-stats__item' onClick={item.onClick}>
               <span className='scholar-stats__num'>{item.num}</span>
               <span className='scholar-stats__label'>{item.label}</span>
             </button>

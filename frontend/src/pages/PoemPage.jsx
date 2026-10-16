@@ -752,7 +752,7 @@ export default function PoemPage() {
                 <div className="poem-metre__detail-title">{d.label} · {d.score} 分</div>
                 <ul>
                   {d.contributions.map((c, i) => (
-                    <li key={i} className={c.ok ? 'is-ok' : 'is-weak'}>
+                    <li key={c.label || i} className={c.ok ? 'is-ok' : 'is-weak'}>
                       {c.label}：{c.value}
                       <em>（权重 {Math.round(c.weight * 100)}%）</em>
                     </li>

@@ -40,7 +40,7 @@ export default function TonePattern({ report, showConfidence = true }) {
                   const isActive = active && active.line === line.index && active.index === i
                   return (
                     <button
-                      key={i}
+                      key={`${line.index}-${i}-${t.ch}`}
                       type="button"
                       className={[
                         'tone-pattern__char',

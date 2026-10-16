@@ -1,8 +1,9 @@
-// 扩大扫描面：找常见代码隐患
 import { readFileSync, readdirSync, statSync } from 'node:fs'
-import { join, relative } from 'node:path'
+import { join, relative, resolve, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const ROOT = 'D:/sino-wind-taskB/frontend/src'
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../frontend/src')
+const FRONTEND_DIR = resolve(dirname(fileURLToPath(import.meta.url)), '../frontend')
 const files = []
 ;(function walk(d) {
   for (const n of readdirSync(d)) {
@@ -17,7 +18,7 @@ console.log('')
 const findings = { unguarded: [], imgNoAlt: [], keyIndex: [], consoleLog: [], hardcodedLocalhost: [], httpPlain: [] }
 
 for (const f of files) {
-  const rel = relative('D:/sino-wind-taskB/frontend', f).replace(/\\/g, '/')
+  const rel = relative(FRONTEND_DIR, f).replace(/\\/g, '/')
   const t = readFileSync(f, 'utf8')
   const lines = t.split(/\r?\n/)
 

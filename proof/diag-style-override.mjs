@@ -5,8 +5,9 @@
 // 本版：把选择器按嵌套路径拼成完整选择器，逐字符扫描声明与花括号。
 import fs from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const SRC = 'D:/sino-wind-taskB/frontend/src'
+const SRC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../frontend/src')
 const REFINERS = ['styles/referencePolish.less', 'styles/referenceFidelity.less', 'context/theme.less']
 const walk = (d, out = []) => { for (const n of fs.readdirSync(d)) { const p = path.join(d, n); if (fs.statSync(p).isDirectory()) walk(p, out); else if (/\.less$/.test(n)) out.push(p) } return out }
 

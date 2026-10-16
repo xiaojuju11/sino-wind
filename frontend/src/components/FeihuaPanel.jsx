@@ -84,7 +84,7 @@ export default function FeihuaPanel({ sageId, onClose }) {
       <button type='button' onClick={start} disabled={busy || !rules}>{game ? '再开一局' : '开席行令'}</button>
     </div> : <div className='feihua-round'><strong>令：{game.keyword} · {game.rhyme || '自由换韵'}</strong><span role='timer' aria-label='剩余秒数'>{seconds}秒</span></div>}
     {notice && <p role='status'>{notice}</p>}
-    {game?.turns.map((t, i) => <blockquote key={i}><b>{t.role === 'user' ? '雅士' : rules?.sages?.[game.sageId]?.name || '先贤'}：</b>{t.line}<small>〔{t.author}《{t.title}》〕</small></blockquote>)}
+    {game?.turns.map((t, i) => <blockquote key={t.id || `${t.role}-${t.line}-${i}`}><b>{t.role === 'user' ? '雅士' : rules?.sages?.[game.sageId]?.name || '先贤'}：</b>{t.line}<small>〔{t.author}《{t.title}》〕</small></blockquote>)}
     {game?.status === 'playing' && <form onSubmit={e => { e.preventDefault(); send('submit') }}>
       <label>应令诗句<input value={line} maxLength={100} onChange={e => setLine(e.target.value)} autoComplete='off' placeholder='输入题库中的完整单句' /></label>
       <button type='submit' disabled={busy || !line.trim()}>应令</button><button type='button' disabled={busy} onClick={() => send('resign')}>揖让收局</button>

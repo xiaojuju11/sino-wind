@@ -357,8 +357,8 @@ export default function InviteDrawer({ visible, onClose, onInviteSuccess }) {
                 </div>
                 {tags.length > 0 && (
                   <div className="invite-drawer__soul-tags">
-                    {tags.map((t, idx) => (
-                      <span key={idx} className="invite-drawer__soul-tag">#{t}</span>
+                    {tags.map((t) => (
+                      <span key={t} className="invite-drawer__soul-tag">#{t}</span>
                     ))}
                   </div>
                 )}
