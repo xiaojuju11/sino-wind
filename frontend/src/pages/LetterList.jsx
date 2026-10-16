@@ -8,7 +8,7 @@ import InviteDrawer from '../components/InviteDrawer'
 import { cachedLetters, loadLetters, shichen } from '../utils/scholarLetters'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
-import { getScholarScene } from '../utils/scholarScenes'
+import { getScholarScene, scholarPortraitStyle } from '../utils/scholarScenes'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -197,8 +197,8 @@ function LetterListSession() {
             >
               <div className="letter-gallery-avatar-box">
                 <span className='letter-portrait-window'>
-                <img src={scene?.face ? scene.src : item.avatar} alt={item.name} className={`letter-gallery-avatar${scene?.face ? ' reference-sage-portrait' : ''}`}
-                  style={scene?.face ? { '--face-left': `${50 - scene.face[0] * 800}%`, '--face-top': `${50 - scene.face[1] * 1600}%` } : undefined} />
+                <img src={scene?.src || item.avatar} alt={item.name} className={`letter-gallery-avatar${scene?.portrait ? ' reference-sage-portrait' : ''}`}
+                  style={scholarPortraitStyle(scene)} />
                 </span>
                 {item.unread > 0 && (
                   <span className="letter-unread-badge" aria-label='有未读回柬'>1</span>
@@ -230,9 +230,8 @@ function LetterListSession() {
               onClick={() => handleGoChat(item)}
             >
               <div className="letter-card__avatar-wrap">
-                <img src={scene?.src || item.avatar} alt={item.name} loading='lazy' className={`letter-card__avatar${scene?.face ? ' reference-sage-portrait' : ''}`}
-                  style={scene?.face ? { '--face-left': `${50 - scene.face[0] * 800}%`, '--face-top': `${50 - scene.face[1] * 1600}%` } : undefined} />
-                <span className="letter-card__dynasty">{item.dynasty}</span>
+                <img src={scene?.src || item.avatar} alt={item.name} loading='lazy' className={`letter-card__avatar${scene?.portrait ? ' reference-sage-portrait' : ''}`}
+                  style={scholarPortraitStyle(scene)} />
               </div>
 
               <div className="letter-card__body">

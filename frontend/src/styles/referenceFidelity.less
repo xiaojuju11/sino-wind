@@ -264,7 +264,18 @@
   .letter-gallery-avatar { position: absolute; inset: 0; }
   .letter-card__avatar-wrap { position: relative; overflow: hidden; border-radius: 50%; }
   .letter-card__avatar { object-position: center top; }
-  .letter-gallery-avatar-box .reference-sage-portrait,.letter-card__avatar-wrap .reference-sage-portrait { position: absolute; inset: auto; width: 800%; height: auto; max-width: none; border: 0; border-radius: 0; left: var(--face-left); top: var(--face-top); }
+  .letter-gallery-avatar-box .reference-sage-portrait,.letter-card__avatar-wrap .reference-sage-portrait {
+    position: absolute;
+    inset: auto;
+    width: var(--portrait-scale);
+    height: auto;
+    max-width: none;
+    border: 0;
+    border-radius: 0;
+    left: 50%;
+    top: 50%;
+    transform: translate(var(--portrait-x), var(--portrait-y));
+  }
   .letter-gallery-name { font-size: 13px; margin: 0; }
   .letter-list-section { padding: 7px 12px; }
   .letter-list-header { font-size: 10px; padding: 2px 0 5px; }
