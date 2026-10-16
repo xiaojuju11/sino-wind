@@ -4,7 +4,7 @@ import { Toast } from 'antd-mobile'
 import axios from '../http'
 import '../styles/register.less'
 
-export default function Register({ changeActiveTab, agreed = false }) {
+export default function Register({ changeActiveTab, agreed = false, onRegistered }) {
   const [form, setForm] = useState({ nickname: '', phone: '', password: '', captchaCode: '' })
   const [captcha, setCaptcha] = useState(null)
   const [captchaLoading, setCaptchaLoading] = useState(false)
@@ -51,10 +51,15 @@ export default function Register({ changeActiveTab, agreed = false }) {
     setLoading(true)
     setError('')
     try {
-      await axios.post('/api/auth/register', { nickname, phone, password: form.password, captchaId: captcha.id, captchaCode: form.captchaCode.trim() })
+      const { data } = await axios.post('/api/auth/register', { nickname, phone, password: form.password, captchaId: captcha.id, captchaCode: form.captchaCode.trim() })
       if (!mounted.current) return
-      Toast.show({ content: '缔约成功，请落座入席' })
-      changeActiveTab('login', { phone, password: form.password })
+      setForm((previous) => ({ ...previous, password: '', captchaCode: '' }))
+      if (typeof data?.recoveryCode === 'string' && data.recoveryCode && onRegistered) {
+        onRegistered({ phone, recoveryCode: data.recoveryCode })
+      } else {
+        Toast.show({ content: '账号已创建，请登录后在账号设置中生成恢复码', duration: 3500 })
+        changeActiveTab('login', { phone, password: '' })
+      }
     } catch (failure) {
       if (!mounted.current) return
       setError(failure?.response?.data?.message || failure?.data?.message || '缔约未成功，请稍后重试')

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { Toast } from 'antd-mobile'
 import { EyeOutline, EyeInvisibleOutline } from 'antd-mobile-icons'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from '../http'
 import '../styles/login.less'
 
@@ -52,7 +51,7 @@ export default function Login({ user = {}, agreed = false }) {
         <input id="login-password" name="password" autoComplete="current-password" type={visible ? 'text' : 'password'} placeholder="请输入密码" value={password} onChange={(e) => setPassword(e.target.value)} disabled={loading} />
         <button type="button" className="auth-eye" aria-label={visible ? '隐藏密码' : '显示密码'} aria-pressed={visible} onClick={() => setVisible(!visible)}>{visible ? <EyeOutline /> : <EyeInvisibleOutline />}</button>
       </div>
-      <div className="auth-forgot"><button type="button" onClick={() => Toast.show({ content: '密码找回暂未开放，请联系管理员' })}>忘记密码？</button></div>
+      <div className="auth-forgot"><Link to="/recover">忘记密码？</Link></div>
       {error && <p className="auth-error" id="login-error" role="alert">{error}</p>}
       <button className="auth-submit" disabled={loading} type="submit">{loading ? '正在入席…' : '落座入席'}</button>
     </form>

@@ -5,8 +5,9 @@ async function findUserByPhone(phone) {
   return rows[0]
 }
 
-async function createUser({phone, passwordHash, nickname}) {
-  const [res] = await db.execute('INSERT INTO users (phone, password_hash, create_time, nickname) VALUES (?, ?, NOW(), ?)', [phone, passwordHash, nickname])
+async function createUser({phone, passwordHash, nickname, recoveryHash}) {
+  // One statement persists both password and recovery hash; a failed insert leaves no half-created account.
+  const [res] = await db.execute('INSERT INTO users (phone, password_hash, create_time, nickname, recovery_code_hash) VALUES (?, ?, NOW(), ?, ?)', [phone, passwordHash, nickname, recoveryHash || null])
   // console.log(res);
   if (res.affectedRows) {
     return {
@@ -40,8 +41,8 @@ async function updateUserInfo (params, id) {
 }
 
 // Password changes are reachable only through the controller that verifies the old password.
-async function updateUserPassword(passwordHash, id) {
-  return (await db.execute('UPDATE users SET password_hash = ? WHERE id = ?', [passwordHash, id]))[0]
+async function updateUserPassword(passwordHash, id, previousHash, authVersion) {
+  return (await db.execute('UPDATE users SET password_hash = ? WHERE id = ? AND password_hash = ? AND auth_version = ?', [passwordHash, id, previousHash, authVersion]))[0]
 }
 
 module.exports = {

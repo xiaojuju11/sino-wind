@@ -5,10 +5,11 @@ import vm from 'node:vm'
 import { transform } from 'esbuild'
 
 // Exercise the actual JSX, effects and event handlers without a browser dependency.
-async function mount(page, { token = 'account-a', saved = null, get } = {}) {
+async function mount(page, { token = 'account-a', saved = null, get, props = {} } = {}) {
   const storage = new Map(token ? [['token', token]] : [])
   if (saved !== null) storage.set('gufeng_yayan_list', saved)
-  const requests = [], toasts = [], events = new EventTarget(), slots = [], pendingEffects = []
+  const requests = [], toasts = [], navigations = [], events = new EventTarget(), slots = [], pendingEffects = []
+  events.scrollTo = () => {}
   const transport = { get: get || (async () => ({ data: { code: 1, data: [] } })), post: async () => ({ data: { code: 1, removed: true } }) }
   let cursor = 0, dirty = false, tree, confirm
   const react = {
@@ -32,34 +33,45 @@ async function mount(page, { token = 'account-a', saved = null, get } = {}) {
   const scope = () => localStorage.getItem('token') ? `user:${localStorage.getItem('token')}` : 'guest'
   const context = vm.createContext({ localStorage, window: events, Event, navigator: {}, setTimeout, clearTimeout, console })
   const source = await fs.readFile(new URL(`../src/pages/${page}.jsx`, import.meta.url), 'utf8')
-  const { code } = await transform(source, { loader: 'jsx', format: 'esm', define: { 'import.meta.env.BASE_URL': '"/"' } })
+  const { code } = await transform(source, { loader: 'jsx', jsx: 'automatic', format: 'esm', define: { 'import.meta.env.BASE_URL': '"/"' } })
   const module = new vm.SourceTextModule(code, { context })
   await module.link(async name => {
     let exports
     if (name === 'react') exports = { default: react, ...react }
-    else if (name === 'react-router-dom') exports = { useNavigate: () => () => {} }
+    else if (name === 'react/jsx-runtime') exports = { jsx: (type, props) => ({ type, props }), jsxs: (type, props) => ({ type, props }), Fragment: 'Fragment' }
+    else if (name === 'react-router-dom') exports = { useNavigate: () => (...args) => navigations.push(args) }
     else if (name === '../http') exports = { default: axios }
     else if (name === 'antd-mobile') exports = { Toast: { show: value => toasts.push(value) }, Modal: { confirm: value => { confirm = value } }, Popup: 'Popup', ActionSheet: 'ActionSheet', ImageViewer: 'ImageViewer' }
-    else if (name === 'antd-mobile-icons') exports = Object.fromEntries(['LeftOutline', 'SearchOutline', 'FileOutline', 'RightOutline', 'HeartOutline', 'CloseOutline'].map(key => [key, key]))
+    else if (name === 'antd-mobile-icons') exports = Object.fromEntries(['LeftOutline', 'SearchOutline', 'FileOutline', 'RightOutline', 'HeartOutline', 'CloseOutline', 'RedoOutline'].map(key => [key, key]))
     else if (name.includes('useScholarScope')) exports = { useScholarScope: scope }
-    else if (name.includes('scholarLetters')) exports = { scholarScope: scope, syncLocalLetters: async () => {} }
+    else if (name.includes('scholarLetters')) exports = { scholarScope: scope, syncLocalLetters: async () => {}, cachedLetters: () => [], loadLetters: async () => [], shichen: () => '辰时初刻' }
+    else if (name.includes('studyFlow')) {
+      const helper = new vm.SourceTextModule(await fs.readFile(new URL('../src/utils/studyFlow.js', import.meta.url), 'utf8'), { context })
+      await helper.link(() => { throw new Error('Unexpected study helper dependency') })
+      return helper
+    }
     else if (name.includes('scholarAssets')) exports = { guestSummary: () => ({}), guestArchiveCount: () => 0, importGuestArchive: async () => {}, guestGames: () => [] }
     else exports = { default: name.includes('EmptyState') ? 'EmptyState' : 'DecorativeComponent' }
     return new vm.SyntheticModule(Object.keys(exports), function () { for (const [key, value] of Object.entries(exports)) this.setExport(key, value) }, { context })
   })
   await module.evaluate()
+  const expand = node => {
+    if (Array.isArray(node)) return node.map(expand)
+    if (!node || typeof node !== 'object') return node
+    if (typeof node.type === 'function') return expand(node.type(node.props))
+    return { ...node, props: { ...node.props, children: expand(node.props?.children) } }
+  }
   const render = () => {
     cursor = 0; dirty = false
-    tree = module.namespace.default()
-    // Personal pages may key their session component by account identity.
-    while (typeof tree?.type === 'function') tree = tree.type(tree.props)
+    // Materialize real nested sections too, including routed notebooks and refresh controls.
+    tree = expand(module.namespace.default(props))
     while (pendingEffects.length) pendingEffects.shift()()
   }
   const flush = async () => {
     for (let i = 0; i < 8; i++) { await new Promise(resolve => setImmediate(resolve)); if (dirty) render() }
   }
   render()
-  return { transport, requests, toasts, events, localStorage, flush,
+  return { transport, requests, toasts, navigations, events, localStorage, flush,
     get tree() { return tree },
     confirm: () => confirm?.onConfirm(),
     unmount: () => slots.forEach(slot => slot?.cleanup?.()),
@@ -211,44 +223,56 @@ test('duplicate confirms send only one removal and search still uses real items'
   f.unmount()
 })
 
-async function openYayan(f) {
-  nodes(f.tree, node => node.props?.className === 'shuzhai-list-item' && text(node).includes('雅译锦囊'))[0].props.onClick()
-  await f.flush()
-  return nodes(f.tree, node => node.type === 'Popup' && node.props.visible)[0]
-}
-
-test('yayan drawer reads home excerpts on every open and preserves source metadata', async () => {
+test('Mine opens real secondary routes instead of a yayan drawer or fake notification toggle', async () => {
   const f = await mount('MinePage', { token: null })
   await f.flush()
-  f.localStorage.setItem('gufeng_yayan_list', JSON.stringify([
+  for (const [label, route] of [['雅译锦囊', '/mine/yayan'], ['藏牒阁', '/mine/archive'], ['物溯宝鉴', '/mine/artifacts'], ['消息通知', '/mine/messages']]) {
+    nodes(f.tree, node => node.type === 'button' && node.props?.className === 'shuzhai-list-item' && text(node).includes(label))[0].props.onClick()
+    assert.equal(f.navigations.at(-1)[0], route)
+  }
+  assert.equal(nodes(f.tree, node => node.type === 'Popup').length, 0)
+  assert.equal(f.toasts.length, 0)
+  f.unmount()
+})
+
+test('routed yayan notebook reads home excerpts and preserves original source metadata', async () => {
+  const saved = JSON.stringify([
     { id: 1, ancient: '一期一会', modern: '珍惜相遇', author: '雅译署名', explanation: '此次相逢尤可珍重', offline: false, createdAt: '2026/10/16' },
     { id: 2, ancient: '且尽一杯', modern: '先喝一杯', offline: true },
     null, { ancient: { invalid: true } },
-  ]))
-  const drawer = await openYayan(f), content = text(drawer)
+  ])
+  const f = await mount('StudyPage', { token: null, saved, props: { section: 'yayan' } })
+  await f.flush()
+  const content = text(f.tree)
   for (const value of ['一期一会', '珍惜相遇', '雅译署名', '此次相逢尤可珍重', '2026/10/16', '在线', '离线']) assert.ok(content.includes(value), value)
-  assert.equal(nodes(drawer, node => node.props?.className === 'yayan-box__item').length, 2)
-  nodes(drawer, node => node.props?.className === 'yayan-box__close')[0].props.onClick(); await f.flush()
+  assert.equal(cards(f).length, 2)
+  assert.equal(f.localStorage.getItem('gufeng_yayan_list'), saved, 'invalid rows are not removed from the stored original')
   f.localStorage.setItem('gufeng_yayan_list', JSON.stringify([{ ancient: '新摘录', modern: '重新开卷可见' }]))
-  assert.match(text(await openYayan(f)), /新摘录/)
+  nodes(f.tree, node => node.type === 'button' && node.props?.className === 'study-page__refresh')[0].props.onClick()
+  await f.flush()
+  assert.match(text(f.tree), /新摘录/)
+  assert.doesNotMatch(text(f.tree), /一期一会/)
+  assert.equal(cards(f).length, 1)
   assert.equal(f.requests.length, 0)
+  nodes(f.tree, node => node.props?.className === 'study-page__back')[0].props.onClick()
+  assert.equal(f.navigations.at(-1)[0], '/mine', 'direct URL visits can always return to the study')
   f.unmount()
 })
 
 test('unreadable yayan storage is retained and a retry recovers the original excerpts', async () => {
-  const f = await mount('MinePage', { token: null, saved: '{broken' })
-  const drawer = await openYayan(f)
+  const f = await mount('StudyPage', { token: null, saved: '{broken', props: { section: 'yayan' } })
+  await f.flush()
   assert.equal(f.localStorage.getItem('gufeng_yayan_list'), '{broken')
   f.localStorage.setItem('gufeng_yayan_list', JSON.stringify([{ ancient: '修复后原稿' }]))
-  nodes(drawer, node => node.type === 'EmptyState')[0].props.onAction(); await f.flush()
+  empty(f).props.onAction(); await f.flush()
   assert.match(text(f.tree), /修复后原稿/)
   f.unmount()
 })
 
 for (const saved of [null, '[]', '[null,{}]', '{broken', '{}']) test(`yayan with ${saved} never substitutes preset user excerpts`, async () => {
-  const f = await mount('MinePage', { token: null, saved })
-  const drawer = await openYayan(f)
-  assert.equal(nodes(drawer, node => node.props?.className === 'yayan-box__item').length, 0)
-  assert.match(text(drawer), /尚无|暂无|未能读取/)
+  const f = await mount('StudyPage', { token: null, saved, props: { section: 'yayan' } })
+  await f.flush()
+  assert.equal(cards(f).length, 0)
+  assert.match(text(f.tree), /案头尚虚|暂未展开|未能读取/)
   f.unmount()
 })

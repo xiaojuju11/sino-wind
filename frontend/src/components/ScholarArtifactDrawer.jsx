@@ -3,12 +3,11 @@ import { useEffect, useState } from 'react'
 import { CloseOutline, DeleteOutline } from 'antd-mobile-icons'
 import axios from '../http'
 import '../styles/scholarEcosystem.less'
-import { useScholarSheet } from '../utils/useScholarSheet'
+import ScholarSurface from './ScholarSurface'
 import { scholarScope } from '../utils/scholarLetters'
 import { localArtifacts, removeLocalArtifact } from '../utils/scholarAssets'
 
-function ScholarArtifactDrawerSession({ onClose, onPick }) {
-  const sheet = useScholarSheet(onClose)
+function ScholarArtifactDrawerSession({ onClose, onPick, presentation }) {
   const [data, setData] = useState(null), [page, setPage] = useState(1)
   const [busy, setBusy] = useState(false), [notice, setNotice] = useState(''), [revision, setRevision] = useState(0)
   const [confirmId, setConfirmId] = useState(null)
@@ -46,8 +45,8 @@ function ScholarArtifactDrawerSession({ onClose, onPick }) {
     catch { setNotice('暂未移出宝鉴，可稍后再试') }
     finally { setBusy(false) }
   }
-  return <div className='scholar-sheet-backdrop'><section ref={sheet} className='scholar-sheet' role='dialog' aria-modal='true' aria-label='宝鉴藏品选择'>
-    <header><h2>{onPick ? '携物入席 · 宝鉴' : '物溯宝鉴 · 已藏器物'}</h2><button onClick={onClose} aria-label='合上宝鉴'><CloseOutline /></button></header>
+  return <ScholarSurface presentation={presentation} onClose={onClose} label={onPick ? '携物入席 · 宝鉴' : '物溯宝鉴'}>
+    {presentation !== 'page' && <header><h2>{onPick ? '携物入席 · 宝鉴' : '物溯宝鉴 · 已藏器物'}</h2><button onClick={onClose} aria-label='合上宝鉴'><CloseOutline /></button></header>}
     <p>在此展读已保存的器物考释。识别结果是文化研习推演，年代仍待考证。</p>
     {scholarScope() === 'guest' && <p>游客藏品仅保留本机，登录后可在书斋确认收入本人账户。</p>}
     <>
@@ -62,9 +61,9 @@ function ScholarArtifactDrawerSession({ onClose, onPick }) {
         {confirmId === item.id && <button onClick={() => setConfirmId(null)}>保留</button>}
       </article>)}
       <nav aria-label='宝鉴分页'><button disabled={busy || page <= 1} onClick={() => setPage(n => n - 1)}>前页</button><span>第{page}页</span><button disabled={busy || !data || page * data.pageSize >= data.total} onClick={() => setPage(n => n + 1)}>后页</button></nav>
-      {notice && <button onClick={() => setRevision(n => n + 1)}>重新开卷</button>}
+      <button type='button' disabled={busy} onClick={() => setRevision(n => n + 1)}>重新开卷</button>
     </>
-  </section></div>
+  </ScholarSurface>
 }
 
 export default function ScholarArtifactDrawer(props) {

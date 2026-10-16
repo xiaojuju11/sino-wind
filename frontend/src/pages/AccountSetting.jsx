@@ -1,9 +1,10 @@
-import { useEffect, useState, useRef } from 'react'
+import { useCallback, useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { List, Avatar, ActionSheet, Toast, Popup, Button, Input } from 'antd-mobile'
 import axios from '../http'
 import { LeftOutline, CloseOutline } from 'antd-mobile-icons'
 import { uploadFileChunks, DEFAULT_CHUNK_SIZE } from '../utils/chunkUpload'
+import RecoveryCodeCard from '../components/RecoveryCodeCard'
 import '../styles/accountSetting.less'
 
 const actions = [
@@ -47,6 +48,84 @@ export default function AccountSetting() {
   const [visiblePopupPassword, setVisiblePopupPassword] = useState(false)
   const [newPassword, setNewPassword] = useState('')
   const [oldPassword, setOldPassword] = useState('')
+  const [recoveryOpen, setRecoveryOpen] = useState(false)
+  const [recoveryPassword, setRecoveryPassword] = useState('')
+  const [recoveryCode, setRecoveryCode] = useState('')
+  const [recoveryBusy, setRecoveryBusy] = useState(false)
+  const [recoveryError, setRecoveryError] = useState('')
+  const [recoveryIdentity] = useState(() => localStorage.getItem('token') || '')
+  const [recoverySessionValid, setRecoverySessionValid] = useState(Boolean(recoveryIdentity))
+  const recoveryScopeInvalid = useRef(false)
+  const recoveryAbort = useRef(null)
+  const recoveryRequest = useRef(false)
+  const recoveryActive = useRef(false)
+  const invalidateRecovery = useCallback(() => {
+    recoveryScopeInvalid.current = true
+    recoveryAbort.current?.abort()
+    setRecoverySessionValid(false)
+    setRecoveryPassword('')
+    setRecoveryCode('')
+    setRecoveryError('登录身份已变化，请刷新页面并确认账号后再生成恢复码。')
+  }, [])
+  useEffect(() => {
+    recoveryActive.current = true
+    const checkIdentity = (event) => {
+      if (event?.type === 'storage' && event.key !== null && event.key !== 'token') return
+      if ((localStorage.getItem('token') || '') !== recoveryIdentity) invalidateRecovery()
+    }
+    window.addEventListener('storage', checkIdentity)
+    window.addEventListener('scholarSessionChanged', checkIdentity)
+    window.addEventListener('focus', checkIdentity)
+    return () => {
+      recoveryActive.current = false
+      recoveryAbort.current?.abort()
+      window.removeEventListener('storage', checkIdentity)
+      window.removeEventListener('scholarSessionChanged', checkIdentity)
+      window.removeEventListener('focus', checkIdentity)
+    }
+  }, [recoveryIdentity, invalidateRecovery])
+
+  const generateRecovery = async (event) => {
+    event.preventDefault()
+    if (recoveryRequest.current) return
+    if (!recoveryIdentity || recoveryScopeInvalid.current || localStorage.getItem('token') !== recoveryIdentity) return invalidateRecovery()
+    if (!recoveryPassword) return setRecoveryError('请输入当前账号密码以确认身份')
+    recoveryRequest.current = true
+    setRecoveryBusy(true)
+    setRecoveryError('')
+    const controller = new AbortController()
+    recoveryAbort.current = controller
+    try {
+      const { data } = await axios.post('/api/auth/recovery-code', { password: recoveryPassword }, {
+        signal: controller.signal,
+        // Pin this sensitive request after shared interceptors; never rotate another tab's account.
+        transformRequest: [(payload, headers) => {
+          if (recoveryScopeInvalid.current || localStorage.getItem('token') !== recoveryIdentity) {
+            invalidateRecovery()
+            throw new Error('登录身份已变化')
+          }
+          headers.set('Authorization', recoveryIdentity)
+          return JSON.stringify(payload)
+        }]
+      })
+      if (!recoveryActive.current) return
+      if (recoveryScopeInvalid.current || localStorage.getItem('token') !== recoveryIdentity) return invalidateRecovery()
+      setRecoveryPassword('')
+      if (typeof data?.data?.recoveryCode !== 'string' || !data.data.recoveryCode) {
+        setRecoveryError('生成请求已完成，但恢复码未显示，请再次验证当前密码重新生成。')
+        return
+      }
+      setRecoveryCode(data.data.recoveryCode)
+    } catch (failure) {
+      if (recoveryActive.current) {
+        if (recoveryScopeInvalid.current || localStorage.getItem('token') !== recoveryIdentity) invalidateRecovery()
+        else setRecoveryError(failure?.response?.data?.message || failure?.data?.message || '恢复码生成失败，请核对密码后重试')
+      }
+    } finally {
+      recoveryRequest.current = false
+      if (recoveryActive.current) setRecoveryBusy(false)
+    }
+  }
 
   // 初始化获取用户信息
   useEffect(() => {
@@ -246,16 +325,33 @@ export default function AccountSetting() {
           说明：题头右侧原有的 ThemeToggle 已删除；下方「墨色雅意」列表项也一并移除，
           本页不再提供日月切换入口（书斋页仅保留「墨色雅意」一处）。 */}
       <header className='image-capture-header'>
-        <button className='image-capture-header__back' aria-label='返回上一页' onClick={() => navigate(-1)}>
+        <button className='image-capture-header__back' aria-label={recoveryOpen ? '返回账号设置' : '返回上一页'} disabled={recoveryBusy || Boolean(recoveryCode)} onClick={() => {
+          if (recoveryOpen) { setRecoveryOpen(false); setRecoveryPassword(''); setRecoveryError('') }
+          else navigate(-1)
+        }}>
           <LeftOutline aria-hidden="true" />
         </button>
-        <h1 className='image-capture-header__title'>账号设置</h1>
+        <h1 className='image-capture-header__title'>{recoveryOpen ? '账号恢复密笺' : '账号设置'}</h1>
         {/* 占位：保持 header 的 space-between 布局，让标题稳定居中 */}
         <span className='image-capture-header__spacer' aria-hidden='true' />
       </header>
 
       {/* 账号配置列表 */}
-      <section className='account-setting__section'>
+      {recoveryOpen ? <section className="account-recovery">
+        {recoveryCode ? <RecoveryCodeCard code={recoveryCode} onDone={() => { setRecoveryCode(''); setRecoveryOpen(false) }} /> : <>
+          <span className="account-recovery__eyebrow">密笺护席</span>
+          <h2>留一份凭据，安心归来</h2>
+          <p>恢复码可在忘记密码时验证身份。请输入当前密码生成；如已有恢复码，新码生成后将立即替换旧码。</p>
+          {!recoverySessionValid && <p className="account-recovery__error" role="alert">当前页面登录身份已变化，请刷新页面并确认账号后再继续。</p>}
+          <form onSubmit={generateRecovery} aria-busy={recoveryBusy}>
+            <label htmlFor="recovery-current-password">当前密码</label>
+            <input id="recovery-current-password" type="password" autoComplete="current-password" value={recoveryPassword} onChange={(event) => setRecoveryPassword(event.target.value)} disabled={recoveryBusy || !recoverySessionValid} placeholder="请输入当前账号密码" />
+            {recoveryError && <p className="account-recovery__error" role="alert">{recoveryError}</p>}
+            <button type="submit" disabled={recoveryBusy || !recoverySessionValid}>{recoveryBusy ? '正在核验…' : '验证密码 · 生成新恢复码'}</button>
+          </form>
+          <p className="account-recovery__tip">新码只显示一次，请准备好安全的保存位置。</p>
+        </>}
+      </section> : <section className='account-setting__section'>
         <List>
           <List.Item
             extra={<Avatar style={{ '--border-radius': '50%' }} src={avatar} size={40} />}
@@ -281,8 +377,11 @@ export default function AccountSetting() {
           >
             密码
           </List.Item>
+          <List.Item extra='生成 / 换新' clickable onClick={() => { setRecoveryOpen(true); setRecoveryPassword(''); setRecoveryError('') }}>
+            账号恢复码
+          </List.Item>
         </List>
-      </section>
+      </section>}
 
       {/* 隐藏的真实文件选择框（支持各类格式与超大文件） */}
       <input
