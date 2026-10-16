@@ -1,5 +1,5 @@
 import ReferenceCorners from '../components/ReferenceCorners'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import '../styles/home.less'
 import { Toast, Popup } from 'antd-mobile'
 import { DownOutline, RightOutline, UpOutline, CompassOutline, EditSOutline, CheckCircleOutline, DownCircleOutline, StarOutline, ShopbagOutline, FileOutline, SearchOutline } from 'antd-mobile-icons'
@@ -13,7 +13,8 @@ import '../styles/referencePolish.less'
 import { CITIES, searchCities } from '../utils/geoCities.js'
 import { currentTerm, seasonLine, fetchWeather, locate } from '../utils/almanac.js'
 import { SHICHEN, shichenOf } from '../utils/shichen.js'
-import { cityChronicle, NOT_FOUND_TIP, RECOMMEND_CITIES } from '../utils/cityChronicle.js'
+// 《九州地名志 · 城邑春秋》已迁到独立二级页面（pages/CityChroniclePage.jsx），
+// 本页不再需要 cityChronicle / NOT_FOUND_TIP / RECOMMEND_CITIES
 
 const BASE = import.meta.env.BASE_URL
 
@@ -116,6 +117,9 @@ export default function Home() {
   // 题头元素引用：水墨粒子引擎的手势监听直接挂在这里（不新增遮挡层）
   const heroRef = useRef(null)
   const heroInkZoneRef = useRef(null)
+  // 是否已由「留驻此时空」等手动操作接管城邑 —— 定位链路见到此标记即不再自动写入，
+  // 避免 IP 定位稍后返回把用户刚选的城市覆盖掉（实测踩过）
+  const manualPickRef = useRef(false)
 
   // 点击题头「华风」朱砂印章：激荡朱砂印泥水墨晕染
   const handleSealClick = (e) => {
@@ -145,9 +149,6 @@ export default function Home() {
   const [locatedBy, setLocatedBy] = useState('')   // '' | 'gps' | 'ip' | 'default' | 'manual'
   const [weather, setWeather] = useState(undefined)   // 真实气温：undefined=取数中，对象=成功，null=失败
 
-  // ②-1 《九州地名志 · 城邑春秋》弹窗：搜城邑 → 看朝代演进轴 → 一键留驻此时空
-  const [chronicleOpen, setChronicleOpen] = useState(false)
-  const [chronicleQuery, setChronicleQuery] = useState('')
   // ②-2 《十二时辰养生与雅事》弹窗
   const [shichenOpen, setShichenOpen] = useState(false)
   // 打开时自动滑到「当前时辰」那张卡（亥时在最右，不滑过去看不见）。
@@ -193,6 +194,7 @@ export default function Home() {
 
   // 选中城邑：更新展示 + 切到该城经纬度（触发真实气温重取）
   const pickCity = (city) => {
+    manualPickRef.current = true   // 标记为手动选择，定位链路不再覆盖
     setCurrentCity(cityView(city))
     setCityCoords({ lat: city.lat, lng: city.lng })
     setLocatedBy('manual')
@@ -212,26 +214,47 @@ export default function Home() {
       : { temp: '—', weather: '' }
 
   // ──《九州地名志 · 城邑春秋》──
-  // 当前检索到的演进轴（未收录则为 null，走典雅提示分支）
-  const chronicle = useMemo(() => cityChronicle(chronicleQuery), [chronicleQuery])
+  // 2026-10-16 由底部弹窗改为独立二级页面（/city-chronicle）。
+  // 交接方式说明（实测踩过的坑）：
+  //   原用 window 自定义事件回传，但该页是在 navigate() 之前同步派发事件的 ——
+  //   那一刻 Home 尚未挂载，监听器还不存在，事件直接丢失（实测：留驻成都后
+  //   首页仍是香港）。故改为**本页挂载时读取 sessionStorage**，与挂载时序无关。
+  //   sessionStorage 仅在切换/刷新时仍保留，故读后立即清除，避免下次误触发。
+  /** 进入城邑志页：把当前城邑带过去，页面打开即展示它（同原弹窗行为） */
+  const openChronicle = useCallback(() => {
+    try { sessionStorage.setItem('city-chronicle:from', currentCity.name || '') } catch { /* 无 storage 时忽略 */ }
+    navigate('/city-chronicle')
+  }, [currentCity.name, navigate])
 
-  /**
-   * 留驻此时空：把主页时令卡片切到该城邑 ——
-   * 左栏天气温度重取、右栏古称与诗句联动刷新
-   */
-  const commitCity = (name) => {
-    const target = String(name || '').trim()
-    if (!target) return
-    const rec = CITIES.find((c) => c[0] === target || c[0].startsWith(target))
+  /** 把时令卡片切到指定城邑（左栏气温重取、右栏古称与诗句联动刷新） */
+  const applyCity = useCallback((target) => {
+    const name = String(target || '').trim()
+    if (!name) return
+    const rec = CITIES.find((c) => c[0] === name || c[0].startsWith(name))
     if (!rec) { Toast.show({ content: '城外云深，暂未收录此邑' }); return }
     const city = { name: rec[0], ancient: rec[4] || '', lat: rec[2], lng: rec[3] }
     setCurrentCity(cityView(city))
     setCityCoords({ lat: city.lat, lng: city.lng })
     setLocatedBy('manual')
-    setChronicleOpen(false)
-    setChronicleQuery('')
     Toast.show({ content: `已留驻${city.ancient ? `${city.ancient}（${city.name}）` : city.name}` })
-  }
+  }, [])
+
+  // 挂载时消费「留驻此时空」待处理项（由城邑志页写入）
+  // ⚠️ 竞态（实测踩过）：本 effect 与下方 IP 定位 effect 都在挂载时跑 ——
+  //    若先应用了留驻城邑，IP 定位稍后返回会把它**覆盖掉**（留驻成都却仍显示香港）。
+  //    故用 ref 记录「已由手动留驻接管」，定位链路见到该标记即放弃自动写入。
+  useEffect(() => {
+    let pending = ''
+    try {
+      pending = sessionStorage.getItem('city-chronicle:commit') || ''
+      if (pending) sessionStorage.removeItem('city-chronicle:commit')
+    } catch { /* 无 storage 时忽略 */ }
+    if (pending) { manualPickRef.current = true; applyCity(pending) }
+    // 兜底：同页内若仍有事件派发（例如将来改为不跳转的调用方），一并支持
+    const onCommit = (e) => { manualPickRef.current = true; applyCity(e?.detail?.name) }
+    window.addEventListener('city-chronicle:commit', onCommit)
+    return () => window.removeEventListener('city-chronicle:commit', onCommit)
+  }, [applyCity])
 
   // 🏮 自动感知驻足之地（合并说明 2026-10-15）
   // 原有两个并行实现互相竞争：郑小君的 autoDetectUserCity()（IP + 12h 缓存，
@@ -266,6 +289,8 @@ export default function Home() {
         source = r.source
       }
       if (!alive) return
+      // 若期间用户已手动留驻某城邑，则放弃自动定位结果（避免覆盖用户选择）
+      if (manualPickRef.current) return
       setCurrentCity(cityView(city))
       setCityCoords({ lat: city.lat, lng: city.lng })
       setLocatedBy(source)
@@ -448,7 +473,7 @@ export default function Home() {
           <button
             type="button"
             className="home-almanac__roam"
-            onClick={() => { setChronicleOpen(true); setChronicleQuery(currentCity.name) }}
+            onClick={openChronicle}
             aria-label="漫游古今城邑"
           >
             <CompassOutline className="home-almanac__roam-icon" />
@@ -470,7 +495,7 @@ export default function Home() {
             </div>
             <p
               className="home-almanac__city"
-              onClick={() => { setChronicleOpen(true); setChronicleQuery(currentCity.name) }}
+              onClick={openChronicle}
               style={{ cursor: 'pointer' }}
               role="button"
               tabIndex={0}
@@ -621,77 +646,6 @@ export default function Home() {
             ))}
           </div>
           <p className="home-citysheet__foot">共收录 {CITIES.length} 城 · 古称仅列有史料可考者</p>
-        </div>
-      </Popup>
-
-      {/* ── 《九州地名志 · 城邑春秋》：搜城邑 → 朝代演进轴 → 留驻此时空 ── */}
-      <Popup
-        visible={chronicleOpen}
-        onMaskClick={() => setChronicleOpen(false)}
-        onClose={() => { setChronicleOpen(false); setChronicleQuery('') }}
-        bodyStyle={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}
-      >
-        <div className="home-chronicle">
-          <div className="home-chronicle__head">
-            <strong>九州地名志 · 城邑春秋</strong>
-            <button type="button" onClick={() => { setChronicleOpen(false); setChronicleQuery('') }} aria-label="收起">收起</button>
-          </div>
-
-          <label className="home-chronicle__search">
-            <SearchOutline aria-hidden="true" />
-            <input
-              value={chronicleQuery}
-              onChange={(e) => setChronicleQuery(e.target.value)}
-              placeholder="输入今夕城邑（如：西安、南京、杭州、北京、洛阳、成都……）"
-              autoComplete="off"
-            />
-          </label>
-
-          <div className="home-chronicle__body">
-            {!chronicleQuery.trim() && (
-              <p className="home-chronicle__hint">输入一座城邑，展卷看它的前世今生</p>
-            )}
-
-            {chronicleQuery.trim() && chronicle && (
-              <>
-                <p className="home-chronicle__title">
-                  {chronicle.key}
-                  <em className="home-chronicle__title-sub">历代沿革</em>
-                </p>
-                <ol className="home-chronicle__axis">
-                  {chronicle.timeline.map(([era, place, note], i) => (
-                    <li key={`${era}-${place}`} className="home-chronicle__node">
-                      <span className="home-chronicle__era">{era}</span>
-                      <span className="home-chronicle__place">〔{place}〕</span>
-                      <span className="home-chronicle__note">—— {note}</span>
-                      {i < chronicle.timeline.length - 1 && <i className="home-chronicle__link" aria-hidden="true" />}
-                    </li>
-                  ))}
-                </ol>
-              </>
-            )}
-
-            {chronicleQuery.trim() && !chronicle && (
-              <div className="home-chronicle__void">
-                <p className="home-chronicle__void-tip">「{NOT_FOUND_TIP}」</p>
-                <p className="home-chronicle__void-sub">此邑暂未入志，且先探江南名邑：</p>
-                <div className="home-chronicle__reco">
-                  {RECOMMEND_CITIES.map((c) => (
-                    <button key={c} type="button" onClick={() => setChronicleQuery(c)}>{c}</button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <button
-            type="button"
-            className="home-chronicle__commit"
-            disabled={!chronicle}
-            onClick={() => commitCity(chronicle ? chronicle.key : '')}
-          >
-            留驻此时空 · 切换时令
-          </button>
         </div>
       </Popup>
 

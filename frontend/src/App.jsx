@@ -14,6 +14,7 @@ import ScholarChat from './pages/ScholarChat'
 import PoemPage from './pages/PoemPage'
 import PoemCollection from './pages/PoemCollection'
 import NotFoundPage from './pages/NotFoundPage'
+import CityChroniclePage from './pages/CityChroniclePage'
 
 export default function App() {
   return (
@@ -37,6 +38,8 @@ export default function App() {
         {/* 古诗词鉴赏大卷轴与书斋诗笺 */}
         <Route path='/poem' element={<PoemPage/>}></Route>
         <Route path='/poem-collection' element={<PoemCollection/>}></Route>
+        {/* 九州地名志 · 城邑春秋：独立全屏页（原为首页底部弹窗，2026-10-16 改为二级页面） */}
+        <Route path='/city-chronicle' element={<CityChroniclePage/>}></Route>
         {/* 全局 404 迷津问渡路由兜底 */}
         <Route path='*' element={<NotFoundPage/>}></Route>
       </Routes>

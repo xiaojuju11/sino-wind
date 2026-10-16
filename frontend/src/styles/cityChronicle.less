@@ -1,0 +1,122 @@
+@import '../styles/variables.less';
+
+// ════════════════════════════════════════════════════
+//  《九州地名志 · 城邑春秋》二级页面
+//  2026-10-16：由底部弹窗改为独立全屏页（顶级路由 /city-chronicle，不套 Layout）。
+//  内容区沿用 home.less 里的 home-chronicle__* 类（沿革轴/节点/印章等），
+//  本文件只负责页面骨架（页头、宣纸卡、留驻按钮的布局）。
+//  基准视口 390px，1rem = clientWidth / 10
+// ════════════════════════════════════════════════════
+
+.city-chronicle-root {
+  position: relative;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 0.4rem 0.32rem calc(1.2rem + env(safe-area-inset-bottom, 0px));
+  // 独立页面不套 Layout，需自己保证底部留白（原弹窗由抽屉负责）
+  background: var(--gf-bg-page, #F6F1E4);
+  overflow-x: hidden;
+}
+
+// ── 页头：返回 + 标题 + 朱砂印 ──
+.chronicle-header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.16rem;
+  padding: 0.1rem 0;
+
+  &__back {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.62rem;
+    height: 0.62rem;
+    font-size: 0.34rem;
+    color: var(--gf-ink-secondary);
+    background: color-mix(in srgb, var(--gf-bg-paper) 88%, transparent);
+    border: 1px solid color-mix(in srgb, var(--gf-gold) 45%, transparent);
+    border-radius: 50%;
+    cursor: pointer;
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  &__title {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    font-size: 0.5rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--gf-ink-primary);
+  }
+
+  // 朱砂小印，与首页「时」印同语言
+  &__seal {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.06rem 0.12rem;
+    font-size: 0.22rem;
+    letter-spacing: 0.1em;
+    color: #FBF8F1;
+    background: var(--gf-cinnabar);
+    border-radius: 0.06rem;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gf-gold) 55%, transparent);
+  }
+}
+
+.chronicle-sub {
+  position: relative;
+  z-index: 1;
+  margin: 0.1rem 0 0.3rem;
+  font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+  font-size: 0.26rem;
+  line-height: 1.7;
+  color: var(--gf-ink-secondary);
+}
+
+// ── 宣纸卡：承载搜索 + 沿革轴 + 留驻按钮 ──
+.chronicle-card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0.32rem 0.28rem 0.3rem;
+  background: color-mix(in srgb, var(--gf-bg-paper) 94%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 45%, transparent);
+  border-radius: 0.24rem;
+  box-shadow: 0 0.04rem 0.18rem rgba(58, 47, 29, 0.06);
+}
+
+.chronicle-search {
+  margin-bottom: 0.26rem;
+}
+
+// 页面不做抽屉限高，沿革轴随内容自然展开
+.chronicle-body {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.chronicle-commit {
+  margin-top: 0.36rem;
+}
+
+// ── 暗色适配 ──
+[data-theme='dark'] {
+  .city-chronicle-root {
+    background: var(--gf-bg-page, #1A1815);
+  }
+
+  .chronicle-card {
+    background: color-mix(in srgb, var(--gf-bg-card) 92%, transparent);
+  }
+}
