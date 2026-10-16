@@ -2,7 +2,7 @@ import ReferenceCorners from '../components/ReferenceCorners'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import '../styles/home.less'
 import { Toast, Popup } from 'antd-mobile'
-import { DownOutline, RightOutline, UpOutline, CompassOutline, EditSOutline, CheckCircleOutline, DownCircleOutline, StarOutline, ShopbagOutline, FileOutline, SearchOutline } from 'antd-mobile-icons'
+import { DownOutline, RightOutline, UpOutline, CompassOutline, CheckCircleOutline, StarOutline, SearchOutline } from 'antd-mobile-icons'
 import { CITY_DICT, autoDetectUserCity } from '../utils/ancientCities'   // 郑小君的逐城精编诗文 + IP 感知
 import { useNavigate } from 'react-router-dom'
 import InkParticleField from '../components/InkParticleField.jsx'
@@ -375,7 +375,9 @@ export default function Home() {
           <div className="home-yayan-inner">
             <div className="home-yayan-input-box">
               <span className="home-yayan-pencil" aria-hidden="true">
-                <EditSOutline />
+                <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor">
+                  <path d="M7.2 14.4c-1.4 0-2.5 1.1-2.5 2.5 0 1.1-.9 1.7-.8 1.7.8 0 2.1-.3 2.9-1 .5-.5.7-1 .8-1.5l9.2-9.2c.4-.4.4-1 0-1.4l-1.5-1.5c-.4-.4-1-.4-1.4 0L7.2 14.4z" />
+                </svg>
               </span>
               <textarea
                 className="home-yayan-textarea"
@@ -389,7 +391,9 @@ export default function Home() {
             </div>
 
             <div className="home-yayan-divider" aria-hidden="true">
-              <DownCircleOutline className="home-yayan-divider__arrow" />
+              <span className="home-yayan-divider__arrow">
+                <DownOutline />
+              </span>
             </div>
 
             {yayanResult && (
@@ -475,7 +479,9 @@ export default function Home() {
               role="button"
               tabIndex={0}
             >
-              {currentCity.ancient ? `${currentCity.ancient}（${currentCity.name}）` : currentCity.name}
+              <span className="home-almanac__city-text" title={currentCity.ancient ? `${currentCity.ancient}（${currentCity.name}）` : currentCity.name}>
+                {currentCity.ancient ? `${currentCity.ancient}（${currentCity.name}）` : currentCity.name}
+              </span>
               {/* 定位来源以极小字附在城市名后，不新占一行（保持左右两栏对称） */}
               {locatedBy === 'gps' && <em className="home-almanac__loc">已定位</em>}
               {locatedBy === 'ip' && <em className="home-almanac__loc">网络定位</em>}
@@ -546,9 +552,9 @@ export default function Home() {
                 className="home-shiwu-demo__item"
                 onClick={() => navigate('/recognition')}
               >
-                {item.modern.includes('奶茶') ? <ShopbagOutline className='home-shiwu-demo__symbol' aria-hidden='true' /> : <FileOutline className='home-shiwu-demo__symbol' aria-hidden='true' />}
+                <span className="home-shiwu-demo__seal" aria-hidden="true">{item.seal}</span>
                 <span className="home-shiwu-demo__modern">{item.modern}</span>
-                <RightOutline className="home-shiwu-demo__arrow" />
+                <span className="home-shiwu-demo__flow-arrow" aria-hidden="true">→</span>
                 <span className="home-shiwu-demo__ancient">{item.ancient}</span>
                 <RightOutline className="home-shiwu-demo__chevron" />
               </button>
@@ -558,7 +564,12 @@ export default function Home() {
       </section>
 
       {/* ── 区块④ 古诗词赏析 ── */}
-      <section className="home-card-scroll home-poem-card">
+      <section
+        className="home-card-scroll home-poem-card"
+        onClick={() => navigate('/poem')}
+        role="button"
+        tabIndex={0}
+      >
         <ReferenceCorners />
         <div className="home-section-header">
           <h2 className="home-section-title">古诗词赏析</h2>
@@ -572,14 +583,11 @@ export default function Home() {
           <div className="home-poem-verses">
             <p>一蓑烟雨任平生，</p>
             <p>也无风雨也无晴。</p>
-          </div>          <button
-            type="button"
-            className="home-poem-more"
-            aria-label="展卷细读"
-            onClick={() => navigate('/poem')}
-          >
-            <RightOutline />
-          </button>
+          </div>
+          <div className="home-poem-more" aria-label="展卷细读">
+            <span className="home-poem-more__text">展卷细读</span>
+            <RightOutline className="home-poem-more__icon" />
+          </div>
         </div>
       </section>
 
