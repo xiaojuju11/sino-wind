@@ -526,18 +526,6 @@ function ScholarChatSession() {
                   {item.degraded && <small className="scholar-stream-note">离线情境对答</small>}
                   {item.error && <small className="scholar-stream-note" role="status">{item.error}</small>}
                 </div>
-                {item.role === 'ai' && (
-                  <button
-                    type="button"
-                    className="scholar-msg-sound-btn"
-                    onClick={() => playVoice(item.content)}
-                    aria-label="诵读此言"
-                    title="聆听名士诵读"
-                  >
-                    <SoundOutline />
-                    <span>品韵</span>
-                  </button>
-                )}
               </div>
 
               {item.role === 'user' && (
@@ -588,15 +576,6 @@ function ScholarChatSession() {
         </div>
 
         <div className="scholar-input-bar">
-          <button
-            type="button"
-            className="scholar-mic-btn"
-            onClick={() => Toast.show({ content: '且慢，语音抚弦功能研墨中…' })}
-            title="语音畅论"
-          >
-            <i className="iconfont icon-maikefeng" />
-          </button>
-
           <textarea
             className="scholar-textarea"
             rows={1}
