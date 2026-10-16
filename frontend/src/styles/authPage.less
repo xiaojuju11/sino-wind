@@ -1,5 +1,9 @@
 @import './variables.less';
 
+// Only the account entrance opens into a full-width landscape on desktop.
+// The form keeps its reading width; all other pages retain their existing frame.
+#root:has(> .auth-page-root) { max-width: none; box-shadow: none; }
+
 .auth-page-root {
   --auth-u: clamp(3.5px, 1vw, 5px);
   --auth-paper: var(--gf-bg-paper, #f7f4eb);
@@ -87,7 +91,6 @@
     input { appearance: none; width: 16px; height: 16px; margin: 0 6px 0 0; border: 1px solid var(--auth-gold); border-radius: 50%; flex-shrink: 0; &:checked { background: #8a2b2b; box-shadow: inset 0 0 0 3px var(--auth-paper); } }
     a { color: var(--gf-accent-text, #8a2b2b); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
   }
-  .auth-reading-note { margin: 8px 0 0; color: var(--auth-muted); text-align: center; font: 11px/1.7 system-ui, sans-serif; }
   .auth-sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .auth-back { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; color: var(--auth-muted); text-decoration: none; font-size: 15px; }
   .auth-recovery-heading { margin-top: 15px; margin-bottom: 16px; }
@@ -95,6 +98,41 @@
   .auth-recovery-form { display: grid; gap: 8px; .auth-submit { font-size: 19px; letter-spacing: .04em; } }
   .auth-recovery-label { margin-top: 4px; font-size: 15px; }
   .auth-recovery-help { margin-top: 22px; padding-top: 16px; border-top: 1px solid color-mix(in srgb, var(--auth-gold) 30%, transparent); p { margin: 5px 0 0; } }
+  .auth-scene-verses { display: none; }
+  @media (min-width: 800px) {
+    justify-content: center;
+    padding-block: 54px;
+    &::before {
+      content: ''; position: absolute; z-index: 1; inset: 18px;
+      border: 1px solid color-mix(in srgb, var(--auth-gold) 28%, transparent);
+      outline: 1px solid color-mix(in srgb, var(--auth-gold) 13%, transparent);
+      outline-offset: 5px; pointer-events: none;
+    }
+    > .home-ink-wash {
+      background: radial-gradient(ellipse at 50% 42%, #fff8ed 12%, transparent 63%),
+        linear-gradient(120deg, #e8ddc7, #f8efdf 50%, #eee3cb);
+      &::after {
+        content: ''; position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse at 50% 45%, transparent 30%, #796b4010 100%),
+          repeating-linear-gradient(93deg, transparent 0 4px, #927d4b03 5px 6px);
+      }
+    }
+    .auth-scene-verses {
+      display: block; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      > span {
+        position: absolute; top: 39%; writing-mode: vertical-rl;
+        font-size: clamp(18px, 1.8vw, 25px); letter-spacing: .42em;
+        line-height: 1.8; color: color-mix(in srgb, var(--auth-ink) 58%, transparent);
+        &::after {
+          content: ''; display: block; width: 1px; height: 52px; margin: 18px auto 0;
+          background: linear-gradient(var(--auth-gold), transparent);
+        }
+      }
+      &__left { left: calc((100% - 430px) / 4 - 20px); }
+      &__right { right: calc((100% - 430px) / 4 - 20px); }
+    }
+    .auth-paper { box-shadow: 0 0 0 4px #f6ecd488, 0 0 0 5px #b89b5455, 0 24px 70px #45381f24; }
+  }
   @media (max-width: 359px) { padding-inline: 15px; .auth-paper { padding-inline: 18px; } }
   @media (prefers-reduced-motion: reduce) { .auth-tabs button, .auth-tab-stamp { transition: none; } .auth-panel, > .home-ink-wash .home-ink-wash__mist { animation: none; } }
 }

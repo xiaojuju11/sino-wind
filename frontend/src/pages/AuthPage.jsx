@@ -20,6 +20,10 @@ export default function AuthPage() {
   return (
     <main className={"auth-page-root " + (activeTab === "register" ? "is-register" : "is-login")}>
       <InkWashBackground />
+      <div className="auth-scene-verses" aria-hidden="true">
+        <span className="auth-scene-verses__left">竹影摇窗 · 清风入卷</span>
+        <span className="auth-scene-verses__right">一纸风雅 · 半窗山河</span>
+      </div>
       <p className="auth-landscape-caption" aria-hidden="true">一卷山河 · 静候君来</p>
       <section className="auth-paper" aria-label="华风雅集账号认证"><span className="auth-corner top-left" aria-hidden="true" /><span className="auth-corner top-right" aria-hidden="true" /><span className="auth-corner bottom-left" aria-hidden="true" /><span className="auth-corner bottom-right" aria-hidden="true" /><span className="auth-cloud cloud-left" aria-hidden="true" /><span className="auth-cloud cloud-right" aria-hidden="true" />
         <header className="auth-heading">
@@ -60,7 +64,6 @@ export default function AuthPage() {
             <span>和</span>
             <Link to="/legal/privacy" target="_blank" rel="noopener noreferrer">《隐私政策》</Link>
           </div>
-          <p className="auth-reading-note">协议在新页打开，阅读后返回此页继续</p>
         </footer>
         </>}
       </section>
