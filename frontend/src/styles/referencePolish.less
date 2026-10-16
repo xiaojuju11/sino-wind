@@ -1,4 +1,23 @@
 // Reference screens 1–8: visual layer only. No routing, API or motion-engine changes.
+//
+// ════════════════════════════════════════════════════
+//  ⚠️ 本层会【静默覆盖】以下基础样式 —— 改基础文件不生效，需同时改本层
+//  （2026-10-16 审计补记，依据 proof/diag-style-conflicts.mjs）
+//
+//    .bottom-nav          border-radius  基础 layout.less 1px        → 本层 11px 11px 0 0
+//    .collection-list     padding         基础 poemCollection.less   → 本层 .18rem .25rem
+//    .home-hero__actions  top             基础 home.less -0.52rem    → 本层 .08rem
+//    .home-hero__title    font-size       基础 home.less 0.74rem     → 本层 .98rem
+//    .home-ink-wash       width           基础 inkWashBackground     → 本层 min(100%, 480px)
+//    .home-root           width           基础 inkWashBackground     → 本层 min(100%, 480px)
+//    .home-almanac__roam  padding / font-size / border-radius
+//    .home-yayan-submit-btn  border / box-shadow / transform
+//    .home-shiwu-demo     background-image
+//
+//  另注：本项目有两套单位体系 —— 基础层用 rem（随屏宽缩放）、本层与
+//  referenceFidelity.less 多用固定 px。二者重叠的类名共 35 个，
+//  改尺寸时务必确认最终生效的是哪一套，否则会出现「改了但缩放行为不对」。
+// ════════════════════════════════════════════════════
 .reference-paper() {
   background: linear-gradient(115deg, color-mix(in srgb, var(--gf-bg-card) 35%, var(--gf-bg-paper)), var(--ref-paper,var(--gf-bg-paper)));
 }
