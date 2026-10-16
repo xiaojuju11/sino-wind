@@ -78,12 +78,11 @@ function LetterListSession() {
   })
   const [drawerVisible, setDrawerVisible] = useState(false)
   const [letters, setLetters] = useState(cachedLetters)
-  const [notice, setNotice] = useState('')
   const [searchOpen, setSearchOpen] = useState(false), [searchText, setSearchText] = useState('')
   useEffect(() => {
     let current = true
-    const refresh = () => loadLetters().then(rows => { if (current) { setLetters(rows); setNotice('') } })
-      .catch(() => { if (current) { setLetters(cachedLetters()); setNotice('暂以本机信札展读，云端记录稍后可刷新') } })
+    const refresh = () => loadLetters().then(rows => { if (current) setLetters(rows) })
+      .catch(() => { if (current) setLetters(cachedLetters()) })
     const local = () => { if (current) setLetters(cachedLetters()) }
     refresh()
     const timer = setTimeout(refresh, 1200)
@@ -167,8 +166,6 @@ function LetterListSession() {
       {/* 3. 信札往还列表 */}
       <section className="letter-list-section">
         <ReferenceCorners />
-        {notice && <p role='status'>{notice}</p>}
-        <button type='button' onClick={() => loadLetters().then(rows => { setLetters(rows); setNotice('信札已刷新') }).catch(() => setNotice('云端暂未开卷，本机原稿保留'))}>刷新真实信札</button>
         <div className="letter-list-header">
           <span className="letter-list-title">尺素往来（{conversations.length} 席）</span>
           <span className="letter-list-tip">点击展开长谈</span>

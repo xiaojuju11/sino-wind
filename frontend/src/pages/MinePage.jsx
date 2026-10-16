@@ -32,7 +32,6 @@ function MinePageSession() {
   const navigate = useNavigate()
   const [userInfo, setUserInfo] = useState({})
   const [rankData, setRankData] = useState(null)
-  const [assetNotice, setAssetNotice] = useState('')
   const [guestCount, setGuestCount] = useState(guestArchiveCount)
   const [importing, setImporting] = useState(false)
   const refreshAssets = useRef(() => {})
@@ -51,7 +50,7 @@ function MinePageSession() {
       const valid = () => alive && current === generation && scope === scholarScope()
       setGuestCount(guestArchiveCount())
       if (!scope.startsWith('user:')) {
-        setUserInfo(guestSummary()); setRankData(null); setAssetNotice('游客记录仅保留本机；登录后可确认收入本人账户，竞技积分以服务器结算为准。')
+        setUserInfo(guestSummary()); setRankData(null)
         return
       }
       try { await syncLocalLetters() } catch { /* The summary may still be readable; local pending originals are retained. */ }
@@ -63,7 +62,6 @@ function MinePageSession() {
       if (!valid()) return
       setUserInfo(results[0].status === 'fulfilled' ? results[0].value.data.data : {})
       setRankData(results[1].status === 'fulfilled' ? results[1].value.data.data : null)
-      setAssetNotice(results.some(r => r.status === 'rejected') ? '部分修持档案尚未载入，请重试。' : '')
       setGuestCount(guestArchiveCount())
     }
     const schedule = () => { clearTimeout(timer); timer = setTimeout(fetchInfo, 100) }
@@ -75,9 +73,16 @@ function MinePageSession() {
   const importGuest = async () => {
     if (importing) return
     setImporting(true)
-    try { await importGuestArchive(); setAssetNotice('本机游客信札与藏品已收入当前账户；不兑换竞技积分。'); refreshAssets.current() }
-    catch (error) { setAssetNotice(error.message || '补传未完成，本机原稿保留，请重试') }
-    finally { setImporting(false); setGuestCount(guestArchiveCount()) }
+    try {
+      await importGuestArchive()
+      Toast.show({ content: '本机游客信札与藏品已收入当前账户', icon: 'success' })
+      refreshAssets.current()
+    } catch (error) {
+      Toast.show({ content: error.message || '补传未完成，本机原稿保留，请重试' })
+    } finally {
+      setImporting(false)
+      setGuestCount(guestArchiveCount())
+    }
   }
 
   // 退出登录操作选项
@@ -210,17 +215,26 @@ function MinePageSession() {
               <span className='scholar-badge'>
                 <i className='iconfont icon-wode scholar-badge__icon'></i>
                 {rankData?.rank || (scholarScope() === 'guest' ? '游客研习' : '文阶待载入')}
+                {rankData?.meritPoints !== undefined && (
+                  <span className='scholar-badge__points'>· {rankData.meritPoints}分</span>
+                )}
               </span>
             </div>
             <p className='scholar-motto'>读千年风雅 与君共此山河</p>
           </div>
         </div>
 
-        {/* 四列修持数据看板（支持快捷下钻） */}
-        <p className='scholar-motto'>飞花修持积分：{rankData?.meritPoints ?? (scholarScope() === 'guest' ? 0 : '—')} · 宝鉴藏品：{userInfo.artifact_count ?? '—'}</p>
-        {assetNotice && <p className='scholar-motto' role='status'>{assetNotice}</p>}
-        {scholarScope().startsWith('user:') && <button type='button' onClick={() => refreshAssets.current()}>刷新修持档案</button>}
-        {scholarScope().startsWith('user:') && guestCount > 0 && <button type='button' disabled={importing} onClick={importGuest}>{importing ? '收入中…' : `确认将本机游客的${guestCount}份信札/藏品收入当前账户`}</button>}
+        {/* 游客资产收录提示横幅（仅在存在未同步游客数据时呈现） */}
+        {scholarScope().startsWith('user:') && guestCount > 0 && (
+          <div className='scholar-guest-banner'>
+            <span>检测到本机存有游客记录（{guestCount}份）</span>
+            <button type='button' className='scholar-guest-banner__btn' disabled={importing} onClick={importGuest}>
+              {importing ? '收入中…' : '收入账户'}
+            </button>
+          </div>
+        )}
+
+        {/* 五列修持数据看板（支持快捷下钻） */}
         <div className='scholar-stats'>
           {stats.map((item, idx) => (
             <div key={idx} className='scholar-stats__item' onClick={item.onClick}>
