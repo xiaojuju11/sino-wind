@@ -5,31 +5,14 @@ require('dotenv').config({ path: ['.env.local', '.env'] })
 /**
  * 物溯古今 · 拍照识器网关（成员 A / TRD v3.0 §3.1、§4.4）
  *   POST /api/coze/recognition
- * 上游：Coze 智能工作流 https://r85vf8qf77.coze.site/run（视觉识别 ➔ 古物推演 ➔ TTS ➔ 结构化输出）
+ * 上游：COZE_ENDPOINT 指定的工作流（视觉识别 ➔ 古物推演 ➔ 结构化输出）
  * 输出字段（TRD §3.1 ④）：{ name, dynasty, description, score, audio_url }
- * 容灾（TRD §3.1 末条、§10 第二级）：无 Token、超时、网络异常或上游返回不可解析时，
- * 秒级返回内置高保真文博库兜底推演（code:1 + degraded:true），演示永不断流。
+ * 请求失败时返回明确错误；不把固定示例作为本次图像的识别结果。
  */
 
 const COZE_ENDPOINT = process.env.COZE_ENDPOINT || 'https://r85vf8qf77.coze.site/run'
-const COZE_TIMEOUT = parseInt(process.env.COZE_TIMEOUT, 10) || 20000 // 放宽至 20 秒，保障真实大模型多节点工作流（视觉+流变+TTS）完整执行
+const COZE_TIMEOUT = parseInt(process.env.COZE_TIMEOUT, 10) || 60000
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024
-
-// 内置文博库兜底条目：文案取自 TRD §4.4 的既有示例（保温杯 ➔ 宋代执壶 / 汤瓶）与 §3.1 的流变路线。
-// score 在兜底条目里置 0 并标记 degraded，前端按「品位鉴值待考」呈现，不编造评价分数（DESIGN.md R4）。
-const FALLBACK_RECOGNITION = Object.freeze({
-  name: '宋代执壶 / 青白瓷汤瓶',
-  dynasty: '宋代',
-  description:
-    '此物在今世名曰「保温器皿」，溯其渊源，实乃唐宋文士点茶所用之「执壶」与「汤瓶」。' +
-    '宋代点茶点汤、击拂之用，以器载茶事。' +
-    '【流变考略】唐代金银执壶 ➔ 宋代影青汤瓶 ➔ 明代紫砂提梁 ➔ 当代真空器。',
-  score: 0,
-  audio_url: ''
-})
-
-const OFFLINE_NOTICE =
-  '当前未接入 Coze 工作流（缺少 Token 或服务不可达），本响应为内置文博库兜底推演，非真实图像识别。'
 
 function parseResult(payload) {
   let value = payload
@@ -49,14 +32,9 @@ function parseResult(payload) {
   return { name: value.name, dynasty: value.dynasty, description: value.description, score: value.score, audio_url: audioUrl }
 }
 
-function fallbackBody() {
-  return {
-    code: 1,
-    data: { ...FALLBACK_RECOGNITION },
-    degraded: true,
-    source: 'local-fallback',
-    notice: OFFLINE_NOTICE
-  }
+function failure(ctx, status, error, message) {
+  ctx.status = status
+  ctx.body = { code: 0, error, message, source: 'coze' }
 }
 
 async function recognition(ctx) {
@@ -68,18 +46,33 @@ async function recognition(ctx) {
   const imageBytes = Math.floor(encoded.length * 3 / 4) - (encoded.endsWith('==') ? 2 : encoded.endsWith('=') ? 1 : 0)
   if (encoded.length % 4 !== 0 || imageBytes > MAX_IMAGE_BYTES) { ctx.status = 400; ctx.body = { code: 0, message: '图片编码无效或超过 10MB' }; return }
   const apiKey = process.env.COZE_API_TOKEN || process.env.COZE_IMAGE_TO_TEXT_AND_VOICE || process.env.VITE_COZE_IMAGE_TO_TEXT_AND_VOICE
-  if (!apiKey) { ctx.body = fallbackBody(); return }
+  if (!apiKey) {
+    failure(ctx, 503, 'COZE_NOT_CONFIGURED', '识物服务尚未配置，暂时无法识别图片，请联系管理员。')
+    return
+  }
   let data
+  let receivedResponse = false
   try {
     const response = await axios.post(COZE_ENDPOINT, { image: img }, {
       headers: { Authorization: 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
       timeout: COZE_TIMEOUT, signal: AbortSignal.timeout(COZE_TIMEOUT), maxContentLength: 10 * 1024 * 1024
     })
+    receivedResponse = true
     data = parseResult(response.data)
   } catch (err) {
-    console.error('❌ [Coze Recognition Upstream Error]:', err?.message, err?.response?.data || '')
-    // 超时、DNS / 网络异常、上游不可解析：一律降级为内置文博库兜底，不向页面抛错
-    ctx.body = fallbackBody()
+    const status = err?.response?.status
+    console.error('[Coze Recognition Error]', { code: err?.code, status, phase: receivedResponse ? 'parse' : 'request' })
+    if (receivedResponse) {
+      failure(ctx, 502, 'COZE_INVALID_RESPONSE', '识物服务返回的考释格式异常，本次未能完成识别，请重试。')
+    } else if (['ECONNABORTED', 'ETIMEDOUT', 'ERR_CANCELED'].includes(err?.code)) {
+      failure(ctx, 504, 'COZE_TIMEOUT', '图片识别超时，本次尚未取得结果，请重试。')
+    } else if (status === 401 || status === 403) {
+      failure(ctx, 502, 'COZE_AUTH_FAILED', '识物服务授权失效，请联系管理员更新配置。')
+    } else if (status === 429) {
+      failure(ctx, 503, 'COZE_RATE_LIMITED', '识物服务当前繁忙，请稍后重试。')
+    } else {
+      failure(ctx, 502, 'COZE_UNAVAILABLE', '暂时无法连接识物服务，本次未能完成识别，请稍后重试。')
+    }
     return
   }
   try {
