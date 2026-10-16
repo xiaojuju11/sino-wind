@@ -44,7 +44,6 @@ function YayanNotebook() {
   }
   return <>
     <div className='study-page__toolbar'><span>共 {notebook.items.length} 则摘录</span><RefreshButton onClick={refresh} /></div>
-    <p className='study-page__note'>来自首页「摘录入卷」，仅保存在本机浏览器，尚未同步到账号；来源随原稿保留。</p>
     {notebook.error && <p className='study-page__notice' role='status'>{notebook.error}</p>}
     {!notebook.items.length && <EmptyState seal='待题' title={notebook.error ? '摘录暂未展开' : '案头尚虚 · 待君题墨'} desc={notebook.error ? '可重新展卷，存档内容没有被覆盖。' : '在首页完成白话雅译并摘录，便可在此回看。'} actionText={notebook.error ? '重新读取' : '前往雅集'} onAction={notebook.error ? refresh : () => navigate('/home')} />}
     {notebook.items.map(item => <article className='study-note-card' key={item.key}>
@@ -89,7 +88,6 @@ function Messages({ scope }) {
   const unread = replies.filter(row => row.reply.unread).length
   return <>
     <div className='study-page__toolbar'><span>{unread ? `${unread} 封待展读` : '往来回柬'} · 共 {replies.length} 封</span><RefreshButton busy={busy} onClick={() => refreshRef.current()} /></div>
-    <p className='study-page__note'>此处收取站内回柬，不发送浏览器或手机系统通知。进入对席后，可展读来信并继续交谈。</p>
     {notice && <p className='study-page__notice' role='status'>{notice}</p>}
     {busy && <p role='status'>信驿展卷中…</p>}
     {!busy && replies.length === 0 && <EmptyState seal='待书' title='尚无知音回柬' desc='与先贤完成四轮清谈并离开对席后，再来收取回柬。' actionText='前往知音' onAction={() => navigate('/letters')} />}

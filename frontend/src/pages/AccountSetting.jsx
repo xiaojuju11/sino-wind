@@ -5,8 +5,11 @@ import axios from '../http'
 import { LeftOutline, CloseOutline } from 'antd-mobile-icons'
 import { uploadFileChunks, DEFAULT_CHUNK_SIZE } from '../utils/chunkUpload'
 import RecoveryCodeCard from '../components/RecoveryCodeCard'
+import InkWashBackground from '../components/InkWashBackground'
 import '../styles/accountSetting.less'
 import '../styles/recoverySurface.less'
+import '../styles/studyPages.less'
+import '../styles/accountStudyPage.less'
 
 const actions = [
   { text: '从相册选择（支持超大图片）', key: 'select' }
@@ -321,20 +324,20 @@ export default function AccountSetting() {
   const totalChunksCount = selectedFile ? Math.ceil(selectedFile.size / DEFAULT_CHUNK_SIZE) : 0
 
   return (
-    <div className='account-setting'>
-      {/* 头部导航
-          说明：题头右侧原有的 ThemeToggle 已删除；下方「墨色雅意」列表项也一并移除，
-          本页不再提供日月切换入口（书斋页仅保留「墨色雅意」一处）。 */}
-      <header className='image-capture-header'>
-        <button className='image-capture-header__back' aria-label={recoveryOpen ? '返回账号设置' : '返回上一页'} disabled={recoveryBusy || Boolean(recoveryCode)} onClick={() => {
+    <div className='account-setting study-page'>
+      <InkWashBackground />
+      <header className='study-page__header'>
+        <button type='button' className='study-page__back' aria-label={recoveryOpen ? '返回账号设置' : '返回书斋'} disabled={recoveryBusy || Boolean(recoveryCode)} onClick={() => {
           if (recoveryOpen) { setRecoveryOpen(false); setRecoveryPassword(''); setRecoveryError('') }
-          else navigate(-1)
+          else navigate('/mine')
         }}>
           <LeftOutline aria-hidden="true" />
         </button>
-        <h1 className='image-capture-header__title'>{recoveryOpen ? '账号恢复密笺' : '账号设置'}</h1>
-        {/* 占位：保持 header 的 space-between 布局，让标题稳定居中 */}
-        <span className='image-capture-header__spacer' aria-hidden='true' />
+        <div>
+          <h1>{recoveryOpen ? '账号恢复密笺' : '账号设置'}</h1>
+          <p>{recoveryOpen ? '留一份凭据，安心归来' : '守一席清雅，护一卷风华'}</p>
+        </div>
+        <span className='study-page__seal'>{recoveryOpen ? '密笺护席' : '雅席清规'}</span>
       </header>
 
       {/* 账号配置列表 */}

@@ -244,7 +244,7 @@ function MinePageSession() {
           <button type='button' className='shuzhai-list-item' onClick={() => navigate('/mine/archive')}>
             <i className='iconfont icon-shuben' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
-              <span className='shuzhai-list-item__title'>藏牒阁（通关诏书）</span>
+              <span className='shuzhai-list-item__title'>藏牒阁</span>
               <span className='shuzhai-list-item__desc'>历局唱和存卷 · 高清文牒回看与分享</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
@@ -252,7 +252,7 @@ function MinePageSession() {
           <button type='button' className='shuzhai-list-item' onClick={() => navigate('/mine/artifacts')}>
             <i className='iconfont icon-zhanpin' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
-              <span className='shuzhai-list-item__title'>物溯宝鉴（已鉴藏品）</span>
+              <span className='shuzhai-list-item__title'>物溯宝鉴</span>
               <span className='shuzhai-list-item__desc'>已考证之今物与古器原型</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
@@ -270,7 +270,7 @@ function MinePageSession() {
           <button type='button' className='shuzhai-list-item' onClick={() => navigate('/letters')}>
             <i className='iconfont icon-message' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
-              <span className='shuzhai-list-item__title'>知音鸿雁（往来信札）</span>
+              <span className='shuzhai-list-item__title'>知音鸿雁</span>
               <span className='shuzhai-list-item__desc'>与李白、苏轼等千古知己交谈归档</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />

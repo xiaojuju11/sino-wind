@@ -1,0 +1,20 @@
+// Reuse StudyPage's ink scene, heading and back button without changing forms.
+.account-setting.study-page {
+  background: transparent;
+
+  .account-setting__section {
+    position: relative;
+    padding: 20px 16px 32px;
+    .adm-list {
+      --adm-color-background: color-mix(in srgb, var(--gf-bg-paper, #f7f4eb) 94%, transparent);
+      --border-top: none;
+      --border-bottom: none;
+      border-color: color-mix(in srgb, var(--gf-gold, #b58b48) 45%, transparent);
+      background: var(--adm-color-background);
+    }
+  }
+
+  .account-recovery { margin-top: 20px; }
+  // The shared page's generic button rule must not override the saved-code CTA.
+  .recovery-code .recovery-code__done { color: #fff7e9; }
+}
