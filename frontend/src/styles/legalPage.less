@@ -1,0 +1,28 @@
+.legal-page {
+  position: relative; isolation: isolate; min-height: 100dvh;
+  padding: 0 14px 30px; color: var(--gf-ink-primary, #302a22);
+  font-family: 'Noto Serif SC', 'Songti SC', SimSun, serif;
+  > .home-ink-wash { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  .home-ink-wash__canvas { width: 100%; height: 100%; position: absolute; inset: 0; }
+  &__bar { position: sticky; top: 0; z-index: 3; min-height: 58px; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--gf-bg-paper, #f7f1e5); border-bottom: 1px solid #bd944a66; }
+  &__bar button { display: flex; gap: 6px; align-items: center; min-height: 44px; padding: 8px 6px; background: none; border: 0; color: inherit; font: inherit; cursor: pointer; }
+  &__bar span { font-size: 14px; letter-spacing: .1em; }
+  &__paper { position: relative; margin-top: 18px; padding: 28px 21px; background: var(--gf-bg-card, #fcf8ef); border: 1px solid #bb934f; outline: 1px solid #bb934f66; outline-offset: 4px; border-radius: 10px; box-shadow: 0 5px 22px #49351a0c; overflow-wrap: anywhere; }
+  &__eyebrow, &__date { text-align: center; font-size: 12px; line-height: 1.8; opacity: .8; }
+  &__eyebrow { letter-spacing: .18em; }
+  h1 { text-align: center; font-size: 28px; letter-spacing: .18em; margin: 10px 0; }
+  &__notice { padding: 13px; border-inline-start: 2px solid #ad8136; background: #b7934b0e; font-size: 13px; line-height: 1.9; }
+  &__tabs { display: flex; margin: 22px 0 16px; border-bottom: 1px solid #bb934f55; gap: 24px; }
+  a { color: var(--gf-accent-red, #96382d); text-underline-offset: 4px; }
+  &__tabs a { padding: 10px 0; text-decoration: none; }
+  &__tabs a[aria-current='page'] { border-bottom: 2px solid currentColor; font-weight: 700; }
+  &__contents { display: grid; gap: 9px; margin: 18px 0 28px; font-size: 13px; }
+  &__contents a { color: inherit; text-decoration: none; line-height: 1.8; }
+  section { scroll-margin-top: 74px; margin: 26px 0; }
+  h2 { font-size: 17px; line-height: 1.6; margin: 0 0 10px; color: inherit; }
+  section p, aside p { font-size: 14px; line-height: 2; margin: 10px 0; }
+  &__sources { padding-top: 20px; border-top: 1px solid #bb934f55; }
+  &__return { display: block; width: fit-content; margin: 30px auto 0; padding: 10px 24px; border: 1px solid #ad8136; border-radius: 6px; text-decoration: none; }
+  button:focus-visible, a:focus-visible { outline: 2px solid #ad8136; outline-offset: 4px; }
+}
+@media (max-width: 360px) { .legal-page { padding-inline: 10px; &__paper { padding-inline: 16px; } } }

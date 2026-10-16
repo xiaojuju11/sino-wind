@@ -1,14 +1,16 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { JWT_SECRET } = require('../utils/jwt.js')
-const { findUserByPhone, createUser, findUserById, updateUserInfo } = require('../models/userModel.js')
+const { findUserByPhone, createUser, findUserById, updateUserInfo, updateUserPassword } = require('../models/userModel.js')
 const { generateCaptcha, verifyCaptcha } = require('../utils/captcha.js')
+const db = require('../config/db')
+const { generateRecoveryCode, matchesRecoveryCode, validPassword, validAccount, normalizeAccount, checkRecoveryRateLimit, INVALID_RECOVERY_MESSAGE } = require('../utils/accountRecovery')
 
 
 async function login(ctx) {
   // 解析请求体中的账号密码
-  const { phone, password } = ctx.request.body
-  if (!phone || !password) {
+  const { phone, password } = ctx.request.body || {}
+  if (typeof phone !== 'string' || !phone || typeof password !== 'string' || !password || Buffer.byteLength(password, 'utf8') > 72) {
     ctx.status = 400; // 设置 http 的状态码
     ctx.body = { message: '账号和密码不能为空' }
     return
@@ -31,7 +33,7 @@ async function login(ctx) {
   }
 
   // 生成一个 token（使用安全的 JWT_SECRET）
-  const token = jwt.sign({ id: user.id, phone: user.phone }, JWT_SECRET, { expiresIn: '7d' })
+  const token = jwt.sign({ id: user.id, phone: user.phone, authVersion: Number(user.auth_version) }, JWT_SECRET, { expiresIn: '7d' })
 
   ctx.body = {
     message: '登录成功',
@@ -66,19 +68,20 @@ function getCaptcha(ctx) {
 
 // 注册
 async function register(ctx) {
-  const { nickname, phone, captchaId, captchaCode, password } = ctx.request.body
+  const { nickname, phone: rawPhone, captchaId, captchaCode, password } = ctx.request.body || {}
+  const phone = normalizeAccount(rawPhone)
 
-  if (!nickname || !phone || !password) {
+  if (typeof nickname !== 'string' || !nickname.trim() || nickname.length > 50 || !validAccount(phone) || !validPassword(password)) {
     ctx.status = 400
     ctx.body = {
-      message: '账号密码和昵称都不能为空',
+      message: '请填写有效手机号或支持的邮箱和昵称，密码须至少6位且不超过72字节',
       code: 0
     }
     return
   }
 
   // 验证图形验证码
-  if (!captchaId || !captchaCode) {
+  if (typeof captchaId !== 'string' || !captchaId || typeof captchaCode !== 'string' || !captchaCode) {
     ctx.status = 400
     ctx.body = {
       message: '请输入验证码',
@@ -112,16 +115,19 @@ async function register(ctx) {
 
   // 写入数据库
   try {
-    const user = await createUser({ phone, passwordHash, nickname })
+    const recovery = generateRecoveryCode()
+    const user = await createUser({ phone, passwordHash, nickname: nickname.trim(), recoveryHash: recovery.hash })
+    ctx.set('Cache-Control', 'no-store')
     ctx.body = {
       message: '注册成功',
       user: user,
-      code: 1
+      code: 1,
+      recoveryCode: recovery.recoveryCode
     }
   } catch (error) {
-    ctx.status = 500
+    ctx.status = error.code === 'ER_DUP_ENTRY' ? 400 : 500
     ctx.body = {
-      message: '服务器异常',
+      message: error.code === 'ER_DUP_ENTRY' ? '账号已存在' : '服务器异常',
       code: 0
     }
   }
@@ -168,13 +174,14 @@ async function getUserInfo(ctx) {
 async function updateUser(ctx) {
   const id = ctx.userId
   const params = ctx.request.body
-  
-  console.log('Update user params:', params)
-  console.log('User ID:', id)
+  // koa-router is case-insensitive and accepts a trailing slash by default.
+  const field = /\/updateavatar\/?$/i.test(ctx.path) ? 'avatar' : 'nickname'
+  if (!params || typeof params !== 'object' || Array.isArray(params) || Object.keys(params).length !== 1 || typeof params[field] !== 'string' || !params[field].trim() || params[field].length > (field === 'nickname' ? 50 : 2048)) {
+    ctx.status = 400; ctx.body = { code: 0, message: '仅可修改有效的头像或昵称' }; return
+  }
 
   try {
-    const res = await updateUserInfo(params, id)
-    console.log('Update result:', res)
+    const res = await updateUserInfo({ [field]: params[field].trim() }, id)
     
     if (res.affectedRows) {
       ctx.body = {
@@ -202,9 +209,16 @@ async function updateUser(ctx) {
 // 更新密码
 async function updatePassword(ctx) {
   const id = ctx.userId
-  const { oldPassword, newPassword } = ctx.request.body
+  const { oldPassword, newPassword } = ctx.request.body || {}
+  if (typeof oldPassword !== 'string' || !oldPassword || Buffer.byteLength(oldPassword, 'utf8') > 72 || !validPassword(newPassword)) {
+    ctx.status = 400; ctx.body = { code: 0, message: '请提供旧密码，新密码须至少6位且不超过72字节' }; return
+  }
   try {
     const user = await findUserById(id)
+    if (!user) { ctx.status = 401; ctx.body = { code: 0, message: '请重新登录' }; return }
+    if (ctx.authVersion !== undefined && Number(user.auth_version) !== ctx.authVersion) {
+      ctx.status = 416; ctx.body = { code: 0, message: '登录已失效，请重新入席' }; return
+    }
     const ok = await bcrypt.compare(oldPassword, user.password_hash)
     if (!ok) {
       ctx.status = 400
@@ -212,7 +226,7 @@ async function updatePassword(ctx) {
       return
     }
     const password_hash = await bcrypt.hash(newPassword, 10)
-    const res = await updateUserInfo({ password_hash }, id)
+    const res = await updateUserPassword(password_hash, id, user.password_hash, Number(user.auth_version))
     if (res.affectedRows) {
       ctx.body = {
         code: 1,
@@ -234,6 +248,71 @@ async function updatePassword(ctx) {
   }
 }
 
+// A signed-in owner must re-enter the password before replacing the recovery secret.
+async function issueRecoveryCode(ctx) {
+  ctx.set('Cache-Control', 'no-store')
+  const { password } = ctx.request.body || {}
+  let connection
+  try {
+    if (!await checkRecoveryRateLimit(ctx, 'issue', String(ctx.userId))) return
+    if (typeof password !== 'string' || !password || Buffer.byteLength(password, 'utf8') > 72) {
+      ctx.status = 400; ctx.body = { code: 0, message: '请输入当前密码' }; return
+    }
+    connection = await db.getConnection()
+    await connection.beginTransaction()
+    const [rows] = await connection.execute('SELECT password_hash, auth_version FROM users WHERE id=? FOR UPDATE', [ctx.userId])
+    const user = rows[0]
+    if (!user || Number(user.auth_version) !== ctx.authVersion) {
+      await connection.rollback()
+      ctx.status = 416; ctx.body = { code: 0, message: '登录已失效，请重新入席' }; return
+    }
+    if (!await bcrypt.compare(password, user.password_hash)) {
+      await connection.rollback()
+      ctx.status = 400; ctx.body = { code: 0, message: '当前密码不正确' }; return
+    }
+    const recovery = generateRecoveryCode()
+    await connection.execute('UPDATE users SET recovery_code_hash=? WHERE id=?', [recovery.hash, ctx.userId])
+    await connection.commit()
+    ctx.body = { code: 1, message: '恢复码已更新，请立即妥善保存', data: { recoveryCode: recovery.recoveryCode } }
+  } catch {
+    if (connection) await connection.rollback().catch(() => {})
+    ctx.status = 503; ctx.body = { code: 0, message: '账号恢复服务暂不可用，请稍后重试' }
+  } finally { if (connection) connection.release() }
+}
+
+async function resetWithRecoveryCode(ctx) {
+  ctx.set('Cache-Control', 'no-store')
+  const { phone: rawPhone, recoveryCode, newPassword } = ctx.request.body || {}
+  const phone = normalizeAccount(rawPhone)
+  let connection
+  try {
+    // Malformed inputs still count against the caller's limit; no lookup-based response differences.
+    if (!await checkRecoveryRateLimit(ctx, 'reset', phone || 'invalid')) return
+    if (!validPassword(newPassword)) {
+      ctx.status = 400; ctx.body = { code: 0, message: '新密码须至少6位且不超过72字节' }; return
+    }
+    if (!validAccount(phone)) {
+      ctx.status = 400; ctx.body = { code: 0, message: INVALID_RECOVERY_MESSAGE }; return
+    }
+    connection = await db.getConnection()
+    await connection.beginTransaction()
+    const [rows] = await connection.execute('SELECT id, recovery_code_hash FROM users WHERE phone=? LIMIT 1 FOR UPDATE', [phone])
+    const user = rows[0]
+    if (!matchesRecoveryCode(recoveryCode, user?.recovery_code_hash)) {
+      await connection.rollback()
+      ctx.status = 400; ctx.body = { code: 0, message: INVALID_RECOVERY_MESSAGE }; return
+    }
+    const passwordHash = await bcrypt.hash(newPassword, 10)
+    const recovery = generateRecoveryCode()
+    // The row lock serializes use of the old code. Its replacement and session revocation commit together.
+    await connection.execute('UPDATE users SET password_hash=?, recovery_code_hash=?, auth_version=auth_version+1 WHERE id=?', [passwordHash, recovery.hash, user.id])
+    await connection.commit()
+    ctx.body = { code: 1, message: '密码已重置，请保存新恢复码后重新入席', data: { recoveryCode: recovery.recoveryCode } }
+  } catch {
+    if (connection) await connection.rollback().catch(() => {})
+    ctx.status = 503; ctx.body = { code: 0, message: '账号恢复服务暂不可用，请稍后重试' }
+  } finally { if (connection) connection.release() }
+}
 
 
 module.exports = {
@@ -242,5 +321,7 @@ module.exports = {
   register,
   getUserInfo,
   updateUser,
-  updatePassword
+  updatePassword,
+  issueRecoveryCode,
+  resetWithRecoveryCode
 }

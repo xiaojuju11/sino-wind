@@ -1,0 +1,17 @@
+.recovery-code {
+  box-sizing: border-box;
+  color: var(--gf-ink-primary, #2b2b2b);
+  font-family: 'STKaiti', 'KaiTi', 'Songti SC', serif;
+  text-align: left;
+  h2 { margin: 12px 0; font-size: 23px; line-height: 1.4; }
+  p { font: 14px/1.7 system-ui, sans-serif; color: var(--gf-ink-secondary, #6b675b); }
+  &__seal { display: inline-block; border: 3px double #8a2b2b; border-radius: 4px; padding: 3px 7px; color: #8a2b2b; letter-spacing: .12em; }
+  &__label { display: block; margin: 15px 0 7px; }
+  &__value { display: block; box-sizing: border-box; width: 100%; resize: none; border: 1px solid var(--gf-gold, #b58b48); border-radius: 8px; padding: 13px; background: var(--gf-bg-paper, #f7f4eb); color: inherit; font: 16px/1.7 ui-monospace, monospace; overflow-wrap: anywhere; }
+  &__actions { display: flex; gap: 10px; margin: 12px 0; }
+  button { cursor: pointer; font: inherit; min-height: 44px; border: 1px solid var(--gf-gold, #b58b48); border-radius: 8px; padding: 8px 12px; }
+  &__actions button { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; color: inherit; background: var(--gf-bg-card, #faf7f0); }
+  &__confirm { display: flex; gap: 8px; align-items: flex-start; margin: 18px 0; font: 14px/1.6 system-ui, sans-serif; input { margin-top: 4px; accent-color: #8a2b2b; } }
+  &__done { width: 100%; background: #8a2b2b; color: #fff7e9; &:disabled { opacity: .5; cursor: not-allowed; } }
+  button:focus-visible, textarea:focus-visible, input:focus-visible { outline: 2px solid var(--gf-gold, #b58b48); outline-offset: 3px; }
+}

@@ -15,6 +15,9 @@ import PoemPage from './pages/PoemPage'
 import PoemCollection from './pages/PoemCollection'
 import NotFoundPage from './pages/NotFoundPage'
 import CityChroniclePage from './pages/CityChroniclePage'
+import ForgotPassword from './pages/ForgotPassword'
+import LegalPage from './pages/LegalPage'
+import StudyPage from './pages/StudyPage'
 
 export default function App() {
   return (
@@ -22,6 +25,8 @@ export default function App() {
       <BambooBreeze />
       <Routes>
         <Route path='/login' element={<AuthPage/>}></Route>
+        <Route path='/recover' element={<ForgotPassword/>}></Route>
+        <Route path='/legal/:kind' element={<LegalPage/>}></Route>
         <Route path='/' element={<Layout/>}>
           {/* 默认重定向 */}
           <Route path='' element={<Navigate to='/home' />}></Route>
@@ -40,6 +45,10 @@ export default function App() {
         <Route path='/poem-collection' element={<PoemCollection/>}></Route>
         {/* 九州地名志 · 城邑春秋：独立全屏页（原为首页底部弹窗，2026-10-16 改为二级页面） */}
         <Route path='/city-chronicle' element={<CityChroniclePage/>}></Route>
+        <Route path='/mine/archive' element={<StudyPage section='archive'/>}></Route>
+        <Route path='/mine/artifacts' element={<StudyPage section='artifacts'/>}></Route>
+        <Route path='/mine/yayan' element={<StudyPage section='yayan'/>}></Route>
+        <Route path='/mine/messages' element={<StudyPage section='messages'/>}></Route>
         {/* 全局 404 迷津问渡路由兜底 */}
         <Route path='*' element={<NotFoundPage/>}></Route>
       </Routes>

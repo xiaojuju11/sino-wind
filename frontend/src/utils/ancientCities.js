@@ -159,59 +159,59 @@ export function matchAncientCity(rawCityName = '杭州') {
 /**
  * 自动定位探知用户驻足城市（支持离线缓存、IP免打扰探知与GPS备选）
  */
-export async function autoDetectUserCity() {
+export async function autoDetectUserCity(signal) {
+  if (signal?.aborted) return null
   // 1. 优先从 LocalStorage 中读取 12 小时内的定位缓存，避免每次刷新闪烁
   try {
     const cached = JSON.parse(localStorage.getItem('gufeng_detected_city_cache') || 'null')
-    if (cached && (Date.now() - cached.timestamp < 12 * 3600 * 1000) && cached.data) {
+    if (cached?.version === 2 && cached.source === 'ip' && cached.timestamp <= Date.now() && (Date.now() - cached.timestamp < 12 * 3600 * 1000) && typeof cached.data?.name === 'string') {
       return cached.data
     }
   } catch {
     // ignore
   }
 
-  // 2. 尝试国内极速免授权 IP 地理定位 API
-  try {
-    const controller = new AbortController()
-    const timer = setTimeout(() => controller.abort(), 2500)
-    const resp = await fetch('https://whois.pconline.com.cn/ipJson.jsp?json=true', {
-      signal: controller.signal
-    })
-    clearTimeout(timer)
-    if (resp.ok) {
-      const json = await resp.json()
-      const cityName = json.city || json.pro || ''
-      if (cityName) {
-        const matched = matchAncientCity(cityName)
-        localStorage.setItem('gufeng_detected_city_cache', JSON.stringify({ timestamp: Date.now(), data: matched }))
-        return matched
-      }
+  // 2. 尝试免授权 IP 地理定位（HTTPS + CORS:*，支持中文）
+  const IP_PROVIDERS = [
+    {
+      url: 'https://ipwho.is/?lang=zh-CN',
+      pick: (j) => (j && j.success !== false ? (j.city || j.region || '') : '')
+    },
+    {
+      url: 'https://ipinfo.io/json',
+      pick: (j) => (j ? (j.city || j.region || '') : '')
     }
-  } catch {
-    // 接口稍缓或跨域阻断时继续往下尝试
+  ]
+
+  for (const p of IP_PROVIDERS) {
+    if (signal?.aborted) return null
+    const controller = new AbortController()
+    const cancel = () => controller.abort()
+    signal?.addEventListener('abort', cancel, { once: true })
+    const timer = setTimeout(cancel, 2500)
+    try {
+      const resp = await fetch(p.url, { signal: controller.signal })
+      if (!resp.ok) continue
+      const rawJson = await resp.json()
+      if (controller.signal.aborted) continue
+      const cityName = p.pick(rawJson)
+      // 校验城名是否可读（排查乱码/非预期特殊字符），避免脏数据写入 12 小时缓存
+      const readable = typeof cityName === 'string' && cityName.trim() && !/[\uFFFD]|[^\u4e00-\u9fa5A-Za-z0-9·\-\s]/.test(cityName)
+      if (!readable) continue
+
+      const matched = matchAncientCity(cityName)
+      try {
+        localStorage.setItem('gufeng_detected_city_cache', JSON.stringify({ version: 2, source: 'ip', timestamp: Date.now(), data: matched }))
+      } catch { /* A successful location does not depend on writable browser storage. */ }
+      return matched
+    } catch {
+      // 接口超时或网络异常，继续尝试下一个备选服务
+    } finally {
+      clearTimeout(timer)
+      signal?.removeEventListener('abort', cancel)
+    }
   }
 
-  // 3. 备选方案：尝试海外/备用 IP 解析
-  try {
-    const controller = new AbortController()
-    const timer = setTimeout(() => controller.abort(), 2000)
-    const resp = await fetch('http://ip-api.com/json/?lang=zh-CN', {
-      signal: controller.signal
-    })
-    clearTimeout(timer)
-    if (resp.ok) {
-      const json = await resp.json()
-      const cityName = json.city || json.regionName || ''
-      if (cityName) {
-        const matched = matchAncientCity(cityName)
-        localStorage.setItem('gufeng_detected_city_cache', JSON.stringify({ timestamp: Date.now(), data: matched }))
-        return matched
-      }
-    }
-  } catch {
-    // ignore
-  }
-
-  // 4. 终极默认：江南临安（杭州）
-  return TOP_ANCIENT_CITIES[0]
+  // No detected location: let the caller run GPS/IP/default and label its true source.
+  return null
 }

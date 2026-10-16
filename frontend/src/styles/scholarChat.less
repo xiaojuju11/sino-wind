@@ -45,6 +45,17 @@
     align-items: center;
     justify-content: center;
     padding: 0.06rem;
+    transition: all 0.25s ease;
+
+    &.is-speaking {
+      color: var(--gf-primary, #9B3B2B);
+      animation: scholarVoicePulse 1.5s ease-in-out infinite;
+    }
+  }
+
+  @keyframes scholarVoicePulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.15); opacity: 0.75; }
   }
 
   &__center {

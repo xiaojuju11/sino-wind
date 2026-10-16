@@ -92,6 +92,31 @@ function getShichenTime() {
   return `${shichenNames[idx]}二刻`
 }
 
+// Project only bounded character facts; InviteDrawer's legacy prompt is never sent.
+function customSageData(sage) {
+  if (!sage || typeof sage !== 'object' || Array.isArray(sage)) return null
+  const profile = {}
+  for (const [key, limit] of Object.entries({ name: 40, dynasty: 40, title: 80, biography: 2000 })) {
+    const text = Object.hasOwn(sage, key) ? sage[key] : ''
+    if (typeof text !== 'string' || text.length > limit) return null
+    if (Array.from(text).some(char => {
+      const code = char.charCodeAt(0)
+      return code === 127 || (code < 32 && !(key === 'biography' && [9, 10, 13].includes(code)))
+    })) return null
+    profile[key] = text.trim()
+  }
+  return profile.name ? profile : null
+}
+
+function resolveCustomSage(sageKey, navSage) {
+  if (!/^sage_\d{1,20}$/.test(sageKey)) return null
+  if (navSage?.id === sageKey && customSageData(navSage)) return navSage
+  try {
+    const saved = JSON.parse(localStorage.getItem('gufeng_custom_sages') || '[]')
+    return Array.isArray(saved) ? saved.find(sage => sage?.id === sageKey && customSageData(sage)) || null : null
+  } catch { return null }
+}
+
 function ScholarChatSession() {
   const { id } = useParams()
   const location = useLocation()
@@ -99,18 +124,21 @@ function ScholarChatSession() {
 
   // 匹配先贤元信息（兼容 /chat/:id 以及 /ai-chat 路由的 location.state.sageId）
   const sageKey = id || location.state?.sageId || location.state?.sage?.id || 'libai'
-  const navSage = location.state?.sage
-  const sageInfo = SAGE_HERO_MAP[sageKey] || {
-    name: navSage?.name || '先贤雅士',
-    title: navSage?.title || '千古知音',
+  const presetSage = Object.hasOwn(SAGE_HERO_MAP, sageKey) ? SAGE_HERO_MAP[sageKey] : null
+  const navSage = presetSage ? null : resolveCustomSage(sageKey, location.state?.sage)
+  const customSage = customSageData(navSage)
+  const sageInfo = presetSage || {
+    name: customSage?.name || '先贤雅士',
+    title: customSage?.title || '千古知音',
     motto: '读千年风雅，与君共此山河。',
     status: '神交长谈中',
     portrait: navSage?.avatar || `${BASE}assets/guancang/sage_libai.png`,
-    welcome: navSage?.welcome || '幸与足下相逢于云山竹简之境，且煮清茶以待君言。',
+    welcome: typeof navSage?.welcome === 'string' && navSage.welcome.trim() && navSage.welcome.length <= 500
+      ? navSage.welcome : customSage ? `吾乃${customSage.name}，幸与足下相逢于云山之境。` : '幸与足下相逢于云山竹简之境，且煮清茶以待君言。',
     capsules: ['〔经史〕请与我畅谈经史子集', '〔茶道〕茶道与修身之道', '〔心境〕如何保持内心宁静', '〔题咏〕作诗一首赠吾']
   }
   const [failedScene, setFailedScene] = useState('')
-  const scene = getScholarScene(sageKey, sageInfo.name)
+  const scene = presetSage ? getScholarScene(sageKey, sageInfo.name) : null
   const hasScene = Boolean(scene && failedScene !== sageKey)
 
   // 同步用户在“我的”页面中的头像与昵称
@@ -234,6 +262,7 @@ function ScholarChatSession() {
     const text = (customContent || inputText).trim()
     if (!text || activeRequest.current || gameOpen || hydrating) return
     if (text.length > 2000) { Toast.show({ content: '请将论道内容控制在两千字以内' }); return }
+    if (sageKey.startsWith('sage_') && !customSage) { Toast.show({ content: '自定先贤资料缺失或超出字数限制，请回知音殿重新迎请' }); return }
     const userMsg = { id: crypto.randomUUID(), role: 'user', content: text, time: getShichenTime() }
     const aiId = crypto.randomUUID()
     const scope = scholarScope()
@@ -260,7 +289,7 @@ function ScholarChatSession() {
     const timeout = setTimeout(() => request.controller.abort(), 40000)
     try {
       const history = messages.filter(m => m.content && !m.failed).slice(-8).map(m => ({ role: m.role === 'ai' ? 'assistant' : 'user', content: m.content }))
-      await receiveScholarStream(axios.getUri({ url: '/api/deepseek/chat/stream' }), { sageId: sageKey, message: text, history, requestId: userMsg.id, ...(artifactId ? { artifactId } : {}) }, request.controller.signal, (event, data) => {
+      await receiveScholarStream(axios.getUri({ url: '/api/deepseek/chat/stream' }), { sageId: sageKey, ...(customSage ? { customSage } : {}), message: text, history, requestId: userMsg.id, ...(artifactId ? { artifactId } : {}) }, request.controller.signal, (event, data) => {
         if (activeRequest.current !== request) return
         if (scope !== scholarScope()) { stopRequest(); window.dispatchEvent(new Event('scholarSessionChanged')); return }
         if (event === 'delta' && typeof data.text === 'string') request.queue.push(...Array.from(data.text).slice(0, Math.max(0, 2000 - request.queue.length)))
@@ -296,8 +325,35 @@ function ScholarChatSession() {
     }
   }
 
+  const [isSpeaking, setIsSpeaking] = useState(false)
+  const stopVoice = () => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel()
+    }
+    setIsSpeaking(false)
+  }
+
+  // 离开页面、切换先贤、或者页面隐藏时彻底停止先贤诵音
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.hidden) stopVoice()
+    }
+    window.addEventListener('pagehide', stopVoice)
+    document.addEventListener('visibilitychange', handleVisibility)
+    return () => {
+      stopVoice()
+      window.removeEventListener('pagehide', stopVoice)
+      document.removeEventListener('visibilitychange', handleVisibility)
+    }
+  }, [sageKey])
+
   // 雅乐与先贤诵音：纯浏览器古琴合成 + 沉稳名士语调
   const playVoice = (text) => {
+    if (isSpeaking) {
+      stopVoice()
+      Toast.show({ content: '诵音已止' })
+      return
+    }
     try {
       const AudioCtx = window.AudioContext || window.webkitAudioContext
       if (AudioCtx) {
@@ -324,12 +380,16 @@ function ScholarChatSession() {
         utterance.lang = 'zh-CN'
         utterance.rate = 0.85
         utterance.pitch = 0.9
+        utterance.onend = () => setIsSpeaking(false)
+        utterance.onerror = () => setIsSpeaking(false)
+        setIsSpeaking(true)
         window.speechSynthesis.speak(utterance)
         Toast.show({ content: '先贤诵音绕梁…' })
       } else {
         Toast.show({ content: '琴韵已绕梁' })
       }
     } catch {
+      setIsSpeaking(false)
       Toast.show({ content: '琴韵已绕梁' })
     }
   }
@@ -352,7 +412,14 @@ function ScholarChatSession() {
       }} />}
       {/* 1. 顶部清雅导航栏 */}
       <header className="scholar-nav">
-        <button type="button" className="scholar-nav__back" onClick={() => navigate(-1)}>
+        <button
+          type="button"
+          className="scholar-nav__back"
+          onClick={() => {
+            stopVoice()
+            navigate(-1)
+          }}
+        >
           <LeftOutline />
         </button>
         <div className="scholar-nav__center">
@@ -365,12 +432,12 @@ function ScholarChatSession() {
         <div className="scholar-nav__right">
           <button
             type="button"
-            className="scholar-nav__action"
+            className={`scholar-nav__action ${isSpeaking ? 'is-speaking' : ''}`}
             onClick={() => {
               const lastAiMsg = [...messages].reverse().find(m => m.role === 'ai')
               playVoice(lastAiMsg ? lastAiMsg.content : sageInfo.welcome)
             }}
-            aria-label="聆听诵音"
+            aria-label={isSpeaking ? '停止诵音' : '聆听诵音'}
           >
             <SoundOutline />
           </button>
@@ -385,13 +452,15 @@ function ScholarChatSession() {
             <section className="scholar-hero-banner">
               <div className="scholar-hero-banner__bg" />
               <div className="scholar-hero-banner__content">
-                <div className="scholar-hero-banner__portrait-box">
-                  <img
-                    src={sageKey === 'libai' ? `${BASE}assets/guancang/sage-libai-full-v2.png` : (hasScene && scene.src ? scene.src : sageInfo.portrait)}
-                    alt={sageInfo.name}
-                    className="scholar-hero-banner__portrait"
-                  />
-                </div>
+                {!hasScene && (
+                  <div className="scholar-hero-banner__portrait-box">
+                    <img
+                      src={sageInfo.portrait}
+                      alt={sageInfo.name}
+                      className="scholar-hero-banner__portrait"
+                    />
+                  </div>
+                )}
                 <div className="scholar-hero-banner__info">
                   <div className="scholar-hero-banner__names">
                     <span className="scholar-hero-banner__name">{sageInfo.name}</span>
@@ -457,18 +526,6 @@ function ScholarChatSession() {
                   {item.degraded && <small className="scholar-stream-note">离线情境对答</small>}
                   {item.error && <small className="scholar-stream-note" role="status">{item.error}</small>}
                 </div>
-                {item.role === 'ai' && (
-                  <button
-                    type="button"
-                    className="scholar-msg-sound-btn"
-                    onClick={() => playVoice(item.content)}
-                    aria-label="诵读此言"
-                    title="聆听名士诵读"
-                  >
-                    <SoundOutline />
-                    <span>品韵</span>
-                  </button>
-                )}
               </div>
 
               {item.role === 'user' && (
@@ -503,15 +560,6 @@ function ScholarChatSession() {
           <button
             type="button"
             className="scholar-tool-btn"
-            disabled={loading || hydrating}
-            onClick={handleCiteShiwu}
-          >
-            <span className="scholar-tool-seal">物</span>
-            引物溯古今
-          </button>
-          <button
-            type="button"
-            className="scholar-tool-btn"
             onClick={() => handleSend('请兄台以此时月色为题，口占一绝。')}
           >
             <EditSOutline className="scholar-tool-icon" />
@@ -528,15 +576,6 @@ function ScholarChatSession() {
         </div>
 
         <div className="scholar-input-bar">
-          <button
-            type="button"
-            className="scholar-mic-btn"
-            onClick={() => Toast.show({ content: '且慢，语音抚弦功能研墨中…' })}
-            title="语音畅论"
-          >
-            <i className="iconfont icon-maikefeng" />
-          </button>
-
           <textarea
             className="scholar-textarea"
             rows={1}
@@ -568,5 +607,12 @@ function ScholarChatSession() {
 
 export default function ScholarChat() {
   const scope = useScholarScope()
+  useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel()
+      }
+    }
+  }, [])
   return <ScholarChatSession key={scope} />
 }

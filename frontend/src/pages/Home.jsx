@@ -2,7 +2,7 @@ import ReferenceCorners from '../components/ReferenceCorners'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import '../styles/home.less'
 import { Toast, Popup } from 'antd-mobile'
-import { DownOutline, RightOutline, UpOutline, CompassOutline, EditSOutline, CheckCircleOutline, DownCircleOutline, StarOutline, ShopbagOutline, FileOutline, SearchOutline } from 'antd-mobile-icons'
+import { DownOutline, RightOutline, UpOutline, CompassOutline, CheckCircleOutline, StarOutline, SearchOutline } from 'antd-mobile-icons'
 import { CITY_DICT, autoDetectUserCity } from '../utils/ancientCities'   // 郑小君的逐城精编诗文 + IP 感知
 import { useNavigate } from 'react-router-dom'
 import InkParticleField from '../components/InkParticleField.jsx'
@@ -147,6 +147,7 @@ export default function Home() {
   const [visibleCitySheet, setVisibleCitySheet] = useState(false)
   const [cityQuery, setCityQuery] = useState('')
   const [locatedBy, setLocatedBy] = useState('')   // '' | 'gps' | 'ip' | 'default' | 'manual'
+  const locationRequest = useRef(null)
   const [weather, setWeather] = useState(undefined)   // 真实气温：undefined=取数中，对象=成功，null=失败
 
   // ②-2 《十二时辰养生与雅事》弹窗
@@ -194,7 +195,8 @@ export default function Home() {
 
   // 选中城邑：更新展示 + 切到该城经纬度（触发真实气温重取）
   const pickCity = (city) => {
-    manualPickRef.current = true   // 标记为手动选择，定位链路不再覆盖
+    manualPickRef.current = true            // 标记为手动选择，定位链路不再覆盖
+    locationRequest.current?.abort()        // 同时中止在途的定位请求（主干新增）
     setCurrentCity(cityView(city))
     setCityCoords({ lat: city.lat, lng: city.lng })
     setLocatedBy('manual')
@@ -232,6 +234,7 @@ export default function Home() {
     if (!name) return
     const rec = CITIES.find((c) => c[0] === name || c[0].startsWith(name))
     if (!rec) { Toast.show({ content: '城外云深，暂未收录此邑' }); return }
+    locationRequest.current?.abort()
     const city = { name: rec[0], ancient: rec[4] || '', lat: rec[2], lng: rec[3] }
     setCurrentCity(cityView(city))
     setCityCoords({ lat: city.lat, lng: city.lng })
@@ -265,37 +268,44 @@ export default function Home() {
   // 关键：无论走哪条，都必须同步 cityCoords —— 否则真实气温会一直用初值杭州。
   useEffect(() => {
     const ac = new AbortController()
+    locationRequest.current = ac
     let alive = true
     ;(async () => {
       let city = null
       let source = 'default'
       try {
-        const detected = await autoDetectUserCity()
-        // 防御：autoDetectUserCity 内部的 pconline 接口返回 GBK，若按 UTF-8 解码
-        // 会得到乱码城市名（实测 city = "�Ž���"，正确应为「九江市」），
-        // 且该乱码会被缓存 12 小时。此处校验城名是否可读：
-        // 含替换符或非中日韩字符即视为脏数据，直接弃用并走 locate() 兜底。
-        const readable = detected?.name && !/[\uFFFD]|[^\u4e00-\u9fa5A-Za-z0-9·\-\s]/.test(detected.name)
+        const detected = await autoDetectUserCity(ac.signal)
+        if (!alive || ac.signal.aborted) return
+        // 两道校验后才采用 IP 定位结果：
+        //  ① 城名可读 —— 2026-10-16 起主干已把数据源从 whois.pconline（无 CORS + GBK）
+        //     换成 ipwho.is（HTTPS + CORS + UTF-8），乱码根因已消除；此处保留作兜底，
+        //     防止将来再接入 GBK 数据源时把乱码城市名写进 12 小时缓存。
+        //  ② 城名必须能落到本项目的城邑库（CITIES，359 城）—— 这条更常触发：
+        //     实测本机 IP 被判为海外，ipwho.is 返回「新加坡」，虽可读但库中无此邑，
+        //     不拦就会得到「九州·新加坡」这类兜底文案。落空则改走下方 locate()。
+        const name = detected?.name || ''
+        const readable = name && !/[\uFFFD]|[^\u4e00-\u9fa5A-Za-z0-9·\-\s]/.test(name)
         if (readable) {
           // 按名回填经纬度（他的库是名称型，我的库是坐标型）
-          const rec = CITIES.find((c) => c[0] === detected.name || c[0].startsWith(detected.name))
+          const rec = CITIES.find((c) => c[0] === name || c[0].startsWith(name))
           if (rec) { city = { name: rec[0], ancient: rec[4] || detected.ancient || '', lat: rec[2], lng: rec[3] }; source = 'ip' }
         }
       } catch { /* 继续走 locate() 兜底 */ }
+      if (!alive || ac.signal.aborted) return
       if (!city) {
         const r = await locate(ac.signal)
-        if (!alive) return
+        if (!alive || ac.signal.aborted) return
         city = r.city
         source = r.source
       }
-      if (!alive) return
+      if (!alive || ac.signal.aborted) return
       // 若期间用户已手动留驻某城邑，则放弃自动定位结果（避免覆盖用户选择）
       if (manualPickRef.current) return
       setCurrentCity(cityView(city))
       setCityCoords({ lat: city.lat, lng: city.lng })
       setLocatedBy(source)
     })()
-    return () => { alive = false; ac.abort() }
+    return () => { alive = false; ac.abort(); if (locationRequest.current === ac) locationRequest.current = null }
   }, [])
 
   // 白话雅译请求（接口与字段保持不变）
@@ -345,7 +355,7 @@ export default function Home() {
       localStorage.setItem('gufeng_yayan_list', JSON.stringify(saved))
       Toast.show({ content: '已摘录入墨隐书斋 · 雅译锦囊', icon: 'success' })
     } catch {
-      Toast.show({ content: '已收录' })
+      Toast.show({ content: '摘录未保存，本机存储不可用，请稍后重试', icon: 'fail' })
     }
   }
 
@@ -400,7 +410,9 @@ export default function Home() {
           <div className="home-yayan-inner">
             <div className="home-yayan-input-box">
               <span className="home-yayan-pencil" aria-hidden="true">
-                <EditSOutline />
+                <svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor">
+                  <path d="M7.2 14.4c-1.4 0-2.5 1.1-2.5 2.5 0 1.1-.9 1.7-.8 1.7.8 0 2.1-.3 2.9-1 .5-.5.7-1 .8-1.5l9.2-9.2c.4-.4.4-1 0-1.4l-1.5-1.5c-.4-.4-1-.4-1.4 0L7.2 14.4z" />
+                </svg>
               </span>
               <textarea
                 className="home-yayan-textarea"
@@ -414,7 +426,9 @@ export default function Home() {
             </div>
 
             <div className="home-yayan-divider" aria-hidden="true">
-              <DownCircleOutline className="home-yayan-divider__arrow" />
+              <span className="home-yayan-divider__arrow">
+                <DownOutline />
+              </span>
             </div>
 
             {yayanResult && (
@@ -500,7 +514,9 @@ export default function Home() {
               role="button"
               tabIndex={0}
             >
-              {currentCity.ancient ? `${currentCity.ancient}（${currentCity.name}）` : currentCity.name}
+              <span className="home-almanac__city-text" title={currentCity.ancient ? `${currentCity.ancient}（${currentCity.name}）` : currentCity.name}>
+                {currentCity.ancient ? `${currentCity.ancient}（${currentCity.name}）` : currentCity.name}
+              </span>
               {/* 定位来源以极小字附在城市名后，不新占一行（保持左右两栏对称） */}
               {locatedBy === 'gps' && <em className="home-almanac__loc">已定位</em>}
               {locatedBy === 'ip' && <em className="home-almanac__loc">网络定位</em>}
@@ -571,9 +587,9 @@ export default function Home() {
                 className="home-shiwu-demo__item"
                 onClick={() => navigate('/recognition')}
               >
-                {item.modern.includes('奶茶') ? <ShopbagOutline className='home-shiwu-demo__symbol' aria-hidden='true' /> : <FileOutline className='home-shiwu-demo__symbol' aria-hidden='true' />}
+                <span className="home-shiwu-demo__seal" aria-hidden="true">{item.seal}</span>
                 <span className="home-shiwu-demo__modern">{item.modern}</span>
-                <RightOutline className="home-shiwu-demo__arrow" />
+                <span className="home-shiwu-demo__flow-arrow" aria-hidden="true">→</span>
                 <span className="home-shiwu-demo__ancient">{item.ancient}</span>
                 <RightOutline className="home-shiwu-demo__chevron" />
               </button>
@@ -583,7 +599,12 @@ export default function Home() {
       </section>
 
       {/* ── 区块④ 古诗词赏析 ── */}
-      <section className="home-card-scroll home-poem-card">
+      <section
+        className="home-card-scroll home-poem-card"
+        onClick={() => navigate('/poem')}
+        role="button"
+        tabIndex={0}
+      >
         <ReferenceCorners />
         <div className="home-section-header">
           <h2 className="home-section-title">古诗词赏析</h2>
@@ -598,15 +619,17 @@ export default function Home() {
             <p>一蓑烟雨任平生，</p>
             <p>也无风雨也无晴。</p>
           </div>
-          {/* 展卷细读：原为一个圆形箭头图标，用户要求改为带文字的可读按钮
-              （文字沿用既有 aria-label，补一枚小箭头作前向暗示，不再用纯箭头） */}
+          {/* 展卷细读：原为圆形箭头图标，改为带文字的可读按钮。
+              合并说明：主干同期也做了同名改动，但其实现用 <div aria-label> —— 
+              不可键盘聚焦、语义不正确；此处保留 <button>，子元素沿用主干的
+              __text / __icon 类名，以套用其在 referenceFidelity.less 中的样式。 */}
           <button
             type="button"
             className="home-poem-more"
             onClick={() => navigate('/poem')}
           >
-            <span>展卷细读</span>
-            <RightOutline className="home-poem-more__arrow" aria-hidden="true" />
+            <span className="home-poem-more__text">展卷细读</span>
+            <RightOutline className="home-poem-more__icon" aria-hidden="true" />
           </button>
         </div>
       </section>

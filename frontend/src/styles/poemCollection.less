@@ -1,5 +1,27 @@
 @import './variables.less';
 
+// 本轮第六张反馈图：取消旧视觉覆盖层造成的顶部空档，题头贴合安全区。
+.poem-collection-root.reference-polish {
+  padding-top: 0;
+  > .collection-header {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    box-sizing: border-box;
+    min-height: 72px;
+    padding: calc(12px + env(safe-area-inset-top, 0px)) 12px 12px;
+    gap: 8px;
+    background: var(--gf-bg-paper, #f7f1e5);
+    .collection-header__back { flex: 0 0 40px; height: 44px; }
+    .collection-header__title-box { flex: 1; min-width: 0; flex-wrap: wrap; justify-content: center; gap: 5px; }
+    .collection-header__title { font-size: clamp(24px, 6vw, 30px); line-height: 1.3; }
+    .collection-header__seal { font-size: 10px; }
+    .collection-header__actions { max-width: 76px; flex-shrink: 0; }
+    .collection-header__count { font-size: 12px; line-height: 1.5; }
+  }
+  > .collection-search-wrap { position: relative; z-index: 1; padding-top: 16px; }
+}
+
 .poem-collection-root {
   min-height: 100vh;
   background-color: var(--gf-bg-paper, @color-bg);

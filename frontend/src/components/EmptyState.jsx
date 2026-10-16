@@ -25,14 +25,13 @@ export default function EmptyState({
         <span className='empty-state__ripple ripple-1' />
         <span className='empty-state__ripple ripple-2' />
         <span className='empty-state__cloud' />
-      </div>
-
-      {/* 2. 两宋金石朱砂印章 */}
-      <div className='empty-state__seal-wrap' aria-hidden='true'>
-        <div className='empty-state__seal'>
-          <span className='empty-state__seal-border-outer' />
-          <span className='empty-state__seal-border-inner' />
-          <span className='empty-state__seal-text'>{seal}</span>
+        {/* 印章以圆环为定位容器，文案换行也不会改变印章的位置。 */}
+        <div className='empty-state__seal-wrap'>
+          <div className='empty-state__seal'>
+            <span className='empty-state__seal-border-outer' />
+            <span className='empty-state__seal-border-inner' />
+            <span className='empty-state__seal-text'>{seal}</span>
+          </div>
         </div>
       </div>
 

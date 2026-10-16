@@ -135,16 +135,22 @@ const SEASON_LINES = {
   ],
 }
 
-/** 按当前季节取一句时令诗；若指定城市且有对应城市的句子则优先 */
+/** 按当前季节取一句时令诗；若指定城市且有对应城市的句子则优先；无专属诗时优先选用无强烈异地地名色彩的普适名句 */
 export function seasonLine(date = new Date(), cityName = '') {
   const list = SEASON_LINES[seasonKey(date)] || SEASON_LINES.spring
   if (cityName) {
     const hit = list.find((x) => x.city === cityName)
     if (hit) return hit
   }
+  // 未命中专属城市时，过滤掉诗句中强硬出现其他地名（如金陵、长安、洛阳、苏州）的诗句，保证全国各地都顺理成章
+  const generalList = list.filter((x) => {
+    const hasOtherCityName = ['金陵', '长安', '洛阳', '姑苏', '江枫', '渭水'].some((k) => x.line.includes(k))
+    return !hasOtherCityName
+  })
+  const pool = generalList.length > 0 ? generalList : list
   // 用日期做稳定散列，同一天内不变
   const d = date.getDate() + date.getMonth() * 31
-  return list[d % list.length]
+  return pool[d % pool.length]
 }
 
 // ════════════════════════════════════════════════════

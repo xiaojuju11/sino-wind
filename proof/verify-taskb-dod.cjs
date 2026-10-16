@@ -1,6 +1,6 @@
 // 任务书 DoD 逐条核对（陈思卉 · 2026-10-15）
 const path = require('path')
-const B = 'D:/sino-wind-taskB/backend/src'
+const B = path.resolve(__dirname, '../backend/src')
 const e = require(path.join(B, 'utils/feihuaEngine.js'))
 const fs = require('node:fs')
 
