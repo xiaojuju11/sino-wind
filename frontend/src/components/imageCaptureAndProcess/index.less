@@ -1,4 +1,7 @@
 @import '../../styles/variables.less';
+// 统一按钮规范（双色 + 柔圆角 + 外阴影）：与识别结果页共用同一套 mixin，
+// 保证「拍照 / 上传 / 收入宝鉴 / 发音 / 音色」观感一致
+@import '../../styles/buttons.less';
 
 // ════════════════════════════════════════════════════
 //  物溯古今 · 拍照识器 —— 图片采集器样式（成员 A 独占）
@@ -73,26 +76,11 @@
     padding: 0.3rem 0 0.26rem;
 
     &__back {
-      flex: none;
-      width: 0.72rem;
-      height: 0.72rem;
-      border-radius: 50%;
-      border: 1px solid fade(@color-gold, 45%);
-      background-color: var(--gf-bg-card, @color-card);
-      color: var(--gf-text-main, @color-text-main);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      padding: 0;
-      transition: transform 0.2s ease;
+      .btn-base();
+      .btn-icon-round(0.72rem);
 
       .iconfont {
         font-size: 0.34rem;
-      }
-
-      &:active {
-        transform: scale(0.94);
       }
     }
 
@@ -202,27 +190,26 @@
     }
 
     &__clear {
+      .btn-base();
       position: absolute;
       top: 0.1rem;
       right: 0.1rem;
       width: 0.72rem;
       height: 0.72rem;
+      padding: 0;
       border-radius: 50%;
       border: none;
+      // 叠在器物影像之上，故用深色半透明而非宣纸底（与页头返回按钮区别对待）
       background-color: fade(@color-text-main, 72%);
       color: @color-card;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      padding: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
 
       .iconfont {
         font-size: 0.32rem;
       }
 
-      &:active {
-        transform: scale(0.94);
+      &:active:not(:disabled) {
+        background-color: fade(@color-text-main, 84%);
       }
     }
   }
@@ -247,50 +234,25 @@
   }
 
   .image-capture-btn {
+    .btn-base();
     flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.14rem;
     min-height: 1.15rem;
     padding: 0 0.2rem;
-    border-radius: @radius-seal;
     font-size: 0.4rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    font-family: inherit;
-    cursor: pointer;
-    transition: transform 0.2s ease;
 
     .iconfont {
       font-size: 0.4rem;
     }
 
-    // 主按钮：朱砂实底 + 泥金双线描边 + 象牙白字（不加外发光）
+    // 主按钮：朱砂实底 + 泥金细描边 + 象牙白字
+    // 视觉（圆角/阴影/按压）来自统一 mixin；2026-10-16 起改用柔圆角 + 外阴影
     &--primary {
-      background-color: var(--gf-seal, @color-seal);
-      color: @color-card;
-      border: 1px solid fade(@color-gold, 70%);
-      box-shadow: inset 0 0 0 2px fade(@color-gold, 40%);
-
-      &:active {
-        transform: scale(0.98);
-      }
-
-      &:disabled {
-        opacity: 0.72;
-      }
+      .btn-primary();
     }
 
-    // 次按钮：米白底 + 泥金细线描边
+    // 次按钮：宣纸底 + 泥金细描边 + 墨字（双色里的另一色）
     &--secondary {
-      background-color: var(--gf-bg-card, @color-card);
-      color: var(--gf-text-main, @color-text-main);
-      border: 1px solid fade(@color-gold, 55%);
-
-      &:active {
-        transform: scale(0.98);
-      }
+      .btn-secondary();
     }
   }
 

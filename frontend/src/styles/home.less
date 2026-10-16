@@ -795,6 +795,7 @@
   border-radius: 0.24rem;
 }
 
+// ⚠️ 精修层覆盖：.home-poem-title 的 margin，精修层定为 3px 0
 .home-poem-title {
   margin: 0;
   font-size: 0.4rem;
@@ -803,7 +804,7 @@
 }
 
 .home-poem-meta {
-  margin: 0.1rem 0 0;
+  margin: 0.1rem 0 0;   // ⚠️ 精修层覆盖：.home-poem-meta 的 margin，精修层定为 0 0 4px
   font-size: 0.28rem;
   color: var(--gf-ink-secondary);
 }
@@ -821,27 +822,64 @@
   }
 }
 
-// 右下角圆形展卷按钮
+// 右下角「展卷细读」按钮
+// 2026-10-16：原为圆形箭头图标，用户要求改为写明文字的按钮。
+// 说明：本文件通篇走 --gf-* CSS 变量、不引用 Less 令牌，故此处不套用
+// styles/buttons.less 的 mixin（那会额外引入令牌层、且与暗色变量重复），
+// 而是以等价的 --gf-* 写法对齐同一规范：柔圆角 + 暖调外阴影 + 双色描边。
 .home-poem-more {
   position: absolute;
+  // ⚠️ right/bottom 最终值由 referenceFidelity.less 决定（10px），此处为回退值
   right: 0.26rem;
   bottom: 0.26rem;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 0.84rem;
-  height: 0.84rem;
-  padding: 0;
-  font-size: 0.38rem;
-  color: var(--gf-ink-secondary);
+  gap: 0.1rem;
+  min-height: 0.7rem;
+  padding: 0 0.26rem;
+  font-size: 0.28rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+  color: var(--gf-ink-primary);
   background: var(--gf-bg-card);
-  border: 1px solid color-mix(in srgb, var(--gf-border-card) 90%, transparent);
-  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 58%, transparent);
+  border-radius: 0.2rem;
   cursor: pointer;
-  box-shadow: 0 0.04rem 0.14rem var(--home-shadow);
+  -webkit-tap-highlight-color: transparent;
+  box-shadow:
+    0 0.02rem 0.06rem rgba(90, 44, 30, 0.1),
+    0 0.06rem 0.16rem rgba(90, 44, 30, 0.08);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
 
+  &__arrow {
+    font-size: 0.26rem;
+    color: var(--gf-gold);
+    transition: transform 0.18s ease;
+  }
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--gf-gold) 78%, transparent);
+    box-shadow:
+      0 0.02rem 0.06rem rgba(90, 44, 30, 0.14),
+      0 0.08rem 0.2rem rgba(90, 44, 30, 0.11);
+  }
+
+  &:hover &__arrow {
+    transform: translateX(0.04rem);
+  }
+
+  // 按压：收窄外投影并压出内痕，与 buttons.less 的 @shadow-btn-active 同义
   &:active {
-    transform: translateY(1px);
+    transform: translateY(0.5px);
+    background: var(--gf-bg-sunk);
+    box-shadow:
+      0 0.01rem 0.03rem rgba(90, 44, 30, 0.12),
+      inset 0 0.02rem 0.05rem rgba(60, 24, 14, 0.16);
   }
 }
 
@@ -890,12 +928,12 @@
 
 // 题头
 .home-hero { padding: 0.04rem 0 0.18rem; }
-.home-hero__title { font-size: 0.74rem; }
+.home-hero__title { font-size: 0.74rem; }   // ⚠️ 精修层覆盖：font-size，精修层定为 34px / clamp()
 .home-hero__sub { margin-top: 0.12rem; font-size: 0.31rem; }
-.home-hero__actions { top: -0.52rem; gap: 0.12rem; }
+.home-hero__actions { top: -0.52rem; gap: 0.12rem; }   // ⚠️ 精修层覆盖：top，精修层定为 .08rem
 .home-hero__icon-btn { width: 0.66rem; height: 0.66rem; }
 .home-hero__icon-emoji { font-size: 0.32rem; }
-.home-hero__seal { width: 0.36rem; height: 0.5rem; font-size: 0.22rem; }
+.home-hero__seal { width: 0.36rem; height: 0.5rem; font-size: 0.22rem; }   // ⚠️ 精修层覆盖：font-size，精修层定为 13px
 
 // 区块① 白话雅译
 .home-yayan-scroll { margin-top: 0.14rem; padding-left: 0.8rem; }
@@ -926,7 +964,7 @@
 .home-almanac__roam-icon { width: 0.24rem; height: 0.24rem; }
 .home-almanac__cols { margin-top: 0.1rem; }
 .home-almanac__col { gap: 0.03rem; padding: 0.04rem 0.08rem; }
-.home-almanac__label { padding: 0.02rem 0.1rem; font-size: 0.28rem; }
+.home-almanac__label { padding: 0.02rem 0.1rem; font-size: 0.28rem; }   // ⚠️ 精修层覆盖：padding，精修层定为 2px 7px
 .home-almanac__sun { font-size: 0.32rem; }
 .home-almanac__temp { font-size: 0.6rem; }
 .home-almanac__city { font-size: 0.30rem; }
@@ -955,8 +993,6 @@
 .home-poem-meta { margin-top: 0.02rem; font-size: 0.30rem; }
 .home-poem-verses { margin-top: 0.08rem; }
 .home-poem-verses p { font-size: 0.36rem; line-height: 1.6; }
-.home-poem-more { right: 0.18rem; bottom: 0.18rem; width: 0.64rem; height: 0.64rem; font-size: 0.28rem; }
-
 // ════════════════════════════════════════════════════
 //  白话雅译详情稿对齐（d0dba46c…jpg 853×459 → 块高≈210 CSS px）
 //  1) 两端木轴：深色红木（原浅金褐不符）2) 竖排红签：烫金字+泥金边
@@ -1968,6 +2004,7 @@
   backdrop-filter: blur(24px) saturate(190%) brightness(1.02) !important;
   -webkit-backdrop-filter: blur(24px) saturate(190%) brightness(1.02) !important;
   background-color: color-mix(in srgb, var(--gf-bg-card) 76%, transparent) !important;
+  // ⚠️ 精修层覆盖：.home-card-scroll 的 border / border-radius / background-image，精修层定为 7px 等
   background-image: none !important;
   border: 1px solid rgba(255, 255, 255, 0.72) !important;
   border-radius: 0.42rem !important;

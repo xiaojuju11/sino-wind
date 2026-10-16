@@ -1,0 +1,192 @@
+@import './variables.less';
+
+// ════════════════════════════════════════════════════
+//  按钮统一规范（2026-10-16）
+//  适用范围：物溯古今 · 拍照识器全流程（采集页 + 识别结果页）
+//
+//  设计口径 —— 全站「双色」按钮：
+//    · 主色只有两个：朱砂 @color-seal（主要动作）/ 竹青 @color-bamboo（成功态）
+//    · 泥金 @color-gold **只用于描边与图标**，不做大面积填充（沿用既有约定）
+//    · 底色一律单色实底，不用渐变 —— 渐变是「AI 味」的主要来源之一
+//    · 圆角取 @radius-btn(10px) / @radius-btn-sm(8px)，比原 6px 明显柔和
+//    · 外阴影用暖褐调而非纯黑，避免通用组件的冷灰投影
+//
+//  各按钮只需给尺寸（padding / min-height / font-size / width），
+//  视觉（圆角、阴影、描边、按压反馈）一律由下面的 mixin 提供。
+// ════════════════════════════════════════════════════
+
+// 基础：几何 + 排印 + 交互反馈（不设配色）
+.btn-base() {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.14rem;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.22s ease,
+    background-color 0.22s ease,
+    border-color 0.22s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  // 按压：轻微下沉 + 收窄外投影并压出内痕
+  &:active:not(:disabled) {
+    transform: translateY(0.5px) scale(0.985);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  .iconfont,
+  svg {
+    font-size: 1em;
+    line-height: 1;
+  }
+}
+
+// 主按钮：朱砂实底 + 泥金细描边 + 象牙白字
+// radius 可覆盖（默认 @radius-btn）
+.btn-primary(@radius: @radius-btn) {
+  border-radius: @radius;
+  border: 1px solid fade(@color-gold, 62%);
+  background-color: var(--gf-seal, @color-seal);
+  color: @color-card;
+  box-shadow: @shadow-btn;
+
+  .iconfont,
+  svg {
+    color: fade(@color-gold, 92%);
+  }
+
+  &:hover:not(:disabled) {
+    background-color: lighten(@color-seal, 4%);
+    box-shadow: @shadow-btn-hover;
+  }
+
+  &:active:not(:disabled) {
+    background-color: darken(@color-seal, 4%);
+    box-shadow: @shadow-btn-active;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    box-shadow: none;
+    background-color: @color-bg-sunk;
+    border-color: fade(@color-gold, 30%);
+    color: var(--gf-text-sub, @color-text-sub);
+  }
+}
+
+// 次按钮（双色里的另一色）：宣纸底 + 泥金描边 + 墨字
+.btn-secondary(@radius: @radius-btn) {
+  border-radius: @radius;
+  border: 1px solid fade(@color-gold, 58%);
+  background-color: var(--gf-bg-card, @color-card);
+  color: var(--gf-text-main, @color-text-main);
+  box-shadow:
+    0 1px 3px rgba(90, 44, 30, 0.10),
+    0 4px 12px rgba(90, 44, 30, 0.07);
+
+  .iconfont,
+  svg {
+    color: fade(@color-gold, 95%);
+  }
+
+  &:hover:not(:disabled) {
+    border-color: fade(@color-gold, 78%);
+    background-color: lighten(@color-card, 1.5%);
+    box-shadow: @shadow-btn;
+  }
+
+  &:active:not(:disabled) {
+    background-color: @color-bg-sunk;
+    box-shadow: @shadow-btn-active;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    box-shadow: none;
+  }
+}
+
+// 幽灵/订阅按钮：无底色，描边 + 字色双色（用于音色切换这类轻量选择）
+// 选中态由调用方叠加 .is-active，转到主按钮观感
+.btn-ghost(@radius: @radius-btn-sm) {
+  border-radius: @radius;
+  border: 1px solid fade(@color-gold, 50%);
+  background-color: transparent;
+  color: var(--gf-text-sub, @color-text-sub);
+  box-shadow: none;
+
+  &:hover:not(:disabled) {
+    border-color: fade(@color-gold, 75%);
+    background-color: fade(@color-gold, 8%);
+  }
+
+  &:active:not(:disabled) {
+    background-color: fade(@color-gold, 14%);
+  }
+
+  // 选中：朱砂实底，与主按钮同语言
+  &.is-active {
+    border-color: fade(@color-gold, 62%);
+    background-color: var(--gf-seal, @color-seal);
+    color: @color-card;
+    box-shadow: @shadow-btn;
+  }
+}
+
+// 成功/已入藏：竹青实底（双色里的第二色，仅在完成态出现）
+.btn-success(@radius: @radius-btn) {
+  border-radius: @radius;
+  border: 1px solid fade(@color-bamboo, 55%);
+  background-color: var(--gf-bamboo, @color-bamboo);
+  color: @color-card;
+  box-shadow: @shadow-btn;
+
+  .iconfont,
+  svg {
+    color: #C5E0C7;
+  }
+
+  &:disabled,
+  &:disabled:not(.is-saved) {
+    cursor: default;
+    opacity: 1;
+    box-shadow: @shadow-btn;
+  }
+}
+
+// 圆形图标按钮（页头返回、预览清除等）
+.btn-icon-round(@size: 0.72rem, @radius: 50%) {
+  flex: none;
+  width: @size;
+  height: @size;
+  padding: 0;
+  border-radius: @radius;
+  border: 1px solid fade(@color-gold, 50%);
+  // 底色走 --gf-bg-card。注意该令牌有两层定义：theme.less 的 #FAF7F0 与
+  // global.css 精修层的 #FFFFFF —— 后者生效（故实际是纯白卡面）。
+  // 这里不写死色值，跟随主题层，避免与全站卡面不一致。
+  background-color: var(--gf-bg-card, @color-card);
+  color: var(--gf-text-main, @color-text-main);
+  box-shadow:
+    0 1px 3px rgba(90, 44, 30, 0.12),
+    0 4px 10px rgba(90, 44, 30, 0.08);
+
+  &:active:not(:disabled) {
+    background-color: @color-bg-sunk;
+    box-shadow: @shadow-btn-active;
+  }
+}

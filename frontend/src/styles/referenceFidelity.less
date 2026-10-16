@@ -1,5 +1,25 @@
 // Second visual pass: match the seven supplied layouts while retaining live UI.
 // Only module classes are styled; no global tokens, entry points or routes.
+//
+// ════════════════════════════════════════════════════
+//  ⚠️ 本层会【静默覆盖】以下基础样式 —— 改基础文件不生效，需同时改本层
+//  （2026-10-16 审计补记，依据 proof/diag-style-conflicts.mjs）
+//
+//    .home-poem-more      right / bottom 基础 home.less 0.26rem → 本层 10px
+//    .home-card-scroll    border / border-radius / background-image
+//                         基础 home.less 0.42rem !important      → 本层 7px
+//    .home-hero__title    font-size      基础 home.less 0.74rem  → 本层 34px / clamp(...)
+//    .home-hero__seal     font-size      基础 home.less 0.22rem  → 本层 13px
+//    .home-poem-title     margin         基础 home.less 0        → 本层 3px 0
+//    .home-poem-meta      margin         基础 home.less 0.1rem 0 0 → 本层 0 0 4px
+//    .home-almanac__label padding        基础 home.less 0.02rem 0.1rem → 本层 2px 7px
+//    .bottom-nav          bottom         基础 layout.less 含 safe-area → 本层 0
+//
+//  踩坑实录：.home-poem-more 的 right/bottom 被本层定为 0/2px，
+//  是给「圆形箭头按钮」服务的；该按钮 2026-10-16 改为带文字「展卷细读」的
+//  胶囊按钮后，基础层的内边距被这里的贴边定位吃掉，按钮只剩 25×27px。
+//  教训：改任何按钮/卡片尺寸前，先在本文件里搜一遍类名。
+// ════════════════════════════════════════════════════
 .reference-polish:is(.home-root,.letter-root,.shuzhai-root,.poem-root,.scholar-chat-root,.poem-collection-root),
 .reference-invite.invite-drawer {
   --ref-gold: color-mix(in srgb,var(--gf-gold) 86%,var(--gf-seal));
@@ -211,10 +231,12 @@
   .home-poem-title { max-width: 100%; margin: 2px 0; font-size: 16px; line-height: 1.5; }
   .home-poem-meta { font-size: 11px; line-height: 1.5; margin: 0 0 4px; color: var(--gf-ink-secondary); }
   .home-poem-verses p { font-size: 17px; line-height: 1.55; margin: 0; }
+  // 展卷细读按钮（文字胶囊）。合并说明：主干此处的 right:0 / bottom:2px 是给
+  // 旧「圆形箭头」按钮贴边用的；按钮改为带文字后需要内边距，故改为 10px 留白。
   .home-poem-more {
     position: absolute;
-    right: 0;
-    bottom: 2px;
+    right: 10px;
+    bottom: 10px;
     display: flex;
     align-items: center;
     gap: 2px;
