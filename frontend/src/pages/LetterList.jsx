@@ -170,9 +170,21 @@ function LetterListSession() {
       </header>
       {searchOpen && <div className='letter-reference-search'><input aria-label='检索知音姓名或信札' value={searchText} onChange={e => setSearchText(e.target.value)} placeholder='检索知音姓名或信札' /><button type='button' aria-label='清空检索' onClick={() => setSearchText('')}><CloseOutline /></button></div>}
 
-      {/* 2. 顶部水平知己画卷（横向滑动 + 迎请新友按钮） */}
+      {/* 2. 顶部水平知己画卷（迎请新友置于最左侧首位 + 横向滑动知己） */}
       <section className="letter-gallery-section">
         <div className="letter-gallery-scroll">
+          {/* 迎请新友 (+) 按钮置于最左侧首位，方便随时点召新知己 */}
+          <button type='button'
+            className="letter-gallery-item letter-gallery-item--invite"
+            aria-label='迎请新友'
+            onClick={() => setDrawerVisible(true)}
+          >
+            <div className="letter-gallery-avatar-box letter-gallery-avatar-box--add">
+              <AddOutline className="letter-add-icon" />
+            </div>
+            <span className="letter-gallery-name">迎请新友</span>
+          </button>
+
           {displayed.filter(item => item.id !== 'group_zhulin').map((item) => {
             const isCustom = item.id?.startsWith('sage_')
             const scene = isCustom ? null : getScholarScene(item.id, item.name)
@@ -195,18 +207,6 @@ function LetterListSession() {
               <span className="letter-gallery-name">{item.name.split('·')[0]}</span>
             </button>
           )})}
-
-          {/* 迎请新友 (+) 按钮 */}
-          <button type='button'
-            className="letter-gallery-item letter-gallery-item--invite"
-            aria-label='迎请新友'
-            onClick={() => setDrawerVisible(true)}
-          >
-            <div className="letter-gallery-avatar-box letter-gallery-avatar-box--add">
-              <AddOutline className="letter-add-icon" />
-            </div>
-            <span className="letter-gallery-name">迎请新友</span>
-          </button>
         </div>
       </section>
 
