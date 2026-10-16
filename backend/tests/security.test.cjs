@@ -144,7 +144,7 @@ test('password change checks old password and uses only the dedicated password m
   const api = load('controllers/authController.js', {
     '../utils/jwt.js': { JWT_SECRET: 'x'.repeat(48) }, '../utils/captcha.js': {},
     bcrypt: { compare: async password => password === 'old-valid', hash: async () => 'bcrypt-result' },
-    '../models/userModel.js': { findUserById: async () => ({ password_hash: 'old-hash' }),
+    '../models/userModel.js': { findUserById: async () => ({ password_hash: 'old-hash', auth_version: 0 }),
       updateUserInfo: async () => { throw new Error('Password must not use the profile model') },
       updateUserPassword: async (...args) => { changes.push(args); return { affectedRows: 1 } } },
   })
@@ -152,5 +152,5 @@ test('password change checks old password and uses only the dedicated password m
   await api.updatePassword(denied); assert.equal(denied.status, 400); assert.equal(changes.length, 0)
   const allowed = { userId: 7, request: { body: { oldPassword: 'old-valid', newPassword: 'new-valid' } } }
   await api.updatePassword(allowed); assert.equal(allowed.body.code, 1)
-  assert.deepEqual(changes, [['bcrypt-result', 7]])
+  assert.deepEqual(changes, [['bcrypt-result', 7, 'old-hash', 0]])
 })
