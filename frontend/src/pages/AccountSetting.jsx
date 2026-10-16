@@ -6,6 +6,7 @@ import { LeftOutline, CloseOutline } from 'antd-mobile-icons'
 import { uploadFileChunks, DEFAULT_CHUNK_SIZE } from '../utils/chunkUpload'
 import RecoveryCodeCard from '../components/RecoveryCodeCard'
 import '../styles/accountSetting.less'
+import '../styles/recoverySurface.less'
 
 const actions = [
   { text: '从相册选择（支持超大图片）', key: 'select' }

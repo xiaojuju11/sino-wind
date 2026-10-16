@@ -1,0 +1,54 @@
+// A local decorative illustration, independent of account verification logic.
+.account-setting .account-recovery {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 30px 22px 58px;
+  border: 1px solid #b89951;
+  border-radius: 4px 16px 4px 16px;
+  background: #f4ead5;
+  box-shadow: 0 4px 20px #6b542718, 0 0 0 3px #b8995114;
+
+  &::before {
+    content: ''; position: absolute; inset: 0; z-index: -2; pointer-events: none;
+    background: linear-gradient(90deg, #f8f1e3dd, #f8f1e3a3 65%, #f8f1e34a),
+      url('/images/decor/recovery-xuan-paper-v1.jpg') right center / cover no-repeat;
+  }
+  &::after {
+    content: ''; position: absolute; z-index: -1; inset: 7px; pointer-events: none;
+    border: 1px solid #b8995166; border-radius: 2px 10px 2px 10px;
+    box-shadow: inset 0 0 0 2px #fff9eb66;
+  }
+  .account-recovery__eyebrow {
+    display: inline-block; padding: 3px 9px; border: 1px solid #9c493a77;
+    background: #fbf2dfb8; border-radius: 3px; color: #8a392e;
+    font-size: 14px; letter-spacing: .18em;
+  }
+  h2 { margin-top: 15px; color: #423d2f; }
+  p { color: #615b4c; }
+  form { position: relative; padding-top: 18px; margin-top: 18px; border-top: 1px solid #b8995155; }
+  label { color: #514637; font-family: 'STKaiti', 'KaiTi', serif; }
+  input { background: #fffaf0ed; border-color: #c2a368; box-shadow: inset 0 2px 5px #6b542708; color: #332e28; }
+  input:focus-visible { outline: 2px solid #9d703a; outline-offset: 3px; }
+  .recovery-code__confirm input[type='checkbox'] {
+    flex: 0 0 16px; width: 16px; height: 16px; min-height: 0;
+    padding: 0; border-radius: 0; box-shadow: none; accent-color: #8a2b2b;
+  }
+  form button { background: linear-gradient(110deg, #79312c, #963e33 55%, #79312c); box-shadow: 0 3px 8px #682d2020; }
+  .account-recovery__tip { margin-bottom: 0; font-size: 12px; }
+  .account-recovery__error { color: #9b2f27; }
+}
+
+[data-theme='dark'] .account-setting .account-recovery {
+  background: #19272a; border-color: #b99b61; box-shadow: 0 4px 20px #0003, 0 0 0 3px #c4a36814;
+  &::before {
+    background-image: linear-gradient(90deg, #142227f2, #142227d9 65%, #1422279e),
+      url('/images/decor/recovery-xuan-paper-v1.jpg');
+  }
+  &::after { border-color: #c4a36855; box-shadow: inset 0 0 0 2px #c4a36808; }
+  .account-recovery__eyebrow { color: #eed4a8; background: #7b3d3438; border-color: #c4a36888; }
+  h2, label { color: #efdfc2; }
+  p { color: #c7bfad; }
+  input { color: #efdfc2; background: #17242bed; border-color: #b2955e; }
+  .account-recovery__error { color: #f0a194; }
+}

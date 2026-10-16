@@ -16,6 +16,7 @@
     position: relative;
     width: 104px;
     height: 104px;
+    flex: 0 0 104px;
     margin-bottom: 16px;
     display: flex;
     align-items: center;
@@ -161,4 +162,11 @@
   0% { transform: scale(0.96); opacity: 0.6; }
   50% { transform: scale(1.06); opacity: 0.2; }
   100% { transform: scale(0.96); opacity: 0.6; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .empty-state-root,
+  .empty-state-root .empty-state__aura .empty-state__ripple { animation: none; }
+  .empty-state-root .empty-state__seal-wrap,
+  .empty-state-root .empty-state__action-btn { transition: none; }
 }
