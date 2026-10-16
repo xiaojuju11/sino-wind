@@ -68,6 +68,37 @@ const PRESET_CONVERSATIONS = [
   }
 ]
 
+const SAGE_PREVIEW_MAP = {
+  libai: {
+    quote: '人生得意须尽欢，莫使金樽空对月。足下愿与吾共饮否？',
+    status: '把酒对月中'
+  },
+  group_zhulin: {
+    quote: '广陵绝响，竹林清风。嵇康阮籍诸君备薄酒以待来客。',
+    status: '诸贤同席'
+  },
+  sushi: {
+    quote: '一蓑烟雨任平生，也无风雨也无晴。且坐闲话平生。',
+    status: '烹茶赋词'
+  },
+  liqingzhao: {
+    quote: '沉醉不知归路，误入藕花深处。君有新词愿切磋否？',
+    status: '倚栏校词'
+  },
+  dufu: {
+    quote: '感时花溅泪，恨别鸟惊心。愿与君共话家国文章。',
+    status: '掩卷沉思'
+  },
+  wangyangming: {
+    quote: '知善知恶是良知，为善去恶是格物。共参良知本体。',
+    status: '心学悟道'
+  },
+  xinqiji: {
+    quote: '想当年金戈铁马，气吞万里如虎。且与某家倾樽豪饮！',
+    status: '挑灯看剑'
+  }
+}
+
 function LetterListSession() {
   const navigate = useNavigate()
   const [conversations, setConversations] = useState(() => {
@@ -78,12 +109,11 @@ function LetterListSession() {
   })
   const [drawerVisible, setDrawerVisible] = useState(false)
   const [letters, setLetters] = useState(cachedLetters)
-  const [notice, setNotice] = useState('')
   const [searchOpen, setSearchOpen] = useState(false), [searchText, setSearchText] = useState('')
   useEffect(() => {
     let current = true
-    const refresh = () => loadLetters().then(rows => { if (current) { setLetters(rows); setNotice('') } })
-      .catch(() => { if (current) { setLetters(cachedLetters()); setNotice('暂以本机信札展读，云端记录稍后可刷新') } })
+    const refresh = () => loadLetters().then(rows => { if (current) setLetters(rows) })
+      .catch(() => { if (current) setLetters(cachedLetters()) })
     const local = () => { if (current) setLetters(cachedLetters()) }
     refresh()
     const timer = setTimeout(refresh, 1200)
@@ -93,7 +123,22 @@ function LetterListSession() {
   const historical = letters.filter(row => !conversations.some(item => item.id === row.sageId) && (row.rounds > 0 || row.lastMsg)).map(row => ({ id: row.sageId, name: '自定知音', title: row.sageId, dynasty: '旧', avatar: `${BASE}assets/guancang/sage_wangyangming.png` }))
   const displayed = [...conversations, ...historical].map(item => {
     const row = letters.find(l => l.sageId === item.id)
-    return { ...item, lastMsg: row?.reply?.unread ? `知音回柬：${row.reply.text}` : row?.lastMsg || '尚未对席，展卷与先贤初叙', time: shichen(row?.reply?.unread ? row.reply.at : row?.at), unread: row?.reply?.unread ? 1 : 0, at: Math.max(row?.at || 0, row?.reply?.at || 0) }
+    const preview = SAGE_PREVIEW_MAP[item.id]
+    const hasHistory = Boolean(row?.lastMsg || row?.rounds > 0)
+    const lastMsg = row?.reply?.unread
+      ? `知音回柬：${row.reply.text}`
+      : (row?.lastMsg || preview?.quote || '云笺待展，愿与千载知音烹茶对坐。')
+    const time = row?.reply?.unread
+      ? shichen(row.reply.at)
+      : (hasHistory && row?.at ? shichen(row.at) : (preview?.status || item.status || '候席对坐'))
+    return {
+      ...item,
+      hasHistory,
+      lastMsg,
+      time,
+      unread: row?.reply?.unread ? 1 : 0,
+      at: Math.max(row?.at || 0, row?.reply?.at || 0)
+    }
   }).filter(item => `${item.name} ${item.title} ${item.lastMsg}`.includes(searchText.trim())).sort((a, b) => b.at - a.at)
 
   // 迎请新友成功回调
@@ -167,8 +212,6 @@ function LetterListSession() {
       {/* 3. 信札往还列表 */}
       <section className="letter-list-section">
         <ReferenceCorners />
-        {notice && <p role='status'>{notice}</p>}
-        <button type='button' onClick={() => loadLetters().then(rows => { setLetters(rows); setNotice('信札已刷新') }).catch(() => setNotice('云端暂未开卷，本机原稿保留'))}>刷新真实信札</button>
         <div className="letter-list-header">
           <span className="letter-list-title">尺素往来（{conversations.length} 席）</span>
           <span className="letter-list-tip">点击展开长谈</span>
@@ -194,7 +237,11 @@ function LetterListSession() {
                 <div className="letter-card__top">
                   <div className="letter-card__names">
                     <span className="letter-card__name">{item.id === 'group_zhulin' ? '竹林雅集' : item.name}</span>
-                    <span className="letter-card__title">{item.id === 'group_zhulin' ? '群聊' : `· ${item.title}`}</span>
+                    {item.id === 'group_zhulin' ? (
+                      <span className="letter-card__group-seal">群贤</span>
+                    ) : (
+                      <span className="letter-card__title">· {item.title}</span>
+                    )}
                   </div>
                   <span className="letter-card__time">{item.time}</span>
                 </div>

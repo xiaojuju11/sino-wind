@@ -87,7 +87,7 @@ function move(previous, { action, line }, now) {
     return list[0]
   }
   let chosen = pick(p => shared(p) && (!strict || rhymeGroups(p.line).includes(game.rhyme)))
-  if (!chosen) chosen = pick(() => true)              // ② 放宽韵脚，仍须含令字且未用过
+  if (!chosen && !strict) chosen = pick(() => true)   // 仅自由换韵模式允许降级，指定韵部时双方严格同韵
   if (!chosen) return { game: finish(game, 'user', '本局经典题库已无可应之句，雅士胜出', now), changed: true }
   game.turns.push({ role: 'sage', ...chosen })
   if (game.rounds >= 6) return { game: finish(game, 'draw', '六轮唱和俱合令，以和为贵', now), changed: true }

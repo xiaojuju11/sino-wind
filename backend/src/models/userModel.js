@@ -22,11 +22,12 @@ async function findUserById(id) {
 }
 
 async function updateUserInfo (params, id) {
-  const allKeys = ['id', 'avatar', 'nickname', 'password_hash']
+  const allKeys = ['avatar', 'nickname']
+  if (!params || typeof params !== 'object' || Array.isArray(params) || !Object.keys(params).length) throw new Error('资料参数无效')
   const currentkeys = Object.keys(params)  // ['avatar']
   
   currentkeys.forEach((item) => {
-    if (!allKeys.includes(item)) {
+    if (!allKeys.includes(item) || typeof params[item] !== 'string' || !params[item].trim() || params[item].length > (item === 'nickname' ? 50 : 2048)) {
       throw new Error('参数错误')
     }
   })
@@ -38,10 +39,15 @@ async function updateUserInfo (params, id) {
   return res
 }
 
+// Password changes are reachable only through the controller that verifies the old password.
+async function updateUserPassword(passwordHash, id) {
+  return (await db.execute('UPDATE users SET password_hash = ? WHERE id = ?', [passwordHash, id]))[0]
+}
 
 module.exports = {
   findUserByPhone,
   createUser,
   findUserById,
-  updateUserInfo
+  updateUserInfo,
+  updateUserPassword
 }

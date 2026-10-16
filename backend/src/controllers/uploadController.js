@@ -1,10 +1,23 @@
 const path = require('path')
 const fs = require('fs')
+const { Readable } = require('node:stream')
+const { pipeline } = require('node:stream/promises')
+const { randomUUID } = require('node:crypto')
 
 // 基础目录配置
 const PUBLIC_DIR = path.resolve(__dirname, '../../public')
 const AVATAR_DIR = path.join(PUBLIC_DIR, 'uploads/avatars')
 const CHUNKS_DIR = path.resolve(__dirname, '../../uploads_temp/chunks')
+const MAX_CHUNKS = 4096
+const validHash = value => typeof value === 'string' && /^(?:[a-f0-9]{24}_[1-9]\d{0,9}|[a-f0-9]{32}|[a-f0-9]{64})$/i.test(value)
+const validIndex = value => (typeof value === 'number' || typeof value === 'string') && /^(?:0|[1-9]\d*)$/.test(String(value)) && Number.isSafeInteger(Number(value)) && Number(value) < MAX_CHUNKS
+// Every write and recursive cleanup must remain below its fixed upload root.
+function inside(root, ...parts) {
+  const target = path.resolve(root, ...parts), relative = path.relative(root, target)
+  if (!relative || relative.startsWith('..') || path.isAbsolute(relative)) throw new Error('上传路径无效')
+  return target
+}
+const merging = new Set()
 
 // 确保必要目录存在
 function ensureDirs() {
@@ -32,14 +45,14 @@ function getSafeExt(fileName = '') {
 async function checkFile(ctx) {
   try {
     const { fileHash, fileName } = ctx.request.body || {}
-    if (!fileHash) {
+    if (!validHash(fileHash) || typeof fileName !== 'string') {
       ctx.status = 400
-      ctx.body = { code: 0, message: '缺少 fileHash 参数' }
+      ctx.body = { code: 0, message: '文件指纹或文件名无效' }
       return
     }
 
     const ext = getSafeExt(fileName)
-    const targetFilePath = path.join(AVATAR_DIR, `${fileHash}${ext}`)
+    const targetFilePath = inside(AVATAR_DIR, `${fileHash}${ext}`)
 
     // 检查最终目标文件是否存在（秒传）
     if (fs.existsSync(targetFilePath)) {
@@ -58,13 +71,12 @@ async function checkFile(ctx) {
     }
 
     // 检查分片临时目录，收集已上传的分片索引
-    const chunkDir = path.join(CHUNKS_DIR, fileHash)
+    const chunkDir = inside(CHUNKS_DIR, fileHash)
     let uploadedChunks = []
     if (fs.existsSync(chunkDir)) {
       const files = fs.readdirSync(chunkDir)
       uploadedChunks = files
-        .map(name => parseInt(name, 10))
-        .filter(n => !isNaN(n))
+        .filter(validIndex).map(Number)
     }
 
     ctx.body = {
@@ -91,18 +103,19 @@ async function uploadChunk(ctx) {
     const { fileHash, chunkIndex } = body
     const file = ctx.file || (ctx.req && ctx.req.file)
 
-    if (!fileHash || chunkIndex === undefined || !file) {
+    if (!validHash(fileHash) || !validIndex(chunkIndex) || !Buffer.isBuffer(file?.buffer)) {
       ctx.status = 400
       ctx.body = { code: 0, message: '分片参数不完整' }
       return
     }
+    if (merging.has(fileHash)) { ctx.status = 409; ctx.body = { code: 0, message: '文件正在合并，请稍后重试' }; return }
 
-    const chunkDir = path.join(CHUNKS_DIR, fileHash)
+    const chunkDir = inside(CHUNKS_DIR, fileHash)
     if (!fs.existsSync(chunkDir)) {
       fs.mkdirSync(chunkDir, { recursive: true })
     }
 
-    const chunkPath = path.join(chunkDir, String(chunkIndex))
+    const chunkPath = inside(chunkDir, String(chunkIndex))
     // 将上传的 Buffer 写入分片文件
     await fs.promises.writeFile(chunkPath, file.buffer)
 
@@ -124,19 +137,22 @@ async function uploadChunk(ctx) {
  * 3. 合并所有切片并生成最终头像文件
  */
 async function mergeChunks(ctx) {
+  let lockedHash, partialPath
   try {
     const { fileHash, fileName, totalChunks } = ctx.request.body || {}
     const total = Number(totalChunks)
 
-    if (!fileHash || !total || total <= 0) {
+    if (!validHash(fileHash) || typeof fileName !== 'string' || !Number.isSafeInteger(total) || total <= 0 || total > MAX_CHUNKS) {
       ctx.status = 400
       ctx.body = { code: 0, message: '合并参数不正确' }
       return
     }
 
     const ext = getSafeExt(fileName)
-    const targetFilePath = path.join(AVATAR_DIR, `${fileHash}${ext}`)
-    const chunkDir = path.join(CHUNKS_DIR, fileHash)
+    const targetFilePath = inside(AVATAR_DIR, `${fileHash}${ext}`)
+    const chunkDir = inside(CHUNKS_DIR, fileHash)
+    if (merging.has(fileHash)) { ctx.status = 409; ctx.body = { code: 0, message: '文件正在合并，请稍后重试' }; return }
+    merging.add(fileHash); lockedHash = fileHash
 
     if (!fs.existsSync(chunkDir)) {
       ctx.status = 400
@@ -146,7 +162,7 @@ async function mergeChunks(ctx) {
 
     // 检查所有切片是否齐全
     for (let i = 0; i < total; i++) {
-      const chunkPath = path.join(chunkDir, String(i))
+      const chunkPath = inside(chunkDir, String(i))
       if (!fs.existsSync(chunkPath)) {
         ctx.status = 400
         ctx.body = { code: 0, message: `缺少分片 #${i}，无法合并` }
@@ -155,26 +171,17 @@ async function mergeChunks(ctx) {
     }
 
     // 流式顺序合并切片，保证高效率和低内存占用
-    const writeStream = fs.createWriteStream(targetFilePath)
-
-    for (let i = 0; i < total; i++) {
-      const chunkPath = path.join(chunkDir, String(i))
-      await new Promise((resolve, reject) => {
-        const readStream = fs.createReadStream(chunkPath)
-        readStream.on('error', reject)
-        readStream.on('end', resolve)
-        readStream.pipe(writeStream, { end: false })
-      })
+    partialPath = inside(AVATAR_DIR, `${fileHash}.${randomUUID()}.part`)
+    async function* chunks() {
+      for (let i = 0; i < total; i++) yield* fs.createReadStream(inside(chunkDir, String(i)))
     }
-
-    // 关闭写流
-    await new Promise((resolve) => {
-      writeStream.end(resolve)
-    })
+    await pipeline(Readable.from(chunks()), fs.createWriteStream(partialPath, { flags: 'wx' }))
+    await fs.promises.rename(partialPath, targetFilePath)
+    partialPath = null
 
     // 合并完成，异步清理临时切片目录
     try {
-      fs.rmSync(chunkDir, { recursive: true, force: true })
+      fs.rmSync(inside(CHUNKS_DIR, fileHash), { recursive: true, force: true })
     } catch (cleanupErr) {
       console.warn('Clean temp chunks error:', cleanupErr.message)
     }
@@ -192,6 +199,9 @@ async function mergeChunks(ctx) {
     console.error('Merge chunks error:', error)
     ctx.status = 500
     ctx.body = { code: 0, message: '合并切片失败: ' + error.message }
+  } finally {
+    if (partialPath) await fs.promises.unlink(partialPath).catch(() => {})
+    if (lockedHash) merging.delete(lockedHash)
   }
 }
 

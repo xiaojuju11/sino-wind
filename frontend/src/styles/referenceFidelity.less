@@ -23,55 +23,212 @@
   .reference-corners { inset: -5px; > i { width: 18px; height: 18px; border-width: 1px; }> i::before { width: 11px; height: 11px; } }
 }
 .reference-polish.home-root {
-  padding: 10px 15px 12px;
-  .home-hero { padding: 48px 0 25px; min-height: 139px; }
-  .home-hero__title { font-size: clamp(34px,10.8vw,49px); letter-spacing: .04em; }
-  .home-hero__sub { font-size: 12px; letter-spacing: .1em; color: var(--gf-ink-primary); margin-top: 10px; }
-  .home-hero__seal { font-size: 13px; padding: 4px 3px; }
-  .home-card-scroll { margin-bottom: 15px; padding: 12px 13px; }
-  .home-section-title { font-size: 20px; letter-spacing: .05em; }
+  padding: 8px 15px 12px;
+  .home-hero { padding: 32px 0 16px; min-height: 110px; }
+  .home-hero__title { font-size: clamp(32px,10vw,44px); letter-spacing: .04em; }
+  .home-hero__sub { font-size: 12px; letter-spacing: .12em; color: var(--gf-ink-secondary); margin-top: 8px; }
+  .home-hero__seal { font-size: 12px; padding: 4px 3px; }
+  .home-hero__actions { top: 6px; right: 4px; }
+  .home-hero__icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--gf-bg-card) 85%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ref-gold) 60%, transparent);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    .iconfont { font-size: 17px; color: var(--gf-seal); }
+  }
+  .home-card-scroll { margin-bottom: 13px; padding: 12px 14px; }
+  .home-section-title { font-size: 18px; letter-spacing: .05em; }
   .home-section-sub { font-size: 12px; line-height: 1.6; margin: 3px 0 9px; color: var(--gf-ink-secondary); }
-  .home-yayan-section { padding: 15px 13px 13px 49px; margin: 0 2px 19px; border-radius: 1px; background-image: repeating-linear-gradient(90deg,transparent 0 15px,color-mix(in srgb,var(--gf-gold) 12%,transparent) 15px 16px),linear-gradient(100deg,var(--ref-paper),var(--gf-bg-card)); }
-  .home-yayan-section > .home-section-header { left: 8px; top: 15px; padding: 10px 4px; }
-  .home-yayan-section .home-section-title { font-size: 16px; letter-spacing: .15em; }
+  .home-yayan-section {
+    padding: 12px 13px 12px;
+    margin: 0 0 14px;
+    border-radius: 6px;
+    background-image: linear-gradient(100deg,var(--ref-paper),var(--gf-bg-card));
+  }
+  .home-yayan-section > .home-section-header {
+    position: static;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 0 8px;
+    margin-bottom: 6px;
+    writing-mode: horizontal-tb;
+    background: transparent;
+    color: var(--gf-ink-primary);
+    border: 0;
+  }
+  .home-yayan-section .home-section-title { font-size: 18px; letter-spacing: .05em; color: var(--gf-ink-primary); }
+  .home-yayan-section .home-section-seal { display: inline-flex; }
   .home-yayan-scroll { margin: 0; }
   .home-yayan-input-box,.home-yayan-result-card { width: 100%; box-sizing: border-box; margin-left: 0; margin-right: 0; }
-  .home-yayan-input-box { min-height: 46px; padding: 5px 10px; border: 3px double color-mix(in srgb,var(--ref-gold) 50%,transparent); }
-  .home-yayan-textarea { font-size: 13px; min-height: 31px; line-height: 1.7; padding: 0 8px 5px 25px; }
-  .home-yayan-counter { font-size: 10px; }
-  .home-yayan-divider { height: 20px; padding: 0; box-sizing: border-box; margin: 4px 0; }
-  .home-yayan-result-card { padding: 9px 10px 6px; margin: 3px 0 9px; border-radius: 5px; }
+  .home-yayan-input-box {
+    min-height: 44px;
+    padding: 6px 10px;
+    border: 1px solid color-mix(in srgb,var(--ref-gold) 45%,transparent);
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--gf-bg-card) 75%, transparent);
+  }
+  .home-yayan-pencil {
+    top: 9px;
+    left: 8px;
+    color: var(--gf-seal);
+    opacity: 0.8;
+  }
+  .home-yayan-textarea { font-size: 13px; min-height: 30px; line-height: 1.6; padding: 0 8px 4px 22px; }
+  .home-yayan-counter { font-size: 10px; bottom: 4px; right: 8px; }
+  .home-yayan-divider {
+    height: 18px;
+    padding: 0;
+    box-sizing: border-box;
+    margin: 2px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .home-yayan-divider__arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    color: var(--gf-gold);
+    font-size: 13px;
+  }
+  .home-yayan-result-card {
+    padding: 8px 10px 7px;
+    margin: 2px 0 8px;
+    border-radius: 6px;
+    border: 1px solid color-mix(in srgb, var(--ref-gold) 35%, transparent);
+  }
   .home-yayan-ancient-text { font-size: 14px; line-height: 1.7; margin: 0; font-family: 'STKaiti','KaiTi',serif; }
-  .home-yayan-explain { font-size: 12px; line-height: 1.65; margin: 4px 0 0; }
-  .home-yayan-author { font-size: 10px; line-height: 1.5; margin: 2px 0 0; }
-  .home-yayan-btn-row { gap: 9px; }
-  .home-yayan-btn-row { margin-top: 0; }
-  .home-yayan-submit-btn,.home-yayan-collect-btn { min-height: 37px; font-size: 14px; padding: 4px; }
-  .home-almanac { min-height: 162px; }
+  .home-yayan-explain { font-size: 12px; line-height: 1.65; margin: 4px 0 0; color: var(--gf-ink-secondary); }
+  .home-yayan-author { font-size: 11px; line-height: 1.5; margin: 2px 0 0; color: var(--gf-ink-secondary); opacity: 0.85; }
+  .home-yayan-btn-row { gap: 10px; margin-top: 2px; }
+  .home-yayan-submit-btn {
+    min-height: 37px;
+    font-size: 14px;
+    padding: 4px;
+    background: var(--gf-bamboo);
+    color: #fff;
+    border: 1px solid color-mix(in srgb, var(--gf-bamboo) 80%, transparent);
+    box-shadow: 0 2px 6px color-mix(in srgb, var(--gf-bamboo) 25%, transparent);
+  }
+  .home-yayan-collect-btn {
+    min-height: 37px;
+    font-size: 14px;
+    padding: 4px;
+    background: transparent;
+    color: var(--gf-seal);
+    border: 1px solid var(--gf-seal);
+    box-shadow: none;
+    &:active {
+      background: color-mix(in srgb, var(--gf-seal) 10%, transparent);
+    }
+  }
+  .home-almanac { min-height: 155px; }
   .home-almanac__label { display: inline-block; padding: 2px 7px; background: color-mix(in srgb,var(--gf-gold) 14%,transparent); border-radius: 5px; font-size: 12px; }
-  .home-almanac__temp { font-size: 34px; line-height: 1.1; color: var(--gf-ink-primary); }
-  .home-almanac__city,.home-almanac__date,.home-almanac__ganzhi,.home-almanac__wuhou { font-size: 12px; line-height: 1.6; margin: 2px 0; }
+  .home-almanac__temp { font-size: 26px; line-height: 1.1; color: var(--gf-ink-primary); font-weight: 700; }
+  .home-almanac__city {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    max-width: 100%;
+    margin: 3px 0 2px;
+    font-size: 12px;
+    line-height: 1.6;
+    .home-almanac__city-text {
+      max-width: 100px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: inline-block;
+    }
+    .home-almanac__loc {
+      font-size: 10px;
+      padding: 0 4px;
+      border-radius: 2px;
+      background: color-mix(in srgb, var(--gf-gold) 16%, transparent);
+      color: var(--gf-ink-secondary);
+      font-style: normal;
+      white-space: nowrap;
+    }
+  }
+  .home-almanac__date,.home-almanac__ganzhi,.home-almanac__wuhou { font-size: 12px; line-height: 1.6; margin: 2px 0; }
   .home-almanac__desc { font-size: 13px; line-height: 1.6; margin: 3px 0; }
   .home-shiwu-section,.home-poem-card { position: relative; overflow: hidden; }
-  .home-shiwu-section::before,.home-poem-card::before { content: ''; position: absolute; inset: 0 0 0 auto; width: 55%; height: 100%; border: 0; border-radius: 0; background-size: auto 100%; background-repeat: no-repeat; background-position: right center; mask-image: linear-gradient(to right,transparent,#000 55%); pointer-events: none; z-index: 0; }
-  .home-shiwu-section::before { background-image: url('/assets/home/bg-shiwu.jpg'); opacity: .4; }
-  .home-poem-card::before { background-image: url('/assets/home/bg-poem.jpg'); opacity: .88; }
+  .home-shiwu-section::before,.home-poem-card::before { content: ''; position: absolute; inset: 0 0 0 auto; width: 55%; height: 100%; border: 0; border-radius: 0; background-size: auto 100%; background-repeat: no-repeat; background-position: right center; mask-image: linear-gradient(to right,transparent,#000 65%); pointer-events: none; z-index: 0; }
+  .home-shiwu-section::before { background-image: url('/assets/home/bg-shiwu.jpg'); opacity: .3; }
+  .home-poem-card::before { background-image: url('/assets/home/bg-poem.jpg'); opacity: .75; }
   .home-shiwu-section > :not(.reference-corners),.home-poem-card > :not(.reference-corners) { position: relative; z-index: 1; }
-  .home-shiwu-upload { min-height: 85px; background: color-mix(in srgb,var(--gf-bg-card) 80%,transparent); }
-  .home-shiwu-upload__icon { font-size: 32px; }
+  .home-shiwu-upload {
+    min-height: 82px;
+    background: color-mix(in srgb,var(--gf-bg-card) 75%,transparent);
+    border: 1px solid color-mix(in srgb, var(--ref-gold) 45%, transparent);
+    border-radius: 6px;
+  }
+  .home-shiwu-upload__icon { font-size: 30px; }
   .home-shiwu-upload__title { font-size: 13px; }
   .home-shiwu-upload__desc { font-size: 11px; }
-  .home-shiwu-demo__item { background: color-mix(in srgb,var(--gf-bg-card) 80%,transparent); min-height: 37px; }
+  .home-shiwu-demo__item {
+    background: color-mix(in srgb,var(--gf-bg-card) 65%,transparent);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid color-mix(in srgb, var(--ref-gold) 35%, transparent);
+    border-radius: 4px;
+    min-height: 35px;
+    padding: 6px 8px;
+    gap: 6px;
+  }
+  .home-shiwu-demo__seal {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: var(--gf-seal);
+    color: #fff6e3;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    border-radius: 2px;
+  }
   .home-shiwu-demo__modern,.home-shiwu-demo__ancient { font-size: 12px; }
-  .home-shiwu-demo__symbol { font-size: 20px; flex: none; color: var(--gf-ink-primary); }
-  .home-poem-card { min-height: 145px; }
+  .home-shiwu-demo__flow-arrow { color: var(--gf-gold); font-size: 11px; margin: 0 2px; opacity: 0.85; }
+  .home-shiwu-demo__chevron { font-size: 12px; color: var(--gf-ink-secondary); opacity: 0.5; margin-left: auto; }
+  .home-poem-card {
+    min-height: 130px;
+    cursor: pointer;
+    transition: transform .2s ease;
+    &:active { transform: scale(0.99); }
+  }
   .home-poem-title { font-size: 17px; font-family: 'STKaiti','KaiTi',serif; max-width: 72%; line-height: 1.6; }
   .home-poem-verses { font-size: 18px; line-height: 1.7; max-width: 75%; }
-  .home-poem-body { min-height: 0; padding: 3px 0 0; margin: 0; }
-  .home-poem-title { max-width: 100%; margin: 3px 0; font-size: 17px; line-height: 1.5; }
-  .home-poem-meta { font-size: 11px; line-height: 1.5; margin: 0 0 4px; }
-  .home-poem-verses p { font-size: 17px; line-height: 1.5; margin: 0; }
-  .home-poem-more { position: absolute; right: 0; bottom: 2px; }
+  .home-poem-body { min-height: 0; padding: 2px 0 0; margin: 0; }
+  .home-poem-title { max-width: 100%; margin: 2px 0; font-size: 16px; line-height: 1.5; }
+  .home-poem-meta { font-size: 11px; line-height: 1.5; margin: 0 0 4px; color: var(--gf-ink-secondary); }
+  .home-poem-verses p { font-size: 17px; line-height: 1.55; margin: 0; }
+  .home-poem-more {
+    position: absolute;
+    right: 0;
+    bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px 8px;
+    background: color-mix(in srgb, var(--gf-bg-card) 90%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ref-gold) 50%, transparent);
+    border-radius: 12px;
+    color: var(--gf-seal);
+    font-size: 11px;
+    font-family: 'STKaiti', 'KaiTi', serif;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    .home-poem-more__text { font-size: 11px; line-height: 1; }
+    .home-poem-more__icon { font-size: 11px; }
+  }
 }
 .reference-polish.letter-root {
   .letter-header { padding: max(20px, env(safe-area-inset-top)) 2px 14px; }
@@ -177,12 +334,18 @@
   .invite-drawer__confirm-btn { border-radius: 6px; min-height: 45px; font-size: 18px; }
 }
 .layout:has(.reference-polish) .bottom-nav {
-  bottom: 0; height: 62px; max-width: 480px; padding: 6px 24px max(7px,env(safe-area-inset-bottom));
-  background: var(--gf-bg-card); backdrop-filter: none; -webkit-backdrop-filter: none;
-  border: 3px double var(--gf-gold); border-bottom: 0; border-radius: 10px 10px 0 0; box-shadow: 0 -2px 6px #0000000d;
-  .bottom-nav__icon-font { font-size: 27px; height: 28px; width: 28px; }
-  .bottom-nav__label { font-size: 14px; line-height: 1.4; }
-  .bottom-nav__underline { width: 29px; height: 3px; bottom: 0; }
+  bottom: 0; height: 60px; max-width: 480px; padding: 6px 24px max(6px,env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--gf-bg-card) 92%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 45%, transparent);
+  border-bottom: 0;
+  border-radius: 14px 14px 0 0;
+  box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.04);
+  &::before, &::after { display: none !important; }
+  .bottom-nav__icon-font { font-size: 24px; height: 26px; width: 26px; }
+  .bottom-nav__label { font-size: 13px; line-height: 1.3; font-family: 'STKaiti', 'KaiTi', serif; }
+  .bottom-nav__underline { width: 24px; height: 2.5px; border-radius: 2px; }
 }
 .bamboo-breeze-root.reference-bamboo {
   left: 50%; width: min(100%,480px); transform: translateX(-50%);
@@ -200,7 +363,7 @@
   .home-almanac__roam { color: var(--gf-ink-primary); font-size: 11px; min-height: 26px; }
 }
 @media (max-width: 350px) {
-  .reference-polish.home-root { .home-hero__title { font-size: 34px; }.home-yayan-section { padding-left: 42px; }.home-yayan-ancient-text { font-size: 15px; } }
+  .reference-polish.home-root { .home-hero__title { font-size: 32px; }.home-yayan-section { padding-left: 10px; padding-right: 10px; }.home-yayan-ancient-text { font-size: 14px; } }
   .reference-polish.letter-root { .letter-header__title { font-size: 35px; }.letter-card__avatar-wrap { width: 48px; height: 48px; flex-basis: 48px; }.letter-card__name { font-size: 16px; }.letter-card__snippet { font-size: 13px; } }
   .reference-invite.invite-drawer .invite-drawer__title { font-size: 19px; }
   .reference-invite.invite-drawer .invite-drawer__close span { display: none; }

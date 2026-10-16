@@ -1,8 +1,13 @@
 const jwt = require('jsonwebtoken')
-require('dotenv').config({ path: ['.env.local', '.env'] })
+const path = require('node:path')
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env.local'), override: true })
 
 // 安全加固：优先从环境变量读取 JWT_SECRET，杜绝硬编码弱口令伪造风险
-const JWT_SECRET = process.env.JWT_SECRET || 'sino_wind_gufeng_jwt_secret_2026'
+const JWT_SECRET = process.env.JWT_SECRET
+if (typeof JWT_SECRET !== 'string' || JWT_SECRET.trim().length < 32 || JWT_SECRET === 'sino_wind_gufeng_jwt_secret_2026') {
+  throw new Error('JWT_SECRET 必须配置为至少32字符的独立随机密钥；请设置 backend/.env.local 后启动服务')
+}
 
 function verifyToken() {
   return async (ctx, next) => {
