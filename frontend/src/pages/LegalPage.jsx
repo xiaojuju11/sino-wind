@@ -46,7 +46,6 @@ export default function LegalPage() {
         <p className="legal-page__eyebrow">云山竹简项目团队</p>
         <h1>{title}</h1>
         <p className="legal-page__date">更新及生效日期：{updatedAt}</p>
-        <p className="legal-page__notice">竞赛演示版 · 请认真阅读后，自主选择是否同意并使用。若本页在新窗口打开，阅读后可关闭本页，回到原入席页面继续。</p>
         <nav className="legal-page__tabs" aria-label="服务文书">
           <Link to="/legal/terms" aria-current={!isPrivacy ? 'page' : undefined}>用户协议</Link>
           <Link to="/legal/privacy" aria-current={isPrivacy ? 'page' : undefined}>隐私政策</Link>
