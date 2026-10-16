@@ -821,27 +821,63 @@
   }
 }
 
-// 右下角圆形展卷按钮
+// 右下角「展卷细读」按钮
+// 2026-10-16：原为圆形箭头图标，用户要求改为写明文字的按钮。
+// 说明：本文件通篇走 --gf-* CSS 变量、不引用 Less 令牌，故此处不套用
+// styles/buttons.less 的 mixin（那会额外引入令牌层、且与暗色变量重复），
+// 而是以等价的 --gf-* 写法对齐同一规范：柔圆角 + 暖调外阴影 + 双色描边。
 .home-poem-more {
   position: absolute;
   right: 0.26rem;
   bottom: 0.26rem;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 0.84rem;
-  height: 0.84rem;
-  padding: 0;
-  font-size: 0.38rem;
-  color: var(--gf-ink-secondary);
+  gap: 0.1rem;
+  min-height: 0.7rem;
+  padding: 0 0.26rem;
+  font-size: 0.28rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+  color: var(--gf-ink-primary);
   background: var(--gf-bg-card);
-  border: 1px solid color-mix(in srgb, var(--gf-border-card) 90%, transparent);
-  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 58%, transparent);
+  border-radius: 0.2rem;
   cursor: pointer;
-  box-shadow: 0 0.04rem 0.14rem var(--home-shadow);
+  -webkit-tap-highlight-color: transparent;
+  box-shadow:
+    0 0.02rem 0.06rem rgba(90, 44, 30, 0.1),
+    0 0.06rem 0.16rem rgba(90, 44, 30, 0.08);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
 
+  &__arrow {
+    font-size: 0.26rem;
+    color: var(--gf-gold);
+    transition: transform 0.18s ease;
+  }
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--gf-gold) 78%, transparent);
+    box-shadow:
+      0 0.02rem 0.06rem rgba(90, 44, 30, 0.14),
+      0 0.08rem 0.2rem rgba(90, 44, 30, 0.11);
+  }
+
+  &:hover &__arrow {
+    transform: translateX(0.04rem);
+  }
+
+  // 按压：收窄外投影并压出内痕，与 buttons.less 的 @shadow-btn-active 同义
   &:active {
-    transform: translateY(1px);
+    transform: translateY(0.5px);
+    background: var(--gf-bg-sunk);
+    box-shadow:
+      0 0.01rem 0.03rem rgba(90, 44, 30, 0.12),
+      inset 0 0.02rem 0.05rem rgba(60, 24, 14, 0.16);
   }
 }
 
@@ -955,7 +991,7 @@
 .home-poem-meta { margin-top: 0.02rem; font-size: 0.30rem; }
 .home-poem-verses { margin-top: 0.08rem; }
 .home-poem-verses p { font-size: 0.36rem; line-height: 1.6; }
-.home-poem-more { right: 0.18rem; bottom: 0.18rem; width: 0.64rem; height: 0.64rem; font-size: 0.28rem; }
+.home-poem-more { right: 0.26rem; bottom: 0.26rem; }
 
 // ════════════════════════════════════════════════════
 //  白话雅译详情稿对齐（d0dba46c…jpg 853×459 → 块高≈210 CSS px）

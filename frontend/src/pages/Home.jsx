@@ -597,13 +597,16 @@ export default function Home() {
           <div className="home-poem-verses">
             <p>一蓑烟雨任平生，</p>
             <p>也无风雨也无晴。</p>
-          </div>          <button
+          </div>
+          {/* 展卷细读：原为一个圆形箭头图标，用户要求改为带文字的可读按钮
+              （文字沿用既有 aria-label，补一枚小箭头作前向暗示，不再用纯箭头） */}
+          <button
             type="button"
             className="home-poem-more"
-            aria-label="展卷细读"
             onClick={() => navigate('/poem')}
           >
-            <RightOutline />
+            <span>展卷细读</span>
+            <RightOutline className="home-poem-more__arrow" aria-hidden="true" />
           </button>
         </div>
       </section>
