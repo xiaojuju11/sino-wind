@@ -1,0 +1,87 @@
+.reference-polish.home-root .home-card-scroll.frequency-home-card {
+  position: relative; isolation: isolate; overflow: hidden; min-height: 230px; padding-bottom: 52px;
+  background: var(--gf-bg-card, #faf7ed);
+  > .frequency-home-card__art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: right center; opacity: .64; pointer-events: none; z-index: 0; }
+  > :not(.frequency-home-card__art) { position: relative; z-index: 1; }
+  > .reference-corners { position: absolute; }
+  > .home-poem-more { position: absolute; right: 24px; bottom: 22px; }
+  .frequency-home-card__verse { margin: 20px 0 12px; color: var(--gf-ink-primary); font: 600 clamp(22px, 3.5vw, 32px)/1.65 STKaiti, KaiTi, serif; letter-spacing: .08em; p { margin: 0; } }
+  .frequency-home-card__steps { color: var(--gf-ink-secondary); font-size: 12px; letter-spacing: .12em; }
+}
+.reference-polish.home-root .home-card-scroll.home-yayan-section {
+  position: relative; isolation: isolate; overflow: hidden;
+  > .home-yayan-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: right bottom; opacity: .38; pointer-events: none; z-index: 0; }
+  > :not(.home-yayan-art) { position: relative; z-index: 1; }
+  > .reference-corners { position: absolute; z-index: 3; }
+  .home-yayan-result-card { background-color: color-mix(in srgb, var(--gf-bg-card) 88%, transparent); }
+}
+.frequency-page {
+  max-width: 480px; margin: auto; font-size: 14px; line-height: 1.75;
+  --frequency-line: color-mix(in srgb, var(--gf-gold, #b39551) 56%, transparent);
+  .frequency-main { padding: 22px 18px 30px; }
+  .frequency-panel { position: relative; isolation: isolate; border: 1px solid var(--gf-gold, #b39551); border-radius: 7px; padding: 20px; margin-bottom: 22px; background: color-mix(in srgb, var(--gf-bg-card, #faf7ed) 94%, transparent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--gf-bg-paper) 75%, transparent), 0 0 0 4px var(--frequency-line), 0 7px 20px #3b2e1310;
+    > .reference-corners { position: absolute; pointer-events: none; z-index: 2; }
+    h2 { font: 600 23px/1.5 STKaiti, KaiTi, serif; margin: 0 0 16px; }
+  }
+  .frequency-intro { padding: 24px 20px 70px; overflow: hidden;
+    &::before { content: ''; position: absolute; z-index: -1; inset: 0; background: url('/images/frequency/poetry-desk-v1.webp') center / cover; opacity: .52; }
+    p:not(.frequency-eyebrow) { max-width: 85%; }
+    small { font-size: 12px; }
+  }
+  .frequency-eyebrow { color: var(--gf-ink-secondary); letter-spacing: .12em; font-size: 12px; }
+  .frequency-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px 10px;
+    label { display: flex; flex-direction: column; gap: 5px; font-size: 13px; min-width: 0; }
+    input:not([type='checkbox']), select { width: 100%; box-sizing: border-box; min-width: 0; min-height: 44px; border: 1px solid var(--frequency-line); border-radius: 5px; background: var(--gf-bg-paper); color: var(--gf-ink-primary); padding: 8px; font: inherit; }
+    .frequency-wide { grid-column: 1 / -1; }
+    .frequency-checkbox { flex-direction: row; align-items: center; min-height: 30px; input { width: 17px; height: 17px; accent-color: var(--gf-seal); } }
+  }
+  .frequency-primary { min-height: 44px; border: 3px double var(--gf-gold); border-radius: 6px; background: var(--gf-seal, #7b3430); color: #fff0d7; padding: 9px 12px; }
+  .frequency-notice { padding: 20px 10px; text-align: center; }
+  .frequency-quiet { font-size: 12px; color: var(--gf-ink-secondary); }
+  .frequency-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); text-align: center; gap: 8px;
+    > div { border-right: 1px solid var(--frequency-line); &:last-child { border: 0; } }
+    strong, span { display: block; } strong { font: 24px/1.5 STKaiti, KaiTi, serif; } span { font-size: 12px; color: var(--gf-ink-secondary); }
+  }
+  .frequency-wordcloud {
+    margin: 20px -8px; padding: 10px 0; border-block: 1px solid var(--frequency-line);
+    &__toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 0 8px 6px; color: var(--gf-ink-secondary); font-size: 12px;
+      button { min-height: 36px; padding: 4px 10px; background: transparent; border: 1px solid var(--frequency-line); border-radius: 5px; font-size: 12px; }
+    }
+    &__viewport { width: 100%; aspect-ratio: 1000 / 660; overflow: auto; scrollbar-width: thin; overscroll-behavior: contain; }
+    &__svg { display: block; max-width: none; height: auto; }
+    &__word { cursor: pointer;
+      rect { fill: transparent; stroke: transparent; stroke-width: 2px; }
+      text { fill: currentColor; pointer-events: none; }
+      &:hover rect, &:focus-visible rect { fill: color-mix(in srgb, var(--gf-gold) 12%, transparent); stroke: var(--gf-gold); }
+      &:focus { outline: none; }
+      &--0 { color: #ac4d45; } &--1 { color: #3f785e; } &--2 { color: #496a9a; } &--3 { color: #a16d38; } &--4 { color: #77618e; } &--5 { color: #3b8c8c; } &--6 { color: #936578; }
+    }
+  }
+  .frequency-bar { display: flex; width: 100%; min-height: 49px; align-items: center; gap: 8px; padding: 5px 0; border: 0; border-bottom: 1px solid var(--frequency-line); background: transparent; text-align: left;
+    &[aria-pressed='true'] { background: color-mix(in srgb, var(--gf-gold) 10%, transparent); }
+    &__label { display: flex; align-items: center; gap: 6px; flex: 0 0 68px; overflow-wrap: anywhere; font-size: 13px; small { font-size: 10px; color: var(--gf-ink-secondary); } }
+    &__track { flex: 1; min-width: 0; height: 7px; border-radius: 3px; background: color-mix(in srgb, var(--gf-gold) 14%, transparent); i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--gf-seal, #7b3430), var(--gf-gold, #b39551)); } }
+    &__value { flex: 0 0 72px; text-align: right; font-size: 13px; small { display: block; font-size: 10px; color: var(--gf-ink-secondary); } }
+  }
+  .frequency-export { display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; min-height: 44px; border: 1px solid var(--frequency-line); border-radius: 5px; background: var(--gf-bg-paper); margin-top: 18px; }
+  .frequency-context { width: 100%; display: block; text-align: left; border: 0; border-bottom: 1px solid var(--frequency-line); padding: 14px 0; background: transparent; overflow-wrap: anywhere;
+    small { color: var(--gf-ink-secondary); } h3 { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 17px; margin: 4px 0; svg { flex: none; } } p { margin: 6px 0; font-size: 14px; line-height: 1.9; }
+  }
+  #frequency-contexts { scroll-margin-top: 120px; }
+  mark { color: var(--gf-accent-text, #8a2b2b); background: color-mix(in srgb, var(--gf-gold) 20%, transparent); padding: 0 1px; }
+  .frequency-pagination, .frequency-version { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 16px;
+    button { min-height: 40px; padding: 5px 10px; border: 1px solid var(--frequency-line); border-radius: 5px; background: var(--gf-bg-paper); &[aria-pressed='true'] { color: var(--gf-accent-text); border-color: currentColor; } }
+  }
+  .frequency-method { font-size: 12px; color: var(--gf-ink-secondary); summary { cursor: pointer; min-height: 30px; } }
+  a { color: var(--gf-accent-text, #8a2b2b); text-underline-offset: 3px; overflow-wrap: anywhere; }
+  .frequency-poem { text-align: center; h2 { overflow-wrap: anywhere; } .frequency-version { justify-content: center; } &__lines { margin: 32px 0; font: 20px/2 STKaiti, KaiTi, serif; overflow-wrap: anywhere; p { margin: 10px 0; } } footer { font-size: 12px; border-top: 1px solid var(--frequency-line); padding-top: 14px; } }
+}
+[data-theme='dark'] {
+  .frequency-page .frequency-wordcloud__word {
+    &--0 { color: #e39284; } &--1 { color: #99c7a5; } &--2 { color: #99b8e8; } &--3 { color: #e4bd7b; } &--4 { color: #c5a8e4; } &--5 { color: #8dcccb; } &--6 { color: #dfacc0; }
+  }
+  .reference-polish.home-root .home-card-scroll.frequency-home-card > .frequency-home-card__art { opacity: .16; }
+  .reference-polish.home-root .home-card-scroll.home-yayan-section > .home-yayan-art { opacity: .13; }
+  .frequency-page .frequency-intro::before { opacity: .15; }
+}
+@media (max-width: 360px) { .frequency-page { .frequency-main { padding-inline: 12px; } .frequency-panel { padding: 16px; } .frequency-bar__label { flex-basis: 60px; } .frequency-bar__value { flex-basis: 65px; } } }

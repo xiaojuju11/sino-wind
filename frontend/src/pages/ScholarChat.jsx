@@ -9,7 +9,6 @@ import FeihuaPanel from '../components/FeihuaPanel'
 import { receiveScholarStream } from '../utils/scholarStream'
 import { cachedLetters, loadLetterDetail, markLetterRead, saveLocalTurn, leaveScholar, shichen, scholarScope } from '../utils/scholarLetters'
 import '../styles/scholarEcosystem.less'
-import ScholarArtifactDrawer from '../components/ScholarArtifactDrawer'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
 import { getScholarScene } from '../utils/scholarScenes'
@@ -200,12 +199,12 @@ function ScholarChatSession() {
       }
     ]
   })
-  const [inputText, setInputText] = useState('')
+  const [inputText, setInputText] = useState(() => typeof location.state?.scenePrompt === 'string' ? location.state.scenePrompt.slice(0, 1800) : '')
+  const [scenePromptActive, setScenePromptActive] = useState(() => Boolean(location.state?.scenePrompt))
   const [loading, setLoading] = useState(false)
   const [gameOpen, setGameOpen] = useState(false)
   const [hydrating, setHydrating] = useState(true)
   const [replyLetter, setReplyLetter] = useState(null)
-  const [artifactOpen, setArtifactOpen] = useState(false)
   const activeRequest = useRef(null)
   const stopRequest = () => {
     const request = activeRequest.current
@@ -271,6 +270,7 @@ function ScholarChatSession() {
     activeRequest.current = request
     setMessages(prev => [...prev, userMsg, { id: aiId, role: 'ai', content: '', streaming: true, time: getShichenTime() }])
     if (!customContent) setInputText('')
+    setScenePromptActive(false)
     setLoading(true)
     const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
     request.timer = setInterval(() => {
@@ -394,11 +394,6 @@ function ScholarChatSession() {
     }
   }
 
-  // 快捷转引物溯古今
-  const handleCiteShiwu = () => {
-    if (!loading && !hydrating) setArtifactOpen(true)
-  }
-
   return (
     <div className={`scholar-chat-root reference-polish${gameOpen ? " is-game" : ""}${hasScene ? ' has-sage-scene' : ''}`}>
       {hasScene && <div className='scholar-scene' aria-hidden='true'>
@@ -406,10 +401,6 @@ function ScholarChatSession() {
         <div className='scholar-scene__shade' />
       </div>}
       <InkWashBackground atmosphereOnly={hasScene} />
-      {artifactOpen && <ScholarArtifactDrawer onClose={() => setArtifactOpen(false)} onPick={item => {
-        setArtifactOpen(false)
-        handleSend(`${sageInfo.name}先生，吾日前识得「${item.name}」，记录暂考为「${item.dynasty || '年代待考'}」${item.degraded ? '，此项仍为内置资料推演' : ''}。${scholarScope() === 'guest' ? `本机考释资料：${item.description.slice(0, 800)}。` : ''}愿请先生从所属时代的器用与风雅辨析其来历；若晚于先生之世，亦请说明为跨时推论，不知此物与古今生活有何相通？`, scholarScope() === 'guest' ? undefined : item.id)
-      }} />}
       {/* 1. 顶部清雅导航栏 */}
       <header className="scholar-nav">
         <button
@@ -501,7 +492,22 @@ function ScholarChatSession() {
             </section>
           </div>
         )}
-        {hydrating && <p role='status'>正在展读旧笺…</p>}
+        {!gameOpen && scenePromptActive && (
+          <aside className="scholar-scene-lead-banner" aria-label="实景诗境入席">
+            <div>
+              <strong className="scholar-scene-lead-banner__tag">🏮 携实景诗境入席</strong>
+              <p className="scholar-scene-lead-banner__text">已载入实景意象与相配诗句，点击即可一键向先贤追问诗中微意。</p>
+            </div>
+            <button
+              type="button"
+              className="scholar-scene-lead-banner__btn"
+              disabled={loading}
+              onClick={() => handleSend(inputText)}
+            >
+              一键请教
+            </button>
+          </aside>
+        )}
         {!gameOpen && replyLetter && <aside className='scholar-reply-letter' aria-label='知音回柬'><strong>知音回柬 · {replyLetter.kind}</strong><p>{replyLetter.text}</p><button type='button' onClick={() => setReplyLetter(null)}>收笺续谈</button></aside>}
         {gameOpen && <FeihuaPanel key={sageKey} sageId={sageKey} onClose={() => setGameOpen(false)} />}
         {!gameOpen && messages.map((item) => (
@@ -560,15 +566,6 @@ function ScholarChatSession() {
           <button
             type="button"
             className="scholar-tool-btn"
-            disabled={loading || hydrating}
-            onClick={handleCiteShiwu}
-          >
-            <FileOutline className="scholar-tool-icon" />
-            引物溯古
-          </button>
-          <button
-            type="button"
-            className="scholar-tool-btn"
             onClick={() => handleSend('请兄台以此时月色为题，口占一绝。')}
           >
             <EditSOutline className="scholar-tool-icon" />
@@ -610,6 +607,8 @@ function ScholarChatSession() {
           </button>
         </div>
       </footer>}
+
+
     </div>
   )
 }

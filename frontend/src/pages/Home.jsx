@@ -1,8 +1,10 @@
 import ReferenceCorners from '../components/ReferenceCorners'
+import SceneHomeCard from '../components/SceneHomeCard'
+import FrequencyHomeCard from '../components/FrequencyHomeCard'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import '../styles/home.less'
-import { Toast, Popup } from 'antd-mobile'
-import { DownOutline, RightOutline, UpOutline, CompassOutline, CheckCircleOutline, StarOutline, SearchOutline } from 'antd-mobile-icons'
+import { Toast, Popup, CenterPopup } from 'antd-mobile'
+import { DownOutline, RightOutline, UpOutline, CheckCircleOutline, StarOutline, SearchOutline } from 'antd-mobile-icons'
 import { CITY_DICT, autoDetectUserCity } from '../utils/ancientCities'   // 郑小君的逐城精编诗文 + IP 感知
 import { useNavigate } from 'react-router-dom'
 import InkParticleField from '../components/InkParticleField.jsx'
@@ -10,16 +12,15 @@ import InkSpreadZone from '../components/InkSpreadZone.jsx'
 import axios from '../http'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
+import '../styles/homeHarmony.less'
 import { CITIES, searchCities } from '../utils/geoCities.js'
 import { currentTerm, seasonLine, fetchWeather, locate } from '../utils/almanac.js'
 import { SHICHEN, shichenOf } from '../utils/shichen.js'
+import { playInkDropSound } from '../utils/guofengAudio.js'
 // 《九州地名志 · 城邑春秋》已迁到独立二级页面（pages/CityChroniclePage.jsx），
 // 本页不再需要 cityChronicle / NOT_FOUND_TIP / RECOMMEND_CITIES
 
 const BASE = import.meta.env.BASE_URL
-
-// 现代天气日轮图标
-function SunWheelGlyph() { return <CompassOutline aria-hidden="true" /> }
 
 // ════════════════════════════════════════════════════
 //  传统时辰换算（TRD v3.0：动态算法换算十二时辰）
@@ -58,8 +59,8 @@ function getDateText(date = new Date()) {
 // 古今识物 · 示例体验（对齐设计稿两条）
 // 图标走 TRD §2.3 第三优先级「CSS 印章」：朱砂印泥 + 单字古称，随主题着色
 const SHIWU_DEMOS = [
-  { seal: '酪', modern: '拍奶茶', ancient: '酪饮 / 酥签' },
-  { seal: '笈', modern: '拍书包', ancient: '筒简 / 书笈' },
+  { id: 'naicha', seal: '酪', modern: '拍奶茶', ancient: '酪饮 / 酥签' },
+  { id: 'shubao', seal: '笈', modern: '拍书包', ancient: '筒简 / 书笈' },
 ]
 
 // 首屏预置的雅译范例（与后端离线典范库口径一致）
@@ -353,6 +354,7 @@ export default function Home() {
         createdAt: new Date().toLocaleDateString(),
       })
       localStorage.setItem('gufeng_yayan_list', JSON.stringify(saved))
+      playInkDropSound()
       Toast.show({ content: '已摘录入墨隐书斋 · 雅译锦囊', icon: 'success' })
     } catch {
       Toast.show({ content: '摘录未保存，本机存储不可用，请稍后重试', icon: 'fail' })
@@ -398,12 +400,32 @@ export default function Home() {
         <p className="home-hero__sub">—— 读千年风雅 与君共此山河 ——</p>
       </header>
 
-      {/* ── 区块① 白话雅译（两端木轴卷轴 + 竖排红签）── */}
+      {/* ── 核心主线体验：寻镜入诗（首屏最核心展示与交互）── */}
+      <SceneHomeCard />
+
+      {/* ── 雅集风物 · 辅助研习分界 ── */}
+      <div className="home-supporting-divider">
+        <div className="home-supporting-divider__line" />
+        <div className="home-supporting-divider__badge">
+          <span className="home-supporting-divider__icon">📜</span>
+          <span>雅集风物 · 辅助研习</span>
+        </div>
+        <div className="home-supporting-divider__line" />
+      </div>
+      <p className="home-supporting-sub">
+        意象今译、景地物候、名物考释与声律推演，四维相伴诗心
+      </p>
+
+      {/* ── 区块① 白话雅译（意象今译辅助）── */}
       <section className="home-card-scroll home-yayan-section">
+        <img className="home-yayan-art" src={`${BASE}images/frequency/yayan-desk-v1.webp`} alt="" aria-hidden="true" />
         <ReferenceCorners />
         <div className="home-section-header">
-          <h2 className="home-section-title">白话雅译</h2>
-          <span className="home-section-seal">简</span>
+          <div className="home-section-title-wrap">
+            <span className="home-section-category">雅译 · 意象今译</span>
+            <h2 className="home-section-title">白话雅译</h2>
+          </div>
+          <span className="home-section-seal">译</span>
         </div>
 
         <div className="home-yayan-scroll">
@@ -435,7 +457,6 @@ export default function Home() {
               <div className="home-yayan-result-card">
                 <p className="home-yayan-ancient-text">
                   {yayanResult.ancient}
-                  <i className="home-yayan-seal">闲</i>
                 </p>
                 <p className="home-yayan-explain"><span className="home-yayan-explain__label">文言释义：</span>{yayanResult.explanation}</p>
                 <p className="home-yayan-author">—— {yayanResult.author}</p>
@@ -482,28 +503,18 @@ export default function Home() {
       <section className="home-card-scroll home-almanac">
         <ReferenceCorners />
         <div className="home-section-header">
-          <h2 className="home-section-title">古今时令与天象</h2>
+          <div className="home-section-title-wrap">
+            <span className="home-section-category">物候 · 景地时令</span>
+            <h2 className="home-section-title">古今时令与天象</h2>
+          </div>
           <span className="home-section-seal">时</span>
-          <button
-            type="button"
-            className="home-almanac__roam"
-            onClick={openChronicle}
-            aria-label="漫游古今城邑"
-          >
-            <CompassOutline className="home-almanac__roam-icon" />
-            漫游
-          </button>
         </div>
-        <p className="home-section-sub">观天时，知物候，品古今生活之美。</p>
+        <p className="home-section-sub">定位摄景地之古称地志、实时天象与二十四节气物候。</p>
 
         <div className="home-almanac__cols">
           <div className="home-almanac__col">
             <span className="home-almanac__label">现代 · 今日</span>
             <div className="home-almanac__weather">
-              {/* 图标铁律：使用已安装官方库矢量纹样 */}
-              <span className="home-almanac__sun" aria-hidden="true">
-                <SunWheelGlyph />
-              </span>
               {/* 真实气温（Open-Meteo，按选中城邑经纬度取数） */}
               <span className="home-almanac__temp">{wx.temp}</span>
             </div>
@@ -557,10 +568,13 @@ export default function Home() {
       <section className="home-card-scroll home-shiwu-section">
         <ReferenceCorners />
         <div className="home-section-header">
-          <h2 className="home-section-title">古今识物</h2>
+          <div className="home-section-title-wrap">
+            <span className="home-section-category">考释 · 古今识物</span>
+            <h2 className="home-section-title">古今识物</h2>
+          </div>
           <span className="home-section-seal">物</span>
         </div>
-        <p className="home-section-sub">拍一物，识古名，探寻器物背后的风雅渊源。</p>
+        <p className="home-section-sub">识读诗境中遇见的古今器物、文房器具与名物渊源。</p>
 
         <div className="home-shiwu-body">
           <button
@@ -585,7 +599,7 @@ export default function Home() {
                 key={item.modern}
                 type="button"
                 className="home-shiwu-demo__item"
-                onClick={() => navigate('/recognition')}
+                onClick={() => navigate(`/recognition?preset=${item.id}`)}
               >
                 <span className="home-shiwu-demo__seal" aria-hidden="true">{item.seal}</span>
                 <span className="home-shiwu-demo__modern">{item.modern}</span>
@@ -607,10 +621,13 @@ export default function Home() {
       >
         <ReferenceCorners />
         <div className="home-section-header">
-          <h2 className="home-section-title">古诗词赏析</h2>
+          <div className="home-section-title-wrap">
+            <span className="home-section-category">声律 · 诗词研赏</span>
+            <h2 className="home-section-title">古诗词赏析与飞花雅令</h2>
+          </div>
           <span className="home-section-seal">词</span>
         </div>
-        <p className="home-section-sub">品读千古名篇，感受诗词中的人生境界。</p>
+        <p className="home-section-sub">106部平水韵有限状态机，推演律绝平仄与诗境对仗。</p>
 
         <div className="home-poem-body">
           <p className="home-poem-title">《定风波·莫听穿林打叶声》</p>
@@ -633,6 +650,8 @@ export default function Home() {
           </button>
         </div>
       </section>
+
+      <FrequencyHomeCard />
 
       {/* ── 漫游古今城邑抽屉（全国城邑，可搜今名或古称）── */}
       <Popup
@@ -675,14 +694,16 @@ export default function Home() {
         </div>
       </Popup>
 
-      {/* ── 《十二时辰养生与雅事》：滑动体验十二时辰 ── */}
-      <Popup
+      {/* ── 《十二时辰养生与雅事》：居中宣纸画卷弹窗 ── */}
+      <CenterPopup
         visible={shichenOpen}
         onMaskClick={() => setShichenOpen(false)}
         onClose={() => setShichenOpen(false)}
-        bodyStyle={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}
+        showCloseButton={false}
+        className="home-shichen-popup"
       >
-        <div className="home-shichen">
+        <div className="home-shichen home-shichen--modal">
+          <ReferenceCorners />
           <div className="home-shichen__head">
             <strong>十二时辰养生与雅事</strong>
             <button type="button" onClick={() => setShichenOpen(false)} aria-label="收起">收起</button>
@@ -706,9 +727,9 @@ export default function Home() {
               </article>
             ))}
           </div>
-          <p className="home-shichen__foot">左右滑动，遍览十二时辰 · 今人所行，古人亦有节候</p>
+          <p className="home-shichen__foot">左右滑动，遇见十二时辰 · 今人所行，古人亦有节候</p>
         </div>
-      </Popup>
+      </CenterPopup>
     </div>
   )
 }

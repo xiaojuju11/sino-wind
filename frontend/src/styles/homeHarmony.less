@@ -1,0 +1,70 @@
+// Shared proportions and illustration treatment for the six home modules.
+.reference-polish.home-root {
+  .home-card-scroll.home-yayan-section .home-yayan-collect-btn {
+    background: #3e5d4c;
+    color: #fff2dc;
+    border: 1px solid #ad9158;
+    box-shadow: inset 0 1px 0 #ffffff12, 0 2px 5px #263b2920;
+    &:hover:not(:disabled) { background: #466b57; }
+    &:active:not(:disabled) { background: #304d3e; }
+  }
+  .home-card-scroll.home-yayan-section > .home-yayan-art { opacity: .72; filter: saturate(1.08) contrast(1.04); }
+  .home-card-scroll.home-almanac .home-almanac__col::after {
+    opacity: .72; filter: saturate(1.08) contrast(1.04);
+    background-size: cover; background-position: center bottom;
+  }
+  .home-card-scroll.home-almanac .home-almanac__col > :is(.home-almanac__city, .home-almanac__date, .home-almanac__ganzhi, .home-almanac__desc, .home-almanac__wuhou) {
+    color: var(--gf-ink-primary); text-shadow: 0 1px 2px var(--gf-bg-paper), 0 0 4px var(--gf-bg-paper);
+  }
+  .home-card-scroll.home-shiwu-section::before {
+    width: 100%; mask-image: none; background-size: cover; background-position: right center;
+    opacity: .72; filter: saturate(1.08) contrast(1.04);
+  }
+  .home-card-scroll:is(.home-poem-card, .scene-home-card:not(.is-primary-storyline), .frequency-home-card) {
+    box-sizing: border-box; height: 190px; min-height: 190px;
+    padding: 12px 14px; display: flex; flex-direction: column;
+    > .home-section-header { flex: none; }
+    > .home-section-sub { flex: none; max-width: 100%; margin: 3px 0 8px; font-size: 12px; line-height: 1.55; }
+    .scene-home-card__verse, .frequency-home-card__verse {
+      flex: 1; display: flex; flex-direction: column; justify-content: center;
+      font-size: 18px; line-height: 1.55; letter-spacing: .04em; margin: 3px 0 8px;
+    }
+    .scene-home-card__steps, .frequency-home-card__steps {
+      width: fit-content; max-width: calc(100% - 86px); padding: 2px 4px; box-sizing: border-box;
+      font-size: 10px; line-height: 1.6; letter-spacing: .06em; margin: 0 0 4px;
+      color: var(--gf-ink-primary); border-radius: 3px; background: color-mix(in srgb, var(--gf-bg-paper) 76%, transparent);
+    }
+    .home-poem-body { flex: 1; position: static; margin: 0; padding: 0; overflow: visible; }
+    .home-poem-body::after { display: none; }
+    .home-poem-title { font-size: clamp(14px, 3.4vw, 16px); line-height: 1.5; }
+    .home-poem-more { position: absolute; right: 24px; bottom: 22px; z-index: 2; }
+    > .scene-home-card__art, > .frequency-home-card__art { opacity: .72; filter: saturate(1.08) contrast(1.04); }
+  }
+  .home-card-scroll.home-poem-card::before {
+    width: 55%; mask-image: linear-gradient(to right, transparent, #000 65%);
+    background-size: auto 100%; background-position: right center; opacity: .75; filter: none;
+  }
+}
+@media (max-width: 400px) {
+  .reference-polish.home-root .home-card-scroll.home-shiwu-section {
+    .home-shiwu-body { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 8px; }
+    .home-shiwu-upload, .home-shiwu-demo { width: auto; min-width: 0; }
+    .home-shiwu-demo { padding: 8px; }
+    .home-shiwu-demo__item { display: grid; grid-template-columns: 22px minmax(0, 1fr) 10px; gap: 2px 5px; padding: 5px; text-align: left; }
+    .home-shiwu-demo__seal { grid-column: 1; grid-row: 1 / 3; }
+    .home-shiwu-demo__modern { grid-column: 2; grid-row: 1; white-space: nowrap; }
+    .home-shiwu-demo__ancient { grid-column: 2; grid-row: 2; font-size: 11px; }
+    .home-shiwu-demo__chevron { grid-column: 3; grid-row: 1 / 3; margin: 0; }
+    .home-shiwu-demo__flow-arrow { display: none; }
+  }
+}
+[data-theme='dark'] .reference-polish.home-root {
+  .home-card-scroll.home-yayan-section > .home-yayan-art { opacity: .2; filter: saturate(.8); }
+  .home-card-scroll.home-almanac .home-almanac__col::after,
+  .home-card-scroll.home-shiwu-section::before,
+  .home-card-scroll.home-poem-card::before { opacity: .28; filter: brightness(.55) saturate(.8); }
+  .home-card-scroll:is(.scene-home-card, .frequency-home-card) > img { opacity: .25; filter: saturate(.8); }
+}
+@media (max-width: 360px) {
+  .reference-polish.home-root .home-card-scroll:is(.home-poem-card, .scene-home-card:not(.is-primary-storyline), .frequency-home-card) { height: 206px; min-height: 206px; }
+}

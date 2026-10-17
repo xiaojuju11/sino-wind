@@ -77,8 +77,6 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      padding-bottom: 16px;
-      border-bottom: 1px dashed @color-border;
     }
 
     .scholar-avatar {
@@ -149,7 +147,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 10px 0;
+      margin-top: 14px;
+      margin-bottom: 0;
       padding: 6px 12px;
       background: color-mix(in srgb, var(--gf-gold, @color-gold) 12%, transparent);
       border: 1px dashed color-mix(in srgb, var(--gf-gold, @color-gold) 40%, transparent);
@@ -170,51 +169,6 @@
           opacity: 0.6;
           cursor: not-allowed;
         }
-      }
-    }
-
-    // 四列修持数据
-    .scholar-stats {
-      display: flex;
-      justify-content: space-around;
-      padding-top: 14px;
-
-      &__item {
-        text-align: center;
-        flex: 1;
-        position: relative;
-        cursor: pointer;
-        transition: transform 0.15s ease, opacity 0.15s ease;
-
-        &:active {
-          transform: scale(0.95);
-          opacity: 0.8;
-        }
-
-        &:not(:last-child)::after {
-          content: '';
-          position: absolute;
-          right: 0;
-          top: 15%;
-          height: 70%;
-          width: 1px;
-          background-color: @color-divider;
-        }
-      }
-
-      &__num {
-        font-size: 20px;
-        font-weight: 800;
-        color: var(--gf-accent-text, @color-seal); // 朱砂红数据
-        font-family: 'Georgia', serif;
-        line-height: 1.2;
-      }
-
-      &__label {
-        font-size: 11px;
-        color: var(--gf-text-sub, @color-text-sub);
-        margin-top: 4px;
-        letter-spacing: 0.5px;
       }
     }
   }
@@ -450,191 +404,6 @@
   }
 }
 
-// 📜 雅译锦囊抽屉样式
-.yayan-popup {
-  .adm-popup-body {
-    border-top-left-radius: @radius-sheet;
-    border-top-right-radius: @radius-sheet;
-    background-color: @color-bg;
-    max-height: 75vh;
-    overflow-y: auto;
-  }
-}
-
-.yayan-box {
-  padding: 18px 18px 30px;
-  color: @color-text-main;
-
-  &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 12px;
-    border-bottom: 1px dashed @color-divider;
-    margin-bottom: 14px;
-
-    // ── 窗口冻结（吸顶）──────────────────────────────────
-    // 滚动容器是 .yayan-popup .adm-popup-body（max-height: 75vh; overflow-y: auto），
-    // 故把表头 sticky 在其顶部：滚动锦囊列表时标题与关闭键始终可见。
-    // 关键点：
-    //  1) 必须有实底背景，否则下方条目会从表头底下透出来，糊成一片；
-    //     底色取抽屉本体的 --gf-bg-paper（而非卡片色），吸顶块才不会与抽屉出现色差；
-    //  2) 用负外边距 + 等量内边距把背景横向铺满整个抽屉（否则 .yayan-box 的
-    //     18px 内边距会在表头两侧留下两条"缝"，滚过的内容从缝里露出来）；
-    //  3) z-index 提到列表之上，并补回上内边距，避免吸顶后贴住抽屉顶沿。
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    margin: 0 -18px 14px;
-    padding: 12px 18px;
-    background-color: var(--gf-bg-paper, @color-bg);
-  }
-
-  &__title {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--gf-accent-text, @color-seal);
-    font-family: 'STKaiti', 'KaiTi', serif;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  &__seal {
-    font-size: 11px;
-    color: @color-seal;
-    border: 1px solid @color-seal;
-    padding: 1px 6px;
-    border-radius: @radius-seal;
-    background: fade(@color-seal, 8%);
-  }
-
-  &__close {
-    font-size: 20px;
-    color: @color-text-sub;
-    cursor: pointer;
-    line-height: 1;
-    padding: 4px;
-  }
-
-  &__sub {
-    font-size: 12px;
-    color: @color-text-sub;
-    margin: 0 0 16px;
-    line-height: 1.5;
-  }
-
-  &__list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  &__item {
-    background-color: @color-card;
-    border: 1px solid @color-border;
-    border-radius: @radius-card;
-    padding: 12px 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: @shadow-card;
-  }
-
-  &__content {
-    flex: 1;
-  }
-
-  &__ancient {
-    font-size: 15px;
-    font-weight: 700;
-    color: @color-text-main;
-    font-family: 'STKaiti', 'KaiTi', serif;
-    margin-bottom: 3px;
-  }
-
-  &__modern {
-    font-size: 12px;
-    color: @color-text-sub;
-  }
-
-  &__copy-btn {
-    font-size: 11px;
-    color: @color-seal;
-    border: 1px solid @color-seal;
-    background: transparent;
-    padding: 3px 8px;
-    border-radius: 12px;
-    cursor: pointer;
-    flex-shrink: 0;
-    margin-left: 10px;
-    transition: all 0.2s;
-
-    &:active {
-      background: @color-seal;
-      color: #fff;
-    }
-  }
-}
-
-// 🏮 关于云山竹简卡片样式
-.about-box {
-  padding: 20px;
-  text-align: center;
-  background-color: @color-bg;
-
-  &__header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-
-  &__title {
-    font-size: 20px;
-    font-weight: 800;
-    color: @color-text-main;
-    font-family: 'STKaiti', 'KaiTi', serif;
-    letter-spacing: 1.5px;
-  }
-
-  &__seal {
-    font-size: 11px;
-    color: #fff;
-    background-color: @color-seal;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-family: 'STKaiti', 'KaiTi', serif;
-  }
-
-  &__version {
-    font-size: 12px;
-    color: @color-gold;
-    margin-bottom: 14px;
-    font-family: 'Georgia', serif;
-  }
-
-  &__desc {
-    font-size: 13px;
-    color: @color-text-sub;
-    line-height: 1.8;
-    text-align: justify;
-    background-color: @color-card;
-    border: 1px solid @color-border;
-    border-radius: @radius-card;
-    padding: 14px;
-    margin-bottom: 16px;
-    box-shadow: @shadow-card;
-  }
-
-  &__footer {
-    font-size: 11px;
-    color: lighten(@color-text-sub, 15%);
-    letter-spacing: 1px;
-  }
-}
-
 // 🍎 书斋页暗色模式水玉琉璃质感
 [data-theme='dark'] {
   .shuzhai-root:not(.reference-polish) .scholar-card,
@@ -647,7 +416,8 @@
       0 12px 36px -4px rgba(0, 0, 0, 0.65) !important;
   }
 }
-
+
+
 
 // ════════════════════════════════════════════════════
 //  「关于云山竹简」弹窗的确认按钮（知悉）

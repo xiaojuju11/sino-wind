@@ -13,7 +13,7 @@ import '../styles/studyPages.less'
 import { finishStudySession } from '../utils/studyFlow'
 
 import { scholarScope, syncLocalLetters } from '../utils/scholarLetters'
-import { guestSummary, guestArchiveCount, importGuestArchive, guestGames } from '../utils/scholarAssets'
+import { guestSummary, guestArchiveCount, importGuestArchive } from '../utils/scholarAssets'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -53,8 +53,8 @@ function MinePageSession() {
     const schedule = () => { clearTimeout(timer); timer = setTimeout(fetchInfo, 100) }
     refreshAssets.current = fetchInfo
     fetchInfo()
-    for (const event of ['userInfoUpdated', 'scholarAssetsUpdated', 'focus', 'storage']) window.addEventListener(event, schedule)
-    return () => { alive = false; generation++; clearTimeout(timer); for (const event of ['userInfoUpdated', 'scholarAssetsUpdated', 'focus', 'storage']) window.removeEventListener(event, schedule) }
+    for (const event of ['userInfoUpdated', 'scholarAssetsUpdated', 'sceneArchiveUpdated', 'focus', 'storage']) window.addEventListener(event, schedule)
+    return () => { alive = false; generation++; clearTimeout(timer); for (const event of ['userInfoUpdated', 'scholarAssetsUpdated', 'sceneArchiveUpdated', 'focus', 'storage']) window.removeEventListener(event, schedule) }
   }, [])
   const importGuest = async () => {
     if (importing) return
@@ -93,31 +93,6 @@ function MinePageSession() {
   // 原先此处还解构了 { theme, toggleTheme, isDark }，但 theme 从未被使用（ESLint 报错），
   // 而 toggleTheme / isDark 仅服务于已删除的「日月交替」重复行 —— 故一并清理。
 
-  // Five asset sources; competitive records and ranks are read-only API results.
-  const stats = [
-    {
-      num: userInfo.appraise_count ?? '—',
-      label: '鉴宝印记',
-      onClick: () => navigate('/mine/artifacts')
-    },
-    {
-      num: userInfo.poem_count ?? '—',
-      label: '诗词温故',
-      onClick: () => navigate('/poem-collection')
-    },
-    {
-      num: userInfo.debate_count ?? '—',
-      label: '知音鸿雁',
-      onClick: () => navigate('/letters')
-    },
-    {
-      num: userInfo.yayan_count ?? '—',
-      label: '雅言研习',
-      onClick: () => navigate('/mine/yayan')
-    },
-  ]
-
-  stats.push({ num: rankData?.total ?? (scholarScope() === 'guest' ? guestGames().length : '—'), label: '飞花归档', onClick: () => navigate('/mine/archive') })
 
   // 关于弹窗
   // 说明：原用 Modal.alert，但其 ModalAlertProps 只接受 confirmText，无法给确认按钮传样式；
@@ -215,15 +190,6 @@ function MinePageSession() {
           </div>
         )}
 
-        {/* 五列修持数据看板（支持快捷下钻） */}
-        <div className='scholar-stats'>
-          {stats.map((item) => (
-            <button key={item.label} type='button' className='scholar-stats__item' onClick={item.onClick}>
-              <span className='scholar-stats__num'>{item.num}</span>
-              <span className='scholar-stats__label'>{item.label}</span>
-            </button>
-          ))}
-        </div>
       </section>
 
       {/* 3. 列表卡片 1：五大藏品墨卷 */}
@@ -245,7 +211,6 @@ function MinePageSession() {
             <i className='iconfont icon-shuben' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>藏牒阁</span>
-              <span className='shuzhai-list-item__desc'>历局唱和存卷 · 高清文牒回看与分享</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
@@ -253,7 +218,14 @@ function MinePageSession() {
             <i className='iconfont icon-zhanpin' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>物溯宝鉴</span>
-              <span className='shuzhai-list-item__desc'>已考证之今物与古器原型</span>
+            </div>
+            <RightOutline className='shuzhai-list-item__arrow' />
+          </button>
+
+          <button type='button' className='shuzhai-list-item' onClick={() => navigate('/mine/scenes')}>
+            <i className='iconfont icon-xiangji' aria-hidden='true' />
+            <div className='shuzhai-list-item__content'>
+              <span className='shuzhai-list-item__title'>诗境画阁</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
@@ -262,16 +234,14 @@ function MinePageSession() {
             <i className='iconfont icon-shoucang' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>我的诗笺</span>
-              <span className='shuzhai-list-item__desc'>收录的古诗词与摘录笔记</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
 
-          <button type='button' className='shuzhai-list-item' onClick={() => navigate('/letters')}>
+          <button type='button' className='shuzhai-list-item' onClick={() => navigate('/mine/messages')}>
             <i className='iconfont icon-message' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
-              <span className='shuzhai-list-item__title'>知音鸿雁</span>
-              <span className='shuzhai-list-item__desc'>与李白、苏轼等千古知己交谈归档</span>
+              <span className='shuzhai-list-item__title'>知音回柬</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
@@ -280,7 +250,6 @@ function MinePageSession() {
             <i className='iconfont icon-ziliao' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>雅译锦囊</span>
-              <span className='shuzhai-list-item__desc'>今人白话化两宋雅言之研习札记</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
@@ -302,15 +271,10 @@ function MinePageSession() {
         </div>
 
         <div className='shuzhai-list'>
-          {/* 说明：此处原有「日月交替（墨境切换）」整行，与下方「墨色雅意」功能完全重复
-              （同一 theme 状态、同一 toggleTheme），且用的是通知铃铛图标、语义不符。
-              按要求只保留「墨色雅意」作为唯一的日月切换入口。 */}
-
           <button type='button' className='shuzhai-list-item' onClick={() => navigate(signedIn ? '/accountSetting' : '/login')}>
             <i className='iconfont icon-zhanghao' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>账号设置</span>
-              <span className='shuzhai-list-item__desc'>头像换新、修改昵称与账号管理</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
@@ -320,27 +284,14 @@ function MinePageSession() {
             <i className='iconfont icon-shezhi' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>墨色雅意</span>
-              <span className='shuzhai-list-item__desc'>晓色晨宣 / 月下墨境切换</span>
             </div>
             <ThemeToggle className='shuzhai-theme-toggle' />
           </div>
-
-          <button type='button' className='shuzhai-list-item' onClick={() => navigate('/mine/messages')}>
-            <i className='iconfont icon-tongzhi' aria-hidden='true' />
-            <div className='shuzhai-list-item__content'>
-              <span className='shuzhai-list-item__title'>消息通知</span>
-              <span className='shuzhai-list-item__desc'>
-                展读站内回柬 · 续叙知音清谈
-              </span>
-            </div>
-            <RightOutline className='shuzhai-list-item__arrow' />
-          </button>
 
           <button type='button' className='shuzhai-list-item' onClick={handleShowAbout}>
             <i className='iconfont icon-zhinan' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>关于云山竹简</span>
-              <span className='shuzhai-list-item__desc'>国风两宋美学研习平台 · v2.0 崇雅版</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
@@ -358,7 +309,6 @@ function MinePageSession() {
           <span className='shuzhai-logout-btn__ornaments' aria-hidden='true'>
             <span /><span /><span /><span />
           </span>
-          <span className='shuzhai-logout-btn__seal' aria-hidden='true'><span>{signedIn ? '离' : '入'}</span><span>席</span></span>
           <span className='shuzhai-logout-btn__text'>{signedIn ? '整装离席' : '登录入席'}<small>{signedIn ? '束卷归隐 · 期君再聚' : '落座留名 · 共此山河'}</small></span>
         </button>
         <p className='shuzhai-logout-sub'>{signedIn ? '藏卷仍在，风雅长留' : '入席后，可留存自己的风雅藏卷'}</p>

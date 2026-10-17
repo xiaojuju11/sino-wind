@@ -1,0 +1,181 @@
+@import './variables.less';
+@import './buttons.less';
+
+// ════════════════════════════════════════════════════
+//  物溯古今 · 文博典范标本（答辩秒级高可用安全气囊）
+// ════════════════════════════════════════════════════
+
+.museum-presets-container {
+  margin: 0.36rem 0 0.28rem;
+  padding: 0.28rem 0.24rem;
+  background: color-mix(in srgb, var(--gf-bg-paper, @color-bg) 92%, #000 8%);
+  border: 1px solid fade(@color-gold, 38%);
+  border-radius: 10px;
+  position: relative;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    width: 0.2rem;
+    height: 0.2rem;
+    border: 1px solid fade(@color-gold, 65%);
+    pointer-events: none;
+  }
+
+  &::before {
+    top: 0.06rem;
+    left: 0.06rem;
+    border-right: none;
+    border-bottom: none;
+  }
+
+  &::after {
+    right: 0.06rem;
+    bottom: 0.06rem;
+    border-left: none;
+    border-top: none;
+  }
+
+  .presets-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.22rem;
+    padding-bottom: 0.16rem;
+    border-bottom: 1px dashed fade(@color-gold, 28%);
+
+    .presets-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.14rem;
+
+      .presets-badge {
+        display: inline-block;
+        padding: 0.04rem 0.12rem;
+        background: var(--gf-seal, @color-seal);
+        color: #fff;
+        font-size: 0.22rem;
+        border-radius: 4px;
+        letter-spacing: 0.04em;
+        font-weight: 500;
+      }
+
+      .presets-title {
+        font-size: 0.32rem;
+        font-weight: 600;
+        color: var(--gf-text-main, @color-text-main);
+        letter-spacing: 0.03em;
+        margin: 0;
+      }
+    }
+
+    .presets-sub {
+      font-size: 0.22rem;
+      color: fade(@color-text-main, 60%);
+      font-family: serif;
+    }
+  }
+
+  .presets-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.18rem;
+
+    @media (max-width: 340px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .preset-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0.22rem 0.14rem;
+    background: var(--gf-bg-paper, @color-bg);
+    border: 1px solid fade(@color-gold, 40%);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.24s cubic-bezier(0.2, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
+
+    &:hover,
+    &:active {
+      transform: translateY(-2px);
+      border-color: @color-gold;
+      box-shadow: 0 6px 14px rgba(197, 160, 89, 0.22);
+    }
+
+    &.is-active {
+      border-color: var(--gf-seal, @color-seal);
+      background: color-mix(in srgb, var(--gf-bg-paper, @color-bg) 95%, @color-seal 5%);
+      box-shadow: 0 0 0 1px var(--gf-seal, @color-seal);
+
+      &::after {
+        content: '研摩中';
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: var(--gf-seal, @color-seal);
+        color: #fff;
+        font-size: 0.18rem;
+        padding: 0.02rem 0.08rem;
+        border-bottom-left-radius: 4px;
+      }
+    }
+
+    .preset-icon-circle {
+      width: 0.84rem;
+      height: 0.84rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.14rem;
+      font-size: 0.42rem;
+      font-family: 'Songti SC', 'STSong', serif;
+      font-weight: bold;
+      color: #fff;
+      box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+    }
+
+    .preset-tag {
+      font-size: 0.2rem;
+      color: @color-gold;
+      margin-bottom: 0.06rem;
+      font-family: serif;
+      letter-spacing: 0.02em;
+    }
+
+    .preset-name {
+      font-size: 0.26rem;
+      font-weight: 600;
+      color: var(--gf-text-main, @color-text-main);
+      margin-bottom: 0.06rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .preset-desc {
+      font-size: 0.2rem;
+      color: fade(@color-text-main, 58%);
+      line-height: 1.3;
+      margin-bottom: 0.12rem;
+    }
+
+    .preset-action-cue {
+      font-size: 0.2rem;
+      color: var(--gf-seal, @color-seal);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.04rem;
+    }
+  }
+}

@@ -71,6 +71,17 @@ test('new photos are sent independently and render their real results', async ()
   assert.equal(page.requests[1][1].img, 'vase')
 })
 
+test('built-in specimens carry an explicit example notice and no invented score', async () => {
+  const page = await mount(async () => { throw new Error('examples must not call recognition') })
+  await nodes(page.tree, node => node.type === 'button' && node.props?.['aria-label']?.startsWith('研摩'))[0].props.onClick()
+  page.render()
+  const body = nodes(page.tree, node => node.type === 'Result')[0].props.recognitionResult
+  assert.equal(body.source, 'preset-specimen')
+  assert.match(body.notice, /内置.*案例/)
+  assert.equal(body.data.score, undefined)
+  assert.equal(page.requests.length, 0)
+})
+
 test('a late response cannot replace the newer selected photo', async () => {
   let resolveFirst
   const page = await mount(async (_url, body) => body.img === 'first'

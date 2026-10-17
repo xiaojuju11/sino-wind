@@ -19,6 +19,21 @@ async function fixture({ restore = false, quotaFails = false } = {}) {
     react: hooks, 'antd-mobile-icons': { DownlandOutline() {}, CloseOutline() {} }, '../http': { default: axios },
     '../utils/scholarCertificate': { downloadScholarCertificate: async () => {} },
     '../utils/scholarAssets': { rememberGuestGame: value => { if (quotaFails) throw new Error('quota'); saved.push(value); return true } },
+    '../utils/poemMetre': {
+      rhymeGroupOf: () => ({ name: '上平十一真', tone: 'level' }),
+      toToneArray: (line) => Array.from(line || '').map(ch => ({ ch, tone: 'level' })),
+      identifyPattern: () => ({ name: '五言 · 平起平收' }),
+      checkTi: () => ({ ok: true }),
+      TONE_SYMBOL: { level: '○', oblique: '●', unknown: '△' }
+    },
+    '../utils/turnMetre': {
+      analyzeTurnMetre: () => null
+    },
+    '../utils/guofengAudio': {
+      playChimeSound: () => {},
+      playInkDropSound: () => {},
+      playSilkScrollSound: () => {}
+    },
   }
   const context = vm.createContext({ __jsx: (type, props, ...children) => ({ type, props: props || {}, children: children.flat(Infinity) }),
     __fragment: Symbol('fragment'), Date, Event, window: { dispatchEvent() {} },

@@ -4,15 +4,19 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx nodemon src/index.js",
-    "test": "node --test tests/*.test.cjs scripts/test-scholar-custom-sse.cjs"
+    "test": "node --test tests/*.test.cjs scripts/test-scholar-custom-sse.cjs scripts/test-scene-poetry.cjs",
+    "check:scene": "node scripts/check-scene-deployment.cjs",
+    "test:scene:http": "node scripts/test-scene-http.cjs"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "description": "",
   "dependencies": {
+    "@huggingface/transformers": "3.8.1",
     "@koa/cors": "^5.0.0",
     "@koa/multer": "^4.0.0",
+    "@node-rs/jieba": "2.0.4",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.2.3",
@@ -24,6 +28,8 @@
     "multer": "^2.4.0",
     "mysql2": "^3.16.0",
     "openai": "^6.16.0",
+    "opencc-js": "1.4.2",
+    "sharp": "0.34.5",
     "svg-captcha": "^1.4.0"
   }
 }

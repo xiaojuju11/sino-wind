@@ -13,6 +13,15 @@ body {
   min-height: 100vh;
   margin: 0;
   padding: 0;
+
+  @media (min-width: 840px) {
+    background-image:
+      radial-gradient(ellipse 70% 40% at 50% 0%, color-mix(in srgb, #fff 35%, transparent) 0%, transparent 70%),
+      radial-gradient(ellipse 80% 30% at 50% 100%, color-mix(in srgb, var(--gf-ink-primary, #2B2B2B) 8%, transparent) 0%, transparent 100%),
+      radial-gradient(circle 600px at 15% 50%, color-mix(in srgb, var(--gf-gold, #af8d53) 4%, transparent) 0%, transparent 80%),
+      radial-gradient(circle 600px at 85% 50%, color-mix(in srgb, var(--gf-seal, #8a2b2b) 3%, transparent) 0%, transparent 80%),
+      linear-gradient(180deg, color-mix(in srgb, var(--gf-bg-paper, @color-bg) 98%, #fff 2%) 0%, color-mix(in srgb, var(--gf-bg-paper, @color-bg) 93%, #000 7%) 100%);
+  }
 }
 
 // 多端视口适配核心：在 PC 端保持居中精致移动画幅，在手机端 100% 铺满
@@ -23,4 +32,13 @@ body {
   position: relative;
   box-shadow: 0 0 35px rgba(0, 0, 0, 0.12);
   background-color: transparent;
+
+  @media (min-width: 840px) {
+    min-height: 100vh;
+    box-shadow:
+      0 16px 64px rgba(43, 27, 18, 0.18),
+      0 0 0 1px fade(@color-gold, 40%),
+      0 0 0 4px color-mix(in srgb, var(--gf-bg-paper, @color-bg) 95%, #fff 5%),
+      0 0 0 5px fade(@color-gold, 25%);
+  }
 }

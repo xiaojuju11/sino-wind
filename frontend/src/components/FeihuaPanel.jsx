@@ -3,6 +3,8 @@ import { DownlandOutline, CloseOutline } from 'antd-mobile-icons'
 import axios from '../http'
 import { downloadScholarCertificate } from '../utils/scholarCertificate'
 import { rememberGuestGame } from '../utils/scholarAssets'
+import { analyzeTurnMetre } from '../utils/turnMetre'
+import { playChimeSound } from '../utils/guofengAudio'
 
 function archiveGuestSettlement(game, guestKey) {
   if (!guestKey || game.status !== 'finished' || !game.settled) return ''
@@ -15,6 +17,7 @@ export default function FeihuaPanel({ sageId, onClose }) {
   const [keyword, setKeyword] = useState('月'), [rhyme, setRhyme] = useState('')
   const [line, setLine] = useState(''), [notice, setNotice] = useState(''), [busy, setBusy] = useState(false)
   const [seconds, setSeconds] = useState(30)
+  const [expandedTurnKey, setExpandedTurnKey] = useState(null)
   const live = useRef(false), lock = useRef(false), offset = useRef(0), guest = useRef(null), versionSent = useRef(null), retryAfter = useRef(0)
   useEffect(() => {
     live.current = true
@@ -42,6 +45,7 @@ export default function FeihuaPanel({ sageId, onClose }) {
     try { sessionStorage.setItem(`feihua:${sageId}`, JSON.stringify({ id: data.id, version: data.version, guestKey: guest.current })) } catch { /* optional local recovery */ }
     setGame(data); setNotice(archiveGuestSettlement(data, guest.current) || data.feedback || '')
     if (data.settled) window.dispatchEvent(new Event('userInfoUpdated'))
+    if (data.version !== game?.version && data.turns?.length) playChimeSound()
   }
   const send = async (action) => {
     if (!game || lock.current) return
@@ -84,7 +88,33 @@ export default function FeihuaPanel({ sageId, onClose }) {
       <button type='button' onClick={start} disabled={busy || !rules}>{game ? '再开一局' : '开席行令'}</button>
     </div> : <div className='feihua-round'><strong>令：{game.keyword} · {game.rhyme || '自由换韵'}</strong><span role='timer' aria-label='剩余秒数'>{seconds}秒</span></div>}
     {notice && <p role='status'>{notice}</p>}
-    {game?.turns.map((t, i) => <blockquote key={t.id || `${t.role}-${t.line}-${i}`}><b>{t.role === 'user' ? '雅士' : rules?.sages?.[game.sageId]?.name || '先贤'}：</b>{t.line}<small>〔{t.author}《{t.title}》〕</small></blockquote>)}
+    {game?.turns.map((t, i) => {
+      const turnKey = t.id || `${t.role}-${t.line}-${i}`
+      const isExpanded = expandedTurnKey === turnKey
+      const analysis = isExpanded ? analyzeTurnMetre(t.line) : null
+      return (
+        <blockquote key={turnKey}>
+          <b>{t.role === 'user' ? '雅士' : rules?.sages?.[game.sageId]?.name || '先贤'}：</b>{t.line}
+          <small>〔{t.author}《{t.title}》〕</small>
+          <button
+            type='button'
+            className={`feihua-metre-trigger${isExpanded ? ' is-active' : ''}`}
+            onClick={() => setExpandedTurnKey(prev => prev === turnKey ? null : turnKey)}
+            aria-expanded={isExpanded}
+          >
+            〔格律透视〕{isExpanded ? '▲' : '▼'}
+          </button>
+          {isExpanded && analysis && (
+            <div className='feihua-metre-bubble' role='region' aria-label='格律数理推导'>
+              <p><b>末字韵部：</b>{analysis.rhymeName}（{analysis.rhymeTone}）</p>
+              <p><b>韵脚提取：</b>末字「{analysis.lastChar}」· {analysis.verified ? '字表已覆盖' : '读音需结合语境核对'}</p>
+              <p><b>平仄音律：</b><span className='metre-symbols'>{analysis.toneSymbols}</span> {analysis.toneNotation}（{analysis.patternName} · {analysis.tiStatus}）</p>
+              <span className='feihua-metre-badge'>{analysis.verdict}</span>
+            </div>
+          )}
+        </blockquote>
+      )
+    })}
     {game?.status === 'playing' && <form onSubmit={e => { e.preventDefault(); send('submit') }}>
       <label>应令诗句<input value={line} maxLength={100} onChange={e => setLine(e.target.value)} autoComplete='off' placeholder='输入题库中的完整单句' /></label>
       <button type='submit' disabled={busy || !line.trim()}>应令</button><button type='button' disabled={busy} onClick={() => send('resign')}>揖让收局</button>

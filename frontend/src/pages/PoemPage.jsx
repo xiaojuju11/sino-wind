@@ -25,6 +25,17 @@ import '../styles/referencePolish.less'
 import { getScholarScene } from '../utils/scholarScenes'
 
 
+const AUTHOR_TO_SAGE = {
+  '苏轼': 'sushi',
+  '李白': 'libai',
+  '李清照': 'liqingzhao',
+  '陶渊明': 'taoyuanming',
+  '杜甫': 'dufu',
+  '王维': 'wangwei',
+  '辛弃疾': 'xinqiji',
+  '王阳明': 'wangyangming'
+}
+
 // 🏮 接口异常时的优雅降级诗库（保证页面永不空白）
 const MOCK_POEMS = [
   {
@@ -167,6 +178,9 @@ export default function PoemPage() {
   // 获取诗词多维深度赏析（AI 雅析 + 本地经典文库）
   const fetchAppreciation = useCallback(async (currentPoem) => {
     if (!currentPoem || !currentPoem.title) return
+    const authorMatch = Object.entries(AUTHOR_TO_SAGE).find(([k]) => currentPoem.author?.includes(k))
+    const fallbackSageId = authorMatch ? authorMatch[1] : 'sushi'
+
     setLoadingAppreciation(true)
     try {
       const res = await axios.post('/api/poem/appreciate', {
@@ -176,7 +190,10 @@ export default function PoemPage() {
         content: currentPoem.paragraphs
       })
       if (res?.data?.code === 1 && res.data.data) {
-        setAppreciationData(res.data.data)
+        setAppreciationData({
+          ...res.data.data,
+          sageId: res.data.data.sageId || fallbackSageId
+        })
         return
       }
     } catch {
@@ -192,7 +209,7 @@ export default function PoemPage() {
       background: `${currentPoem.author || '先贤'}借景抒怀，借物寄意，笔底自有一番平生阅历与时代浩叹。`,
       highlight: currentPoem.paragraphs?.[0] ? `「${currentPoem.paragraphs[0]}」——字句清拔，耐人咀华。` : '句法对仗工整，起承转合浑然天成。',
       sageVoice: `此作乃吾平生性灵所聚，得遇今之雅客抚卷相看，亦足慰平生。`,
-      sageId: null
+      sageId: fallbackSageId
     })
     setLoadingAppreciation(false)
   }, [])
@@ -248,12 +265,15 @@ export default function PoemPage() {
 
   // 携诗问道：带入当前诗篇上下文跳转至先贤对席
   const handleChatWithSage = () => {
-    if (!appreciationData?.sageId) return
+    if (!poem) return
+    const authorMatch = Object.entries(AUTHOR_TO_SAGE).find(([k]) => poem.author?.includes(k))
+    const targetSageId = appreciationData?.sageId || (authorMatch ? authorMatch[1] : 'sushi')
     if (window.speechSynthesis) window.speechSynthesis.cancel()
-    navigate(`/scholar-chat/${appreciationData.sageId}`, {
+    navigate(`/scholar-chat/${targetSageId}`, {
       state: {
-        sageId: appreciationData.sageId,
-        poemContext: poem
+        sageId: targetSageId,
+        poemContext: poem,
+        scenePrompt: `拜读先生大作《${poem.title}》：“${(poem.paragraphs || []).slice(0, 2).join('，')}”，后学心向往之。敢请先生指点此作中的意象与创作心境。`
       }
     })
   }
@@ -607,7 +627,7 @@ export default function PoemPage() {
 
         <div className="poem-appreciation__body">
           {/* 赏析维度选项卡 */}
-          <div className="poem-appreciation__tabs">
+          <div className="poem-appreciation__tabs" role="region" aria-label="赏析选项，左右滑动查看更多" tabIndex={0}>
             <button
               type="button"
               className={`poem-appreciation__tab ${appreciationTab === 'overview' ? 'is-active' : ''}`}
@@ -693,7 +713,7 @@ export default function PoemPage() {
                         className="poem-appreciation__sage-btn"
                         onClick={handleChatWithSage}
                       >
-                        携诗入席 · 与{poem?.author}论道 <RightOutline aria-hidden='true' />
+                        携诗入席 · 与{poem?.author || '先贤'}论道 <RightOutline aria-hidden='true' />
                       </button>
                     )}
                   </div>

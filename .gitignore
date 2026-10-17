@@ -65,3 +65,9 @@ proof/_fit_*.png
 docs/素材来源包/云山竹简-素材来源包-*/
 docs/素材来源包/云山竹简-界面截图-*/
 docs/素材来源包/*.zip
+
+# Local scene inference weights; reproduce with backend/scripts/prepare-scene-models.ps1
+backend/models/scene/
+
+# Download cache for pinned poetry source
+backend/.cache/

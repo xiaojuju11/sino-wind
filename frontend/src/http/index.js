@@ -22,22 +22,27 @@ axios.interceptors.request.use(request => {
 axios.interceptors.response.use(
   (response) => {
     if (response.data && response.data.code !== 1) {
-      Toast.show({
-        icon: 'fail',
-        content: response.data.message || '操作未完成'
-      })
+      if (!response.config?.silentToast) {
+        Toast.show({
+          icon: 'fail',
+          content: response.data.message || '操作未完成'
+        })
+      }
       return Promise.reject(response)
     }
     return response
   },
   (error) => {
+    const config = error.config || error.response?.config
     const status = error.response?.status
     const message = error.response?.data?.message || error.message || '服务响应异常'
 
-    Toast.show({
-      icon: 'fail',
-      content: message
-    })
+    if (!config?.silentToast) {
+      Toast.show({
+        icon: 'fail',
+        content: message
+      })
+    }
 
     if (status === 416 || status === 401) {
       localStorage.removeItem('token')

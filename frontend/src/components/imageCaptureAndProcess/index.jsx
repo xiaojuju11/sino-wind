@@ -65,8 +65,9 @@ async function toRecognitionPayload(file) {
   return shrinkFileToJpeg(file)
 }
 
-export default function ImageCaptureAndProcess({ onRecognition, children }) {
-  const [selectedImage, setSelectedImage] = useState(null)
+export default function ImageCaptureAndProcess({ onRecognition, children, previewImage = null, onClear = null }) {
+  const [internalImage, setInternalImage] = useState(null)
+  const selectedImage = previewImage || internalImage
   const [hint, setHint] = useState('')
   const [capturing, setCapturing] = useState(false)
   const navigate = useNavigate()
@@ -89,7 +90,8 @@ export default function ImageCaptureAndProcess({ onRecognition, children }) {
       setHint('这张影像读取失败，请换一张再试。')
       return
     }
-    setSelectedImage(payload)
+    setInternalImage(payload)
+    if (onClear) onClear()
     onRecognition(payload)
   }
 
@@ -138,8 +140,9 @@ export default function ImageCaptureAndProcess({ onRecognition, children }) {
   }
 
   const handleClear = () => {
-    setSelectedImage(null)
+    setInternalImage(null)
     setHint('')
+    if (onClear) onClear()
   }
 
   return (
