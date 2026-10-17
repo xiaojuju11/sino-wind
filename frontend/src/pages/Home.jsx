@@ -403,17 +403,17 @@ export default function Home() {
       {/* ── 核心主线体验：寻镜入诗（首屏最核心展示与交互）── */}
       <SceneHomeCard />
 
-      {/* ── 四维诗境辅助研习系统分界 ── */}
+      {/* ── 雅集风物 · 辅助研习分界 ── */}
       <div className="home-supporting-divider">
         <div className="home-supporting-divider__line" />
         <div className="home-supporting-divider__badge">
           <span className="home-supporting-divider__icon">📜</span>
-          <span>四维诗境辅助研习系统</span>
+          <span>雅集风物 · 辅助研习</span>
         </div>
         <div className="home-supporting-divider__line" />
       </div>
       <p className="home-supporting-sub">
-        围绕「实景诗词」提供意象今译、景地物候、名物考释与声律推演支持
+        意象今译、景地物候、名物考释与声律推演，四维相伴诗心
       </p>
 
       {/* ── 区块① 白话雅译（意象今译辅助）── */}
@@ -422,7 +422,7 @@ export default function Home() {
         <ReferenceCorners />
         <div className="home-section-header">
           <div className="home-section-title-wrap">
-            <span className="home-section-category">辅助 ① · 意象今译</span>
+            <span className="home-section-category">雅译 · 意象今译</span>
             <h2 className="home-section-title">白话雅译</h2>
           </div>
           <span className="home-section-seal">译</span>
@@ -504,7 +504,7 @@ export default function Home() {
         <ReferenceCorners />
         <div className="home-section-header">
           <div className="home-section-title-wrap">
-            <span className="home-section-category">辅助 ② · 景地物候</span>
+            <span className="home-section-category">物候 · 景地时令</span>
             <h2 className="home-section-title">古今时令与天象</h2>
           </div>
           <span className="home-section-seal">时</span>
@@ -569,7 +569,7 @@ export default function Home() {
         <ReferenceCorners />
         <div className="home-section-header">
           <div className="home-section-title-wrap">
-            <span className="home-section-category">辅助 ③ · 名物考释</span>
+            <span className="home-section-category">考释 · 古今识物</span>
             <h2 className="home-section-title">古今识物</h2>
           </div>
           <span className="home-section-seal">物</span>
@@ -622,7 +622,7 @@ export default function Home() {
         <ReferenceCorners />
         <div className="home-section-header">
           <div className="home-section-title-wrap">
-            <span className="home-section-category">辅助 ④ · 声律进阶</span>
+            <span className="home-section-category">声律 · 诗词研赏</span>
             <h2 className="home-section-title">古诗词赏析与飞花雅令</h2>
           </div>
           <span className="home-section-seal">词</span>

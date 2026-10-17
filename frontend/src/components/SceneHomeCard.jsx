@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { CameraOutline, PictureOutline, RightOutline, CheckCircleOutline } from 'antd-mobile-icons'
+import { CameraOutline, PictureOutline, RightOutline } from 'antd-mobile-icons'
 import ReferenceCorners from './ReferenceCorners'
 import { playInkDropSound, triggerHaptic } from '../utils/guofengAudio'
 import '../styles/scenePoetry.less'
@@ -22,79 +22,58 @@ export default function SceneHomeCard() {
 
   return (
     <section className="home-card-scroll scene-home-card is-primary-storyline">
-      <img
-        className="scene-home-card__art"
-        src={`${import.meta.env.BASE_URL}images/scene/poetic-lake-v1.webp`}
-        alt="山水诗境背景"
-        aria-hidden="true"
-      />
       <ReferenceCorners />
 
-      {/* ── 核心主线标签与标题 ── */}
+      {/* ── 标题与传统雅致印章 ── */}
       <div className="home-section-header">
         <div className="home-section-title-wrap">
-          <span className="scene-home-card__main-tag">
-            <span className="scene-home-card__pulse-dot" />
-            国赛主线体验 · 实景诗词交互研习
-          </span>
+          <span className="scene-home-card__tag">山水入镜 · 照见千古诗心</span>
           <h2 className="home-section-title">寻镜入诗</h2>
         </div>
-        <span className="home-section-seal">主线</span>
+        <span className="home-section-seal">寻境</span>
       </div>
 
       <p className="home-section-sub">
-        拍下眼前校园、湖山与街景，点选景物，循词观景，照见千年诗境。
+        摄下眼前风景，点选草木山石，与千载诗心相逢。
       </p>
 
-      {/* ── 5步交互研习闭环链路 ── */}
-      <div className="scene-home-pipeline" aria-label="实景诗词研习闭环">
-        <div className="scene-home-pipeline__step">
-          <span className="step-num">1</span>
-          <span className="step-name">拍眼前景</span>
-        </div>
-        <span className="step-arrow" aria-hidden="true">→</span>
-        <div className="scene-home-pipeline__step">
-          <span className="step-num">2</span>
-          <span className="step-name">点选景物</span>
-        </div>
-        <span className="step-arrow" aria-hidden="true">→</span>
-        <div className="scene-home-pipeline__step">
-          <span className="step-num">3</span>
-          <span className="step-name">循证配诗</span>
-        </div>
-        <span className="step-arrow" aria-hidden="true">→</span>
-        <div className="scene-home-pipeline__step">
-          <span className="step-num">4</span>
-          <span className="step-name">循词观景</span>
-        </div>
-        <span className="step-arrow" aria-hidden="true">→</span>
-        <div className="scene-home-pipeline__step">
-          <span className="step-num">5</span>
-          <span className="step-name">问席藏卷</span>
-        </div>
-      </div>
+      {/* ── 诗境画卷展台（宋代水墨卷轴画框）── */}
+      <div
+        className="scene-home-stage"
+        role="button"
+        tabIndex={0}
+        onClick={() => handleAction('sample')}
+        title="点击展看西湖山水画卷示例"
+      >
+        <img
+          className="scene-home-stage__art"
+          src={`${import.meta.env.BASE_URL}images/scene/poetic-lake-v1.webp`}
+          alt="西湖初晴山水画卷"
+          loading="lazy"
+        />
+        <div className="scene-home-stage__scrim" />
+        <div className="scene-home-stage__content">
+          <div className="scene-home-stage__couplet">
+            <p className="couplet-line">水光潋滟晴方好</p>
+            <p className="couplet-line">山色空蒙雨亦奇</p>
+            <span className="couplet-author">苏轼 · 饮湖上初晴后雨</span>
+          </div>
 
-      {/* ── 诗境画卷微预览与反向观景演示 ── */}
-      <div className="scene-home-card__showcase">
-        <div className="scene-home-card__verse-box">
-          <p className="scene-home-card__verse-highlight">
-            “水光潋滟晴方好，山色空蒙雨亦奇。”
-          </p>
-          <div className="scene-home-card__reverse-hint">
-            <CheckCircleOutline className="scene-home-card__hint-icon" />
-            <span>循词观景：点击诗中「水」，照片自动高亮湖面；点「山」，标示远峰</span>
+          <div className="scene-home-stage__footer-row">
+            <div className="scene-home-stage__pills">
+              <span className="stage-pill">✦ 湖光</span>
+              <span className="stage-pill">✦ 远峰</span>
+              <span className="stage-pill">✦ 烟雨</span>
+            </div>
+            <div className="scene-home-stage__hint">
+              <span>试赏画卷</span>
+              <RightOutline className="hint-arrow" />
+            </div>
           </div>
         </div>
-
-        <div className="scene-home-card__tags-preview">
-          <span className="preview-tag">水 · 湖面</span>
-          <span className="preview-tag">山 · 远峰</span>
-          <span className="preview-tag">树 · 柳岸</span>
-          <span className="preview-tag preview-tag--sage">💬 携此景请教苏轼</span>
-        </div>
       </div>
 
-      {/* ── 首页即刻交互行动栏 ── */}
+      {/* ── 雅致行动按钮组 ── */}
       <div className="scene-home-card__actions">
         <button
           type="button"
@@ -102,24 +81,16 @@ export default function SceneHomeCard() {
           onClick={() => handleAction('camera')}
         >
           <CameraOutline className="scene-home-btn__icon" />
-          <span>拍下眼前风景</span>
+          <span>拍眼前景</span>
         </button>
 
         <button
           type="button"
-          className="scene-home-btn"
+          className="scene-home-btn scene-home-btn--secondary"
           onClick={() => handleAction('upload')}
         >
           <PictureOutline className="scene-home-btn__icon" />
-          <span>相册选取</span>
-        </button>
-
-        <button
-          type="button"
-          className="scene-home-btn scene-home-btn--ghost"
-          onClick={() => handleAction('sample')}
-        >
-          <span>示例画卷体验</span>
+          <span>相册选景</span>
         </button>
       </div>
 
@@ -130,7 +101,7 @@ export default function SceneHomeCard() {
           className="scene-home-card__archive-link"
           onClick={handleOpenArchive}
         >
-          <span>已收录诗境 · 前往诗境画阁</span>
+          <span>已藏画卷 · 前往诗境画阁</span>
           <RightOutline className="scene-home-card__archive-arrow" />
         </button>
       </div>
