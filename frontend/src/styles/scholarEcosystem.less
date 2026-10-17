@@ -1,15 +1,563 @@
-.scholar-sheet-backdrop { position: fixed; inset: 0; z-index: 1001; background: color-mix(in srgb, var(--gf-ink-primary) 35%, transparent); display: flex; align-items: flex-end; justify-content: center; }
-.scholar-sheet { box-sizing: border-box; width: min(100%, 520px); max-height: 88dvh; overflow-y: auto; overscroll-behavior: contain; padding: 22px 18px max(24px, env(safe-area-inset-bottom)); border-radius: 18px 18px 0 0; background: var(--gf-bg-paper); color: var(--gf-ink-primary); font-size: 15px; line-height: 1.8; box-shadow: 0 -4px 24px color-mix(in srgb, var(--gf-ink-primary) 12%, transparent);
-  header, nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  h2 { font-size: 22px; font-family: STKaiti, KaiTi, serif; }
-  p { margin: 12px 0; }
-  button { color: var(--gf-ink-primary); background: var(--gf-bg-card); border: 1px solid var(--gf-ink-muted); border-radius: 6px; padding: 8px 12px; min-height: 44px; font: inherit; cursor: pointer; }
-  button:disabled { opacity: .5; cursor: default; }
-  button:focus-visible { outline: 2px solid var(--gf-cinnabar); outline-offset: 2px; }
-  .scholar-archive-card { display: block; box-sizing: border-box; width: 100%; min-width: 0; padding: 12px; margin: 12px 0; text-align: start; overflow-wrap: anywhere; border-inline-start: 3px solid var(--gf-cinnabar); span, time { display: block; font-size: 13px; color: var(--gf-ink-secondary); } }
+/* ==========================================================================
+   两宋水墨国风生态体系样式（藏牒阁、物溯宝鉴、雅集知音通用）
+   ========================================================================== */
+
+.scholar-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1001;
+  background: color-mix(in srgb, var(--gf-ink-primary) 38%, transparent);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
 }
-.scholar-certificate-preview img { width: 100%; display: block; margin: 12px 0; }
-.scholar-reply-letter { padding: 20px; margin: 14px 0; background: var(--gf-bg-card); color: var(--gf-ink-primary); border: 1px solid var(--gf-cinnabar); line-height: 2; white-space: pre-wrap; animation: scholar-letter-unfold .45s ease-out; }
-.scholar-reply-letter button { font: inherit; min-height: 44px; padding: 6px 12px; color: var(--gf-ink-primary); background: var(--gf-bg-paper); border: 1px solid var(--gf-cinnabar); border-radius: 4px; }
-@keyframes scholar-letter-unfold { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .scholar-reply-letter { animation: none; } }
+
+.scholar-sheet {
+  box-sizing: border-box;
+  width: min(100%, 520px);
+  max-height: 88dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 22px 18px max(24px, env(safe-area-inset-bottom));
+  border-radius: 18px 18px 0 0;
+  background: var(--gf-bg-paper, #f7ebdb);
+  color: var(--gf-ink-primary);
+  font-size: 15px;
+  line-height: 1.8;
+  box-shadow: 0 -6px 28px color-mix(in srgb, var(--gf-ink-primary) 14%, transparent);
+
+  header, nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  h2 {
+    font-size: 22px;
+    font-family: STKaiti, KaiTi, serif;
+    letter-spacing: .08em;
+  }
+  p { margin: 12px 0; }
+  button {
+    font: inherit;
+    cursor: pointer;
+  }
+}
+
+/* 顶部雅士修持 / 概览统计条 */
+.scholar-summary-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--gf-bg-card, #fff9f0);
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 48%, transparent);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--gf-ink-primary) 4%, transparent);
+
+  &__info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: STKaiti, KaiTi, serif;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &__rank {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gf-accent-text, var(--gf-seal, #963b30));
+    border-bottom: 2px solid currentColor;
+    padding-bottom: 1px;
+    letter-spacing: .05em;
+  }
+  &__divider {
+    color: var(--gf-ink-muted, #a69988);
+    font-size: 14px;
+  }
+  &__points, &__count {
+    font-size: 13px;
+    color: var(--gf-ink-secondary);
+    letter-spacing: .04em;
+  }
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+}
+
+/* 胶囊行动按钮 */
+.scholar-capsule-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-family: STKaiti, KaiTi, serif;
+  letter-spacing: .06em;
+  border-radius: 18px;
+  border: 1px solid var(--gf-gold, #c5a059);
+  cursor: pointer;
+  transition: all .2s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  &.primary {
+    background: linear-gradient(135deg, #87362c, #a83f33);
+    color: #fff1d6;
+    border-color: #d2b16e;
+    box-shadow: 0 2px 8px rgba(135, 54, 44, 0.25);
+    &:hover, &:active {
+      background: linear-gradient(135deg, #742e26, #96362c);
+      box-shadow: 0 3px 12px rgba(135, 54, 44, 0.35);
+    }
+  }
+  &:not(.primary) {
+    background: var(--gf-bg-paper, #f7ebdb);
+    color: var(--gf-ink-primary);
+    border-color: color-mix(in srgb, var(--gf-gold) 60%, transparent);
+    &:hover, &:active {
+      border-color: var(--gf-gold);
+      color: var(--gf-accent-text, var(--gf-seal));
+    }
+  }
+}
+
+/* 圆形刷新按钮 */
+.scholar-icon-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 50%, transparent);
+  background: var(--gf-bg-paper, #f7ebdb);
+  color: var(--gf-ink-secondary);
+  cursor: pointer;
+  font-size: 16px;
+  transition: all .2s ease;
+
+  &:hover, &:active {
+    color: var(--gf-accent-text, var(--gf-seal));
+    border-color: var(--gf-gold);
+    transform: rotate(30deg);
+  }
+}
+
+.is-spinning {
+  animation: scholar-spin 1s linear infinite;
+}
+
+@keyframes scholar-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 顶部抽屉标题栏 */
+.scholar-archive-tophead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 14px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--gf-gold) 35%, transparent);
+
+  h2 {
+    margin: 0;
+    font-family: STKaiti, KaiTi, serif;
+    font-size: 20px;
+    letter-spacing: .08em;
+  }
+  button {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: transparent;
+    font-size: 20px;
+    color: var(--gf-ink-secondary);
+  }
+}
+
+/* 状态通知与加载提示 */
+.scholar-status-notice {
+  padding: 10px 14px;
+  margin: 12px 0 16px;
+  border-left: 3px solid var(--gf-gold);
+  background: var(--gf-bg-card);
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--gf-ink-secondary);
+  border-radius: 0 6px 6px 0;
+}
+
+.scholar-loading-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 0;
+  font-size: 14px;
+  font-family: STKaiti, KaiTi, serif;
+  color: var(--gf-ink-secondary);
+}
+
+/* 藏牒阁战绩列表 */
+.scholar-records-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scholar-archive-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  background: var(--gf-bg-card, #fff9f0);
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 45%, transparent);
+  border-radius: 12px;
+  border-inline-start: 4px solid var(--gf-gold, #c5a059);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--gf-ink-primary) 5%, transparent);
+  cursor: pointer;
+  text-align: left;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: var(--gf-gold);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--gf-gold) 20%, transparent);
+  }
+  &__left {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    strong {
+      font-family: STKaiti, KaiTi, serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--gf-ink-primary);
+      letter-spacing: .04em;
+    }
+  }
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--gf-ink-secondary);
+  }
+  &__time {
+    font-size: 11px;
+    color: var(--gf-ink-muted, #998a7a);
+    letter-spacing: .04em;
+  }
+  &__right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  &__action {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-family: STKaiti, KaiTi, serif;
+    color: var(--gf-accent-text, var(--gf-seal));
+    font-weight: 600;
+  }
+}
+
+/* 战绩结果朱砂/泥金印章 */
+.scholar-result-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 11.5px;
+  font-family: STKaiti, KaiTi, serif;
+  border-radius: 3px;
+  line-height: 1.35;
+  letter-spacing: .06em;
+
+  &.win {
+    background: color-mix(in srgb, #963b30 14%, transparent);
+    color: #963b30;
+    border: 1px solid #963b3088;
+  }
+  &.draw {
+    background: color-mix(in srgb, #b8860b 14%, transparent);
+    color: #8a6408;
+    border: 1px solid #b8860b88;
+  }
+  &.lose {
+    background: color-mix(in srgb, #5c5650 14%, transparent);
+    color: #5c5650;
+    border: 1px solid #5c565088;
+  }
+}
+
+/* 飞花文牒证书预览全屏展示 */
+.scholar-certificate-preview {
+  margin-top: 10px;
+
+  .scholar-return-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 38px;
+    padding: 6px 14px;
+    margin-bottom: 14px;
+    background: transparent;
+    border: 1px solid color-mix(in srgb, var(--gf-gold) 55%, transparent);
+    border-radius: 6px;
+    color: var(--gf-ink-primary);
+    font-family: STKaiti, KaiTi, serif;
+    font-size: 13.5px;
+    cursor: pointer;
+    &:hover { border-color: var(--gf-gold); }
+  }
+  .scholar-certificate-frame {
+    padding: 12px;
+    background: #eadecc;
+    border: 2px solid var(--gf-gold);
+    border-radius: 12px;
+    box-shadow: 0 6px 24px rgba(60, 40, 20, 0.16);
+
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 6px;
+    }
+  }
+  .scholar-certificate-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .scholar-action-btn {
+    flex: 1;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: STKaiti, KaiTi, serif;
+    font-size: 15px;
+    letter-spacing: .08em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .18s;
+
+    &.primary {
+      background: linear-gradient(135deg, #87362c, #a83f33);
+      color: #fff1d6;
+      border: 1px solid #d2b16e;
+      box-shadow: 0 3px 12px rgba(135, 54, 44, 0.28);
+      &:hover { background: linear-gradient(135deg, #742e26, #96362c); }
+    }
+    &:not(.primary) {
+      background: var(--gf-bg-card);
+      color: var(--gf-ink-primary);
+      border: 1px solid var(--gf-gold);
+      &:hover { border-color: var(--gf-cinnabar); color: var(--gf-cinnabar); }
+    }
+  }
+}
+
+/* 物溯宝鉴网格与卡片 */
+.scholar-artifacts-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+
+  @media (min-width: 500px) {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+.scholar-artifact-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px 16px 14px;
+  background: var(--gf-bg-card, #fff9f0);
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 48%, transparent);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--gf-ink-primary) 4%, transparent);
+  transition: transform .18s ease, box-shadow .18s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--gf-gold) 15%, transparent);
+  }
+  &__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  &__name {
+    margin: 0;
+    font-family: STKaiti, KaiTi, serif;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--gf-ink-primary);
+    letter-spacing: .04em;
+  }
+  &__dynasty {
+    display: inline-block;
+    font-size: 11px;
+    padding: 1px 6px;
+    border: 1px solid var(--gf-gold);
+    border-radius: 3px;
+    color: var(--gf-ink-secondary);
+    font-family: STKaiti, KaiTi, serif;
+  }
+  &__rank {
+    font-family: STKaiti, KaiTi, serif;
+    font-size: 11.5px;
+    padding: 2px 7px;
+    border: 1px double #963b30;
+    color: #963b30;
+    background: color-mix(in srgb, #963b30 8%, transparent);
+    border-radius: 3px;
+    letter-spacing: .06em;
+  }
+  &__desc {
+    p {
+      margin: 0 0 14px;
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--gf-ink-secondary);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  }
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-top: 12px;
+    border-top: 1px solid color-mix(in srgb, var(--gf-gold) 20%, transparent);
+  }
+  &__date {
+    font-size: 11px;
+    color: var(--gf-ink-muted, #998a7a);
+  }
+  &__ops {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+}
+
+/* 通用操作按钮组 */
+.scholar-card-ops {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.scholar-btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 36px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  border-radius: 6px;
+  font-family: STKaiti, KaiTi, serif;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: all .18s;
+
+  &.primary {
+    background: linear-gradient(135deg, #87362c, #a83f33);
+    color: #fff1d6;
+    border: 1px solid #d2b16e;
+    box-shadow: 0 2px 6px rgba(135, 54, 44, 0.2);
+    &:hover { background: linear-gradient(135deg, #752e25, #95362a); }
+  }
+  &.subtle {
+    background: transparent;
+    color: var(--gf-ink-primary);
+    border: 1px solid color-mix(in srgb, var(--gf-gold) 50%, transparent);
+    &:hover {
+      border-color: var(--gf-gold);
+      color: var(--gf-accent-text, var(--gf-seal));
+    }
+  }
+  &.danger-active {
+    background: #963b30;
+    color: #fff1d6;
+    border: 1px solid #732219;
+  }
+  &.text {
+    background: transparent;
+    border: 0;
+    color: var(--gf-ink-secondary);
+    padding: 6px 8px;
+    &:hover { color: var(--gf-ink-primary); }
+  }
+}
+
+/* 分页控制 */
+.scholar-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+
+  button {
+    min-height: 38px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-family: STKaiti, KaiTi, serif;
+    border-radius: 6px;
+    border: 1px solid color-mix(in srgb, var(--gf-gold) 50%, transparent);
+    background: var(--gf-bg-card);
+    color: var(--gf-ink-primary);
+    cursor: pointer;
+    &:disabled { opacity: .4; cursor: default; }
+  }
+  &__current {
+    font-size: 13px;
+    font-family: STKaiti, KaiTi, serif;
+    color: var(--gf-ink-secondary);
+  }
+}

@@ -2413,15 +2413,71 @@
 }
 
 // ════════════════════════════════════════════════════
-//  《十二时辰养生与雅事》
+//  《十二时辰养生与雅事》（居中宣纸画卷弹窗）
 // ════════════════════════════════════════════════════
+.home-shichen-popup {
+  --background-color: transparent;
+  --max-width: min(92vw, 420px);
+  --min-width: min(88vw, 320px);
+  --border-radius: 14px;
+
+  .adm-center-popup-wrap {
+    max-width: min(92vw, 420px);
+    width: min(92vw, 420px);
+    box-sizing: border-box;
+  }
+
+  .adm-center-popup-body {
+    background-color: transparent;
+    padding: 0;
+    overflow: visible;
+    border-radius: 14px;
+  }
+}
+
 .home-shichen {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 0;
-  padding: 0.3rem 0 0.24rem;
-  background: var(--gf-bg-paper);
-  color: var(--gf-ink-primary);
+  padding: 0.36rem 0 0.28rem;
+  background: var(--gf-bg-paper, #f7f4eb);
+  color: var(--gf-ink-primary, #2b2b2b);
+  border: 1px solid var(--gf-gold, #ba914b);
+  border-radius: 14px;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gf-bg-paper, #f7f4eb) 85%, transparent),
+              0 0 0 4px color-mix(in srgb, var(--gf-gold, #ba914b) 45%, transparent),
+              0 18px 46px rgba(0, 0, 0, 0.35);
+
+  > .reference-corners {
+    position: absolute;
+    inset: -4px;
+    z-index: 3;
+    pointer-events: none;
+    > i {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-top: 1px solid var(--gf-gold, #ba914b);
+      border-left: 1px solid var(--gf-gold, #ba914b);
+      border-radius: 4px 0 0;
+    }
+    > i::before {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 9px;
+      height: 9px;
+      border: 1px solid var(--gf-gold, #ba914b);
+      border-right: 0;
+      border-bottom: 0;
+    }
+    > i:nth-child(1) { top: 0; left: 0; }
+    > i:nth-child(2) { top: 0; right: 0; transform: rotate(90deg); }
+    > i:nth-child(3) { bottom: 0; right: 0; transform: rotate(180deg); }
+    > i:nth-child(4) { bottom: 0; left: 0; transform: rotate(270deg); }
+  }
 }
 
 .home-shichen__head {
@@ -2535,3 +2591,14 @@
   color: var(--gf-ink-secondary);
   opacity: 0.72;
 }
+
+[data-theme='dark'] {
+  .home-shichen {
+    background: var(--gf-bg-card, #19231c);
+    border-color: color-mix(in srgb, var(--gf-gold) 65%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--gf-bg-card, #19231c) 85%, transparent),
+                0 0 0 4px color-mix(in srgb, var(--gf-gold) 35%, transparent),
+                0 18px 46px rgba(0, 0, 0, 0.65);
+  }
+}
+

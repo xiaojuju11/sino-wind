@@ -44,7 +44,7 @@ async function mount(page, { token = 'account-a', saved = null, get, props = {} 
     else if (name === 'antd-mobile') exports = { Toast: { show: value => toasts.push(value) }, Modal: { confirm: value => { confirm = value } }, Popup: 'Popup', ActionSheet: 'ActionSheet', ImageViewer: 'ImageViewer' }
     else if (name === 'antd-mobile-icons') exports = Object.fromEntries(['LeftOutline', 'SearchOutline', 'FileOutline', 'RightOutline', 'HeartOutline', 'CloseOutline', 'RedoOutline'].map(key => [key, key]))
     else if (name.includes('useScholarScope')) exports = { useScholarScope: scope }
-    else if (name.includes('scholarLetters')) exports = { scholarScope: scope, syncLocalLetters: async () => {}, cachedLetters: () => [], loadLetters: async () => [], shichen: () => '辰时初刻' }
+    else if (name.includes('scholarLetters')) exports = { scholarScope: scope, syncLocalLetters: async () => {}, cachedLetters: () => [], loadLetters: async () => [], shichen: () => '辰时初刻', markLetterRead: async () => {} }
     else if (name.includes('studyFlow')) {
       const helper = new vm.SourceTextModule(await fs.readFile(new URL('../src/utils/studyFlow.js', import.meta.url), 'utf8'), { context })
       await helper.link(() => { throw new Error('Unexpected study helper dependency') })

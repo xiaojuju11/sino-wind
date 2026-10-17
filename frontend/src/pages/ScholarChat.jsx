@@ -9,7 +9,6 @@ import FeihuaPanel from '../components/FeihuaPanel'
 import { receiveScholarStream } from '../utils/scholarStream'
 import { cachedLetters, loadLetterDetail, markLetterRead, saveLocalTurn, leaveScholar, shichen, scholarScope } from '../utils/scholarLetters'
 import '../styles/scholarEcosystem.less'
-import ScholarArtifactDrawer from '../components/ScholarArtifactDrawer'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
 import { getScholarScene } from '../utils/scholarScenes'
@@ -205,7 +204,6 @@ function ScholarChatSession() {
   const [gameOpen, setGameOpen] = useState(false)
   const [hydrating, setHydrating] = useState(true)
   const [replyLetter, setReplyLetter] = useState(null)
-  const [artifactOpen, setArtifactOpen] = useState(false)
   const activeRequest = useRef(null)
   const stopRequest = () => {
     const request = activeRequest.current
@@ -394,11 +392,6 @@ function ScholarChatSession() {
     }
   }
 
-  // 快捷转引物溯古今
-  const handleCiteShiwu = () => {
-    if (!loading && !hydrating) setArtifactOpen(true)
-  }
-
   return (
     <div className={`scholar-chat-root reference-polish${gameOpen ? " is-game" : ""}${hasScene ? ' has-sage-scene' : ''}`}>
       {hasScene && <div className='scholar-scene' aria-hidden='true'>
@@ -406,10 +399,6 @@ function ScholarChatSession() {
         <div className='scholar-scene__shade' />
       </div>}
       <InkWashBackground atmosphereOnly={hasScene} />
-      {artifactOpen && <ScholarArtifactDrawer onClose={() => setArtifactOpen(false)} onPick={item => {
-        setArtifactOpen(false)
-        handleSend(`${sageInfo.name}先生，吾日前识得「${item.name}」，记录暂考为「${item.dynasty || '年代待考'}」${item.degraded ? '，此项仍为内置资料推演' : ''}。${scholarScope() === 'guest' ? `本机考释资料：${item.description.slice(0, 800)}。` : ''}愿请先生从所属时代的器用与风雅辨析其来历；若晚于先生之世，亦请说明为跨时推论，不知此物与古今生活有何相通？`, scholarScope() === 'guest' ? undefined : item.id)
-      }} />}
       {/* 1. 顶部清雅导航栏 */}
       <header className="scholar-nav">
         <button
@@ -557,15 +546,6 @@ function ScholarChatSession() {
         <div className="scholar-footer__quick-tools">
           {['libai', 'sushi', 'liqingzhao', 'wangyangming', 'dufu'].includes(sageKey) && <button type="button" className="scholar-tool-btn" disabled={loading || hydrating} onClick={() => setGameOpen(true)}><EditSOutline /> 飞花令</button>}
           {loading && <button type="button" className="scholar-tool-btn" onClick={() => activeRequest.current?.controller.abort()}>停止研墨</button>}
-          <button
-            type="button"
-            className="scholar-tool-btn"
-            disabled={loading || hydrating}
-            onClick={handleCiteShiwu}
-          >
-            <FileOutline className="scholar-tool-icon" />
-            引物溯古
-          </button>
           <button
             type="button"
             className="scholar-tool-btn"
