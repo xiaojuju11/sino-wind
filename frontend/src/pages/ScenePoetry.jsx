@@ -166,7 +166,52 @@ function SceneEditor({ scope }) {
         <ScenePicture scene={scene} selected={selected} highlight={highlight} onToggle={busy ? undefined : toggle} drawing={drawing ? manualTag : ''} onDraw={addRegion} />
         {scene.example && <p className='scene-caption'>山水画示例</p>}
         <div className='scene-actions scene-actions--small'><button type='button' disabled={busy} onClick={() => { const version = ++generation.current; setDrawing(false); analyze(scene, version) }}><RedoOutline />重新识景</button>{busy && <button type='button' onClick={() => request.current?.abort()}><CloseOutline />停止识景</button>}</div>
-        {!busy && <><div className='scene-region-list'>{scene.analysis.regions.map(region => <div className='scene-region-row' key={region.id}><button type='button' aria-pressed={selected.includes(region.id)} onClick={() => toggle(region.id)}>{region.label}</button><select aria-label={`更正${region.label}的意象`} value={region.tag} onChange={event => correct(region.id, event.target.value)}>{Object.entries(SCENE_TAGS).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></div>)}</div><div className='scene-manual'><label>补选意象 <select aria-label='要圈选的意象' value={manualTag} onChange={event => setManualTag(event.target.value)}>{Object.entries(SCENE_TAGS).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></label><button type='button' aria-pressed={drawing} onClick={() => setDrawing(value => !value)}>{drawing ? '取消圈选' : '在图中圈选'}</button></div></>}
+        {!busy && (
+          <>
+            <div className='scene-region-list'>
+              {scene.analysis.regions.map(region => {
+                const isSelected = selected.includes(region.id)
+                return (
+                  <div
+                    className={`scene-region-row${isSelected ? ' is-selected' : ''}`}
+                    key={region.id}
+                  >
+                    <button
+                      type='button'
+                      aria-pressed={isSelected}
+                      onClick={() => toggle(region.id)}
+                    >
+                      <span className='region-check' aria-hidden='true'>
+                        {isSelected ? '✓' : ''}
+                      </span>
+                      <span className='region-label'>{region.label}</span>
+                    </button>
+                    <select
+                      aria-label={`更正${region.label}的意象`}
+                      value={region.tag}
+                      onChange={event => correct(region.id, event.target.value)}
+                    >
+                      {Object.entries(SCENE_TAGS).map(([key, label]) => (
+                        <option key={key} value={key}>{label}</option>
+                      ))}
+                    </select>
+                  </div>
+                )
+              })}
+            </div>
+            <div className='scene-manual'>
+              <label>
+                补选意象
+                <select aria-label='要圈选的意象' value={manualTag} onChange={event => setManualTag(event.target.value)}>
+                  {Object.entries(SCENE_TAGS).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
+                </select>
+              </label>
+              <button type='button' aria-pressed={drawing} onClick={() => setDrawing(value => !value)}>
+                {drawing ? '取消圈选' : '在图中圈选'}
+              </button>
+            </div>
+          </>
+        )}
       </section>}
       {notice && !(!scene && busy) && <p className='scene-notice' role='status' aria-live='polite'>{busy && <span className='scene-spinner' aria-hidden='true' />}{notice}</p>}
       {scene && !busy && <section className='scene-panel'><ReferenceCorners /><div className='scene-section-title'><div><span className='scene-eyebrow'>第二折 · 指景寻诗</span><h2>为此景，寻一句诗</h2></div><span className='scene-seal'>会心</span></div><p className='scene-muted'>按所选意象匹配原诗节选。点击下方意象词，可在照片中寻其所在。</p>
