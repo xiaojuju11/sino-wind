@@ -112,7 +112,7 @@ function SceneEditor({ scope }) {
   return <div className='study-page scene-page'>
     <InkWashBackground />
     <header className='study-page__header'>
-      <button type='button' className='study-page__back' aria-label='返回雅集' onClick={() => navigate(-1)}><LeftOutline /></button>
+      <button type='button' className='study-page__back' aria-label='返回雅集' onClick={() => navigate('/home')}><LeftOutline /></button>
       <div><h1>寻镜入诗</h1><p>眼前的风景，也曾落在古人的诗里</p></div><span className='study-page__seal'>寻境</span>
     </header>
     <main className='scene-main'>
