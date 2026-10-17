@@ -343,7 +343,6 @@ function MinePageSession() {
           <span className='shuzhai-logout-btn__ornaments' aria-hidden='true'>
             <span /><span /><span /><span />
           </span>
-          <span className='shuzhai-logout-btn__seal' aria-hidden='true'><span>{signedIn ? '离' : '入'}</span><span>席</span></span>
           <span className='shuzhai-logout-btn__text'>{signedIn ? '整装离席' : '登录入席'}<small>{signedIn ? '束卷归隐 · 期君再聚' : '落座留名 · 共此山河'}</small></span>
         </button>
         <p className='shuzhai-logout-sub'>{signedIn ? '藏卷仍在，风雅长留' : '入席后，可留存自己的风雅藏卷'}</p>
