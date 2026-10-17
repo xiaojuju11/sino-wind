@@ -15,154 +15,150 @@
   .home-section-header, .home-section-sub { position: relative; z-index: 1; }
   .home-section-sub { max-width: 90%; }
 
-  .scene-home-card__tag {
-    display: inline-block;
+  .scene-home-card__main-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-size: 11px;
-    color: var(--gf-seal, #8a2b2b);
-    letter-spacing: 0.12em;
-    font-family: 'STKaiti', 'KaiTi', serif;
-    margin-bottom: 2px;
+    color: var(--gf-seal);
     font-weight: 600;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
   }
 
-  // ── 宋韵诗境画卷展台（西湖山水册页）──
-  .scene-home-stage {
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-    margin: 12px 0 14px;
-    border: 1px solid color-mix(in srgb, var(--gf-gold) 75%, transparent);
-    box-shadow: 0 4px 18px rgba(44, 38, 33, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.45);
-    background: #dfd8c7;
-    cursor: pointer;
-    touch-action: manipulation;
-    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease;
+  .scene-home-card__pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--gf-seal);
+    box-shadow: 0 0 0 3px rgba(138, 43, 43, 0.2);
+    animation: pulseDot 2s infinite ease-in-out;
+  }
 
-    &:hover {
-      box-shadow: 0 6px 22px rgba(138, 43, 43, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
-    }
+  // 5 步交互研习闭环链路
+  .scene-home-pipeline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    margin: 14px 0 16px;
+    padding: 10px 8px;
+    background: rgba(255, 255, 255, 0.65);
+    border-radius: 6px;
+    border: 1px dashed rgba(179, 149, 81, 0.45);
 
-    &:active {
-      transform: scale(0.985);
-    }
-
-    &__art {
-      display: block;
-      width: 100%;
-      height: 165px;
-      object-fit: cover;
-      object-position: center 62%;
-      transition: transform 0.45s ease;
-    }
-
-    &:hover &__art {
-      transform: scale(1.03);
-    }
-
-    &__scrim {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        180deg,
-        rgba(26, 20, 16, 0.15) 0%,
-        rgba(32, 26, 22, 0.4) 45%,
-        rgba(24, 18, 14, 0.82) 100%
-      );
-      pointer-events: none;
-    }
-
-    &__content {
-      position: absolute;
-      inset: 0;
+    &__step {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      padding: 12px 14px 10px;
-      pointer-events: none;
-    }
-
-    &__couplet {
-      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
-
-      .couplet-line {
-        margin: 0;
-        font-family: 'STKaiti', 'KaiTi', serif;
-        font-size: 16px;
-        font-weight: 600;
-        line-height: 1.45;
-        letter-spacing: 0.1em;
-        color: #fff9ea;
-      }
-
-      .couplet-author {
-        display: inline-block;
-        margin-top: 3px;
-        font-size: 11px;
-        color: #eedcc0;
-        letter-spacing: 0.06em;
-      }
-    }
-
-    &__footer-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    &__pills {
-      display: flex;
-      gap: 6px;
-
-      .stage-pill {
-        font-size: 10px;
-        padding: 2px 7px;
-        border-radius: 3px;
-        background: rgba(255, 255, 255, 0.24);
-        backdrop-filter: blur(4px);
-        color: #fffaf0;
-        border: 1px solid rgba(255, 255, 255, 0.38);
-        letter-spacing: 0.04em;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-      }
-    }
-
-    &__hint {
-      display: inline-flex;
       align-items: center;
       gap: 3px;
-      font-size: 11px;
-      color: #ffe6ba;
-      letter-spacing: 0.04em;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 
-      .hint-arrow {
-        font-size: 11px;
+      .step-num {
+        display: grid;
+        place-items: center;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--gf-seal);
+        color: #fff;
+        font-size: 10px;
+        font-weight: bold;
+      }
+      .step-name {
+        font-size: 10px;
+        color: var(--gf-ink-primary);
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+      }
+    }
+
+    .step-arrow {
+      color: var(--gf-gold);
+      font-size: 11px;
+      opacity: 0.8;
+    }
+  }
+
+  // 诗境画卷微展示与反向观景
+  .scene-home-card__showcase {
+    background: rgba(250, 247, 240, 0.9);
+    border: 1px solid rgba(179, 149, 81, 0.35);
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+  }
+
+  .scene-home-card__verse-highlight {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gf-ink-primary);
+    margin: 0 0 6px;
+    letter-spacing: 0.04em;
+    font-family: 'STKaiti', 'KaiTi', serif;
+  }
+
+  .scene-home-card__reverse-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--gf-seal);
+    line-height: 1.4;
+  }
+
+  .scene-home-card__hint-icon {
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .scene-home-card__tags-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+
+    .preview-tag {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 3px;
+      background: rgba(91, 122, 104, 0.12);
+      color: #3e5a4a;
+      border: 1px solid rgba(91, 122, 104, 0.25);
+
+      &--sage {
+        background: rgba(138, 43, 43, 0.08);
+        color: var(--gf-seal);
+        border-color: rgba(138, 43, 43, 0.25);
       }
     }
   }
 
-  // ── 首页行动栏 ──
+  // 首页即刻交互行动栏
   .scene-home-card__actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 8px;
     margin-bottom: 10px;
+
+    .scene-home-btn--ghost {
+      grid-column: span 2;
+    }
   }
 
   .scene-home-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
-    padding: 10px 14px;
+    gap: 6px;
+    padding: 9px 12px;
     border-radius: 6px;
-    font-size: 14px;
+    font-size: 13px;
     cursor: pointer;
-    font-family: 'STKaiti', 'KaiTi', serif;
-    letter-spacing: 0.04em;
+    font-family: inherit;
+    border: 1px solid var(--gf-gold);
+    background: var(--gf-bg-paper, #f4efdf);
+    color: var(--gf-ink-primary);
     transition: all 0.2s ease;
-    touch-action: manipulation;
 
     &:active {
       transform: scale(0.98);
@@ -171,72 +167,62 @@
     &--primary {
       background: linear-gradient(135deg, #8A2B2B, #6E2121);
       color: #FFF6E5;
-      border: 1px solid #A33A3A;
-      box-shadow: 0 3px 10px rgba(138, 43, 43, 0.25);
-      font-weight: 600;
-
-      &:hover {
-        background: linear-gradient(135deg, #993232, #7a2626);
-      }
+      border-color: #A33A3A;
+      box-shadow: 0 2px 8px rgba(138, 43, 43, 0.25);
+      font-weight: 500;
     }
 
-    &--secondary {
-      background: var(--gf-bg-paper, #f4efdf);
-      color: var(--gf-ink-primary, #282b27);
-      border: 1px solid var(--gf-gold, #b39551);
-      box-shadow: 0 2px 6px rgba(44, 38, 33, 0.06);
-
-      &:hover {
-        background: color-mix(in srgb, var(--gf-gold) 12%, var(--gf-bg-paper));
-      }
+    &--ghost {
+      background: transparent;
+      border: 1px dashed var(--gf-gold);
+      color: var(--gf-ink-secondary);
+      font-size: 12px;
+      padding: 6px 10px;
     }
 
     &__icon {
-      font-size: 16px;
+      font-size: 15px;
     }
   }
 
   .scene-home-card__footer {
     display: flex;
-    align-items: center;
     justify-content: flex-end;
     border-top: 1px solid rgba(179, 149, 81, 0.2);
     padding-top: 8px;
   }
 
   .scene-home-card__archive-link {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 4px;
     border: none;
     background: transparent;
-    color: var(--gf-seal, #8a2b2b);
+    color: var(--gf-seal);
     font-size: 12px;
     cursor: pointer;
-    padding: 2px 0;
-    font-family: 'STKaiti', 'KaiTi', serif;
-    letter-spacing: 0.04em;
-
-    &:hover {
-      opacity: 0.85;
-    }
+    padding: 0;
 
     .scene-home-card__archive-arrow {
-      font-size: 11px;
+      font-size: 12px;
     }
   }
 }
 
 .reference-polish.home-root .home-card-scroll.scene-home-card {
   overflow: hidden;
-  padding-bottom: 14px;
+  padding-bottom: 16px;
+  background: var(--gf-bg-card, #f6efdf) !important;
   &::before { background: none; }
-  > :not(.scene-home-stage) { position: relative; z-index: 1; }
+  > .scene-home-card__art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: right center; opacity: .22; pointer-events: none; z-index: 0; }
+  > :not(.scene-home-card__art) { position: relative; z-index: 1; }
   > .reference-corners { position: absolute; }
 }
+[data-theme='dark'] .reference-polish.home-root .scene-home-card > .scene-home-card__art { opacity: .16; }
 
-[data-theme='dark'] .reference-polish.home-root .scene-home-card .scene-home-stage {
-  border-color: color-mix(in srgb, var(--gf-gold) 45%, transparent);
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
 }
 
 .scene-grounding-banner {
