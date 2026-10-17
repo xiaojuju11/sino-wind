@@ -6,11 +6,15 @@ import { ThemeProvider } from './context/ThemeContext.jsx'
 import './utils/rem.js'
 import './styles/global.css'
 
+import { registerServiceWorker } from './utils/pwaRegister.js'
+
 createRoot(document.getElementById('root')).render(
   <ThemeProvider>
     <App />
   </ThemeProvider>
 )
+
+registerServiceWorker();
 
 unstableSetRender((node, container) => {
   container._reactRoot ||= createRoot(container);

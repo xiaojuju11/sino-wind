@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './styles/app.less'
 import BambooBreeze from './components/BambooBreeze'
 import DesktopStageWings from './components/DesktopStageWings'
+import PwaInstallPrompt from './components/PwaInstallPrompt'
 import Layout from './pages/Layout'
 import Home from './pages/Home'
 import MinePage from './pages/MinePage'
@@ -50,6 +51,7 @@ export default function App() {
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <BambooBreeze />
       <DesktopStageWings />
+      <PwaInstallPrompt />
       <Suspense fallback={<PageFallback />}>
         <Routes>
           <Route path='/login' element={<AuthPage/>}></Route>

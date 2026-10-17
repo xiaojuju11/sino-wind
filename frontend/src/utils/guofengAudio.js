@@ -23,9 +23,23 @@ function getAudioContext() {
 }
 
 /**
+ * 移动端触觉微震动反馈（国风金石手感）
+ */
+export function triggerHaptic(pattern = 15) {
+  if (typeof window !== 'undefined' && typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    try {
+      navigator.vibrate(pattern)
+    } catch {
+      // 降级静音处理
+    }
+  }
+}
+
+/**
  * 1. 落砚盖章音效（厚重温润，墨滴入砚或朱砂落款）
  */
 export function playInkDropSound() {
+  triggerHaptic(18)
   try {
     const ctx = getAudioContext()
     if (!ctx) return
@@ -55,6 +69,7 @@ export function playInkDropSound() {
  * 2. 编钟清磬之声（金石清越，飞花合律与先贤应令）
  */
 export function playChimeSound() {
+  triggerHaptic([15, 30, 15])
   try {
     const ctx = getAudioContext()
     if (!ctx) return

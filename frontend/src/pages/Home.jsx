@@ -398,6 +398,8 @@ export default function Home() {
         <p className="home-hero__sub">—— 读千年风雅 与君共此山河 ——</p>
       </header>
 
+      <SceneHomeCard />
+
       {/* ── 区块① 白话雅译（两端木轴卷轴 + 竖排红签）── */}
       <section className="home-card-scroll home-yayan-section">
         <ReferenceCorners />
@@ -620,8 +622,6 @@ export default function Home() {
           </button>
         </div>
       </section>
-
-      <SceneHomeCard />
 
       {/* ── 漫游古今城邑抽屉（全国城邑，可搜今名或古称）── */}
       <Popup

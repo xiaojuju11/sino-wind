@@ -26,8 +26,7 @@ const MUSEUM_PRESETS = [
     name: '曜变天目茶盏',
     dynasty: '宋代',
     category: '建阳窑黑釉绝品',
-    score: 96,
-    seal: '神品',
+    seal: '案例',
     bgColor: '#172230',
     tag: '国宝名瓷 · 一盏含星河',
     thumb: '盏',
@@ -41,8 +40,7 @@ const MUSEUM_PRESETS = [
     name: '酱釉贴花酒樽',
     dynasty: '唐代',
     category: '盛唐酒礼重器',
-    score: 92,
-    seal: '妙品',
+    seal: '案例',
     bgColor: '#382315',
     tag: '丝路融合 · 胡风西韵',
     thumb: '樽',
@@ -56,8 +54,7 @@ const MUSEUM_PRESETS = [
     name: '三彩腾空三彩马',
     dynasty: '唐代',
     category: '丝路陶俑雕塑巅峰',
-    score: 95,
-    seal: '神品',
+    seal: '案例',
     bgColor: '#212d1b',
     tag: '万国来朝 · 盛世风骨',
     thumb: '驹',
@@ -125,12 +122,11 @@ export default function Recognition() {
     setRecognitionResult({
       code: 1,
       source: 'preset-specimen',
-      message: '典范标本研摩成功',
+      notice: '内置研习案例：图示与考释为预先编写的示例，本次未调用图像识别，不作为个人识物成果。',
       data: {
         name: preset.name,
         dynasty: preset.dynasty,
         description: preset.description,
-        score: preset.score,
         craft: preset.craft,
         material: preset.material
       }
@@ -166,7 +162,7 @@ export default function Recognition() {
             <span className='presets-badge'>典范标本</span>
             <h3 className='presets-title'>文博金石 · 秒级考释</h3>
           </div>
-          <span className='presets-sub'>答辩高可用通道 · 零网络延迟</span>
+          <span className='presets-sub'>内置研习案例 · 无需上传</span>
         </div>
         <div className='presets-grid'>
           {MUSEUM_PRESETS.map((preset) => (
