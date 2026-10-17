@@ -1,5 +1,6 @@
 import ReferenceCorners from '../components/ReferenceCorners'
 import SceneHomeCard from '../components/SceneHomeCard'
+import FrequencyHomeCard from '../components/FrequencyHomeCard'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import '../styles/home.less'
 import { Toast, Popup, CenterPopup } from 'antd-mobile'
@@ -11,6 +12,7 @@ import InkSpreadZone from '../components/InkSpreadZone.jsx'
 import axios from '../http'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
+import '../styles/homeHarmony.less'
 import { CITIES, searchCities } from '../utils/geoCities.js'
 import { currentTerm, seasonLine, fetchWeather, locate } from '../utils/almanac.js'
 import { SHICHEN, shichenOf } from '../utils/shichen.js'
@@ -400,6 +402,7 @@ export default function Home() {
 
       {/* ── 区块① 白话雅译（两端木轴卷轴 + 竖排红签）── */}
       <section className="home-card-scroll home-yayan-section">
+        <img className="home-yayan-art" src={`${BASE}images/frequency/yayan-desk-v1.webp`} alt="" aria-hidden="true" />
         <ReferenceCorners />
         <div className="home-section-header">
           <h2 className="home-section-title">白话雅译</h2>
@@ -435,7 +438,6 @@ export default function Home() {
               <div className="home-yayan-result-card">
                 <p className="home-yayan-ancient-text">
                   {yayanResult.ancient}
-                  <i className="home-yayan-seal">闲</i>
                 </p>
                 <p className="home-yayan-explain"><span className="home-yayan-explain__label">文言释义：</span>{yayanResult.explanation}</p>
                 <p className="home-yayan-author">—— {yayanResult.author}</p>
@@ -622,6 +624,7 @@ export default function Home() {
       </section>
 
       <SceneHomeCard />
+      <FrequencyHomeCard />
 
       {/* ── 漫游古今城邑抽屉（全国城邑，可搜今名或古称）── */}
       <Popup

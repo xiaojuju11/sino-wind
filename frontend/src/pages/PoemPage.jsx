@@ -607,7 +607,7 @@ export default function PoemPage() {
 
         <div className="poem-appreciation__body">
           {/* 赏析维度选项卡 */}
-          <div className="poem-appreciation__tabs">
+          <div className="poem-appreciation__tabs" role="region" aria-label="赏析选项，左右滑动查看更多" tabIndex={0}>
             <button
               type="button"
               className={`poem-appreciation__tab ${appreciationTab === 'overview' ? 'is-active' : ''}`}

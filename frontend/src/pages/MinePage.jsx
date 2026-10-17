@@ -245,7 +245,6 @@ function MinePageSession() {
             <i className='iconfont icon-shuben' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>藏牒阁</span>
-              <span className='shuzhai-list-item__desc'>历局唱和存卷 · 高清文牒回看与分享</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
@@ -253,7 +252,6 @@ function MinePageSession() {
             <i className='iconfont icon-zhanpin' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>物溯宝鉴</span>
-              <span className='shuzhai-list-item__desc'>已考证之今物与古器原型</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
@@ -262,7 +260,6 @@ function MinePageSession() {
             <i className='iconfont icon-xiangji' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>诗境画阁</span>
-              <span className='shuzhai-list-item__desc'>一镜山河一卷诗 · 重展本机风雅藏景</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
@@ -271,7 +268,6 @@ function MinePageSession() {
             <i className='iconfont icon-shoucang' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>我的诗笺</span>
-              <span className='shuzhai-list-item__desc'>收录的古诗词与摘录笔记</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
@@ -280,7 +276,6 @@ function MinePageSession() {
             <i className='iconfont icon-message' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>知音回柬</span>
-              <span className='shuzhai-list-item__desc'>展读千古知己往来信札与清谈回柬</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
@@ -289,7 +284,6 @@ function MinePageSession() {
             <i className='iconfont icon-ziliao' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>雅译锦囊</span>
-              <span className='shuzhai-list-item__desc'>今人白话化两宋雅言之研习札记</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
@@ -315,7 +309,6 @@ function MinePageSession() {
             <i className='iconfont icon-zhanghao' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>账号设置</span>
-              <span className='shuzhai-list-item__desc'>头像换新、修改昵称与账号管理</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
@@ -325,7 +318,6 @@ function MinePageSession() {
             <i className='iconfont icon-shezhi' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>墨色雅意</span>
-              <span className='shuzhai-list-item__desc'>晓色晨宣 / 月下墨境切换</span>
             </div>
             <ThemeToggle className='shuzhai-theme-toggle' />
           </div>
@@ -334,7 +326,6 @@ function MinePageSession() {
             <i className='iconfont icon-zhinan' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>关于云山竹简</span>
-              <span className='shuzhai-list-item__desc'>国风两宋美学研习平台 · v2.0 崇雅版</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>

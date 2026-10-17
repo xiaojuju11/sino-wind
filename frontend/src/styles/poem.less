@@ -592,9 +592,19 @@
     border-bottom: 1px dashed fade(@color-gold, 45%);
     margin-bottom: 0.22rem;
     overflow-x: auto;
-    scrollbar-width: none;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gf-gold, @color-gold) color-mix(in srgb, var(--gf-gold, @color-gold) 16%, transparent);
     &::-webkit-scrollbar {
-      display: none;
+      height: 8px;
+    }
+    &::-webkit-scrollbar-track {
+      background: color-mix(in srgb, var(--gf-gold, @color-gold) 16%, transparent);
+      border-radius: 999px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: var(--gf-gold, @color-gold);
+      border-radius: 999px;
     }
   }
 

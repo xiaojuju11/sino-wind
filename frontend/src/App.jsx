@@ -2,7 +2,6 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './styles/app.less'
 import BambooBreeze from './components/BambooBreeze'
-import DesktopStageWings from './components/DesktopStageWings'
 import Layout from './pages/Layout'
 import Home from './pages/Home'
 import MinePage from './pages/MinePage'
@@ -23,6 +22,8 @@ const StudyPage = lazy(() => import('./pages/StudyPage'))
 const ScenePoetry = lazy(() => import('./pages/ScenePoetry'))
 const SceneScroll = lazy(() => import('./pages/SceneScroll'))
 const SceneArchive = lazy(() => import('./pages/SceneArchive'))
+const PoetryFrequency = lazy(() => import('./pages/PoetryFrequency'))
+const FrequencyPoem = lazy(() => import('./pages/FrequencyPoem'))
 
 function PageFallback() {
   return (
@@ -49,7 +50,6 @@ export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <BambooBreeze />
-      <DesktopStageWings />
       <Suspense fallback={<PageFallback />}>
         <Routes>
           <Route path='/login' element={<AuthPage/>}></Route>
@@ -80,6 +80,8 @@ export default function App() {
           <Route path='/scene-poetry' element={<ScenePoetry/>}></Route>
           <Route path='/scene-poetry/view/:id' element={<SceneScroll/>}></Route>
           <Route path='/mine/scenes' element={<SceneArchive/>}></Route>
+          <Route path='/poetry-frequency' element={<PoetryFrequency/>}></Route>
+          <Route path='/poetry-frequency/poem/:id' element={<FrequencyPoem/>}></Route>
           {/* 全局 404 迷津问渡路由兜底 */}
           <Route path='*' element={<NotFoundPage/>}></Route>
         </Routes>

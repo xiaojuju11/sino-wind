@@ -34,10 +34,13 @@
         opacity: .66;
       }
     }
-    .shuzhai-list button.shuzhai-list-item {
+    .shuzhai-list .shuzhai-list-item {
       width: 100%; box-sizing: border-box; text-align: start;
+      display: flex; align-items: center; min-height: 48px;
       border: 0; border-bottom: 1px solid color-mix(in srgb, var(--gf-gold) 24%, transparent);
       border-radius: 0; font: inherit; color: var(--gf-ink-primary); background: var(--gf-bg-card);
+      .shuzhai-list-item__content { justify-content: center; }
+      .shuzhai-list-item__title { margin: 0; }
       &:last-child { border-bottom: 0; }
     }
   }

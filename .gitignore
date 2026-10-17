@@ -54,3 +54,6 @@ backend/public/uploads/avatars/*
 
 # Local scene inference weights; reproduce with backend/scripts/prepare-scene-models.ps1
 backend/models/scene/
+
+# Download cache for pinned poetry source
+backend/.cache/
