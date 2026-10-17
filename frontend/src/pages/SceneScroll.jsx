@@ -1,0 +1,74 @@
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { LeftOutline, DownlandOutline as DownloadOutline, AddOutline, MessageOutline, RightOutline } from 'antd-mobile-icons'
+import { Toast } from 'antd-mobile'
+import InkWashBackground from '../components/InkWashBackground'
+import ReferenceCorners from '../components/ReferenceCorners'
+import ScenePicture from '../components/ScenePicture'
+import SceneDepth from '../components/SceneDepth'
+import { useScholarScope } from '../utils/useScholarScope'
+import { scholarScope } from '../utils/scholarLetters'
+import { getDraft, loadScene, saveScene } from '../utils/sceneStorage'
+import { SCENE_POEMS, SCENE_TAGS } from '../data/scenePoems'
+import { exportScene } from '../utils/sceneImage'
+import '../styles/studyPages.less'
+import '../styles/scenePoetry.less'
+
+function Scroll({ scope }) {
+  const { id } = useParams(), navigate = useNavigate(), alive = useRef(true)
+  const [scene, setScene] = useState(null), [error, setError] = useState(''), [saving, setSaving] = useState(false), [exporting, setExporting] = useState(false)
+  const [mode, setMode] = useState('poetry'), [highlight, setHighlight] = useState('')
+  useEffect(() => {
+    let current = true; alive.current = true
+    ;(id === 'draft' ? getDraft(scope) : loadScene(scope, id)).then(value => {
+      if (!current) return
+      if (!value) setError('这幅诗境尚未留在当前账号的本机画阁，可重新摄景寻诗。')
+      else setScene(value)
+    }).catch(e => { if (current) setError(e.message) })
+    return () => { current = false; alive.current = false }
+  }, [id, scope])
+  const poem = SCENE_POEMS.find(row => row.id === scene?.poemId)
+  const regions = scene?.analysis.regions.filter(row => scene.selected.includes(row.id)) || []
+  const tags = new Set(regions.map(row => row.tag))
+  const save = async () => {
+    if (saving || scene?.saved || scope !== scholarScope()) return
+    setSaving(true)
+    try { const stored = await saveScene(scope, scene); if (alive.current && scope === scholarScope()) { setScene(stored); Toast.show({ content: '已收入本机诗境画阁', icon: 'success' }) } }
+    catch (e) { if (alive.current) Toast.show({ content: e.message }) }
+    finally { if (alive.current) setSaving(false) }
+  }
+  const download = async () => {
+    if (exporting) return
+    setExporting(true)
+    try { await exportScene(scene, poem) } catch (e) { Toast.show({ content: e.message }) } finally { if (alive.current) setExporting(false) }
+  }
+  const discuss = sage => {
+    const description = [...new Set(regions.map(row => row.label))].join('、')
+    navigate(`/chat/${sage}`, { state: { scenePrompt: `我刚在「寻镜入诗」选了这些景物：${description}。相配的原诗是${poem.author}《${poem.title}》：“${poem.lines.join('')}”。请结合这些文字与我论诗，不要声称看过照片；区分实景描述和诗中联想。` } })
+  }
+  const highlightedLine = line => {
+    const anchors = poem.anchors.filter(([word, tag]) => line.includes(word) && tags.has(tag))
+    if (!anchors.length) return line
+    const pieces = []; let offset = 0
+    for (const [word, tag] of [...anchors].sort((a, b) => line.indexOf(a[0]) - line.indexOf(b[0]))) {
+      const index = line.indexOf(word)
+      if (index < offset) continue
+      pieces.push(line.slice(offset, index), <button type='button' key={word} aria-label={`在照片中查看${SCENE_TAGS[tag]}`} aria-pressed={highlight === tag} onClick={() => { setMode('regions'); setHighlight(value => value === tag ? '' : tag) }}>{word}</button>)
+      offset = index + word.length
+    }
+    pieces.push(line.slice(offset)); return pieces
+  }
+  return <div className='study-page scene-page scene-scroll-page'><InkWashBackground />
+    <header className='scene-header'><button type='button' className='scene-back' aria-label={id === 'draft' ? '返回寻镜入诗' : '返回诗境画阁'} onClick={() => navigate(id === 'draft' ? '/scene-poetry' : '/mine/scenes')}><LeftOutline /></button><div><span className='scene-eyebrow'>把一刻风景，留作此生诗意</span><h1>我的诗境</h1><p>山水入镜，诗意入心</p></div><span className='scene-seal'>留景</span></header>
+    <main className='scene-main'>{error ? <section className='scene-panel'><p role='alert'>{error}</p><button type='button' className='scene-primary' onClick={() => navigate('/scene-poetry')}>重新摄景</button></section> : !scene ? <p role='status'>正在展开诗境…</p> : !poem ? <p role='alert'>这幅藏卷的诗句暂未找到，请重新选诗。</p> : <>
+      <div className='scene-tabs' aria-label='诗境展示方式'>{[['poetry', '原景'], ['regions', '循诗观景'], ...(scene.analysis.depth ? [['depth', '山水层次']] : [])].map(([key, label]) => <button type='button' key={key} aria-pressed={mode === key} onClick={() => { setMode(key); setHighlight('') }}>{label}</button>)}</div>
+      <article className='scene-panel scene-scroll'><ReferenceCorners /><div className='scene-scroll__picture'>{mode === 'regions' ? <ScenePicture scene={scene} selected={scene.selected} highlight={highlight} onToggle={regionId => { const region = scene.analysis.regions.find(row => row.id === regionId); setHighlight(previous => previous === region?.tag ? '' : region?.tag || '') }} /> : <SceneDepth scene={scene} active={mode === 'depth'} />}</div>
+        <p className='scene-caption'>{mode === 'depth' ? '轻移指尖 · 以估计深度呈现轻微视差' : mode === 'regions' ? '点击诗句中有描线的字，查看对应景物' : scene.example ? '山水画示例' : '取自眼前 · 题以古诗'}</p>
+        <div className='scene-scroll__poem'>{poem.lines.map(line => <p key={line}>{highlightedLine(line)}</p>)}</div><p className='scene-scroll__author'>{poem.dynasty} · {poem.author}</p><h2>《{poem.title}》</h2><button type='button' className='scene-scroll__stamp' aria-label={scene.saved ? '已藏，打开诗境画阁' : saving ? '正在收入诗境画阁' : '入诗，收入诗境画阁'} disabled={saving} onClick={scene.saved ? () => navigate('/mine/scenes') : save}><span>{saving ? '藏' : scene.saved ? '已' : '入'}</span><span>{saving ? '卷' : scene.saved ? '藏' : '诗'}</span></button>
+      </article>
+      <section className='scene-panel scene-interpretation'><ReferenceCorners /><span className='scene-eyebrow'>景有所见 · 诗有所思</span><h2>此景与此诗</h2><p>{poem.note}</p><div className='scene-motif-links'>{poem.anchors.map(([word, tag]) => <span key={`${word}-${tag}`} className={tags.has(tag) ? 'is-grounded' : ''}>{word} · {tags.has(tag) ? '有选景对应' : '诗中联想'}</span>)}</div><a className='scene-source-link' href={poem.sourceUrl} target='_blank' rel='noopener noreferrer'>原诗出处：{poem.source} · 检索原文</a></section>
+      <div className='scene-actions'><button type='button' className='scene-primary' disabled={saving || scene.saved} onClick={save}><AddOutline />{scene.saved ? '已收入画阁' : saving ? '正在藏卷…' : '收入诗境画阁'}</button><button type='button' disabled={exporting} onClick={download}><DownloadOutline />{exporting ? '正在制笺…' : '保存高清长图'}</button></div>
+      <section className='scene-panel scene-dialogue'><h2>携景，与先贤一席清谈</h2><p>将选景与诗句带入对席，待你确认后发送。</p><div className='scene-actions'><button type='button' onClick={() => discuss('libai')}><MessageOutline />请教李白</button><button type='button' onClick={() => discuss('sushi')}><MessageOutline />请教苏轼</button></div></section><button type='button' className='scene-text-button scene-library-link' onClick={() => navigate('/mine/scenes')}>展开诗境画阁 <RightOutline /></button>
+    </>}</main></div>
+}
+export default function SceneScroll() { const scope = useScholarScope(); const { id } = useParams(); return <Scroll key={`${scope}:${id}`} scope={scope} /> }

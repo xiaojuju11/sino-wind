@@ -200,7 +200,7 @@ function ScholarChatSession() {
       }
     ]
   })
-  const [inputText, setInputText] = useState('')
+  const [inputText, setInputText] = useState(() => typeof location.state?.scenePrompt === 'string' ? location.state.scenePrompt.slice(0, 1800) : '')
   const [loading, setLoading] = useState(false)
   const [gameOpen, setGameOpen] = useState(false)
   const [hydrating, setHydrating] = useState(true)

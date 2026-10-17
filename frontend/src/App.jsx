@@ -19,6 +19,9 @@ const CityChroniclePage = lazy(() => import('./pages/CityChroniclePage'))
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
 const LegalPage = lazy(() => import('./pages/LegalPage'))
 const StudyPage = lazy(() => import('./pages/StudyPage'))
+const ScenePoetry = lazy(() => import('./pages/ScenePoetry'))
+const SceneScroll = lazy(() => import('./pages/SceneScroll'))
+const SceneArchive = lazy(() => import('./pages/SceneArchive'))
 
 function PageFallback() {
   return (
@@ -72,6 +75,9 @@ export default function App() {
           <Route path='/mine/artifacts' element={<StudyPage section='artifacts'/>}></Route>
           <Route path='/mine/yayan' element={<StudyPage section='yayan'/>}></Route>
           <Route path='/mine/messages' element={<StudyPage section='messages'/>}></Route>
+          <Route path='/scene-poetry' element={<ScenePoetry/>}></Route>
+          <Route path='/scene-poetry/view/:id' element={<SceneScroll/>}></Route>
+          <Route path='/mine/scenes' element={<SceneArchive/>}></Route>
           {/* 全局 404 迷津问渡路由兜底 */}
           <Route path='*' element={<NotFoundPage/>}></Route>
         </Routes>

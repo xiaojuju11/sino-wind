@@ -258,6 +258,15 @@ function MinePageSession() {
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
 
+          <button type='button' className='shuzhai-list-item' onClick={() => navigate('/mine/scenes')}>
+            <i className='iconfont icon-xiangji' aria-hidden='true' />
+            <div className='shuzhai-list-item__content'>
+              <span className='shuzhai-list-item__title'>诗境画阁</span>
+              <span className='shuzhai-list-item__desc'>一镜山河一卷诗 · 重展本机风雅藏景</span>
+            </div>
+            <RightOutline className='shuzhai-list-item__arrow' />
+          </button>
+
           <button type='button' className='shuzhai-list-item' onClick={() => navigate('/poem-collection')}>
             <i className='iconfont icon-shoucang' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>

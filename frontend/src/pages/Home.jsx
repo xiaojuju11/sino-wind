@@ -1,4 +1,5 @@
 import ReferenceCorners from '../components/ReferenceCorners'
+import SceneHomeCard from '../components/SceneHomeCard'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import '../styles/home.less'
 import { Toast, Popup } from 'antd-mobile'
@@ -633,6 +634,8 @@ export default function Home() {
           </button>
         </div>
       </section>
+
+      <SceneHomeCard />
 
       {/* ── 漫游古今城邑抽屉（全国城邑，可搜今名或古称）── */}
       <Popup

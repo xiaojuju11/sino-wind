@@ -15,6 +15,7 @@ const poemRoutes = require('./routes/poemRoutes.js')
 const cozeRoutes = require('./routes/coze-api.js')
 const deepseekRoutes = require('./routes/deepseek-api.js')
 const uploadRoutes = require('./routes/uploadRoutes.js')
+const sceneRoutes = require('./routes/sceneRoutes.js')
 
 const app = new Koa()
 
@@ -60,6 +61,7 @@ app
   .use(cozeRoutes.routes(), cozeRoutes.allowedMethods())
   .use(deepseekRoutes.routes(), deepseekRoutes.allowedMethods())
   .use(uploadRoutes.routes(), uploadRoutes.allowedMethods())
+  .use(sceneRoutes.routes(), sceneRoutes.allowedMethods())
   
 
 app.listen(process.env.PORT || 3000, () => {
