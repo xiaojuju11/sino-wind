@@ -35,6 +35,15 @@ RULES = [
      "docs/handovers/ai-log-liuxia-2026-10-16-visual-refine.md:19（含提示词与压缩参数）",
      "无第三方版权（文生图）；需按 AIGC 规范标注", "界面落 AIGC 标识"),
 
+    # 2026-10-17 主干新增（提交 df450bf / 5bd0f3c），两目录各有 README 记录完整提示词
+    ("frontend/public/images/frequency/", "AI 生成（团队自有）", "内置 imagegen → Sharp 转 1200×800 WebP",
+     "frontend/public/images/frequency/README.md（含两图完整提示词与字节数，注明「未使用 CLI/API 后备方式」）",
+     "无第三方版权（文生图，提示词明确要求不出现文字/印章/UI）；需按 AIGC 规范标注", "界面落 AIGC 标识"),
+
+    ("frontend/public/images/scene/", "AI 生成（团队自有）", "内置 imagegen → 1536×1024 PNG 转 WebP",
+     "frontend/public/images/scene/README.md（含完整提示词）；docs/handovers/dev-A-scene-poetry-20261017.md:65",
+     "无第三方版权（文生图）；需按 AIGC 规范标注", "界面落 AIGC 标识"),
+
     ("frontend/public/assets/guancang/", "AI 生成 + 人工精修", "Midjourney v6 → 人工去噪/抠图/羽化/压缩",
      "docs/handovers/ai-log-C-literati.md:28（Midjourney v6 提示词）、:40（对 AI 原生生成素材去噪羽化）、:42（工程化裁剪）；"
      "2026-10-17 团队书面确认定性为「AI 插画」",
@@ -98,7 +107,7 @@ DISPOSED = [
     ('frontend/public/assets/common/bg_guofeng.jpg', '全站背景已改为纯 CSS 三层渐变，该图零引用，文档说法过期', 293),
     ('frontend/public/assets/guancang/guancang_header_bg.png', '零引用，且文档无启用计划', 441),
     ('frontend/public/assets/guancang/sage-libai-full-v2.png', '为叠加场景生成但始终未接线，零引用（全站最大单图）', 2390),
-    ('frontend/public/assets/guancang/scroll_lundao.png', '零引用；同名 .jpg 已在 AIPage 使用，PNG 为重复', 420),
+    ('frontend/public/assets/guancang/scroll_lundao.png', '零引用；同名 .jpg 当时由 AIPage 使用，PNG 为重复（该 .jpg 后随 AIPage 删除一并清理）', 420),
     ('frontend/public/assets/guancang/scroll_tingyin.png', '同上', 391),
     ('frontend/public/assets/home/bg-paper.jpg', '阶段一切图素材，背景改纯 CSS 后零引用', 159),
     ('frontend/public/assets/home/poem-art.jpg', '阶段一切图素材，零引用', 2),
@@ -108,6 +117,15 @@ DISPOSED = [
     ('frontend/public/assets/home/yaji-poem.jpg', '同上', 25),
     ('frontend/public/vite.svg', '非 Vite 官方 logo（与 logo.svg 近乎相同），零引用且易误解来源', 5),
     ('ChatGPT 图像 2026年10月17日 16_01_50.jpg', 'ChatGPT 误落仓库根目录，与项目视觉体系无关，零引用', 64),
+    # 以下 7 张系合并主干后新增：主干删除 AIPage.jsx（提交 90d4115），
+    # 这批 .jpg 原本只被 AIPage 引用，合并后成为零引用；同名 .png 版本仍在用
+    ('frontend/public/assets/guancang/sage_libai.jpg', '合并主干后零引用（原仅 AIPage 使用，该页已删除）；.png 版本仍在用', 239),
+    ('frontend/public/assets/guancang/sage_sushi.jpg', '同上', 248),
+    ('frontend/public/assets/guancang/sage_liqingzhao.jpg', '同上', 218),
+    ('frontend/public/assets/guancang/sage_wangyangming.jpg', '同上', 251),
+    ('frontend/public/assets/guancang/scroll_changhe.jpg', '同上；.png 版本仍在用', 96),
+    ('frontend/public/assets/guancang/scroll_lundao.jpg', '同上', 93),
+    ('frontend/public/assets/guancang/scroll_tingyin.jpg', '同上', 89),
 ]
 
 
@@ -231,7 +249,9 @@ md.append("| 7 | **产品内先贤立绘经目视确认为数字插画** | 抽�
 md.append("")
 
 md.append("\n## 六、处置记录（本次审计后已执行）\n")
-md.append("审计发现 14 张零引用图片与 1 张误落文件（合计 15 个、%.1f MB），经确认后已全部删除。"
+md.append("首轮审计发现 14 张零引用图片与 1 张误落文件（合计 15 个）。此后合并主干时，"
+          "主干删除了 `AIPage.jsx`（提交 90d4115），导致仅被该页使用的 7 张 .jpg 立绘与卷轴"
+          "亦成为零引用，一并清理。两批合计 22 个文件、%.1f MB。"
           "所有文件均保留在 Git 历史中，如需恢复可执行 `git checkout <提交> -- <路径>`。\n"
           % (sum(d[2] for d in DISPOSED) / 1024))
 md.append("| # | 文件 | 体积 | 删除理由 |")

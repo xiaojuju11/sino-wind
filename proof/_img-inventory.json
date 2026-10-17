@@ -233,26 +233,6 @@
     "refCount": 4
   },
   {
-    "rel": "frontend/public/assets/guancang/sage_libai.jpg",
-    "base": "sage_libai.jpg",
-    "dir": "frontend/public/assets/guancang",
-    "bytes": 244787,
-    "kb": 239,
-    "refs": [
-      "docs/handovers/dev-C-literati.md",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "frontend/src/pages/AIPage.jsx",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/handovers/dev-C-literati.md",
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 6
-  },
-  {
     "rel": "frontend/public/assets/guancang/sage_libai.png",
     "base": "sage_libai.png",
     "dir": "frontend/public/assets/guancang",
@@ -277,26 +257,6 @@
     "refCount": 10
   },
   {
-    "rel": "frontend/public/assets/guancang/sage_liqingzhao.jpg",
-    "base": "sage_liqingzhao.jpg",
-    "dir": "frontend/public/assets/guancang",
-    "bytes": 223426,
-    "kb": 218,
-    "refs": [
-      "docs/handovers/dev-C-literati.md",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "frontend/src/pages/AIPage.jsx",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/handovers/dev-C-literati.md",
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 6
-  },
-  {
     "rel": "frontend/public/assets/guancang/sage_liqingzhao.png",
     "base": "sage_liqingzhao.png",
     "dir": "frontend/public/assets/guancang",
@@ -315,26 +275,6 @@
       "docs/素材来源存档/图片来源登记表.md"
     ],
     "refCount": 7
-  },
-  {
-    "rel": "frontend/public/assets/guancang/sage_sushi.jpg",
-    "base": "sage_sushi.jpg",
-    "dir": "frontend/public/assets/guancang",
-    "bytes": 253473,
-    "kb": 248,
-    "refs": [
-      "docs/handovers/dev-C-literati.md",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "frontend/src/pages/AIPage.jsx",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/handovers/dev-C-literati.md",
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 6
   },
   {
     "rel": "frontend/public/assets/guancang/sage_sushi.png",
@@ -357,26 +297,6 @@
     "refCount": 7
   },
   {
-    "rel": "frontend/public/assets/guancang/sage_wangyangming.jpg",
-    "base": "sage_wangyangming.jpg",
-    "dir": "frontend/public/assets/guancang",
-    "bytes": 257117,
-    "kb": 251,
-    "refs": [
-      "docs/handovers/dev-C-literati.md",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "frontend/src/pages/AIPage.jsx",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/handovers/dev-C-literati.md",
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 6
-  },
-  {
     "rel": "frontend/public/assets/guancang/sage_wangyangming.png",
     "base": "sage_wangyangming.png",
     "dir": "frontend/public/assets/guancang",
@@ -397,26 +317,6 @@
     "refCount": 7
   },
   {
-    "rel": "frontend/public/assets/guancang/scroll_changhe.jpg",
-    "base": "scroll_changhe.jpg",
-    "dir": "frontend/public/assets/guancang",
-    "bytes": 97868,
-    "kb": 96,
-    "refs": [
-      "docs/handovers/dev-C-literati.md",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "frontend/src/pages/AIPage.jsx",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/handovers/dev-C-literati.md",
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 6
-  },
-  {
     "rel": "frontend/public/assets/guancang/scroll_changhe.png",
     "base": "scroll_changhe.png",
     "dir": "frontend/public/assets/guancang",
@@ -435,46 +335,6 @@
       "docs/素材来源存档/图片来源登记表.md"
     ],
     "refCount": 7
-  },
-  {
-    "rel": "frontend/public/assets/guancang/scroll_lundao.jpg",
-    "base": "scroll_lundao.jpg",
-    "dir": "frontend/public/assets/guancang",
-    "bytes": 94895,
-    "kb": 93,
-    "refs": [
-      "docs/handovers/dev-C-literati.md",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "frontend/src/pages/AIPage.jsx",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/handovers/dev-C-literati.md",
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 6
-  },
-  {
-    "rel": "frontend/public/assets/guancang/scroll_tingyin.jpg",
-    "base": "scroll_tingyin.jpg",
-    "dir": "frontend/public/assets/guancang",
-    "bytes": 90709,
-    "kb": 89,
-    "refs": [
-      "docs/handovers/dev-C-literati.md",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "frontend/src/pages/AIPage.jsx",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/handovers/dev-C-literati.md",
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 6
   },
   {
     "rel": "frontend/public/assets/home/bg-almanac-ancient.jpg",
@@ -807,6 +667,65 @@
     "refCount": 9
   },
   {
+    "rel": "frontend/public/images/frequency/poetry-desk-v1.webp",
+    "base": "poetry-desk-v1.webp",
+    "dir": "frontend/public/images/frequency",
+    "bytes": 184006,
+    "kb": 180,
+    "refs": [
+      "frontend/public/images/frequency/README.md",
+      "frontend/src/components/FrequencyHomeCard.jsx",
+      "frontend/src/styles/poetryFrequency.less",
+      "proof/_img-inventory.json",
+      "proof/_img-usage.json"
+    ],
+    "sourceDocs": [
+      "frontend/public/images/frequency/README.md"
+    ],
+    "refCount": 5
+  },
+  {
+    "rel": "frontend/public/images/frequency/yayan-desk-v1.webp",
+    "base": "yayan-desk-v1.webp",
+    "dir": "frontend/public/images/frequency",
+    "bytes": 123078,
+    "kb": 120,
+    "refs": [
+      "frontend/public/images/frequency/README.md",
+      "frontend/src/pages/Home.jsx",
+      "proof/_img-inventory.json",
+      "proof/_img-usage.json"
+    ],
+    "sourceDocs": [
+      "frontend/public/images/frequency/README.md"
+    ],
+    "refCount": 4
+  },
+  {
+    "rel": "frontend/public/images/scene/poetic-lake-v1.webp",
+    "base": "poetic-lake-v1.webp",
+    "dir": "frontend/public/images/scene",
+    "bytes": 308204,
+    "kb": 301,
+    "refs": [
+      "backend/scripts/test-scene-poetry.cjs",
+      "docs/handovers/dev-A-scene-poetry-20261017.md",
+      "docs/寻镜入诗_完整功能与实现说明_20261017.md",
+      "frontend/public/images/scene/README.md",
+      "frontend/src/components/SceneHomeCard.jsx",
+      "frontend/src/pages/ScenePoetry.jsx",
+      "frontend/src/styles/scenePoetry.less",
+      "proof/_img-inventory.json",
+      "proof/_img-usage.json"
+    ],
+    "sourceDocs": [
+      "docs/handovers/dev-A-scene-poetry-20261017.md",
+      "docs/寻镜入诗_完整功能与实现说明_20261017.md",
+      "frontend/public/images/scene/README.md"
+    ],
+    "refCount": 9
+  },
+  {
     "rel": "frontend/public/logo.svg",
     "base": "logo.svg",
     "dir": "frontend/public",
@@ -822,6 +741,7 @@
       "docs/素材来源存档/图片来源登记表.md",
       "frontend/index.html",
       "frontend/public/manifest.json",
+      "frontend/public/sw.js",
       "proof/diag-image-sources.mjs",
       "proof/_img-inventory.json",
       "proof/_img-usage.json"
@@ -831,7 +751,7 @@
       "docs/素材来源包/_readme.tpl.md",
       "docs/素材来源存档/图片来源登记表.md"
     ],
-    "refCount": 12
+    "refCount": 13
   },
   {
     "rel": "proof/chat-libai-390.png",
@@ -1145,10 +1065,14 @@
     "bytes": 2180006,
     "kb": 2129,
     "refs": [
+      "docs/素材来源存档/图片来源存档.html",
+      "docs/素材来源存档/图片来源登记表.md",
       "proof/_img-inventory.json"
     ],
-    "sourceDocs": [],
-    "refCount": 1
+    "sourceDocs": [
+      "docs/素材来源存档/图片来源登记表.md"
+    ],
+    "refCount": 3
   },
   {
     "rel": "proof/poem-metre-dark-390.png",

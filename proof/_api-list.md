@@ -12,19 +12,6 @@
 | `POST` | `/api/auth/updateNickname` |
 | `POST` | `/api/auth/updatePassword` |
 
-#### /api/poem
-
-| 方法 | 路径 |
-| :--- | :--- |
-| `GET` | `/api/poem/random` |
-| `GET` | `/api/poem/search` |
-| `POST` | `/api/poem/collect` |
-| `POST` | `/api/poem/remove` |
-| `DELETE` | `/api/poem/:id` |
-| `GET` | `/api/poem/collection` |
-| `GET` | `/api/poem/my-list` |
-| `POST` | `/api/poem/appreciate` |
-
 #### /api/coze
 
 | 方法 | 路径 |
@@ -54,6 +41,35 @@
 | `GET` | `/api/deepseek/scholar/artifacts` |
 | `POST` | `/api/deepseek/scholar/artifacts` |
 | `DELETE` | `/api/deepseek/scholar/artifacts/:id` |
+
+#### /api/poetry-frequency
+
+| 方法 | 路径 |
+| :--- | :--- |
+| `GET` | `/api/poetry-frequency/meta` |
+| `GET` | `/api/poetry-frequency/stats` |
+| `GET` | `/api/poetry-frequency/contexts` |
+| `GET` | `/api/poetry-frequency/poems/:id` |
+
+#### /api/poem
+
+| 方法 | 路径 |
+| :--- | :--- |
+| `GET` | `/api/poem/random` |
+| `GET` | `/api/poem/search` |
+| `POST` | `/api/poem/collect` |
+| `POST` | `/api/poem/remove` |
+| `DELETE` | `/api/poem/:id` |
+| `GET` | `/api/poem/collection` |
+| `GET` | `/api/poem/my-list` |
+| `POST` | `/api/poem/appreciate` |
+
+#### /api/scene
+
+| 方法 | 路径 |
+| :--- | :--- |
+| `GET` | `/api/scene/status` |
+| `POST` | `/api/scene/analyze` |
 
 #### /api/upload
 

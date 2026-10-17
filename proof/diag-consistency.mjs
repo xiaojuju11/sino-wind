@@ -9,7 +9,13 @@ for (const f of fs.readdirSync(path.join(ROOT, 'backend/src/routes'))) {
   for (const m of t.matchAll(/router\.(get|post|put|delete|patch)\s*\(\s*['"`]([^'"`]+)/g)) real.add(m[2])
 }
 const readme = fs.readFileSync(path.join(ROOT, 'readme.md'), 'utf8')
-const claimed = [...readme.matchAll(/`(\/api\/[^`]+)`/g)].map((m) => m[1])
+// 只取「接口表」行内的声明；排除「已移除的接口」说明段（其中会引述历史路径，属正常记录）
+const claimed = []
+for (const line of readme.split(/\r?\n/)) {
+  if (/已移除|现已不存在|更名/.test(line)) continue
+  if (!/^\s*\|/.test(line)) continue
+  for (const m of line.matchAll(/`(\/api\/[^`]+)`/g)) claimed.push(m[1])
+}
 
 console.log('=== README 接口声明核查 ===')
 console.log('  README 声明: ' + claimed.length + ' 条   实际路由: ' + real.size + ' 条')

@@ -239,7 +239,7 @@ npm run build
 
 ## 📡 6. 核心 API 接口契约
 
-后端共 **40 条**接口，按 5 个路由模块挂载。下表列出核心接口；完整清单见 `backend/src/routes/` 或运行 `node proof/gen-api-list.mjs` 生成。
+后端共 **46 条**接口，按 **7 个**路由模块挂载（`auth` / `poem` / `coze` / `deepseek` / `upload` / `scene` / `poetry-frequency`）。下表列出核心接口；完整清单见 `backend/src/routes/` 或运行 `node proof/gen-api-list.mjs` 生成。
 
 **鉴权约定**：需鉴权的接口在 `Authorization` 头携带 Token。Token 缺失或过期时统一返回 **HTTP 416**（前端据此跳转登录页）；标记「可选」的接口允许游客访问，登录后自动关联账号数据。
 
@@ -263,6 +263,11 @@ npm run build
 | `/api/deepseek/feihua/turn` | POST | 可选 | 出句校验与应答 |
 | `/api/deepseek/scholar/summary` | GET | 是 | 修持四维统计（鉴宝/论道/诗签/雅言） |
 | `/api/deepseek/scholar/letters` | GET | 是 | 先贤信札列表 |
+| `/api/scene/status` | GET | 否 | 寻镜入诗本地场景推理能力探测 |
+| `/api/scene/analyze` | POST | 否 | 上传图像做 CPU 山水意境分割与诗句匹配 |
+| `/api/poetry-frequency/meta` | GET | 否 | 诗海字衡元数据（语料规模、可用朝代） |
+| `/api/poetry-frequency/stats` | GET | 否 | 字频/词频统计结果 |
+| `/api/poetry-frequency/contexts` | GET | 否 | 指定字词的诗句上下文 |
 | `/api/coze/recognition` | POST | 否 | 拍照识器（多模态识别，上游不可用时返回明确错误码） |
 | `/api/upload/check` `/chunk` `/merge` | POST | 是 | 头像分片上传 |
 

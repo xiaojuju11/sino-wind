@@ -1,15 +1,5 @@
 [
   {
-    "rel": "frontend/public/assets/guancang/sage_libai.jpg",
-    "base": "sage_libai.jpg",
-    "kb": 239,
-    "hits": [
-      "frontend/src/pages/AIPage.jsx:15"
-    ],
-    "dyn": [],
-    "kind": "exact"
-  },
-  {
     "rel": "frontend/public/assets/guancang/sage_libai.png",
     "base": "sage_libai.png",
     "kb": 115,
@@ -17,19 +7,9 @@
       "frontend/src/components/InviteDrawer.jsx:11",
       "frontend/src/pages/LetterList.jsx:22",
       "frontend/src/pages/LetterList.jsx:66",
-      "frontend/src/pages/ScholarChat.jsx:27",
-      "frontend/src/pages/ScholarChat.jsx:81",
-      "frontend/src/pages/ScholarChat.jsx:135"
-    ],
-    "dyn": [],
-    "kind": "exact"
-  },
-  {
-    "rel": "frontend/public/assets/guancang/sage_liqingzhao.jpg",
-    "base": "sage_liqingzhao.jpg",
-    "kb": 218,
-    "hits": [
-      "frontend/src/pages/AIPage.jsx:18"
+      "frontend/src/pages/ScholarChat.jsx:26",
+      "frontend/src/pages/ScholarChat.jsx:80",
+      "frontend/src/pages/ScholarChat.jsx:134"
     ],
     "dyn": [],
     "kind": "exact"
@@ -41,17 +21,7 @@
     "hits": [
       "frontend/src/components/InviteDrawer.jsx:13",
       "frontend/src/pages/LetterList.jsx:46",
-      "frontend/src/pages/ScholarChat.jsx:45"
-    ],
-    "dyn": [],
-    "kind": "exact"
-  },
-  {
-    "rel": "frontend/public/assets/guancang/sage_sushi.jpg",
-    "base": "sage_sushi.jpg",
-    "kb": 248,
-    "hits": [
-      "frontend/src/pages/AIPage.jsx:16"
+      "frontend/src/pages/ScholarChat.jsx:44"
     ],
     "dyn": [],
     "kind": "exact"
@@ -63,17 +33,7 @@
     "hits": [
       "frontend/src/components/InviteDrawer.jsx:12",
       "frontend/src/pages/LetterList.jsx:38",
-      "frontend/src/pages/ScholarChat.jsx:36"
-    ],
-    "dyn": [],
-    "kind": "exact"
-  },
-  {
-    "rel": "frontend/public/assets/guancang/sage_wangyangming.jpg",
-    "base": "sage_wangyangming.jpg",
-    "kb": 251,
-    "hits": [
-      "frontend/src/pages/AIPage.jsx:17"
+      "frontend/src/pages/ScholarChat.jsx:35"
     ],
     "dyn": [],
     "kind": "exact"
@@ -89,18 +49,8 @@
       "frontend/src/pages/LetterList.jsx:107",
       "frontend/src/pages/LetterList.jsx:123",
       "frontend/src/pages/LetterList.jsx:148",
-      "frontend/src/pages/ScholarChat.jsx:63",
-      "frontend/src/pages/ScholarChat.jsx:72"
-    ],
-    "dyn": [],
-    "kind": "exact"
-  },
-  {
-    "rel": "frontend/public/assets/guancang/scroll_changhe.jpg",
-    "base": "scroll_changhe.jpg",
-    "kb": 96,
-    "hits": [
-      "frontend/src/pages/AIPage.jsx:38"
+      "frontend/src/pages/ScholarChat.jsx:62",
+      "frontend/src/pages/ScholarChat.jsx:71"
     ],
     "dyn": [],
     "kind": "exact"
@@ -112,27 +62,7 @@
     "hits": [
       "frontend/src/components/InviteDrawer.jsx:15",
       "frontend/src/pages/LetterList.jsx:30",
-      "frontend/src/pages/ScholarChat.jsx:54"
-    ],
-    "dyn": [],
-    "kind": "exact"
-  },
-  {
-    "rel": "frontend/public/assets/guancang/scroll_lundao.jpg",
-    "base": "scroll_lundao.jpg",
-    "kb": 93,
-    "hits": [
-      "frontend/src/pages/AIPage.jsx:29"
-    ],
-    "dyn": [],
-    "kind": "exact"
-  },
-  {
-    "rel": "frontend/public/assets/guancang/scroll_tingyin.jpg",
-    "base": "scroll_tingyin.jpg",
-    "kb": 89,
-    "hits": [
-      "frontend/src/pages/AIPage.jsx:47"
+      "frontend/src/pages/ScholarChat.jsx:53"
     ],
     "dyn": [],
     "kind": "exact"
@@ -142,7 +72,7 @@
     "base": "bg-almanac-ancient.jpg",
     "kb": 45,
     "hits": [
-      "frontend/src/styles/home.less:1340"
+      "frontend/src/styles/home.less:1346"
     ],
     "dyn": [],
     "kind": "exact"
@@ -152,7 +82,7 @@
     "base": "bg-almanac-modern.jpg",
     "kb": 43,
     "hits": [
-      "frontend/src/styles/home.less:1333"
+      "frontend/src/styles/home.less:1339"
     ],
     "dyn": [],
     "kind": "exact"
@@ -162,8 +92,8 @@
     "base": "bg-poem.jpg",
     "kb": 45,
     "hits": [
-      "frontend/src/pages/PoemPage.jsx:490",
-      "frontend/src/styles/home.less:1354",
+      "frontend/src/pages/PoemPage.jsx:510",
+      "frontend/src/styles/home.less:1360",
       "frontend/src/styles/referenceFidelity.less:184"
     ],
     "dyn": [],
@@ -174,16 +104,16 @@
     "base": "bg-shiwu.jpg",
     "kb": 54,
     "hits": [
-      "frontend/src/styles/home.less:1347",
-      "frontend/src/styles/home.less:1382",
-      "frontend/src/styles/home.less:1515",
-      "frontend/src/styles/home.less:1530",
-      "frontend/src/styles/home.less:1736",
-      "frontend/src/styles/home.less:1762",
-      "frontend/src/styles/home.less:1830",
-      "frontend/src/styles/home.less:1837",
-      "frontend/src/styles/home.less:1853",
-      "frontend/src/styles/home.less:1874",
+      "frontend/src/styles/home.less:1353",
+      "frontend/src/styles/home.less:1388",
+      "frontend/src/styles/home.less:1521",
+      "frontend/src/styles/home.less:1536",
+      "frontend/src/styles/home.less:1737",
+      "frontend/src/styles/home.less:1763",
+      "frontend/src/styles/home.less:1831",
+      "frontend/src/styles/home.less:1838",
+      "frontend/src/styles/home.less:1854",
+      "frontend/src/styles/home.less:1875",
       "frontend/src/styles/referenceFidelity.less:183"
     ],
     "dyn": [],
@@ -194,8 +124,8 @@
     "base": "bg-yayan.jpg",
     "kb": 92,
     "hits": [
-      "frontend/src/styles/home.less:1679",
-      "frontend/src/styles/home.less:1694"
+      "frontend/src/styles/home.less:1680",
+      "frontend/src/styles/home.less:1695"
     ],
     "dyn": [],
     "kind": "exact"
@@ -277,12 +207,12 @@
     "base": "avatar_yunshan.png",
     "kb": 62,
     "hits": [
-      "frontend/src/pages/MinePage.jsx:188",
-      "frontend/src/pages/MinePage.jsx:379",
-      "frontend/src/pages/ScholarChat.jsx:149",
-      "frontend/src/pages/ScholarChat.jsx:154",
-      "frontend/src/pages/ScholarChat.jsx:168",
-      "frontend/src/pages/ScholarChat.jsx:537"
+      "frontend/src/pages/MinePage.jsx:163",
+      "frontend/src/pages/MinePage.jsx:329",
+      "frontend/src/pages/ScholarChat.jsx:148",
+      "frontend/src/pages/ScholarChat.jsx:153",
+      "frontend/src/pages/ScholarChat.jsx:167",
+      "frontend/src/pages/ScholarChat.jsx:543"
     ],
     "dyn": [],
     "kind": "exact"
@@ -292,7 +222,7 @@
     "base": "illus_cangpin.png",
     "kb": 76,
     "hits": [
-      "frontend/src/pages/MinePage.jsx:240"
+      "frontend/src/pages/MinePage.jsx:206"
     ],
     "dyn": [],
     "kind": "exact"
@@ -302,7 +232,7 @@
     "base": "illus_qinggui.png",
     "kb": 69,
     "hits": [
-      "frontend/src/pages/MinePage.jsx:301",
+      "frontend/src/pages/MinePage.jsx:270",
       "frontend/src/styles/referencePolish.less:230"
     ],
     "dyn": [],
@@ -315,6 +245,39 @@
     "hits": [
       "frontend/src/styles/recoverySurface.less:15",
       "frontend/src/styles/recoverySurface.less:46"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/images/frequency/poetry-desk-v1.webp",
+    "base": "poetry-desk-v1.webp",
+    "kb": 180,
+    "hits": [
+      "frontend/src/components/FrequencyHomeCard.jsx:9",
+      "frontend/src/styles/poetryFrequency.less:27"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/images/frequency/yayan-desk-v1.webp",
+    "base": "yayan-desk-v1.webp",
+    "kb": 120,
+    "hits": [
+      "frontend/src/pages/Home.jsx:421"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/images/scene/poetic-lake-v1.webp",
+    "base": "poetic-lake-v1.webp",
+    "kb": 301,
+    "hits": [
+      "frontend/src/components/SceneHomeCard.jsx:20",
+      "frontend/src/pages/ScenePoetry.jsx:104",
+      "frontend/src/styles/scenePoetry.less:439"
     ],
     "dyn": [],
     "kind": "exact"

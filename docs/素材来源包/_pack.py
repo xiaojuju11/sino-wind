@@ -20,6 +20,9 @@ usage = {u["rel"]: u for u in json.loads(io.open(os.path.join(ROOT, "proof", "_i
 RULES = [
     ("frontend/public/assets/scholar-scenes/", "A", "AI生成-团队自有", "内置 ImageGen（含逐图提示词）"),
     ("frontend/public/images/decor/recovery-xuan-paper-v1.jpg", "A", "AI生成-团队自有", "image_gen（含提示词）"),
+    # 2026-10-17 主干新增
+    ("frontend/public/images/frequency/", "A", "AI生成-团队自有", "内置 imagegen → Sharp 转 WebP（README 含提示词）"),
+    ("frontend/public/images/scene/", "A", "AI生成-团队自有", "内置 imagegen → WebP（README 含提示词）"),
     ("frontend/public/assets/guancang/", "B", "AI生成-人工精修", "Midjourney v6 → 人工去噪/抠图/羽化/压缩"),
     ("frontend/public/assets/shuzhai/", "B", "AI生成-人工精修", "Midjourney v6 → 人工精修"),
     ("frontend/public/assets/home/", "A", "AI生成-团队自有", "AI 生成后人工切图"),
