@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { CameraOutline, PictureOutline, RightOutline, LeftOutline, RedoOutline, CloseOutline } from 'antd-mobile-icons'
 import { Toast } from 'antd-mobile'
 import axios from 'axios'
@@ -17,7 +17,8 @@ import '../styles/scenePoetry.less'
 const BASE = import.meta.env.BASE_URL
 const sceneApi = axios.create({ baseURL: import.meta.env.VITE_API_BASE_URL || '', timeout: 95000 })
 function SceneEditor({ scope }) {
-  const navigate = useNavigate(), fileRef = useRef(null), cameraRef = useRef(null), request = useRef(null), generation = useRef(0)
+  const navigate = useNavigate(), [searchParams] = useSearchParams()
+  const fileRef = useRef(null), cameraRef = useRef(null), request = useRef(null), generation = useRef(0), handledActionRef = useRef(false)
   const [scene, setScene] = useState(null), [selected, setSelected] = useState([]), [poemId, setPoemId] = useState('')
   const [busy, setBusy] = useState(false), [saving, setSaving] = useState(false), [notice, setNotice] = useState(''), [highlight, setHighlight] = useState('')
   const [manualTag, setManualTag] = useState('tree'), [drawing, setDrawing] = useState(false)
@@ -28,9 +29,22 @@ function SceneEditor({ scope }) {
     getDraft(scope).then(draft => {
       if (active && version === generation.current && draft) {
         setScene(draft); setSelected(draft.selected || []); setPoemId(draft.poemId || '')
+      } else if (active && !handledActionRef.current) {
+        const action = searchParams.get('action')
+        if (action === 'sample') {
+          handledActionRef.current = true
+          example()
+        } else if (action === 'camera') {
+          handledActionRef.current = true
+          setTimeout(() => cameraRef.current?.click(), 150)
+        } else if (action === 'upload') {
+          handledActionRef.current = true
+          setTimeout(() => fileRef.current?.click(), 150)
+        }
       }
     }).catch(() => {})
     return () => { active = false }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scope])
   const selectedRegions = useMemo(() => scene?.analysis.regions.filter(row => selected.includes(row.id)) || [], [scene, selected])
   const matches = useMemo(() => matchScenePoems(selectedRegions), [selectedRegions])

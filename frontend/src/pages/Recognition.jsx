@@ -87,7 +87,7 @@ export default function Recognition() {
     Toast.show({ content: '呈递图卷 · 先贤研墨考证中…', duration: 3500 })
 
     try {
-      const res = await axios.post('/api/coze/recognition', { img: dataUrl }, { timeout: REQUEST_TIMEOUT })
+      const res = await axios.post('/api/coze/recognition', { img: dataUrl }, { timeout: REQUEST_TIMEOUT, silentToast: true })
       if (requestSeq.current !== seq) return
       const body = res?.data
       if (body && body.code === 1 && body.data && !body.degraded && body.source !== 'local-fallback') {

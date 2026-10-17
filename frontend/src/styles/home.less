@@ -197,12 +197,90 @@
     }
   }
 
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.12rem;
+    padding: 0.06rem 0.22rem;
+    margin-bottom: 0.18rem;
+    background: color-mix(in srgb, var(--gf-bg-card) 90%, transparent);
+    border: 1px solid color-mix(in srgb, var(--gf-seal) 40%, transparent);
+    border-radius: 0.3rem;
+    font-size: 0.26rem;
+    color: var(--gf-seal);
+    font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+    letter-spacing: 0.02rem;
+    box-shadow: 0 2px 8px rgba(138, 43, 43, 0.08);
+
+    &-seal {
+      background: var(--gf-seal);
+      color: #fff;
+      font-size: 0.2rem;
+      padding: 0.02rem 0.08rem;
+      border-radius: 2px;
+      font-weight: bold;
+    }
+  }
+
   &__sub {
     margin: 0.22rem 0 0;
     font-size: 0.32rem;
     letter-spacing: 0.03rem;
     color: var(--gf-ink-secondary);
   }
+}
+
+.home-supporting-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin: 0.75rem 0 0.1rem;
+
+  &__line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--gf-gold) 60%, transparent), transparent);
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.1rem;
+    padding: 0.08rem 0.26rem;
+    background: color-mix(in srgb, var(--gf-bg-card) 85%, transparent);
+    border: 1px solid var(--gf-gold);
+    border-radius: 0.24rem;
+    font-size: 0.28rem;
+    font-weight: 600;
+    color: var(--gf-ink-primary);
+    font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+  }
+
+  &__icon {
+    font-size: 0.3rem;
+  }
+}
+
+.home-supporting-sub {
+  text-align: center;
+  margin: 0.12rem 0 0.2rem;
+  font-size: 0.26rem;
+  color: var(--gf-ink-secondary);
+  letter-spacing: 0.02rem;
+}
+
+.home-section-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.02rem;
+}
+
+.home-section-category {
+  font-size: 0.22rem;
+  color: var(--gf-seal);
+  font-weight: 600;
+  letter-spacing: 0.04rem;
+  font-family: 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
 }
 
 // ════════════ 模块卡片通用外壳 ════════════

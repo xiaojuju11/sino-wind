@@ -383,8 +383,13 @@ export default function Home() {
           </button>
         </div>
 
+        <div className="home-hero__badge" aria-label="项目定位">
+          <span className="home-hero__badge-seal">国一冲刺</span>
+          <span>面向大学生的实景诗词互动学习应用</span>
+        </div>
+
         <div className="home-hero__title-row">
-          <h1 className="home-hero__title">云山竹简</h1>
+          <h1 className="home-hero__title">云山竹简 · 寻镜入诗</h1>
           <span
             className="home-hero__seal"
             onClick={handleSealClick}
@@ -392,20 +397,37 @@ export default function Home() {
             role="button"
             tabIndex={0}
           >
-            华风
+            主线
           </span>
         </div>
-        <p className="home-hero__sub">—— 读千年风雅 与君共此山河 ——</p>
+        <p className="home-hero__sub">—— 拍下眼前风景，点选景物，读懂一句古诗 ——</p>
       </header>
 
+      {/* ── 核心主线体验：寻镜入诗（首屏最核心展示与交互）── */}
       <SceneHomeCard />
 
-      {/* ── 区块① 白话雅译（两端木轴卷轴 + 竖排红签）── */}
+      {/* ── 四维诗境辅助研习系统分界 ── */}
+      <div className="home-supporting-divider">
+        <div className="home-supporting-divider__line" />
+        <div className="home-supporting-divider__badge">
+          <span className="home-supporting-divider__icon">📜</span>
+          <span>四维诗境辅助研习系统</span>
+        </div>
+        <div className="home-supporting-divider__line" />
+      </div>
+      <p className="home-supporting-sub">
+        围绕「实景诗词」提供意象今译、景地物候、名物考释与声律推演支持
+      </p>
+
+      {/* ── 区块① 白话雅译（意象今译辅助）── */}
       <section className="home-card-scroll home-yayan-section">
         <ReferenceCorners />
         <div className="home-section-header">
-          <h2 className="home-section-title">白话雅译</h2>
-          <span className="home-section-seal">简</span>
+          <div className="home-section-title-wrap">
+            <span className="home-section-category">辅助 ① · 意象今译</span>
+            <h2 className="home-section-title">白话雅译</h2>
+          </div>
+          <span className="home-section-seal">译</span>
         </div>
 
         <div className="home-yayan-scroll">
@@ -484,10 +506,13 @@ export default function Home() {
       <section className="home-card-scroll home-almanac">
         <ReferenceCorners />
         <div className="home-section-header">
-          <h2 className="home-section-title">古今时令与天象</h2>
+          <div className="home-section-title-wrap">
+            <span className="home-section-category">辅助 ② · 景地物候</span>
+            <h2 className="home-section-title">古今时令与天象</h2>
+          </div>
           <span className="home-section-seal">时</span>
         </div>
-        <p className="home-section-sub">观天时，知物候，品古今生活之美。</p>
+        <p className="home-section-sub">定位摄景地之古称地志、实时天象与二十四节气物候。</p>
 
         <div className="home-almanac__cols">
           <div className="home-almanac__col">
@@ -546,10 +571,13 @@ export default function Home() {
       <section className="home-card-scroll home-shiwu-section">
         <ReferenceCorners />
         <div className="home-section-header">
-          <h2 className="home-section-title">古今识物</h2>
+          <div className="home-section-title-wrap">
+            <span className="home-section-category">辅助 ③ · 名物考释</span>
+            <h2 className="home-section-title">古今识物</h2>
+          </div>
           <span className="home-section-seal">物</span>
         </div>
-        <p className="home-section-sub">拍一物，识古名，探寻器物背后的风雅渊源。</p>
+        <p className="home-section-sub">识读诗境中遇见的古今器物、文房器具与名物渊源。</p>
 
         <div className="home-shiwu-body">
           <button
@@ -596,10 +624,13 @@ export default function Home() {
       >
         <ReferenceCorners />
         <div className="home-section-header">
-          <h2 className="home-section-title">古诗词赏析</h2>
+          <div className="home-section-title-wrap">
+            <span className="home-section-category">辅助 ④ · 声律进阶</span>
+            <h2 className="home-section-title">古诗词赏析与飞花雅令</h2>
+          </div>
           <span className="home-section-seal">词</span>
         </div>
-        <p className="home-section-sub">品读千古名篇，感受诗词中的人生境界。</p>
+        <p className="home-section-sub">106部平水韵有限状态机，推演律绝平仄与诗境对仗。</p>
 
         <div className="home-poem-body">
           <p className="home-poem-title">《定风波·莫听穿林打叶声》</p>
