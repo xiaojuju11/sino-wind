@@ -77,8 +77,6 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      padding-bottom: 16px;
-      border-bottom: 1px dashed @color-border;
     }
 
     .scholar-avatar {
@@ -149,7 +147,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 10px 0;
+      margin-top: 14px;
+      margin-bottom: 0;
       padding: 6px 12px;
       background: color-mix(in srgb, var(--gf-gold, @color-gold) 12%, transparent);
       border: 1px dashed color-mix(in srgb, var(--gf-gold, @color-gold) 40%, transparent);
@@ -170,65 +169,6 @@
           opacity: 0.6;
           cursor: not-allowed;
         }
-      }
-    }
-
-    // 六列修持数据（首项为寻镜主线：诗境藏卷）
-    .scholar-stats {
-      display: flex;
-      justify-content: space-around;
-      padding-top: 14px;
-
-      &__item {
-        text-align: center;
-        flex: 1;
-        min-width: 0;
-        position: relative;
-        cursor: pointer;
-        transition: transform 0.15s ease, opacity 0.15s ease;
-
-        &:active {
-          transform: scale(0.95);
-          opacity: 0.8;
-        }
-
-        &:first-child .scholar-stats__num {
-          color: var(--gf-primary, @color-seal);
-          font-weight: 900;
-        }
-
-        &:first-child .scholar-stats__label {
-          color: var(--gf-ink-primary, @color-text-main);
-          font-weight: 600;
-        }
-
-        &:not(:last-child)::after {
-          content: '';
-          position: absolute;
-          right: 0;
-          top: 15%;
-          height: 70%;
-          width: 1px;
-          background-color: @color-divider;
-        }
-      }
-
-      &__num {
-        font-size: 19px;
-        font-weight: 800;
-        color: var(--gf-accent-text, @color-seal); // 朱砂红数据
-        font-family: 'Georgia', serif;
-        line-height: 1.2;
-      }
-
-      &__label {
-        font-size: 10.5px;
-        color: var(--gf-text-sub, @color-text-sub);
-        margin-top: 4px;
-        letter-spacing: 0.2px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
       }
     }
   }

@@ -13,8 +13,7 @@ import '../styles/studyPages.less'
 import { finishStudySession } from '../utils/studyFlow'
 
 import { scholarScope, syncLocalLetters } from '../utils/scholarLetters'
-import { guestSummary, guestArchiveCount, importGuestArchive, guestGames } from '../utils/scholarAssets'
-import { listScenes } from '../utils/sceneStorage'
+import { guestSummary, guestArchiveCount, importGuestArchive } from '../utils/scholarAssets'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -22,7 +21,6 @@ function MinePageSession() {
   const navigate = useNavigate()
   const [userInfo, setUserInfo] = useState({})
   const [rankData, setRankData] = useState(null)
-  const [sceneCount, setSceneCount] = useState(0)
   const [guestCount, setGuestCount] = useState(guestArchiveCount)
   const [importing, setImporting] = useState(false)
   const refreshAssets = useRef(() => {})
@@ -37,7 +35,6 @@ function MinePageSession() {
       const current = ++generation, scope = scholarScope()
       const valid = () => alive && current === generation && scope === scholarScope()
       setGuestCount(guestArchiveCount())
-      listScenes(scope).then(rows => { if (valid()) setSceneCount(rows.length) }).catch(() => {})
       if (!scope.startsWith('user:')) {
         setUserInfo(guestSummary()); setRankData(null)
         return
@@ -96,36 +93,6 @@ function MinePageSession() {
   // 原先此处还解构了 { theme, toggleTheme, isDark }，但 theme 从未被使用（ESLint 报错），
   // 而 toggleTheme / isDark 仅服务于已删除的「日月交替」重复行 —— 故一并清理。
 
-  // Six asset sources; primary storyline 诗境藏卷 at the first position.
-  const stats = [
-    {
-      num: sceneCount,
-      label: '诗境藏卷',
-      onClick: () => navigate('/mine/scenes')
-    },
-    {
-      num: userInfo.appraise_count ?? '—',
-      label: '鉴宝印记',
-      onClick: () => navigate('/mine/artifacts')
-    },
-    {
-      num: userInfo.poem_count ?? '—',
-      label: '诗词温故',
-      onClick: () => navigate('/poem-collection')
-    },
-    {
-      num: userInfo.debate_count ?? '—',
-      label: '知音鸿雁',
-      onClick: () => navigate('/mine/messages')
-    },
-    {
-      num: userInfo.yayan_count ?? '—',
-      label: '雅言研习',
-      onClick: () => navigate('/mine/yayan')
-    },
-  ]
-
-  stats.push({ num: rankData?.total ?? (scholarScope() === 'guest' ? guestGames().length : '—'), label: '飞花归档', onClick: () => navigate('/mine/archive') })
 
   // 关于弹窗
   // 说明：原用 Modal.alert，但其 ModalAlertProps 只接受 confirmText，无法给确认按钮传样式；
@@ -223,15 +190,6 @@ function MinePageSession() {
           </div>
         )}
 
-        {/* 五列修持数据看板（支持快捷下钻） */}
-        <div className='scholar-stats'>
-          {stats.map((item) => (
-            <button key={item.label} type='button' className='scholar-stats__item' onClick={item.onClick}>
-              <span className='scholar-stats__num'>{item.num}</span>
-              <span className='scholar-stats__label'>{item.label}</span>
-            </button>
-          ))}
-        </div>
       </section>
 
       {/* 3. 列表卡片 1：五大藏品墨卷 */}
