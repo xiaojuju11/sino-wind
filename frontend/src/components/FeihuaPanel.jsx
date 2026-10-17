@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { DownlandOutline, CloseOutline } from 'antd-mobile-icons'
+import { DownlandOutline } from 'antd-mobile-icons'
 import axios from '../http'
 import { downloadScholarCertificate } from '../utils/scholarCertificate'
 import { rememberGuestGame } from '../utils/scholarAssets'
@@ -12,7 +12,7 @@ function archiveGuestSettlement(game, guestKey) {
   catch { return '本局已结算，但本机文牒未保存，请释放存储后重新进入重试，或立即导出文牒' }
 }
 
-export default function FeihuaPanel({ sageId, onClose }) {
+export default function FeihuaPanel({ sageId }) {
   const [rules, setRules] = useState(null), [game, setGame] = useState(null)
   const [keyword, setKeyword] = useState('月'), [rhyme, setRhyme] = useState('')
   const [line, setLine] = useState(''), [notice, setNotice] = useState(''), [busy, setBusy] = useState(false)
@@ -79,7 +79,7 @@ export default function FeihuaPanel({ sageId, onClose }) {
     finally { lock.current = false; if (live.current) setBusy(false) }
   }
   return <section className='feihua-panel' aria-label='飞花令对弈'>
-    <div className='feihua-heading'><h2>飞花令 · 对席</h2><button type='button' onClick={onClose} aria-label='返回对话'><CloseOutline /></button></div>
+    <div className='feihua-heading'><h2>飞花令 · 对席</h2></div>
     <p>三十息应令，双方不可重复。自由换韵时先贤优先同韵；指定韵部时双方须严格同韵。胜得三分、和局一分，败局不计分。未登录可体验并保存本机文牒，积分不入书斋。</p>
     <p>{rules?.sages?.[sageId]?.name} · {rules?.sages?.[sageId]?.style}。跨朝代引句以题库作者署名为准。</p>
     {!game || game.status === 'finished' ? <div className='feihua-controls'>

@@ -54,14 +54,14 @@ function ScholarArchiveSession({ onClose, presentation }) {
     finally { if (alive.current) setBusy(false) }
   }
   const download = () => {
-    const anchor = document.createElement('a'); anchor.href = preview.url; anchor.download = `飞花文牒-${preview.id}.png`; document.body.appendChild(anchor); anchor.click(); anchor.remove()
+    const anchor = document.createElement('a'); anchor.href = preview.url; anchor.download = `翰林文牒-${preview.id}.png`; document.body.appendChild(anchor); anchor.click(); anchor.remove()
   }
   const share = async () => {
     try {
       if (typeof File !== 'function' || typeof navigator.share !== 'function') { download(); setNotice('当前浏览器暂不支持系统分享，已转为下载'); return }
-      const file = new File([preview.blob], `飞花文牒-${preview.id}.png`, { type: 'image/png' })
+      const file = new File([preview.blob], `翰林文牒-${preview.id}.png`, { type: 'image/png' })
       if (!navigator.canShare?.({ files: [file] })) { download(); setNotice('当前浏览器暂不支持系统分享，已转为下载'); return }
-      await navigator.share({ title: '云山竹简 · 飞花文牒', files: [file] })
+      await navigator.share({ title: '云山竹简 · 翰林文牒', files: [file] })
     } catch (e) { if (e.name !== 'AbortError') setNotice('分享未完成，可下载后分享') }
   }
 
@@ -110,10 +110,10 @@ function ScholarArchiveSession({ onClose, presentation }) {
       <>
         {!busy && data?.total === 0 && (
           <EmptyState
-            seal='待战'
-            title='案上尚无飞花文牒'
-            desc={localMode ? '本机暂无游客研习对局。' : '入席与千古先贤行一局飞花令，收局后无论胜负皆录入文牒，存藏翰林。'}
-            actionText='前往飞花对弈'
+            seal='修卷'
+            title='案上尚无修持文牒'
+            desc={localMode ? '本机暂无游客研习墨卷。' : '入席与千古先贤长谈对席，存藏翰林修持记录。'}
+            actionText='前往知音对席'
             onAction={() => {
               if (presentation === 'drawer' && onClose) onClose()
               navigate('/letters')

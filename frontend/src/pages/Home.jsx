@@ -623,7 +623,7 @@ export default function Home() {
         <div className="home-section-header">
           <div className="home-section-title-wrap">
             <span className="home-section-category">声律 · 诗词研赏</span>
-            <h2 className="home-section-title">古诗词赏析与飞花雅令</h2>
+            <h2 className="home-section-title">古诗词赏析与平水韵律</h2>
           </div>
           <span className="home-section-seal">词</span>
         </div>

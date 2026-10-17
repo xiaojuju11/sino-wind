@@ -5,7 +5,6 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { LeftOutline, SoundOutline, EditSOutline, FileOutline, MessageOutline, CompassOutline, RightOutline } from 'antd-mobile-icons'
 import { Toast, DotLoading } from 'antd-mobile'
 import axios from '../http'
-import FeihuaPanel from '../components/FeihuaPanel'
 import { receiveScholarStream } from '../utils/scholarStream'
 import { cachedLetters, loadLetterDetail, markLetterRead, saveLocalTurn, leaveScholar, shichen, scholarScope } from '../utils/scholarLetters'
 import '../styles/scholarEcosystem.less'
@@ -202,7 +201,6 @@ function ScholarChatSession() {
   const [inputText, setInputText] = useState(() => typeof location.state?.scenePrompt === 'string' ? location.state.scenePrompt.slice(0, 1800) : '')
   const [scenePromptActive, setScenePromptActive] = useState(() => Boolean(location.state?.scenePrompt))
   const [loading, setLoading] = useState(false)
-  const [gameOpen, setGameOpen] = useState(false)
   const [hydrating, setHydrating] = useState(true)
   const [replyLetter, setReplyLetter] = useState(null)
   const activeRequest = useRef(null)
@@ -219,7 +217,6 @@ function ScholarChatSession() {
     let restored = false
     const scope = scholarScope()
     setHydrating(true); setReplyLetter(null)
-    setGameOpen(false)
     setLoading(false)
     const welcome = poemCtx
       ? `${sageInfo.welcome}\n\n【雅集案头】：正与君品读《${poemCtx.title}》，愿共论诗中微意。`
@@ -259,7 +256,7 @@ function ScholarChatSession() {
   // One reader and one animation clock per request. Navigation cancels both.
   const handleSend = async (customContent, artifactId) => {
     const text = (customContent || inputText).trim()
-    if (!text || activeRequest.current || gameOpen || hydrating) return
+    if (!text || activeRequest.current || hydrating) return
     if (text.length > 2000) { Toast.show({ content: '请将论道内容控制在两千字以内' }); return }
     if (sageKey.startsWith('sage_') && !customSage) { Toast.show({ content: '自定先贤资料缺失或超出字数限制，请回知音殿重新迎请' }); return }
     const userMsg = { id: crypto.randomUUID(), role: 'user', content: text, time: getShichenTime() }
@@ -395,7 +392,7 @@ function ScholarChatSession() {
   }
 
   return (
-    <div className={`scholar-chat-root reference-polish${gameOpen ? " is-game" : ""}${hasScene ? ' has-sage-scene' : ''}`}>
+    <div className={`scholar-chat-root reference-polish${hasScene ? ' has-sage-scene' : ''}`}>
       {hasScene && <div className='scholar-scene' aria-hidden='true'>
         <img key={scene.src} className='scholar-scene__art' src={scene.src} alt='' decoding='async' fetchPriority='high' onError={() => setFailedScene(sageKey)} />
         <div className='scholar-scene__shade' />
@@ -437,62 +434,60 @@ function ScholarChatSession() {
 
       {/* 2. 消息流区域：先贤入席名帖与论道发语随对话自然滚动，彻底解除对长谈消息的遮挡 */}
       <main className="scholar-messages-container" ref={chatScrollRef}>
-        {!gameOpen && (
-          <div className="scholar-chat-header-flow">
-            {/* 顶部知己水墨立绘名帖：开篇展现先贤风骨，随消息自然滑动，绝不常驻遮挡 */}
-            <section className="scholar-hero-banner">
-              <div className="scholar-hero-banner__bg" />
-              <div className="scholar-hero-banner__content">
-                {!hasScene && (
-                  <div className="scholar-hero-banner__portrait-box">
-                    <img
-                      src={sageInfo.portrait}
-                      alt={sageInfo.name}
-                      className="scholar-hero-banner__portrait"
-                    />
-                  </div>
-                )}
-                <div className="scholar-hero-banner__info">
-                  <div className="scholar-hero-banner__names">
-                    <span className="scholar-hero-banner__name">{sageInfo.name}</span>
-                    <span className="scholar-hero-banner__tag">{sageInfo.title}</span>
-                    <span className="scholar-hero-banner__seal">{hasScene ? scene.title : `${sageInfo.name}墨宝`}</span>
-                  </div>
-                  <p className="scholar-hero-banner__motto">“{sageInfo.motto}”</p>
+        <div className="scholar-chat-header-flow">
+          {/* 顶部知己水墨立绘名帖：开篇展现先贤风骨，随消息自然滑动，绝不常驻遮挡 */}
+          <section className="scholar-hero-banner">
+            <div className="scholar-hero-banner__bg" />
+            <div className="scholar-hero-banner__content">
+              {!hasScene && (
+                <div className="scholar-hero-banner__portrait-box">
+                  <img
+                    src={sageInfo.portrait}
+                    alt={sageInfo.name}
+                    className="scholar-hero-banner__portrait"
+                  />
                 </div>
+              )}
+              <div className="scholar-hero-banner__info">
+                <div className="scholar-hero-banner__names">
+                  <span className="scholar-hero-banner__name">{sageInfo.name}</span>
+                  <span className="scholar-hero-banner__tag">{sageInfo.title}</span>
+                  <span className="scholar-hero-banner__seal">{hasScene ? scene.title : `${sageInfo.name}墨宝`}</span>
+                </div>
+                <p className="scholar-hero-banner__motto">“{sageInfo.motto}”</p>
               </div>
-            </section>
+            </div>
+          </section>
 
-            {/* 论道发语灵感推荐 */}
-            <section className="scholar-capsules-bar">
-              <div className="scholar-capsules-heading">
-                <span className="scholar-capsules-heading__title">
-                  <CompassOutline /> 论道发语 · 触景叩问
-                </span>
-                <span className="scholar-capsules-heading__tip">点击即刻入席</span>
-              </div>
-              <div className="scholar-capsules-scroll">
-                {dynamicCapsules.map((cap, idx) => (
-                  <button
-                    key={cap}
-                    type="button"
-                    className="scholar-capsule"
-                    onClick={() => handleSend(cap.replace(/^〔.+?〕\s*/, ''))}
-                  >
-                    <span className='scholar-capsule__icon' aria-hidden='true'>
-                      {React.createElement(CAPSULE_ICONS[idx % CAPSULE_ICONS.length])}
-                    </span>
-                    <span className='scholar-capsule__label'>
-                      {cap.replace(/^〔.+?〕\s*/, '')}
-                    </span>
-                    <RightOutline className='scholar-capsule__arrow' aria-hidden='true' />
-                  </button>
-                ))}
-              </div>
-            </section>
-          </div>
-        )}
-        {!gameOpen && scenePromptActive && (
+          {/* 论道发语灵感推荐 */}
+          <section className="scholar-capsules-bar">
+            <div className="scholar-capsules-heading">
+              <span className="scholar-capsules-heading__title">
+                <CompassOutline /> 论道发语 · 触景叩问
+              </span>
+              <span className="scholar-capsules-heading__tip">点击即刻入席</span>
+            </div>
+            <div className="scholar-capsules-scroll">
+              {dynamicCapsules.map((cap, idx) => (
+                <button
+                  key={cap}
+                  type="button"
+                  className="scholar-capsule"
+                  onClick={() => handleSend(cap.replace(/^〔.+?〕\s*/, ''))}
+                >
+                  <span className='scholar-capsule__icon' aria-hidden='true'>
+                    {React.createElement(CAPSULE_ICONS[idx % CAPSULE_ICONS.length])}
+                  </span>
+                  <span className='scholar-capsule__label'>
+                    {cap.replace(/^〔.+?〕\s*/, '')}
+                  </span>
+                  <RightOutline className='scholar-capsule__arrow' aria-hidden='true' />
+                </button>
+              ))}
+            </div>
+          </section>
+        </div>
+        {scenePromptActive && (
           <aside className="scholar-scene-lead-banner" aria-label="实景诗境入席">
             <div>
               <strong className="scholar-scene-lead-banner__tag">🏮 携实景诗境入席</strong>
@@ -508,9 +503,8 @@ function ScholarChatSession() {
             </button>
           </aside>
         )}
-        {!gameOpen && replyLetter && <aside className='scholar-reply-letter' aria-label='知音回柬'><strong>知音回柬 · {replyLetter.kind}</strong><p>{replyLetter.text}</p><button type='button' onClick={() => setReplyLetter(null)}>收笺续谈</button></aside>}
-        {gameOpen && <FeihuaPanel key={sageKey} sageId={sageKey} onClose={() => setGameOpen(false)} />}
-        {!gameOpen && messages.map((item) => (
+        {replyLetter && <aside className='scholar-reply-letter' aria-label='知音回柬'><strong>知音回柬 · {replyLetter.kind}</strong><p>{replyLetter.text}</p><button type='button' onClick={() => setReplyLetter(null)}>收笺续谈</button></aside>}
+        {messages.map((item) => (
           <div
             key={item.id}
             className={`scholar-msg-row scholar-msg-row--${item.role}`}
@@ -549,7 +543,7 @@ function ScholarChatSession() {
           </div>
         ))}
 
-        {loading && !gameOpen && (
+        {loading && (
           <div className="scholar-loading-row">
             <span className="scholar-loading-text">
               先贤研墨思辨中 <DotLoading color="#8A2B2B" />
@@ -559,9 +553,8 @@ function ScholarChatSession() {
       </main>
 
       {/* 5. 底部宣纸输入与操作栏 */}
-      {!gameOpen && <footer className="scholar-footer">
+      <footer className="scholar-footer">
         <div className="scholar-footer__quick-tools">
-          {['libai', 'sushi', 'liqingzhao', 'wangyangming', 'dufu'].includes(sageKey) && <button type="button" className="scholar-tool-btn" disabled={loading || hydrating} onClick={() => setGameOpen(true)}><EditSOutline /> 飞花令</button>}
           {loading && <button type="button" className="scholar-tool-btn" onClick={() => activeRequest.current?.controller.abort()}>停止研墨</button>}
           <button
             type="button"
@@ -606,7 +599,7 @@ function ScholarChatSession() {
             <span>畅论</span>
           </button>
         </div>
-      </footer>}
+      </footer>
 
 
     </div>
