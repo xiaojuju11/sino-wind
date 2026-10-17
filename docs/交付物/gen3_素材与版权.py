@@ -192,8 +192,13 @@ para(doc, "该规范已实际执行：仓库内 public/assets/tabbar/ 目录下�
 h1(doc, "五、图片与插画合规清单")
 
 h2(doc, "5.1 总体规模")
-para(doc, "frontend/public 下共 48 个图片文件，合计约 12.6MB，按 7 个目录组织。"
+para(doc, "frontend/public 下现为 29 个图片文件，合计约 4.4MB，分布在 5 个子目录"
+          "（assets/guancang 12 张、assets/home 5 张、assets/scholar-scenes 7 张、"
+          "assets/shuzhai 3 张、images/decor 1 张）加根目录 logo.svg 1 张。"
           "frontend/src/assets 目录不存在（全部图片置于 public 下）。")
+note(doc, "变更说明：本次审计开始时为 48 个文件约 12.6MB；经来源审计后删除了 14 张在产品代码中"
+          "零引用的图片与 1 张误落仓库的 ChatGPT 导出图（合计释放 8.3MB），余下 29 张全部为在用素材。"
+          "逐项删除理由见 docs/素材来源存档/图片来源登记表.md 第六节「处置记录」。")
 
 h2(doc, "5.2 逐目录清单")
 table(doc, ["目录", "数量 / 大小", "内容与关键文件", "来源", "授权"],
