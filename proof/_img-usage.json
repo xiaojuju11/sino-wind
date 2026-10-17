@@ -1,0 +1,448 @@
+[
+  {
+    "rel": "frontend/public/assets/auth/reference-login.png",
+    "base": "reference-login.png",
+    "kb": 2193,
+    "hits": [],
+    "dyn": [],
+    "kind": "unused"
+  },
+  {
+    "rel": "frontend/public/assets/auth/reference-register.png",
+    "base": "reference-register.png",
+    "kb": 2092,
+    "hits": [],
+    "dyn": [],
+    "kind": "unused"
+  },
+  {
+    "rel": "frontend/public/assets/common/bg_guofeng.jpg",
+    "base": "bg_guofeng.jpg",
+    "kb": 293,
+    "hits": [],
+    "dyn": [],
+    "kind": "unused"
+  },
+  {
+    "rel": "frontend/public/assets/guancang/guancang_header_bg.png",
+    "base": "guancang_header_bg.png",
+    "kb": 441,
+    "hits": [],
+    "dyn": [],
+    "kind": "unused"
+  },
+  {
+    "rel": "frontend/public/assets/guancang/sage_libai.jpg",
+    "base": "sage_libai.jpg",
+    "kb": 239,
+    "hits": [
+      "frontend/src/pages/AIPage.jsx:15"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/guancang/sage_libai.png",
+    "base": "sage_libai.png",
+    "kb": 115,
+    "hits": [
+      "frontend/src/components/InviteDrawer.jsx:11",
+      "frontend/src/pages/LetterList.jsx:22",
+      "frontend/src/pages/LetterList.jsx:66",
+      "frontend/src/pages/ScholarChat.jsx:27",
+      "frontend/src/pages/ScholarChat.jsx:81",
+      "frontend/src/pages/ScholarChat.jsx:135"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/guancang/sage_liqingzhao.jpg",
+    "base": "sage_liqingzhao.jpg",
+    "kb": 218,
+    "hits": [
+      "frontend/src/pages/AIPage.jsx:18"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/guancang/sage_liqingzhao.png",
+    "base": "sage_liqingzhao.png",
+    "kb": 117,
+    "hits": [
+      "frontend/src/components/InviteDrawer.jsx:13",
+      "frontend/src/pages/LetterList.jsx:46",
+      "frontend/src/pages/ScholarChat.jsx:45"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/guancang/sage_sushi.jpg",
+    "base": "sage_sushi.jpg",
+    "kb": 248,
+    "hits": [
+      "frontend/src/pages/AIPage.jsx:16"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/guancang/sage_sushi.png",
+    "base": "sage_sushi.png",
+    "kb": 117,
+    "hits": [
+      "frontend/src/components/InviteDrawer.jsx:12",
+      "frontend/src/pages/LetterList.jsx:38",
+      "frontend/src/pages/ScholarChat.jsx:36"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/guancang/sage_wangyangming.jpg",
+    "base": "sage_wangyangming.jpg",
+    "kb": 251,
+    "hits": [
+      "frontend/src/pages/AIPage.jsx:17"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/guancang/sage_wangyangming.png",
+    "base": "sage_wangyangming.png",
+    "kb": 118,
+    "hits": [
+      "frontend/src/components/InviteDrawer.jsx:14",
+      "frontend/src/pages/LetterList.jsx:54",
+      "frontend/src/pages/LetterList.jsx:59",
+      "frontend/src/pages/LetterList.jsx:107",
+      "frontend/src/pages/LetterList.jsx:123",
+      "frontend/src/pages/LetterList.jsx:148",
+      "frontend/src/pages/ScholarChat.jsx:63",
+      "frontend/src/pages/ScholarChat.jsx:72"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/guancang/sage-libai-full-v2.png",
+    "base": "sage-libai-full-v2.png",
+    "kb": 2390,
+    "hits": [],
+    "dyn": [],
+    "kind": "unused"
+  },
+  {
+    "rel": "frontend/public/assets/guancang/scroll_changhe.jpg",
+    "base": "scroll_changhe.jpg",
+    "kb": 96,
+    "hits": [
+      "frontend/src/pages/AIPage.jsx:38"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/guancang/scroll_changhe.png",
+    "base": "scroll_changhe.png",
+    "kb": 421,
+    "hits": [
+      "frontend/src/components/InviteDrawer.jsx:15",
+      "frontend/src/pages/LetterList.jsx:30",
+      "frontend/src/pages/ScholarChat.jsx:54"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/guancang/scroll_lundao.jpg",
+    "base": "scroll_lundao.jpg",
+    "kb": 93,
+    "hits": [
+      "frontend/src/pages/AIPage.jsx:29"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/guancang/scroll_lundao.png",
+    "base": "scroll_lundao.png",
+    "kb": 420,
+    "hits": [],
+    "dyn": [],
+    "kind": "unused"
+  },
+  {
+    "rel": "frontend/public/assets/guancang/scroll_tingyin.jpg",
+    "base": "scroll_tingyin.jpg",
+    "kb": 89,
+    "hits": [
+      "frontend/src/pages/AIPage.jsx:47"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/guancang/scroll_tingyin.png",
+    "base": "scroll_tingyin.png",
+    "kb": 391,
+    "hits": [],
+    "dyn": [],
+    "kind": "unused"
+  },
+  {
+    "rel": "frontend/public/assets/home/bg-almanac-ancient.jpg",
+    "base": "bg-almanac-ancient.jpg",
+    "kb": 45,
+    "hits": [
+      "frontend/src/styles/home.less:1340"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/home/bg-almanac-modern.jpg",
+    "base": "bg-almanac-modern.jpg",
+    "kb": 43,
+    "hits": [
+      "frontend/src/styles/home.less:1333"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/home/bg-paper.jpg",
+    "base": "bg-paper.jpg",
+    "kb": 159,
+    "hits": [],
+    "dyn": [],
+    "kind": "unused"
+  },
+  {
+    "rel": "frontend/public/assets/home/bg-poem.jpg",
+    "base": "bg-poem.jpg",
+    "kb": 45,
+    "hits": [
+      "frontend/src/pages/PoemPage.jsx:490",
+      "frontend/src/styles/home.less:1354",
+      "frontend/src/styles/referenceFidelity.less:184"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/home/bg-shiwu.jpg",
+    "base": "bg-shiwu.jpg",
+    "kb": 54,
+    "hits": [
+      "frontend/src/styles/home.less:1347",
+      "frontend/src/styles/home.less:1382",
+      "frontend/src/styles/home.less:1515",
+      "frontend/src/styles/home.less:1530",
+      "frontend/src/styles/home.less:1736",
+      "frontend/src/styles/home.less:1762",
+      "frontend/src/styles/home.less:1830",
+      "frontend/src/styles/home.less:1837",
+      "frontend/src/styles/home.less:1853",
+      "frontend/src/styles/home.less:1874",
+      "frontend/src/styles/referenceFidelity.less:183"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/home/bg-yayan.jpg",
+    "base": "bg-yayan.jpg",
+    "kb": 92,
+    "hits": [
+      "frontend/src/styles/home.less:1679",
+      "frontend/src/styles/home.less:1694"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/home/poem-art.jpg",
+    "base": "poem-art.jpg",
+    "kb": 2,
+    "hits": [],
+    "dyn": [],
+    "kind": "unused"
+  },
+  {
+    "rel": "frontend/public/assets/home/yaji-appraise.jpg",
+    "base": "yaji-appraise.jpg",
+    "kb": 19,
+    "hits": [],
+    "dyn": [],
+    "kind": "unused"
+  },
+  {
+    "rel": "frontend/public/assets/home/yaji-debate.jpg",
+    "base": "yaji-debate.jpg",
+    "kb": 23,
+    "hits": [],
+    "dyn": [],
+    "kind": "unused"
+  },
+  {
+    "rel": "frontend/public/assets/home/yaji-leisure.jpg",
+    "base": "yaji-leisure.jpg",
+    "kb": 23,
+    "hits": [],
+    "dyn": [],
+    "kind": "unused"
+  },
+  {
+    "rel": "frontend/public/assets/home/yaji-poem.jpg",
+    "base": "yaji-poem.jpg",
+    "kb": 25,
+    "hits": [],
+    "dyn": [],
+    "kind": "unused"
+  },
+  {
+    "rel": "frontend/public/assets/scholar-scenes/dufu-scene-v1.webp",
+    "base": "dufu-scene-v1.webp",
+    "kb": 217,
+    "hits": [],
+    "dyn": [
+      "frontend/src/utils/scholarScenes.js:26"
+    ],
+    "kind": "dynamic"
+  },
+  {
+    "rel": "frontend/public/assets/scholar-scenes/group_zhulin-scene-v1.webp",
+    "base": "group_zhulin-scene-v1.webp",
+    "kb": 273,
+    "hits": [],
+    "dyn": [
+      "frontend/src/utils/scholarScenes.js:26"
+    ],
+    "kind": "dynamic"
+  },
+  {
+    "rel": "frontend/public/assets/scholar-scenes/libai-scene-v1.webp",
+    "base": "libai-scene-v1.webp",
+    "kb": 186,
+    "hits": [],
+    "dyn": [
+      "frontend/src/utils/scholarScenes.js:26"
+    ],
+    "kind": "dynamic"
+  },
+  {
+    "rel": "frontend/public/assets/scholar-scenes/liqingzhao-scene-v1.webp",
+    "base": "liqingzhao-scene-v1.webp",
+    "kb": 237,
+    "hits": [],
+    "dyn": [
+      "frontend/src/utils/scholarScenes.js:26"
+    ],
+    "kind": "dynamic"
+  },
+  {
+    "rel": "frontend/public/assets/scholar-scenes/sushi-scene-v1.webp",
+    "base": "sushi-scene-v1.webp",
+    "kb": 246,
+    "hits": [
+      "frontend/tests/scholarScenes.test.js:22"
+    ],
+    "dyn": [
+      "frontend/src/utils/scholarScenes.js:26"
+    ],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/scholar-scenes/wangyangming-scene-v1.webp",
+    "base": "wangyangming-scene-v1.webp",
+    "kb": 196,
+    "hits": [],
+    "dyn": [
+      "frontend/src/utils/scholarScenes.js:26"
+    ],
+    "kind": "dynamic"
+  },
+  {
+    "rel": "frontend/public/assets/scholar-scenes/xinqiji-scene-v1.webp",
+    "base": "xinqiji-scene-v1.webp",
+    "kb": 251,
+    "hits": [],
+    "dyn": [
+      "frontend/src/utils/scholarScenes.js:26"
+    ],
+    "kind": "dynamic"
+  },
+  {
+    "rel": "frontend/public/assets/shuzhai/avatar_yunshan.png",
+    "base": "avatar_yunshan.png",
+    "kb": 62,
+    "hits": [
+      "frontend/src/pages/MinePage.jsx:188",
+      "frontend/src/pages/MinePage.jsx:379",
+      "frontend/src/pages/ScholarChat.jsx:149",
+      "frontend/src/pages/ScholarChat.jsx:154",
+      "frontend/src/pages/ScholarChat.jsx:168",
+      "frontend/src/pages/ScholarChat.jsx:537"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/shuzhai/illus_cangpin.png",
+    "base": "illus_cangpin.png",
+    "kb": 76,
+    "hits": [
+      "frontend/src/pages/MinePage.jsx:240"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/assets/shuzhai/illus_qinggui.png",
+    "base": "illus_qinggui.png",
+    "kb": 69,
+    "hits": [
+      "frontend/src/pages/MinePage.jsx:301",
+      "frontend/src/styles/referencePolish.less:230"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/images/decor/recovery-xuan-paper-v1.jpg",
+    "base": "recovery-xuan-paper-v1.jpg",
+    "kb": 247,
+    "hits": [
+      "frontend/src/styles/recoverySurface.less:15",
+      "frontend/src/styles/recoverySurface.less:46"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/logo.svg",
+    "base": "logo.svg",
+    "kb": 5,
+    "hits": [
+      "frontend/index.html:9",
+      "frontend/index.html:10",
+      "frontend/public/manifest.json:16",
+      "frontend/public/manifest.json:22",
+      "frontend/public/manifest.json:28"
+    ],
+    "dyn": [],
+    "kind": "exact"
+  },
+  {
+    "rel": "frontend/public/vite.svg",
+    "base": "vite.svg",
+    "kb": 5,
+    "hits": [],
+    "dyn": [],
+    "kind": "unused"
+  }
+]

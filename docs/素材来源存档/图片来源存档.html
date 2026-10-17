@@ -1,0 +1,862 @@
+<!doctype html><html lang='zh-CN'><head><meta charset='utf-8'>
+<title>项目图片来源存档 · 云山竹简</title><style>
+
+*{box-sizing:border-box}
+body{margin:0;padding:28px 22px 60px;background:#F7F4EB;color:#2B2B2B;
+     font-family:"Songti SC","SimSun",serif;line-height:1.65}
+h1{font-size:26px;color:#8A2B2B;margin:0 0 6px;letter-spacing:.04em}
+.sub{color:#6B675B;font-size:13px;margin-bottom:16px}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 22px}
+.stat{background:#fff;border:1px solid rgba(197,155,39,.5);border-radius:10px;
+      padding:10px 16px;box-shadow:0 1px 3px rgba(90,44,30,.08);min-width:110px}
+.stat b{display:block;font-size:20px;color:#8A2B2B}
+.stat span{font-size:12px;color:#6B675B}
+.stat.warn b{color:#B4701A}
+h2{font-size:17px;color:#2D5A3F;margin:34px 0 12px;padding-bottom:6px;
+   border-bottom:2px solid rgba(197,155,39,.45)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(236px,1fr));gap:16px}
+.card{background:#fff;border:1px solid rgba(197,155,39,.42);border-radius:12px;overflow:hidden;
+      box-shadow:0 2px 8px rgba(90,44,30,.07);display:flex;flex-direction:column}
+.card.unused{border-color:rgba(180,112,26,.75);box-shadow:0 0 0 2px rgba(180,112,26,.14)}
+.thumb{height:168px;background:#EFEBE1 center/contain no-repeat;border-bottom:1px solid rgba(197,155,39,.25)}
+.card.unused .thumb{background-color:#FBF0DE}
+.body{padding:10px 12px 12px;font-size:12px;display:flex;flex-direction:column;gap:5px;flex:1}
+.path{font-family:Consolas,monospace;font-size:11px;word-break:break-all}
+.meta{color:#6B675B;font-size:11px}
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;color:#fff;align-self:flex-start}
+.b-ai{background:#8A2B2B}.b-team{background:#2D5A3F}.b-warn{background:#B4701A}
+.b-own{background:#203A4C}.b-ref{background:#6B675B}.b-shot{background:#4A7C59}
+.use{font-size:11px;color:#2D5A3F}
+.use.none{color:#B4701A;font-weight:bold}
+.right{font-size:11px;color:#6B675B;border-top:1px dashed rgba(138,43,43,.18);padding-top:6px;margin-top:auto}
+.notice{background:#FDF6E3;border-left:4px solid #C59B27;padding:12px 16px;border-radius:6px;font-size:13px;margin:16px 0}
+table{border-collapse:collapse;width:100%;font-size:12.5px;margin:10px 0 6px;background:#fff}
+th{background:#8A2B2B;color:#fff;padding:8px 10px;text-align:left;font-weight:600}
+td{border:1px solid #E9DEDB;padding:7px 10px;vertical-align:top}
+tr:nth-child(even) td{background:#FCFAF5}
+
+</style></head><body>
+<h1>项目图片来源存档</h1>
+<div class='sub'>《云山竹简 · 华风雅集》 · 逐张标注来源、引用状态与版权判定 · 依据实测审计生成</div>
+<div class='stats'>
+<div class='stat'><b>83</b><span>图片总数</span></div>
+<div class='stat'><b>44.0 MB</b><span>总占用</span></div>
+<div class='stat'><b>43</b><span>产品素材</span></div>
+<div class='stat warn'><b>14</b><span>零引用（可删）</span></div>
+<div class='stat warn'><b>8.3 MB</b><span>零引用占用</span></div>
+<div class='stat'><b>12</b><span>来源类别</span></div>
+</div>
+<div class='notice'><b>两个关键结论</b><br>① <b>14 张 / 8.3 MB 的图片在产品代码中零引用</b>，其中包含授权未确认的两张登录注册画稿（约 4.2MB）；删除即可同时消除版权不确定与体积浪费。<br>② <b>全站背景已改为纯 CSS 渐变</b>（app.less:6-9），文档中「全站统一使用 bg_guofeng.jpg」的说法已过期，该文件亦零引用。</div>
+<h2>★ 零引用台账 · 14 张 / 8.3 MB</h2>
+<table><tr><th>文件</th><th style='width:78px'>体积</th><th style='width:150px'>建议处置</th></tr>
+<tr><td><code>frontend/public/assets/auth/reference-login.png</code></td><td>2193KB</td><td>删除（授权未确认且已停用）</td></tr>
+<tr><td><code>frontend/public/assets/auth/reference-register.png</code></td><td>2092KB</td><td>删除（授权未确认且已停用）</td></tr>
+<tr><td><code>frontend/public/assets/common/bg_guofeng.jpg</code></td><td>293KB</td><td>删除（来源不明且已改纯 CSS 背景）</td></tr>
+<tr><td><code>frontend/public/assets/guancang/guancang_header_bg.png</code></td><td>441KB</td><td>确认是否计划使用；否则删除</td></tr>
+<tr><td><code>frontend/public/assets/guancang/sage-libai-full-v2.png</code></td><td>2390KB</td><td>确认是否被动态引用；否则删除（2.4MB，最大单图）</td></tr>
+<tr><td><code>frontend/public/assets/guancang/scroll_lundao.png</code></td><td>420KB</td><td>删除（同名 .jpg 已在用，PNG 为重复）</td></tr>
+<tr><td><code>frontend/public/assets/guancang/scroll_tingyin.png</code></td><td>391KB</td><td>删除（同名 .jpg 已在用，PNG 为重复）</td></tr>
+<tr><td><code>frontend/public/assets/home/bg-paper.jpg</code></td><td>159KB</td><td>删除（背景已改纯 CSS 渐变）</td></tr>
+<tr><td><code>frontend/public/assets/home/poem-art.jpg</code></td><td>2KB</td><td>删除（2KB 未被引用）</td></tr>
+<tr><td><code>frontend/public/assets/home/yaji-appraise.jpg</code></td><td>19KB</td><td>确认四雅插画是否计划启用；否则删除</td></tr>
+<tr><td><code>frontend/public/assets/home/yaji-debate.jpg</code></td><td>23KB</td><td>确认四雅插画是否计划启用；否则删除</td></tr>
+<tr><td><code>frontend/public/assets/home/yaji-leisure.jpg</code></td><td>23KB</td><td>确认四雅插画是否计划启用；否则删除</td></tr>
+<tr><td><code>frontend/public/assets/home/yaji-poem.jpg</code></td><td>25KB</td><td>确认四雅插画是否计划启用；否则删除</td></tr>
+<tr><td><code>frontend/public/vite.svg</code></td><td>5KB</td><td>删除（非 Vite 官方 logo，易误解）</td></tr>
+</table>
+<h2>AI 生成（团队自有） · 8 张</h2>
+<table><tr><th style='width:96px'>生成/来源工具</th><td>内置 ImageGen</td></tr><tr><th>证据出处</th><td>frontend/public/assets/scholar-scenes/README.md:3（含逐图提示词）；docs/handovers/ai-log-liuxia-2026-10-14-visual-polish.md:15</td></tr><tr><th>版权判定</th><td>无第三方版权（文生图，未以第三方图片作输入）；需按 AIGC 规范标注</td></tr><tr><th>待办</th><td>界面落 AIGC 标识</td></tr></table>
+<div class='grid'>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/scholar-scenes/dufu-scene-v1.webp')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成（团队自有）</span>
+<div class='path'>frontend/public/assets/scholar-scenes/dufu-scene-v1.webp</div>
+<div class='meta'>887x1774 · 217KB</div>
+<div class='use'>动态引用（按诗人 key 拼路径）</div>
+<div class='right'>无第三方版权（文生图，未以第三方图片作输入）；需按 AIGC 规范标注</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/scholar-scenes/group_zhulin-scene-v1.webp')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成（团队自有）</span>
+<div class='path'>frontend/public/assets/scholar-scenes/group_zhulin-scene-v1.webp</div>
+<div class='meta'>886x1774 · 273KB</div>
+<div class='use'>动态引用（按诗人 key 拼路径）</div>
+<div class='right'>无第三方版权（文生图，未以第三方图片作输入）；需按 AIGC 规范标注</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/scholar-scenes/libai-scene-v1.webp')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成（团队自有）</span>
+<div class='path'>frontend/public/assets/scholar-scenes/libai-scene-v1.webp</div>
+<div class='meta'>887x1774 · 186KB</div>
+<div class='use'>动态引用（按诗人 key 拼路径）</div>
+<div class='right'>无第三方版权（文生图，未以第三方图片作输入）；需按 AIGC 规范标注</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/scholar-scenes/liqingzhao-scene-v1.webp')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成（团队自有）</span>
+<div class='path'>frontend/public/assets/scholar-scenes/liqingzhao-scene-v1.webp</div>
+<div class='meta'>887x1774 · 237KB</div>
+<div class='use'>动态引用（按诗人 key 拼路径）</div>
+<div class='right'>无第三方版权（文生图，未以第三方图片作输入）；需按 AIGC 规范标注</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/scholar-scenes/sushi-scene-v1.webp')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成（团队自有）</span>
+<div class='path'>frontend/public/assets/scholar-scenes/sushi-scene-v1.webp</div>
+<div class='meta'>887x1774 · 246KB</div>
+<div class='use'>静态引用 1 处</div>
+<div class='right'>无第三方版权（文生图，未以第三方图片作输入）；需按 AIGC 规范标注</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/scholar-scenes/wangyangming-scene-v1.webp')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成（团队自有）</span>
+<div class='path'>frontend/public/assets/scholar-scenes/wangyangming-scene-v1.webp</div>
+<div class='meta'>887x1774 · 196KB</div>
+<div class='use'>动态引用（按诗人 key 拼路径）</div>
+<div class='right'>无第三方版权（文生图，未以第三方图片作输入）；需按 AIGC 规范标注</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/scholar-scenes/xinqiji-scene-v1.webp')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成（团队自有）</span>
+<div class='path'>frontend/public/assets/scholar-scenes/xinqiji-scene-v1.webp</div>
+<div class='meta'>887x1774 · 251KB</div>
+<div class='use'>动态引用（按诗人 key 拼路径）</div>
+<div class='right'>无第三方版权（文生图，未以第三方图片作输入）；需按 AIGC 规范标注</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/images/decor/recovery-xuan-paper-v1.jpg')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成（团队自有）</span>
+<div class='path'>frontend/public/images/decor/recovery-xuan-paper-v1.jpg</div>
+<div class='meta'>1536x1024 · 247KB</div>
+<div class='use'>静态引用 2 处</div>
+<div class='right'>无第三方版权（文生图）；需按 AIGC 规范标注</div>
+</div></div>
+</div>
+<h2>AI 生成 + 人工精修 · 19 张</h2>
+<table><tr><th style='width:96px'>生成/来源工具</th><td>Midjourney v6 → 人工去噪/抠图/羽化/压缩</td></tr><tr><th>证据出处</th><td>docs/handovers/ai-log-C-literati.md:28（Midjourney v6 提示词）、:40（对 AI 原生生成素材去噪羽化）、:42（工程化裁剪）</td></tr><tr><th>版权判定</th><td>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</td></tr><tr><th>待办</th><td>统一「AI 生成」表述并删除「真迹」措辞；核实 Midjourney 订阅层级</td></tr></table>
+<div class='grid'>
+<div class='card unused'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/guancang_header_bg.png')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/guancang/guancang_header_bg.png</div>
+<div class='meta'>900x290 · 441KB</div>
+<div class='use none'>⚠ 零引用（产品代码未使用）</div>
+<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/sage_libai.jpg')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/guancang/sage_libai.jpg</div>
+<div class='meta'>576x1024 · 239KB</div>
+<div class='use'>静态引用 1 处</div>
+<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/sage_libai.png')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/guancang/sage_libai.png</div>
+<div class='meta'>198x300 · 115KB</div>
+<div class='use'>静态引用 6 处</div>
+<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/sage_liqingzhao.jpg')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/guancang/sage_liqingzhao.jpg</div>
+<div class='meta'>576x1024 · 218KB</div>
+<div class='use'>静态引用 1 处</div>
+<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/sage_liqingzhao.png')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/guancang/sage_liqingzhao.png</div>
+<div class='meta'>198x300 · 117KB</div>
+<div class='use'>静态引用 3 处</div>
+<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/sage_sushi.jpg')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/guancang/sage_sushi.jpg</div>
+<div class='meta'>576x1024 · 248KB</div>
+<div class='use'>静态引用 1 处</div>
+<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/sage_sushi.png')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/guancang/sage_sushi.png</div>
+<div class='meta'>194x300 · 117KB</div>
+<div class='use'>静态引用 3 处</div>
+<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/sage_wangyangming.jpg')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/guancang/sage_wangyangming.jpg</div>
+<div class='meta'>576x1024 · 251KB</div>
+<div class='use'>静态引用 1 处</div>
+<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/sage_wangyangming.png')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/guancang/sage_wangyangming.png</div>
+<div class='meta'>194x300 · 118KB</div>
+<div class='use'>静态引用 8 处</div>
+<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+</div></div>
+<div class='card unused'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/sage-libai-full-v2.png')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/guancang/sage-libai-full-v2.png</div>
+<div class='meta'>1024x1536 · 2390KB</div>
+<div class='use none'>⚠ 零引用（产品代码未使用）</div>
+<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/scroll_changhe.jpg')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/guancang/scroll_changhe.jpg</div>
+<div class='meta'>1024x341 · 96KB</div>
+<div class='use'>静态引用 1 处</div>
+<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/scroll_changhe.png')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/guancang/scroll_changhe.png</div>
+<div class='meta'>840x290 · 421KB</div>
+<div class='use'>静态引用 3 处</div>
+<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/scroll_lundao.jpg')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/guancang/scroll_lundao.jpg</div>
+<div class='meta'>1024x341 · 93KB</div>
+<div class='use'>静态引用 1 处</div>
+<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+</div></div>
+<div class='card unused'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/scroll_lundao.png')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/guancang/scroll_lundao.png</div>
+<div class='meta'>840x285 · 420KB</div>
+<div class='use none'>⚠ 零引用（产品代码未使用）</div>
+<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/scroll_tingyin.jpg')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/guancang/scroll_tingyin.jpg</div>
+<div class='meta'>1024x341 · 89KB</div>
+<div class='use'>静态引用 1 处</div>
+<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+</div></div>
+<div class='card unused'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/scroll_tingyin.png')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/guancang/scroll_tingyin.png</div>
+<div class='meta'>840x290 · 391KB</div>
+<div class='use none'>⚠ 零引用（产品代码未使用）</div>
+<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/shuzhai/avatar_yunshan.png')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/shuzhai/avatar_yunshan.png</div>
+<div class='meta'>177x177 · 62KB</div>
+<div class='use'>静态引用 6 处</div>
+<div class='right'>无第三方版权；需按 AIGC 规范标注</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/shuzhai/illus_cangpin.png')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/shuzhai/illus_cangpin.png</div>
+<div class='meta'>290x125 · 76KB</div>
+<div class='use'>静态引用 1 处</div>
+<div class='right'>无第三方版权；需按 AIGC 规范标注</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/shuzhai/illus_qinggui.png')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成 + 人工精修</span>
+<div class='path'>frontend/public/assets/shuzhai/illus_qinggui.png</div>
+<div class='meta'>260x130 · 69KB</div>
+<div class='use'>静态引用 2 处</div>
+<div class='right'>无第三方版权；需按 AIGC 规范标注</div>
+</div></div>
+</div>
+<h2>团队提供底图 / 设计稿切图 · 11 张</h2>
+<table><tr><th style='width:96px'>生成/来源工具</th><td>GPT Image 生成后人工切图（口径之一）；另有文档称「用户提供的底图」</td></tr><tr><th>证据出处</th><td>docs/handovers/CONTEXT-BRIEF.md:53；docs/handovers/dev-B-home.md（四雅插画记为用户提供的底图）</td></tr><tr><th>版权判定</th><td>⚠️ 权属口径不一致，需团队书面确认原始出处</td></tr><tr><th>待办</th><td>统一口径并补原始出处证明</td></tr></table>
+<div class='grid'>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/home/bg-almanac-ancient.jpg')"></div>
+<div class='body'>
+<span class='badge b-team'>团队提供底图 / 设计稿切图</span>
+<div class='path'>frontend/public/assets/home/bg-almanac-ancient.jpg</div>
+<div class='meta'>800x267 · 45KB</div>
+<div class='use'>静态引用 1 处</div>
+<div class='right'>⚠️ 权属口径不一致，需团队书面确认原始出处</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/home/bg-almanac-modern.jpg')"></div>
+<div class='body'>
+<span class='badge b-team'>团队提供底图 / 设计稿切图</span>
+<div class='path'>frontend/public/assets/home/bg-almanac-modern.jpg</div>
+<div class='meta'>800x267 · 43KB</div>
+<div class='use'>静态引用 1 处</div>
+<div class='right'>⚠️ 权属口径不一致，需团队书面确认原始出处</div>
+</div></div>
+<div class='card unused'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/home/bg-paper.jpg')"></div>
+<div class='body'>
+<span class='badge b-team'>团队提供底图 / 设计稿切图</span>
+<div class='path'>frontend/public/assets/home/bg-paper.jpg</div>
+<div class='meta'>941x1672 · 159KB</div>
+<div class='use none'>⚠ 零引用（产品代码未使用）</div>
+<div class='right'>⚠️ 权属口径不一致，需团队书面确认原始出处</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/home/bg-poem.jpg')"></div>
+<div class='body'>
+<span class='badge b-team'>团队提供底图 / 设计稿切图</span>
+<div class='path'>frontend/public/assets/home/bg-poem.jpg</div>
+<div class='meta'>800x267 · 45KB</div>
+<div class='use'>静态引用 3 处</div>
+<div class='right'>⚠️ 权属口径不一致，需团队书面确认原始出处</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/home/bg-shiwu.jpg')"></div>
+<div class='body'>
+<span class='badge b-team'>团队提供底图 / 设计稿切图</span>
+<div class='path'>frontend/public/assets/home/bg-shiwu.jpg</div>
+<div class='meta'>800x505 · 54KB</div>
+<div class='use'>静态引用 11 处</div>
+<div class='right'>⚠️ 权属口径不一致，需团队书面确认原始出处</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/home/bg-yayan.jpg')"></div>
+<div class='body'>
+<span class='badge b-team'>团队提供底图 / 设计稿切图</span>
+<div class='path'>frontend/public/assets/home/bg-yayan.jpg</div>
+<div class='meta'>800x673 · 92KB</div>
+<div class='use'>静态引用 2 处</div>
+<div class='right'>⚠️ 权属口径不一致，需团队书面确认原始出处</div>
+</div></div>
+<div class='card unused'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/home/poem-art.jpg')"></div>
+<div class='body'>
+<span class='badge b-team'>团队提供底图 / 设计稿切图</span>
+<div class='path'>frontend/public/assets/home/poem-art.jpg</div>
+<div class='meta'>124x360 · 2KB</div>
+<div class='use none'>⚠ 零引用（产品代码未使用）</div>
+<div class='right'>⚠️ 权属口径不一致，需团队书面确认原始出处</div>
+</div></div>
+<div class='card unused'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/home/yaji-appraise.jpg')"></div>
+<div class='body'>
+<span class='badge b-team'>团队提供底图 / 设计稿切图</span>
+<div class='path'>frontend/public/assets/home/yaji-appraise.jpg</div>
+<div class='meta'>240x308 · 19KB</div>
+<div class='use none'>⚠ 零引用（产品代码未使用）</div>
+<div class='right'>⚠️ 权属口径不一致，需团队书面确认原始出处</div>
+</div></div>
+<div class='card unused'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/home/yaji-debate.jpg')"></div>
+<div class='body'>
+<span class='badge b-team'>团队提供底图 / 设计稿切图</span>
+<div class='path'>frontend/public/assets/home/yaji-debate.jpg</div>
+<div class='meta'>240x308 · 23KB</div>
+<div class='use none'>⚠ 零引用（产品代码未使用）</div>
+<div class='right'>⚠️ 权属口径不一致，需团队书面确认原始出处</div>
+</div></div>
+<div class='card unused'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/home/yaji-leisure.jpg')"></div>
+<div class='body'>
+<span class='badge b-team'>团队提供底图 / 设计稿切图</span>
+<div class='path'>frontend/public/assets/home/yaji-leisure.jpg</div>
+<div class='meta'>240x308 · 23KB</div>
+<div class='use none'>⚠ 零引用（产品代码未使用）</div>
+<div class='right'>⚠️ 权属口径不一致，需团队书面确认原始出处</div>
+</div></div>
+<div class='card unused'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/home/yaji-poem.jpg')"></div>
+<div class='body'>
+<span class='badge b-team'>团队提供底图 / 设计稿切图</span>
+<div class='path'>frontend/public/assets/home/yaji-poem.jpg</div>
+<div class='meta'>240x308 · 25KB</div>
+<div class='use none'>⚠ 零引用（产品代码未使用）</div>
+<div class='right'>⚠️ 权属口径不一致，需团队书面确认原始出处</div>
+</div></div>
+</div>
+<h2>团队/用户提供画稿 · 2 张</h2>
+<table><tr><th style='width:96px'>生成/来源工具</th><td>未记录生成工具</td></tr><tr><th>证据出处</th><td>docs/handovers/dev-A-auth.md:67（改用用户提供的登录、注册画稿）；同文自述「原作者、生成工具及使用授权仍需团队确认」</td></tr><tr><th>版权判定</th><td>⚠️ 授权未书面确认；且实测这两张图在产品代码中零引用</td></tr><tr><th>待办</th><td>确认授权；建议直接从交付包移除（4.2MB）</td></tr></table>
+<div class='grid'>
+<div class='card unused'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/auth/reference-login.png')"></div>
+<div class='body'>
+<span class='badge b-team'>团队/用户提供画稿</span>
+<div class='path'>frontend/public/assets/auth/reference-login.png</div>
+<div class='meta'>941x1672 · 2193KB</div>
+<div class='use none'>⚠ 零引用（产品代码未使用）</div>
+<div class='right'>⚠️ 授权未书面确认；且实测这两张图在产品代码中零引用</div>
+</div></div>
+<div class='card unused'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/auth/reference-register.png')"></div>
+<div class='body'>
+<span class='badge b-team'>团队/用户提供画稿</span>
+<div class='path'>frontend/public/assets/auth/reference-register.png</div>
+<div class='meta'>941x1672 · 2092KB</div>
+<div class='use none'>⚠ 零引用（产品代码未使用）</div>
+<div class='right'>⚠️ 授权未书面确认；且实测这两张图在产品代码中零引用</div>
+</div></div>
+</div>
+<h2>待确认（且已停用） · 1 张</h2>
+<table><tr><th style='width:96px'>生成/来源工具</th><td>未记录</td></tr><tr><th>证据出处</th><td>全仓无来源声明；⚠️ 实测产品代码零引用——全站背景已改为纯 CSS 渐变（frontend/src/styles/app.less:6-9），文档中「全站统一背景」的说法已过期</td></tr><tr><th>版权判定</th><td>⚠️ 来源不明。因已停用，移除即可消除该风险</td></tr><tr><th>待办</th><td>建议删除该文件并更正文档</td></tr></table>
+<div class='grid'>
+<div class='card unused'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/common/bg_guofeng.jpg')"></div>
+<div class='body'>
+<span class='badge b-warn'>待确认（且已停用）</span>
+<div class='path'>frontend/public/assets/common/bg_guofeng.jpg</div>
+<div class='meta'>576x1024 · 293KB</div>
+<div class='use none'>⚠ 零引用（产品代码未使用）</div>
+<div class='right'>⚠️ 来源不明。因已停用，移除即可消除该风险</div>
+</div></div>
+</div>
+<h2>团队自制 · 1 张</h2>
+<table><tr><th style='width:96px'>生成/来源工具</th><td>手写 SVG（宣纸渐变 + 印章图形）</td></tr><tr><th>证据出处</th><td>内容为手写 SVG 结构，无第三方图形库痕迹；被 index.html:9,10 与 manifest.json:16 引用</td></tr><tr><th>版权判定</th><td>团队自有</td></tr><tr><th>待办</th><td>无</td></tr></table>
+<div class='grid'>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/logo.svg')"></div>
+<div class='body'>
+<span class='badge b-own'>团队自制</span>
+<div class='path'>frontend/public/logo.svg</div>
+<div class='meta'>- · 5KB</div>
+<div class='use'>静态引用 5 处</div>
+<div class='right'>团队自有</div>
+</div></div>
+</div>
+<h2>团队自制（疑似复制残留） · 1 张</h2>
+<table><tr><th style='width:96px'>生成/来源工具</th><td>手写 SVG，与 logo.svg 仅差 2 字节</td></tr><tr><th>证据出处</th><td>与 logo.svg 结构一致（5420 vs 5422 字节）；实测产品代码零引用</td></tr><tr><th>版权判定</th><td>团队自有，但为未使用文件</td></tr><tr><th>待办</th><td>建议删除（避免被误认为 Vite 官方 logo）</td></tr></table>
+<div class='grid'>
+<div class='card unused'>
+<div class='thumb' style="background-image:url('../../frontend/public/vite.svg')"></div>
+<div class='body'>
+<span class='badge b-own'>团队自制（疑似复制残留）</span>
+<div class='path'>frontend/public/vite.svg</div>
+<div class='meta'>- · 5KB</div>
+<div class='use none'>⚠ 零引用（产品代码未使用）</div>
+<div class='right'>团队自有，但为未使用文件</div>
+</div></div>
+</div>
+<h2>第三方 / 队长提供（不进产品） · 4 张</h2>
+<table><tr><th style='width:96px'>生成/来源工具</th><td>未记录；原始文件名为「微信图片_2026-10-12_*.png」</td></tr><tr><th>证据出处</th><td>docs/design/cankao/README.md:1-12（队长提供的审美基准参考图，仅作出图对齐）</td></tr><tr><th>版权判定</th><td>⚠️ 原始来源与授权未书面确认；文档已禁止放入 frontend/public/</td></tr><tr><th>待办</th><td>补授权说明；确认不进交付包</td></tr></table>
+<div class='grid'>
+<div class='card'>
+<div class='thumb' style="background-image:url('../design/cankao/ref-01-ruxi-login.png')"></div>
+<div class='body'>
+<span class='badge b-ref'>第三方 / 队长提供（不进产品）</span>
+<div class='path'>docs/design/cankao/ref-01-ruxi-login.png</div>
+<div class='meta'>900x1600 · 1021KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>⚠️ 原始来源与授权未书面确认；文档已禁止放入 frontend/public/</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../design/cankao/ref-02-yaji-home.png')"></div>
+<div class='body'>
+<span class='badge b-ref'>第三方 / 队长提供（不进产品）</span>
+<div class='path'>docs/design/cankao/ref-02-yaji-home.png</div>
+<div class='meta'>900x1600 · 1486KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>⚠️ 原始来源与授权未书面确认；文档已禁止放入 frontend/public/</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../design/cankao/ref-03-guancang-guYou.png')"></div>
+<div class='body'>
+<span class='badge b-ref'>第三方 / 队长提供（不进产品）</span>
+<div class='path'>docs/design/cankao/ref-03-guancang-guYou.png</div>
+<div class='meta'>900x1600 · 1751KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>⚠️ 原始来源与授权未书面确认；文档已禁止放入 frontend/public/</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../design/cankao/ref-04-shuzhai.png')"></div>
+<div class='body'>
+<span class='badge b-ref'>第三方 / 队长提供（不进产品）</span>
+<div class='path'>docs/design/cankao/ref-04-shuzhai.png</div>
+<div class='meta'>900x1600 · 1281KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>⚠️ 原始来源与授权未书面确认；文档已禁止放入 frontend/public/</div>
+</div></div>
+</div>
+<h2>AI 设计稿 / 含古画素材（不进产品） · 7 张</h2>
+<table><tr><th style='width:96px'>生成/来源工具</th><td>Google Stitch 导出；portrait_libai_welcome.jpg 被评审判为「古画原作裁圆」</td></tr><tr><th>证据出处</th><td>docs/design/phase3/REVIEW.md（判定先贤头像为写实古画原作裁圆、立绘为彩色古画，要求替换为团队自有写意水墨）</td></tr><tr><th>版权判定</th><td>⚠️ 古画类若确为扫描件属公有领域（宋画逾千年）但须标出处；Stitch 导出稿含 fonts.googleapis.com 外链</td></tr><tr><th>待办</th><td>确认不进交付包，或清理外链并标注古画出处</td></tr></table>
+<div class='grid'>
+<div class='card'>
+<div class='thumb' style="background-image:url('../design/phase3/assets/portrait_libai_welcome.jpg')"></div>
+<div class='body'>
+<span class='badge b-ref'>AI 设计稿 / 含古画素材（不进产品）</span>
+<div class='path'>docs/design/phase3/assets/portrait_libai_welcome.jpg</div>
+<div class='meta'>1024x1024 · 1648KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>⚠️ 古画类若确为扫描件属公有领域（宋画逾千年）但须标出处；Stitch 导出稿含 fonts.googleapis.com 外链</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../design/phase3/P1-yaji.png')"></div>
+<div class='body'>
+<span class='badge b-ref'>AI 设计稿 / 含古画素材（不进产品）</span>
+<div class='path'>docs/design/phase3/P1-yaji.png</div>
+<div class='meta'>610x1600 · 192KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>⚠️ 古画类若确为扫描件属公有领域（宋画逾千年）但须标出处；Stitch 导出稿含 fonts.googleapis.com 外链</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../design/phase3/P2-zhiyin.png')"></div>
+<div class='body'>
+<span class='badge b-ref'>AI 设计稿 / 含古画素材（不进产品）</span>
+<div class='path'>docs/design/phase3/P2-zhiyin.png</div>
+<div class='meta'>706x1600 · 306KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>⚠️ 古画类若确为扫描件属公有领域（宋画逾千年）但须标出处；Stitch 导出稿含 fonts.googleapis.com 外链</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../design/phase3/P3-zhiyin-chat.png')"></div>
+<div class='body'>
+<span class='badge b-ref'>AI 设计稿 / 含古画素材（不进产品）</span>
+<div class='path'>docs/design/phase3/P3-zhiyin-chat.png</div>
+<div class='meta'>652x1600 · 411KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>⚠️ 古画类若确为扫描件属公有领域（宋画逾千年）但须标出处；Stitch 导出稿含 fonts.googleapis.com 外链</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../design/phase3/P4-yingqing-v2.png')"></div>
+<div class='body'>
+<span class='badge b-ref'>AI 设计稿 / 含古画素材（不进产品）</span>
+<div class='path'>docs/design/phase3/P4-yingqing-v2.png</div>
+<div class='meta'>487x1055 · 111KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>⚠️ 古画类若确为扫描件属公有领域（宋画逾千年）但须标出处；Stitch 导出稿含 fonts.googleapis.com 外链</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../design/phase3/P4-yingqing.png')"></div>
+<div class='body'>
+<span class='badge b-ref'>AI 设计稿 / 含古画素材（不进产品）</span>
+<div class='path'>docs/design/phase3/P4-yingqing.png</div>
+<div class='meta'>1600x1055 · 170KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>⚠️ 古画类若确为扫描件属公有领域（宋画逾千年）但须标出处；Stitch 导出稿含 fonts.googleapis.com 外链</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../design/phase3/P5-shuzhai.png')"></div>
+<div class='body'>
+<span class='badge b-ref'>AI 设计稿 / 含古画素材（不进产品）</span>
+<div class='path'>docs/design/phase3/P5-shuzhai.png</div>
+<div class='meta'>594x1600 · 189KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>⚠️ 古画类若确为扫描件属公有领域（宋画逾千年）但须标出处；Stitch 导出稿含 fonts.googleapis.com 外链</div>
+</div></div>
+</div>
+<h2>团队自摄截图（自动化） · 27 张</h2>
+<table><tr><th style='width:96px'>生成/来源工具</th><td>Chrome DevTools Protocol 脚本截图</td></tr><tr><th>证据出处</th><td>由 proof/ 下脚本在本地构建产物上截取；内容为本项目界面</td></tr><tr><th>版权判定</th><td>无第三方版权</td></tr><tr><th>待办</th><td>无</td></tr></table>
+<div class='grid'>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/chat-libai-390.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/chat-libai-390.png</div>
+<div class='meta'>780x1688 · 402KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/chronicle-sichuan.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/chronicle-sichuan.png</div>
+<div class='meta'>1170x2532 · 680KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/img-archive-groups.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/img-archive-groups.png</div>
+<div class='meta'>2560x3000 · 825KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/img-archive-page.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/img-archive-page.png</div>
+<div class='meta'>2560x3200 · 697KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/letters-390.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/letters-390.png</div>
+<div class='meta'>780x1688 · 541KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/letters-avatars-fixed-390.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/letters-avatars-fixed-390.png</div>
+<div class='meta'>780x2360 · 648KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/m-chronicle-xian.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/m-chronicle-xian.png</div>
+<div class='meta'>1170x2532 · 673KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/m-shichen-now.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/m-shichen-now.png</div>
+<div class='meta'>1170x2532 · 878KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/page-city-chronicle.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/page-city-chronicle.png</div>
+<div class='meta'>1170x2532 · 759KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/particle-firefly-390.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/particle-firefly-390.png</div>
+<div class='meta'>780x1688 · 888KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/particle-rain-390.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/particle-rain-390.png</div>
+<div class='meta'>780x1688 · 879KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/particle-snow-390.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/particle-snow-390.png</div>
+<div class='meta'>780x1688 · 856KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/particle-swipe-390.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/particle-swipe-390.png</div>
+<div class='meta'>780x1688 · 849KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/phase3-home-dark-390.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/phase3-home-dark-390.png</div>
+<div class='meta'>780x1840 · 915KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/phase3-home-light-390.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/phase3-home-light-390.png</div>
+<div class='meta'>780x1840 · 978KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/phase3-home-longtext-390.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/phase3-home-longtext-390.png</div>
+<div class='meta'>780x1840 · 964KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/phase3-home-offline-390.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/phase3-home-offline-390.png</div>
+<div class='meta'>780x1840 · 1046KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/phase3-home-real-ai-390.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/phase3-home-real-ai-390.png</div>
+<div class='meta'>780x1840 · 949KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/poem-metre-dark-390.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/poem-metre-dark-390.png</div>
+<div class='meta'>780x1962 · 455KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/poem-metre-light-390.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/poem-metre-light-390.png</div>
+<div class='meta'>780x1962 · 549KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/poem-more-button.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/poem-more-button.png</div>
+<div class='meta'>1170x2532 · 1691KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/preview-almanac.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/preview-almanac.png</div>
+<div class='meta'>3348x2295 · 2719KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/preview-chronicle.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/preview-chronicle.png</div>
+<div class='meta'>3510x3564 · 1591KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/preview-recognition.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/preview-recognition.png</div>
+<div class='meta'>3510x3573 · 679KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/recognition-buttons.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/recognition-buttons.png</div>
+<div class='meta'>1170x2532 · 269KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/recognition-error-retry-390.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/recognition-error-retry-390.png</div>
+<div class='meta'>780x1688 · 491KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../proof/recognition-result-buttons.png')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（自动化）</span>
+<div class='path'>proof/recognition-result-buttons.png</div>
+<div class='meta'>1170x3180 · 485KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+</div>
+<h2>团队自摄截图（手动） · 1 张</h2>
+<table><tr><th style='width:96px'>生成/来源工具</th><td>手动截图</td></tr><tr><th>证据出处</th><td>docs/FRONTEND_VERIFICATION.md 引用</td></tr><tr><th>版权判定</th><td>无第三方版权</td></tr><tr><th>待办</th><td>无</td></tr></table>
+<div class='grid'>
+<div class='card'>
+<div class='thumb' style="background-image:url('../handovers/img/front-5173.jpg')"></div>
+<div class='body'>
+<span class='badge b-shot'>团队自摄截图（手动）</span>
+<div class='path'>docs/handovers/img/front-5173.jpg</div>
+<div class='meta'>484x1047 · 81KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>无第三方版权</div>
+</div></div>
+</div>
+<h2>ChatGPT 生成（误落入仓库，与项目无关） · 1 张</h2>
+<table><tr><th style='width:96px'>生成/来源工具</th><td>ChatGPT（OpenAI 图像生成）</td></tr><tr><th>证据出处</th><td>文件名为 ChatGPT 默认导出命名；创建时间 2026-10-17 16:01:57；全仓零代码引用；内容为卡通花苞角色，与项目宋韵国风视觉体系无关</td></tr><tr><th>版权判定</th><td>⚠️ 非项目素材。若不慎提交将把无关的第三方 AI 生成物带入交付物</td></tr><tr><th>待办</th><td>确认用途；若无用途请从仓库根目录移除，并加入 .gitignore 规则防误提交</td></tr></table>
+<div class='grid'>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../ChatGPT 图像 2026年10月17日 16_01_50.jpg')"></div>
+<div class='body'>
+<span class='badge b-warn'>ChatGPT 生成（误落入仓库，与项目无关）</span>
+<div class='path'>ChatGPT 图像 2026年10月17日 16_01_50.jpg</div>
+<div class='meta'>1024x1024 · 64KB</div>
+<div class='use'>文档/证据引用</div>
+<div class='right'>⚠️ 非项目素材。若不慎提交将把无关的第三方 AI 生成物带入交付物</div>
+</div></div>
+</div>
+</body></html>
