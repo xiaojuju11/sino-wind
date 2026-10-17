@@ -20,7 +20,7 @@
                                   │
          ┌────────────────────────┴────────────────────────┐
          ▼                                                 ▼
-【前端表现层 Client (React 19 + Vite)】         【后端服务层 Server (Koa 2)】
+【前端表现层 Client (React 19 + Vite)】         【后端服务层 Server (Koa 3)】
  ├─ 路由系统 (React Router v7)                    ├─ 中间件栈 (Koa-Router, CORS, Body)
  │   ├─ /home (雅集首页)                          ├─ 控制器层 (Controllers)
  │   ├─ /letters (知音信札)                       │   ├─ deepseekController.js
@@ -39,14 +39,16 @@
 
 | 层级 | 技术选型 | 版本 | 选型理由与技术收益 |
 | :--- | :--- | :--- | :--- |
-| **前端框架** | React | `v19.0.0` | 业界领先的响应式组件框架，并发渲染，生态成熟。 |
+| **前端框架** | React | `v19.2.0` | 业界领先的响应式组件框架，并发渲染，生态成熟。 |
 | **构建工具** | Vite | `v7.3.0` | 秒级冷启动、极速 HMR 热更新，Rollup 生产打包。 |
 | **路由管理** | React Router | `v7.1.3` | 支持嵌套路由、动态路由传参与状态传递。 |
-| **UI 组件库**| Ant Design Mobile | `v5.39.0` | 专业移动端组件库，提供高质量 Popup、Toast、ActionSheet。 |
+| **UI 组件库**| Ant Design Mobile | `v5.42.3` | 专业移动端组件库，提供高质量 Popup、Toast、ActionSheet。 |
 | **图标体系** | **阿里巴巴矢量图标库 (iconfont.cn)** + `antd-mobile-icons` | 云端 CDN 字体 | **【队长设计铁律】必须去 iconfont 里搜寻最接近设计稿的矢量图标，严禁 AI 直接生图！** |
-| **样式预处理**| Less | `v4.2.0` | 变量复用、嵌套规则、Mixin 回纹描金框封装。 |
+| **样式预处理**| Less | `v4.5.1` | 变量复用、嵌套规则、Mixin 回纹描金框封装。 |
 | **音频引擎** | Web Audio API | 浏览器原生 | **【免版权风险】** 纯代码生成五声音阶（宫商角徵羽），无需外部音频版权。 |
-| **后端框架** | Koa 2 | `v2.15.0` | 轻量化洋葱模型中间件，异步流程控制直观优雅。 |
+| **后端框架** | Koa | `v3.1.1` |
+
+> **版本勘误（2026-10-17）**：本表此前记录的 `React v19.0.0`、`Ant Design Mobile v5.39.0`、`Less v4.2.0`、`Koa 2 / v2.15.0` 为立项初期的规划版本，实际落地版本为 React 19.2、Ant Design Mobile 5.42.3、Less 4.5.1、Koa 3.1.1（Vite 7.2.4）。已按 `package.json` 实际安装版本更正；后续如再升级请同步本表。 轻量化洋葱模型中间件，异步流程控制直观优雅。 |
 | **AI 驱动**  | DeepSeek API | OpenAI SDK | 高性价比文曲大模型，支持高质量半文言、考据与先贤人设。 |
 
 ---
@@ -461,7 +463,7 @@ JWT_SECRET=sino_wind_gufeng_yaji_2026
 
 ### 8.2 本地 0 到 1 极速冷启动指南
 
-1. **启动后端服务 (Koa 2)**：
+1. **启动后端服务 (Koa 3)**：
    ```bash
    cd backend
    npm install        # 初次安装依赖

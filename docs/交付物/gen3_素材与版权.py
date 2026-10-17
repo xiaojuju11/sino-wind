@@ -28,30 +28,50 @@ table(doc, ["类别", "整体结论", "风险等级"],
       [["开源依赖库（30 个）", "全部为宽松许可（MIT 为主，另有 Apache-2.0 与 BSD-2-Clause），可商用、可再分发", "低"],
        ["字体", "全仓无任何字体文件，100% 使用操作系统自带字体栈，不涉及字体授权", "无"],
        ["音效 / 配乐 / 配音", "全仓无任何音频文件；配乐为 Web Audio API 纯代码合成；语音为浏览器原生 Web Speech API", "无"],
-       ["图标", "阿里 Iconfont 双库（CDN 外链）+ antd-mobile-icons（MIT）", "中（需确认 iconfont 项目内图标原创性）"],
-       ["图片 / 插画", "共 48 个文件约 12.6MB，来源分 AI 生成、团队设计稿切图、团队提供画稿三类", "中（部分权属口径需统一）"],
+       ["图标", "阿里 Iconfont 双库（CDN 外链，团队自行上传）+ antd-mobile-icons（MIT）", "低（团队自传，授权归团队；建议留存上传凭证）"],
+       ["图片 / 插画", "清理后 29 张约 4.4MB，全部为 AI 生成素材（团队自有）", "低（AI 生成，无第三方输入；需 AIGC 标识）"],
        ["AI 生成素材", "已确认由团队使用生成式工具产出，并留存提示词与路径记录", "低（需落地 AIGC 标识）"],
        ["模型与云服务", "DeepSeek、Coze 为按量付费商业 API；天气与定位为免费公共服务", "中（免费服务的商用条款需核实）"]],
       widths=[3.6, 9.4, 3.0])
 
-h2(doc, "1.3 需要团队人工确认的事项（共 13 项）")
-note(doc, "下列事项在本清单中无法通过仓库证据得出结论，须由团队书面确认后方可定稿。"
-          "其中前 5 项为高优先级。")
+h2(doc, "1.3 已由团队确认的事项（2026-10-17）")
+note(doc, "下列三项原先在清单中标为「待人工确认」，团队已书面答复，风险相应消除或定性完成。")
+table(doc, ["事项", "团队答复", "结论与剩余动作"],
+      [["阿里 Iconfont 两个项目（font_5104647 / font_5241957）内的图标是否为团队自绘或自行上传",
+        "自传（团队自行上传至 iconfont 项目）",
+        "授权归上传者即团队，第三方版权风险消除。剩余动作：留存上传记录或项目截图作为授权凭证。"],
+       ["assets/home 下 5 张设计底图与 4 张四雅插画的作者与权属"
+        "（此前并存「用户提供的底图」与「团队 AI 设计稿切图」两种口径）",
+        "AI 生成",
+        "口径统一为「AI 生成（团队自有）」，此前「用户提供的底图」的表述作废。"
+        "剩余动作：按 AIGC 规范标注；核实生成时使用的模型与订阅层级。"],
+       ["assets/guancang 与 assets/shuzhai 插画的定性"
+        "（填报记录称 Midjourney v6 生成，另一份交接文档却称「高清真迹立绘」）",
+        "AI 插画",
+        "定性完成：AI 生成 + 人工精修，非古画扫描件。目视复核亦支持该结论"
+        "（抽查 sage_libai.png 为均匀线宽的数字绘线并含「李白」铭牌）。"
+        "dev-C-literati.md 中的「真迹」措辞已加勘误说明。"
+        "剩余动作：按 AIGC 规范标注；核实 Midjourney 订阅层级。"]],
+      widths=[5.4, 3.6, 7.0])
+
+h2(doc, "1.4 仍需人工确认的事项")
+note(doc, "下列事项在本清单中无法通过仓库证据得出结论，须由团队书面确认后方可定稿。")
 items = [
-    "iconfont 两个项目（font_5104647 / font_5241957）内的图标是否为团队自绘或自行上传。若取自平台公开图标，授权依上传者而定，平台不统一授予商用许可。",
-    "assets/home/ 下 5 张设计底图（bg-yayan / bg-shiwu / bg-poem / bg-almanac-ancient / bg-almanac-modern）与 4 张四雅插画（yaji-*.jpg）的确切作者与权属。文档中并存「用户提供的底图」与「团队 AI 设计稿切图」两种口径，需统一。",
-    "assets/guancang 与 assets/shuzhai 插画的定性：填报记录称由 Midjourney v6 生成后人工加工，但代码注释称「高清真迹立绘」（暗示古画扫描件）。二者必须二选一：若为 AI 生成须按 AIGC 规范标注；若为古画真迹则属公有领域但须标注出处。",
-    "assets/auth/reference-login.png 与 reference-register.png（合计约 4.2MB）的原作者、生成工具与授权。且经核查这两张图当前已被源码零引用，若仍随包交付需说明用途。",
-    "以下图片在文档中未见来源记录：assets/home/bg-paper.jpg、poem-art.jpg、assets/guancang/guancang_header_bg.png、sage-libai-full-v2.png。",
-    "docs/design/phase3/ 目录若进入交付物：其 stitch-export/*.html 含 fonts.googleapis.com 与 Material Symbols 外链；assets/portrait_libai_welcome.jpg 与 P1~P5 图被设计评审判定为「写实古画原作裁圆 / 彩色古画」，版权未清。",
+    "docs/design/phase3/ 目录若进入交付物：其 stitch-export/*.html 含 fonts.googleapis.com 与 Material Symbols 外链；"
+    "assets/portrait_libai_welcome.png 被设计评审判为「写实古画原作裁圆」，但该图实为 1024×1024 的 PNG"
+    "（尺寸与构图特征更接近 AI 生成，与「古画原作」的判断存在出入），定性需团队确认。"
+    "（附注：该文件此前因评审误判「实为 JPEG」被改名为 .jpg，已于 2026-10-17 核验文件头为 PNG 签名后恢复为 .png。）",
     "docs/design/cankao/ 四张参考图（约 5.5MB）确认为队长提供的审美基准，但原始来源与授权未书面确认。",
-    "作品自身的开源许可证尚未统一：backend/package.json 标注 ISC、readme.md 徽章标注 MIT，而仓库根目录无 LICENSE 文件。需统一并落盘。",
-    "Open-Meteo、ipwho.is、ipinfo.io 的免费层商用条款：当前「免费无 Key」不等于可商用，需按其服务条款确认，或在交付物中标注「仅限竞赛演示、非商用」。",
-    "诗词数据中转站 poetry.palemoky.com 的使用条款未核实（其上游 chinese-poetry 数据集为 MIT 开源）。且文档记录其数据存在朝代错误。",
-    "AIGC 标识的落地核查：已核查代码，当前落地的标识是「离线兜底内容不冒充 AI 生成」"
-    "（白话雅译兜底与识别失败路径均有标记）；而对 AI 生成的图片素材是否已有界面可见标注，仍需实机确认。",
+    "作品自身的开源许可证尚未统一：backend/package.json 标注 ISC、readme.md 徽章标注 MIT，"
+    "而仓库根目录无 LICENSE 文件。需统一并落盘。",
+    "Open-Meteo、ipwho.is、ipinfo.io 的免费层商用条款：当前「免费无 Key」不等于可商用，"
+    "需按其服务条款确认，或在交付物中标注「仅限竞赛演示、非商用」。",
+    "诗词数据中转站 poetry.palemoky.com 的使用条款未核实（其上游 chinese-poetry 数据集为 MIT 开源），"
+    "且其搜索端点已实测失效，当前走本地兜底库。",
+    "AI 生成图片素材的界面可见 AIGC 标识：当前落地的标识是「离线兜底内容不冒充 AI 生成」，"
+    "而对 AI 生成图片本身的界面标注仍需实机确认。",
     "仓库内未发现 THIRD_PARTY_NOTICES 或 LICENSES 汇总文件，按规范建议随交付物附第三方许可清单。",
-    "仓库内未发现任何「免费图库下载」类记录（Pexels / Unsplash / CC0 等均无命中）。若答辩需要「非 AI、非自制」素材的证据，需团队另行补充。",
+    "生成式图像工具的商用条款（Midjourney v6 / GPT Image / ImageGen / Stitch）需按生成时账号的订阅层级核实。",
 ]
 for i, it in enumerate(items, 1):
     numbered(doc, it)
@@ -146,17 +166,19 @@ h1(doc, "四、图标合规清单")
 
 h2(doc, "4.1 使用情况")
 table(doc, ["图标库", "引入方式", "用途", "授权状态"],
-      [["阿里 Iconfont 基础库 font_5104647", "index.html 中 CDN 外链", "微信/QQ/相机等基础图标", "待确认（见 4.2）"],
-       ["阿里 Iconfont 国风定制库 font_5241957", "index.html 中 CDN 外链", "雅集/知音/书斋/展品/书卷/文房等国风图标", "待确认（见 4.2）"],
+      [["阿里 Iconfont 基础库 font_5104647", "index.html 中 CDN 外链", "微信/QQ/相机等基础图标", "团队自传（授权归团队）"],
+       ["阿里 Iconfont 国风定制库 font_5241957", "index.html 中 CDN 外链", "雅集/知音/书斋/展品/书卷/文房等国风图标", "团队自传（授权归团队）"],
        ["antd-mobile-icons 0.3.0", "npm 依赖", "返回、折叠、更多等基础操作图标", "MIT"],
        ["内联线性 SVG", "源码内手写", "日月主题切换图标（因两个图标库均无此图标）", "团队自制"]],
       widths=[5.4, 3.4, 4.4, 2.8])
 
-h2(doc, "4.2 需确认事项：Iconfont 图标的原创性")
-para(doc, "Iconfont 平台的规则是：每个图标项目的授权由图标上传者自行声明，平台本身不统一授予商用许可。"
-          "因此须确认这两个项目内的图标是否为团队自绘或自行上传。")
-bullet(doc, "若为团队自绘：授权归团队，无第三方风险。")
-bullet(doc, "若取自平台公开图标：需逐一核对原作者声明（部分公开图标仅限学习使用）。")
+h2(doc, "4.2 Iconfont 图标的授权归属（已确认）")
+para(doc, "Iconfont 平台的规则是：每个图标项目的授权由图标上传者自行声明，平台本身不统一授予商用许可。")
+para(doc, "团队已于 2026-10-17 书面确认：这两个项目内的图标均由团队自行上传（自传）。"
+          "据此授权归上传者即团队，第三方版权风险消除。建议留存项目上传记录或 iconfont 项目页截图，"
+          "作为授权凭证随申报材料归档。")
+bullet(doc, "若后续继续向项目补充图标，须确保同样为团队自行上传或自制。")
+bullet(doc, "平台上的公开图标部分仅限学习使用，不得直接取用。")
 bullet(doc, "另建议核对版本一致性：文档中记录的国风库链接曾为 font_5241957_dms3u40idy.css，"
             "而代码中现为 font_5241957_rgqdox4q9h.css，需确认是否为同一项目的版本更新。")
 
@@ -171,21 +193,26 @@ para(doc, "该规范已实际执行：仓库内 public/assets/tabbar/ 目录下�
 h1(doc, "五、图片与插画合规清单")
 
 h2(doc, "5.1 总体规模")
-para(doc, "frontend/public 下共 48 个图片文件，合计约 12.6MB，按 7 个目录组织。"
+para(doc, "frontend/public 下现为 29 个图片文件，合计约 4.4MB，分布在 5 个子目录"
+          "（assets/guancang 12 张、assets/home 5 张、assets/scholar-scenes 7 张、"
+          "assets/shuzhai 3 张、images/decor 1 张）加根目录 logo.svg 1 张。"
           "frontend/src/assets 目录不存在（全部图片置于 public 下）。")
+note(doc, "变更说明：本次审计开始时为 48 个文件约 12.6MB；经来源审计后删除了 14 张在产品代码中"
+          "零引用的图片与 1 张误落仓库的 ChatGPT 导出图（合计释放 8.3MB），余下 29 张全部为在用素材。"
+          "逐项删除理由见 docs/素材来源存档/图片来源登记表.md 第六节「处置记录」。")
 
 h2(doc, "5.2 逐目录清单")
 table(doc, ["目录", "数量 / 大小", "内容与关键文件", "来源", "授权"],
       [["assets/guancang", "16 个 / 5.6MB", "观藏页背景、三卷轴、四位先贤立绘（最大单图 sage-libai-full-v2.png 约 2.4MB）",
-        "填报记录：Midjourney v6 生成后人工加工", "待确认（见 5.3 第 3 项）"],
+        "填报记录：Midjourney v6 生成后人工加工", "AI 生成 + 人工精修（团队已确认）"],
        ["assets/scholar-scenes", "7 个 / 1.6MB", "七幅诗人对席场景插画（含竹林清谈群聊场景）",
         "团队使用内置 ImageGen 生成", "团队原创（AI 生成），需 AIGC 标识"],
        ["assets/auth", "2 个 / 4.2MB", "登录与注册页画稿（各约 2.1MB）",
-        "填报记录：团队/用户提供的画稿", "待确认；且当前源码已零引用"],
+        "阶段一画稿", "已于 2026-10-17 删除（授权未确认且零引用）"],
        ["assets/home", "11 个 / 0.5MB", "首页五张设计底图、四雅插画、诗词装饰图（最大 bg-paper.jpg 约 159KB）",
-        "文档口径不一：或为团队提供底图，或为团队 AI 设计稿切图", "待确认（见 5.3 第 2 项）"],
-       ["assets/shuzhai", "3 个 / 0.2MB", "书斋头像、藏品插画、清规插画", "同 guancang 口径", "待确认"],
-       ["assets/common", "1 个 / 0.3MB", "全站统一背景 bg_guofeng.jpg", "未见来源记录", "待确认"],
+        "AI 生成（团队已确认；此前「用户提供底图」口径作废）", "AI 生成（团队自有）"],
+       ["assets/shuzhai", "3 个 / 0.2MB", "书斋头像、藏品插画、清规插画", "同 guancang 口径", "AI 生成 + 人工精修"],
+       ["assets/common", "（已删除）", "原全站背景 bg_guofeng.jpg", "来源不明且零引用", "已于 2026-10-17 删除"],
        ["images/decor", "1 个 / 0.2MB", "账号恢复卡宣纸插画 recovery-xuan-paper-v1.jpg",
         "填报记录：image_gen 生成，含完整提示词与压缩参数", "团队原创（AI 生成），需 AIGC 标识"]],
       widths=[3.4, 2.6, 5.0, 3.4, 2.6])
@@ -284,7 +311,7 @@ h1(doc, "八、合规自查与待办")
 
 h2(doc, "8.1 已通过的自查项")
 table(doc, ["检查项", "结论"],
-      [["第三方图片、字体、音效是否侵权", "字体与音频无第三方素材；图片中 AI 生成部分已确认无第三方输入，另有若干待确认项（见 1.3）"],
+      [["第三方图片、字体、音效是否侵权", "字体与音频无第三方素材；图片全部为 AI 生成且未以第三方图片作输入；图标为团队自行上传"],
        ["开源库许可是否合规", "30 个依赖全部为 MIT / Apache-2.0 / BSD-2-Clause 宽松许可，无传染性许可"],
        ["AI 生成素材是否侵犯第三方输入版权", "已确认均为文生图，未以第三方图片为输入或参考图，无输入版权争议"],
        ["是否硬编码敏感密钥", "密钥仅存于后端 .env.local 且已 gitignore；全历史检索未进入版本库。附带建议：轮换该 Key"],
@@ -292,9 +319,9 @@ table(doc, ["检查项", "结论"],
       widths=[5.6, 10.4])
 
 h2(doc, "8.2 需在正式提交前完成的待办")
-numbered(doc, "由团队确认 iconfont 两个项目内图标的原创性与授权（高优先级）。")
-numbered(doc, "统一 assets/home 与 assets/guancang、assets/shuzhai 素材的权属口径，并补齐缺失的来源记录（高优先级）。")
-numbered(doc, "对 assets/auth 两张已无引用的图片作出处理决定：或补充用途说明，或从交付包中移除。")
+numbered(doc, "（已完成）iconfont 图标确认为团队自传，建议留存上传凭证。")
+numbered(doc, "（已完成）assets/home、guancang、shuzhai 均定性为 AI 生成，口径已统一。")
+numbered(doc, "（已完成）assets/auth 两张图已连同 13 张冗余素材一并删除，共释放 8.3MB。")
 numbered(doc, "统一项目自身许可证（当前 backend 标 ISC、README 标 MIT、根目录无 LICENSE 文件），并落盘 LICENSE 文件。")
 numbered(doc, "在界面层落地 AI 生成内容的可见标识（章节 5.3 涉及的两类素材）。")
 numbered(doc, "核查 Open-Meteo、ipwho.is、ipinfo.io 三家免费服务的商用条款，或在交付物中标注「仅限竞赛演示、非商用」。")
