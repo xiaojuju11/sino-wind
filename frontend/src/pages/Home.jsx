@@ -13,6 +13,7 @@ import '../styles/referencePolish.less'
 import { CITIES, searchCities } from '../utils/geoCities.js'
 import { currentTerm, seasonLine, fetchWeather, locate } from '../utils/almanac.js'
 import { SHICHEN, shichenOf } from '../utils/shichen.js'
+import { playInkDropSound } from '../utils/guofengAudio.js'
 // 《九州地名志 · 城邑春秋》已迁到独立二级页面（pages/CityChroniclePage.jsx），
 // 本页不再需要 cityChronicle / NOT_FOUND_TIP / RECOMMEND_CITIES
 
@@ -350,6 +351,7 @@ export default function Home() {
         createdAt: new Date().toLocaleDateString(),
       })
       localStorage.setItem('gufeng_yayan_list', JSON.stringify(saved))
+      playInkDropSound()
       Toast.show({ content: '已摘录入墨隐书斋 · 雅译锦囊', icon: 'success' })
     } catch {
       Toast.show({ content: '摘录未保存，本机存储不可用，请稍后重试', icon: 'fail' })

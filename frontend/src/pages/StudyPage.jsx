@@ -9,6 +9,7 @@ import EmptyState from '../components/EmptyState'
 import { useScholarScope } from '../utils/useScholarScope'
 import { cachedLetters, loadLetters, scholarScope, shichen, markLetterRead } from '../utils/scholarLetters'
 import { readYayanNotebook, formatStudyDate } from '../utils/studyFlow'
+import { playSilkScrollSound } from '../utils/guofengAudio'
 import '../styles/studyPages.less'
 
 const SECTIONS = {
@@ -357,7 +358,10 @@ export default function StudyPage({ section }) {
   const navigate = useNavigate()
   const scope = useScholarScope()
   const info = SECTIONS[section] || SECTIONS.yayan
-  useEffect(() => { window.scrollTo(0, 0) }, [section])
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    playSilkScrollSound?.()
+  }, [section])
   return <div className='study-page'>
     <InkWashBackground />
     <header className='study-page__header'>
