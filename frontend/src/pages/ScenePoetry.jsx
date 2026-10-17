@@ -29,26 +29,42 @@ function SceneEditor({ scope }) {
   useEffect(() => {
     let active = true
     const version = generation.current
-    getDraft(scope).then(draft => {
-      if (active && version === generation.current && draft) {
-        setScene(draft); setSelected(draft.selected || []); setPoemId(draft.poemId || '')
-      } else if (active && !handledActionRef.current) {
-        const action = searchParams.get('action')
-        if (action === 'sample') {
-          handledActionRef.current = true
-          example()
-        } else if (action === 'camera') {
-          handledActionRef.current = true
-          setCameraOpen(true)
-        } else if (action === 'upload') {
-          handledActionRef.current = true
-          setTimeout(() => fileRef.current?.click(), 150)
-        }
+    const action = searchParams.get('action')
+    const reset = searchParams.get('reset')
+
+    if (reset === '1') {
+      setScene(null)
+      setSelected([])
+      setPoemId('')
+      setHighlight('')
+      return () => { active = false }
+    }
+
+    if (action && !handledActionRef.current) {
+      handledActionRef.current = true
+      if (action === 'sample') {
+        example()
+      } else if (action === 'camera') {
+        setCameraOpen(true)
+      } else if (action === 'upload') {
+        setTimeout(() => fileRef.current?.click(), 150)
       }
-    }).catch(() => {})
+      return () => { active = false }
+    }
+
+    if (!action) {
+      getDraft(scope).then(draft => {
+        if (active && version === generation.current && draft) {
+          setScene(draft)
+          setSelected(draft.selected || [])
+          setPoemId(draft.poemId || '')
+        }
+      }).catch(() => {})
+    }
+
     return () => { active = false }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scope])
+  }, [scope, searchParams])
   const selectedRegions = useMemo(() => scene?.analysis.regions.filter(row => selected.includes(row.id)) || [], [scene, selected])
   const matches = useMemo(() => matchScenePoems(selectedRegions), [selectedRegions])
   const chosen = matches.find(row => row.id === poemId) || matches[0]
@@ -146,7 +162,7 @@ function SceneEditor({ scope }) {
           </section>
         )
       ) : <section className='scene-panel scene-workspace'><ReferenceCorners />
-        <div className='scene-section-title'><div><span className='scene-eyebrow'>第一折 · 取景识境</span><h2>细看眼前山水</h2></div><div className='scene-image-actions'><button type='button' disabled={busy} className='scene-text-button' onClick={() => setCameraOpen(true)}><CameraOutline />再拍一张</button><button type='button' disabled={busy} className='scene-text-button' onClick={() => fileRef.current.click()}><PictureOutline />换一幅</button></div></div>
+        <div className='scene-section-title'><div><span className='scene-eyebrow'>第一折 · 取景识境</span><h2>细看眼前山水</h2></div><div className='scene-image-actions'><button type='button' disabled={busy} className='scene-text-button' onClick={() => setCameraOpen(true)}><CameraOutline />再拍一张</button><button type='button' disabled={busy} className='scene-text-button' onClick={() => fileRef.current?.click()}><PictureOutline />换一幅</button><button type='button' disabled={busy} className='scene-text-button' onClick={() => { setScene(null); setSelected([]); setPoemId(''); setHighlight('') }}><RedoOutline />重置</button></div></div>
         <ScenePicture scene={scene} selected={selected} highlight={highlight} onToggle={busy ? undefined : toggle} drawing={drawing ? manualTag : ''} onDraw={addRegion} />
         {scene.example && <p className='scene-caption'>山水画示例</p>}
         <div className='scene-actions scene-actions--small'><button type='button' disabled={busy} onClick={() => { const version = ++generation.current; setDrawing(false); analyze(scene, version) }}><RedoOutline />重新识景</button>{busy && <button type='button' onClick={() => request.current?.abort()}><CloseOutline />停止识景</button>}</div>
@@ -158,7 +174,6 @@ function SceneEditor({ scope }) {
         <div className='scene-poem-list'>{matches.map(poem => <article key={poem.id} className={`scene-poem-option${chosen?.id === poem.id ? ' is-chosen' : ''}`}><label><input type='radio' name='scene-poem' checked={chosen?.id === poem.id} onChange={() => setPoemId(poem.id)} /><span>{poem.dynasty} · {poem.author}《{poem.title}》</span></label><blockquote>{poem.lines.map(line => <p key={line}>{line}</p>)}</blockquote><div className='scene-motif-links'>{poem.matched.map(([word, tag]) => <button type='button' key={`${word}-${tag}`} aria-pressed={highlight === tag} onClick={() => { setHighlight(previous => previous === tag ? '' : tag); document.querySelector('.scene-workspace')?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'center' }) }}>{word} · {SCENE_TAGS[tag]}</button>)}</div><p className='scene-muted'>配诗依据：选景与诗句中的{[...new Set(poem.matched.map(([, tag]) => SCENE_TAGS[tag]))].join('、')}相对应。{poem.note}</p><a className='scene-source-link' href={poem.sourceUrl} target='_blank' rel='noopener noreferrer'>{poem.sourceVerified ? '核对原诗版本' : '检索原文（版本待核）'}</a></article>)}</div>
         <button type='button' className='scene-primary scene-wide' disabled={!chosen || saving} onClick={unfold}>{saving ? '正在铺展…' : '展开我的诗境'}<RightOutline /></button>
       </section>}
-      <button type='button' className='scene-text-button scene-library-link' onClick={() => navigate('/mine/scenes')}>前往诗境画阁 <RightOutline /></button>
     </main>
     {cameraOpen && <SceneCamera onClose={closeCamera} onCapture={file => { closeCamera(); receive(file) }} />}
   </div>
