@@ -8,7 +8,7 @@
 ## 基线与交付状态
 - 从 GitHub 拉取 origin/main，基线 f5d0651；本地分支 feat/scene-poetry-20261017。
 - 开发前备份：D:\数媒比赛\云山竹简_开发前备份_20261017_075128。project 为文件副本，repository-all.bundle 为 Git 历史；不含 node_modules、dist 和运行中的数据库。
-- 按用户最新要求：仅本地修改，未提交、未推送、未合并，等待用户检查。
+- 初版按用户要求仅本地预览。2026-10-17 用户检查后授权先备份，再同步主线、提交和推送；本次集成记录见文末。
 - 保留原有未跟踪 dev-A-shuzhai-flow-20261015.md、环境配置和旧 stash。
 
 ## 已实现
@@ -76,3 +76,13 @@ frontend/public/images/scene/poetic-lake-v1.webp，由本次内置 imagegen 生�
 - 默认权重约40MB，仍为CPU本地推理。B1 样例分割单次约0.9–1.2秒，仅为该机少量样例，不是整体延迟保证；接口还包含解码、深度与传输。
 - 核查配置发现 ADE20K 不含直接 snow 标签，之前映射中的 snow 并不表示模型能自动识别积雪；当前雪意象由用户手动确认。对比实验未将低可信零样本分类结果混入页面或配诗。
 - B1 来源：https://huggingface.co/Xenova/segformer-b1-finetuned-ade-512-512 ，许可沿用相应 NVIDIA 上游限制。
+
+## 提交前备份与主线集成
+- 2026-10-17 提交前备份：D:\数媒比赛\云山竹简_提交前备份_20261017_131205。
+- project 包含当前代码、未跟踪文件、本机环境配置、上传资源与已下载的模型；另有 repository-all.bundle、uncommitted.patch 和备份说明。7 个关键代码/插画/权重文件 SHA256 与源文件一致。不包含依赖目录、构建缓存、运行中的数据库和浏览器 IndexedDB。
+- 功能提交：5bd0f3c；随后将 origin/main 的 0f607c1 合入 feat/scene-poetry-20261017，Git 自动合并 App、Home、MinePage、ScholarChat，无文本冲突。
+- 保留队长删除的 AIPage、AiChat、HomeCard、旧样式及重复通知等内容；不恢复已删板块。相对主线的差异仅为寻镜入诗及必要接入。
+- 合并后验证：前端 npm test 72 项通过，后端 npm test 63 项通过，寻镜入诗测试 6 项通过（含实际模型 HTTP）；新增前端 ESLint 和生产构建通过。
+- 本次发布同步功能分支与 main；具体远程提交以发布后的 Git HEAD 核验结果为准。
+- 队友首次运行：backend 执行 npm ci，再 powershell -File scripts/prepare-scene-models.ps1。Git 不包含模型权重，需完成模型准备才能自动识景。
+- 原有未跟踪 docs/handovers/dev-A-shuzhai-flow-20261015.md 保留在工作区，未混入本次提交。
