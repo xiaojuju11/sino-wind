@@ -226,7 +226,7 @@ test('duplicate confirms send only one removal and search still uses real items'
 test('Mine opens real secondary routes instead of a yayan drawer or fake notification toggle', async () => {
   const f = await mount('MinePage', { token: null })
   await f.flush()
-  for (const [label, route] of [['雅译锦囊', '/mine/yayan'], ['藏牒阁', '/mine/archive'], ['物溯宝鉴', '/mine/artifacts'], ['消息通知', '/mine/messages']]) {
+  for (const [label, route] of [['雅译锦囊', '/mine/yayan'], ['藏牒阁', '/mine/archive'], ['物溯宝鉴', '/mine/artifacts'], ['知音回柬', '/mine/messages']]) {
     nodes(f.tree, node => node.type === 'button' && node.props?.className === 'shuzhai-list-item' && text(node).includes(label))[0].props.onClick()
     assert.equal(f.navigations.at(-1)[0], route)
   }

@@ -108,7 +108,7 @@ function MinePageSession() {
     {
       num: userInfo.debate_count ?? '—',
       label: '知音鸿雁',
-      onClick: () => navigate('/letters')
+      onClick: () => navigate('/mine/messages')
     },
     {
       num: userInfo.yayan_count ?? '—',
@@ -267,11 +267,11 @@ function MinePageSession() {
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
 
-          <button type='button' className='shuzhai-list-item' onClick={() => navigate('/letters')}>
+          <button type='button' className='shuzhai-list-item' onClick={() => navigate('/mine/messages')}>
             <i className='iconfont icon-message' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
-              <span className='shuzhai-list-item__title'>知音鸿雁</span>
-              <span className='shuzhai-list-item__desc'>与李白、苏轼等千古知己交谈归档</span>
+              <span className='shuzhai-list-item__title'>知音回柬</span>
+              <span className='shuzhai-list-item__desc'>展读千古知己往来信札与清谈回柬</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
@@ -302,10 +302,6 @@ function MinePageSession() {
         </div>
 
         <div className='shuzhai-list'>
-          {/* 说明：此处原有「日月交替（墨境切换）」整行，与下方「墨色雅意」功能完全重复
-              （同一 theme 状态、同一 toggleTheme），且用的是通知铃铛图标、语义不符。
-              按要求只保留「墨色雅意」作为唯一的日月切换入口。 */}
-
           <button type='button' className='shuzhai-list-item' onClick={() => navigate(signedIn ? '/accountSetting' : '/login')}>
             <i className='iconfont icon-zhanghao' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
@@ -324,17 +320,6 @@ function MinePageSession() {
             </div>
             <ThemeToggle className='shuzhai-theme-toggle' />
           </div>
-
-          <button type='button' className='shuzhai-list-item' onClick={() => navigate('/mine/messages')}>
-            <i className='iconfont icon-tongzhi' aria-hidden='true' />
-            <div className='shuzhai-list-item__content'>
-              <span className='shuzhai-list-item__title'>消息通知</span>
-              <span className='shuzhai-list-item__desc'>
-                展读站内回柬 · 续叙知音清谈
-              </span>
-            </div>
-            <RightOutline className='shuzhai-list-item__arrow' />
-          </button>
 
           <button type='button' className='shuzhai-list-item' onClick={handleShowAbout}>
             <i className='iconfont icon-zhinan' aria-hidden='true' />
