@@ -1,3 +1,5 @@
+@import './scholarEcosystem.less';
+
 // Book-room refinements stay scoped to these pages; shared icons and the ink engine are untouched.
 .shuzhai-root.reference-polish {
   .scholar-stats__item {
@@ -41,35 +43,35 @@
   }
   button:focus-visible { outline: 2px solid var(--gf-accent-text, var(--gf-seal)); outline-offset: 3px; }
   .shuzhai-logout-wrap {
-    margin-top: 8px; padding: 18px 0 24px;
+    margin-top: 10px; padding: 12px 0 20px;
     .shuzhai-logout-btn {
       --logout-frame: #d2b16e;
       --logout-ivory: #fff1d6;
-      width: min(100%, 326px); max-width: 100%; height: auto; min-height: 86px;
-      padding: 18px 28px; gap: 20px; box-sizing: border-box;
+      width: min(88%, 248px); max-width: 100%; height: auto; min-height: 48px;
+      padding: 8px 18px; gap: 14px; box-sizing: border-box;
       position: relative; isolation: isolate; overflow: visible;
       border: 1px solid var(--logout-frame);
-      border-radius: 10px;
+      border-radius: 8px;
       background:
         radial-gradient(ellipse at 50% 0, #b66f502e, transparent 75%),
         repeating-linear-gradient(115deg, #f7dea105 0 1px, transparent 1px 5px),
         linear-gradient(135deg, #71322f, #812f2c 52%, #632b29);
-      box-shadow: 0 0 0 2px var(--gf-bg-paper), 0 0 0 3px color-mix(in srgb, var(--gf-gold) 42%, transparent), 0 7px 20px #562a1e1c;
+      box-shadow: 0 0 0 1.5px var(--gf-bg-paper), 0 0 0 2.5px color-mix(in srgb, var(--gf-gold) 40%, transparent), 0 4px 14px #562a1e18;
       backdrop-filter: none;
       transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
       &::before, &::after {
         content: ''; display: block; position: absolute; pointer-events: none;
-        border: 1px solid var(--logout-frame); border-radius: 7px; inset: 4px;
+        border: 1px solid var(--logout-frame); border-radius: 6px; inset: 3px;
       }
-      &::after { inset: 9px; border-color: #d2b16e55; border-radius: 2px; }
+      &::after { inset: 6px; border-color: #d2b16e44; border-radius: 3px; }
       &__ornaments {
-        position: absolute; inset: 3px; pointer-events: none;
+        position: absolute; inset: 2px; pointer-events: none;
         > span {
-          position: absolute; width: 18px; height: 18px; box-sizing: border-box;
-          border: 2px solid var(--logout-frame); border-right: 0; border-bottom: 0;
-          border-radius: 5px 0 0 0;
+          position: absolute; width: 11px; height: 11px; box-sizing: border-box;
+          border: 1.5px solid var(--logout-frame); border-right: 0; border-bottom: 0;
+          border-radius: 3px 0 0 0;
           &::after {
-            content: ''; position: absolute; top: 3px; left: 3px; width: 7px; height: 7px;
+            content: ''; position: absolute; top: 2px; left: 2px; width: 4px; height: 4px;
             border: 1px solid var(--logout-frame); border-left: 0; border-top: 0;
           }
           &:nth-child(1) { top: 0; left: 0; }
@@ -80,24 +82,24 @@
       }
       &__seal {
         display: flex; flex-direction: column; align-items: center; justify-content: center;
-        flex: 0 0 34px; width: 34px; height: 44px; position: relative; z-index: 1;
-        box-sizing: border-box; padding: 3px; font-size: 15px; letter-spacing: 0;
+        flex: 0 0 24px; width: 24px; height: 32px; position: relative; z-index: 1;
+        box-sizing: border-box; padding: 2px; font-size: 11px; letter-spacing: 0;
         writing-mode: horizontal-tb; line-height: 1.15;
         color: var(--logout-ivory); background: #963b30;
-        border: 3px double #e6c891;
-        border-radius: 3px; box-shadow: 0 0 0 1px #4b211d, inset 0 0 0 1px #f7e0ad4d;
+        border: 2px double #e6c891;
+        border-radius: 2px; box-shadow: 0 0 0 1px #4b211d, inset 0 0 0 1px #f7e0ad4d;
         transform: rotate(-3deg);
         > span { display: block; }
       }
       &__text {
         position: relative; z-index: 1; min-width: 0;
-        font-family: STKaiti, KaiTi, serif; font-size: 22px; font-weight: 600;
-        line-height: 1.35; letter-spacing: .18em; text-align: left; color: var(--logout-ivory);
+        font-family: STKaiti, KaiTi, serif; font-size: 16px; font-weight: 600;
+        line-height: 1.3; letter-spacing: .14em; text-align: left; color: var(--logout-ivory);
         text-shadow: 0 1px 2px #381a1959;
-        small { display: block; margin-top: 5px; font-size: 11px; font-weight: 400; letter-spacing: .1em; color: #ead4b5; }
+        small { display: block; margin-top: 2px; font-size: 10px; font-weight: 400; letter-spacing: .08em; color: #ead4b5; }
       }
       &:hover, &:active {
-        border-color: #f1d99f; box-shadow: 0 0 0 2px var(--gf-bg-paper), 0 0 0 3px var(--gf-gold), 0 7px 22px #562a1e2b;
+        border-color: #f1d99f; box-shadow: 0 0 0 1.5px var(--gf-bg-paper), 0 0 0 2.5px var(--gf-gold), 0 5px 16px #562a1e24;
         .shuzhai-logout-btn__text { color: var(--logout-ivory); }
         .shuzhai-logout-btn__seal { color: var(--logout-ivory); background: #963b30; }
       }
@@ -106,7 +108,7 @@
         background: linear-gradient(135deg, #672c29, #782d29 52%, #5d2624);
       }
     }
-    .shuzhai-logout-sub { font-size: 12px; opacity: 1; margin: 12px 0 0; color: var(--gf-ink-secondary); letter-spacing: .14em; }
+    .shuzhai-logout-sub { font-size: 11px; opacity: .8; margin: 8px 0 0; color: var(--gf-ink-secondary); letter-spacing: .12em; }
   }
 }
 
@@ -157,19 +159,215 @@
   }
 }
 .study-note-card {
-  padding: 20px 17px 16px; margin-top: 16px; border: 1px solid color-mix(in srgb, var(--gf-gold) 48%, transparent);
-  border-radius: 12px; background: var(--gf-bg-card); box-shadow: 0 3px 14px color-mix(in srgb, var(--gf-ink-primary) 5%, transparent); overflow-wrap: anywhere;
-  h2 { margin: 0 0 16px; font-family: STKaiti, KaiTi, serif; font-size: 21px; line-height: 1.7; }
-  p { font-size: 14px; line-height: 1.9; white-space: pre-wrap; margin: 10px 0; }
-  &__label { color: var(--gf-accent-text, var(--gf-seal)); margin-right: 12px; }
-  &__heading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-  &__seal { flex: none; border: 1px solid currentColor; color: var(--gf-accent-text, var(--gf-seal)); font-size: 11px; padding: 2px 5px; border-radius: 3px; }
-  footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 14px; margin-top: 18px; border-top: 1px solid color-mix(in srgb, var(--gf-gold) 25%, transparent); }
-  small { min-width: 0; color: var(--gf-ink-secondary); font-size: 11px; line-height: 1.8; }
-  button { flex: none; min-height: 44px; padding: 8px 14px; border-radius: 6px; border: 1px solid color-mix(in srgb, var(--gf-gold) 58%, transparent); background: transparent; color: var(--gf-accent-text, var(--gf-seal)); font-size: 13px; }
+  position: relative;
+  padding: 20px 18px 16px;
+  margin-top: 14px;
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 48%, transparent);
+  border-radius: 12px;
+  background: var(--gf-bg-card, #fff9f0);
+  box-shadow: 0 3px 14px color-mix(in srgb, var(--gf-ink-primary) 5%, transparent);
+  overflow-wrap: anywhere;
+  transition: transform .18s ease, box-shadow .18s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 18px color-mix(in srgb, var(--gf-gold) 15%, transparent);
+  }
+
+  h2 {
+    margin: 0 0 14px;
+    font-family: STKaiti, KaiTi, serif;
+    font-size: 21px;
+    line-height: 1.65;
+    letter-spacing: .04em;
+    color: var(--gf-ink-primary);
+  }
+  p {
+    font-size: 13.5px;
+    line-height: 1.85;
+    white-space: pre-wrap;
+    margin: 8px 0;
+    color: var(--gf-ink-secondary);
+  }
+  &__label {
+    display: inline-block;
+    padding: 1px 6px;
+    margin-right: 8px;
+    font-size: 11px;
+    font-family: STKaiti, KaiTi, serif;
+    color: var(--gf-accent-text, var(--gf-seal));
+    border: 1px solid color-mix(in srgb, var(--gf-gold) 60%, transparent);
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--gf-gold) 8%, transparent);
+  }
+  &__heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+  &__seal {
+    flex: none;
+    border: 1px solid currentColor;
+    color: var(--gf-accent-text, var(--gf-seal));
+    font-size: 11px;
+    padding: 2px 5px;
+    border-radius: 3px;
+  }
+  footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding-top: 14px;
+    margin-top: 16px;
+    border-top: 1px solid color-mix(in srgb, var(--gf-gold) 22%, transparent);
+    flex-wrap: wrap;
+  }
+  small {
+    min-width: 0;
+    color: var(--gf-ink-muted, #998a7a);
+    font-size: 11px;
+    line-height: 1.8;
+  }
+  button {
+    flex: none;
+    min-height: 38px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid color-mix(in srgb, var(--gf-gold) 58%, transparent);
+    background: transparent;
+    color: var(--gf-accent-text, var(--gf-seal));
+    font-size: 13px;
+    cursor: pointer;
+  }
 }
+
+/* 雅译锦囊雅致书签质感卡片 */
+.yayan-card {
+  &__ornament {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+  }
+  &__seal {
+    font-family: STKaiti, KaiTi, serif;
+    font-size: 11px;
+    padding: 2px 7px;
+    border: 1px solid var(--gf-seal, #963b30);
+    color: var(--gf-seal, #963b30);
+    background: color-mix(in srgb, var(--gf-seal, #963b30) 8%, transparent);
+    border-radius: 3px;
+    letter-spacing: 1px;
+  }
+  h2 {
+    padding-right: 46px;
+  }
+}
+
+/* 知音回柬薛涛笺信札质感卡片 */
+.study-letter-card {
+  background:
+    radial-gradient(ellipse at 85% 15%, color-mix(in srgb, #963b30 4%, transparent), transparent 60%),
+    repeating-linear-gradient(180deg, var(--gf-bg-card, #fff9f0) 0px, var(--gf-bg-card, #fff9f0) 27px, color-mix(in srgb, var(--gf-gold) 18%, transparent) 28px);
+  border: 1px solid color-mix(in srgb, var(--gf-gold) 52%, transparent);
+
+  &__heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  &__sender {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+  }
+  &__seal-ring {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 2px solid var(--gf-gold);
+    background: linear-gradient(135deg, #782e25, #9b3a2e);
+    color: #fff1d6;
+    display: grid;
+    place-items: center;
+    font-family: STKaiti, KaiTi, serif;
+    font-size: 17px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(120, 46, 37, 0.28);
+    flex-shrink: 0;
+  }
+  &__title {
+    display: block;
+    font-size: 11px;
+    color: var(--gf-ink-secondary);
+    letter-spacing: .05em;
+    margin-top: 2px;
+  }
+  &__seal {
+    font-family: STKaiti, KaiTi, serif;
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+
+    &.unread {
+      border: 1px double #963b30;
+      color: #963b30;
+      background: color-mix(in srgb, #963b30 10%, transparent);
+    }
+    &.read {
+      border: 1px solid #4a6755;
+      color: #4a6755;
+      background: color-mix(in srgb, #4a6755 10%, transparent);
+    }
+  }
+  &__paper {
+    padding: 8px 4px 6px;
+  }
+  .study-note-card__letter {
+    margin: 0;
+    font-family: STKaiti, KaiTi, serif;
+    font-size: 16px;
+    line-height: 2.1;
+    color: var(--gf-ink-primary);
+    letter-spacing: .06em;
+    text-indent: 2em;
+  }
+}
+
+.study-page__footer-note {
+  margin: 24px 0 12px;
+  text-align: center;
+  font-family: STKaiti, KaiTi, serif;
+  font-size: 12px;
+  letter-spacing: .08em;
+  color: var(--gf-ink-muted, #998a7a);
+}
+
 .study-copy-text { box-sizing: border-box; width: 100%; min-height: 130px; padding: 12px; font: inherit; line-height: 1.8; color: var(--gf-ink-primary); background: var(--gf-bg-card); border: 1px solid var(--gf-gold); resize: vertical; }
-[data-theme='dark'] .study-page > .home-ink-wash .home-ink-wash__mist { opacity: .08; }
+
+[data-theme='dark'] {
+  .study-page > .home-ink-wash .home-ink-wash__mist { opacity: .08; }
+  .study-note-card,
+  .scholar-summary-banner,
+  .scholar-archive-card,
+  .scholar-artifact-card {
+    background: var(--gf-bg-card, #231f1c);
+    border-color: color-mix(in srgb, var(--gf-gold) 35%, transparent);
+  }
+  .study-letter-card {
+    background:
+      radial-gradient(ellipse at 85% 15%, color-mix(in srgb, #963b30 8%, transparent), transparent 60%),
+      repeating-linear-gradient(180deg, var(--gf-bg-card, #231f1c) 0px, var(--gf-bg-card, #231f1c) 27px, color-mix(in srgb, var(--gf-gold) 10%, transparent) 28px);
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   .study-page > .home-ink-wash .home-ink-wash__mist { animation: none; }
   .shuzhai-root.reference-polish .shuzhai-logout-wrap .shuzhai-logout-btn { transition: none; }
