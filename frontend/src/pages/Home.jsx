@@ -385,13 +385,8 @@ export default function Home() {
           </button>
         </div>
 
-        <div className="home-hero__badge" aria-label="项目定位">
-          <span className="home-hero__badge-seal">国一冲刺</span>
-          <span>面向大学生的实景诗词互动学习应用</span>
-        </div>
-
         <div className="home-hero__title-row">
-          <h1 className="home-hero__title">云山竹简 · 寻镜入诗</h1>
+          <h1 className="home-hero__title">云山竹简</h1>
           <span
             className="home-hero__seal"
             onClick={handleSealClick}
@@ -399,10 +394,10 @@ export default function Home() {
             role="button"
             tabIndex={0}
           >
-            主线
+            华风
           </span>
         </div>
-        <p className="home-hero__sub">—— 拍下眼前风景，点选景物，读懂一句古诗 ——</p>
+        <p className="home-hero__sub">—— 读千年风雅 与君共此山河 ——</p>
       </header>
 
       {/* ── 核心主线体验：寻镜入诗（首屏最核心展示与交互）── */}
