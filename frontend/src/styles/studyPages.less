@@ -147,26 +147,26 @@
     width: 100%; max-height: none; overflow: visible; padding: 0; border-radius: 0; box-shadow: none; background: transparent;
     > p:first-child { margin-top: 0; }
     button { border-color: color-mix(in srgb, var(--gf-gold) 55%, transparent); }
-    .scholar-archive-card { padding: 16px; border: 1px solid color-mix(in srgb, var(--gf-gold) 55%, transparent); border-radius: 5px; background: var(--gf-bg-card); box-shadow: 0 3px 12px color-mix(in srgb, var(--gf-ink-primary) 5%, transparent); }
+    .scholar-archive-card { padding: 16px; border: 1px solid color-mix(in srgb, var(--gf-gold) 55%, transparent); border-radius: 12px; background: var(--gf-bg-card); box-shadow: 0 3px 12px color-mix(in srgb, var(--gf-ink-primary) 5%, transparent); }
     .scholar-archive-card h3 { margin: 0 0 10px; font-size: 19px; font-family: STKaiti, KaiTi, serif; }
     .scholar-archive-card strong { font-size: 19px; font-family: STKaiti, KaiTi, serif; }
     .scholar-archive-card summary { min-height: 44px; cursor: pointer; }
-    .scholar-archive-card button { margin: 8px 6px 0 0; }
-    .scholar-certificate-preview button { margin: 4px; }
+    .scholar-archive-card button { margin: 8px 6px 0 0; border-radius: 6px; }
+    .scholar-certificate-preview button { margin: 4px; border-radius: 6px; }
     nav { margin-top: 24px; }
   }
 }
 .study-note-card {
   padding: 20px 17px 16px; margin-top: 16px; border: 1px solid color-mix(in srgb, var(--gf-gold) 48%, transparent);
-  border-radius: 5px; background: var(--gf-bg-card); box-shadow: 0 3px 14px color-mix(in srgb, var(--gf-ink-primary) 5%, transparent); overflow-wrap: anywhere;
+  border-radius: 12px; background: var(--gf-bg-card); box-shadow: 0 3px 14px color-mix(in srgb, var(--gf-ink-primary) 5%, transparent); overflow-wrap: anywhere;
   h2 { margin: 0 0 16px; font-family: STKaiti, KaiTi, serif; font-size: 21px; line-height: 1.7; }
   p { font-size: 14px; line-height: 1.9; white-space: pre-wrap; margin: 10px 0; }
   &__label { color: var(--gf-accent-text, var(--gf-seal)); margin-right: 12px; }
   &__heading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-  &__seal { flex: none; border: 1px solid currentColor; color: var(--gf-accent-text, var(--gf-seal)); font-size: 11px; padding: 2px 5px; border-radius: 2px; }
+  &__seal { flex: none; border: 1px solid currentColor; color: var(--gf-accent-text, var(--gf-seal)); font-size: 11px; padding: 2px 5px; border-radius: 3px; }
   footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 14px; margin-top: 18px; border-top: 1px solid color-mix(in srgb, var(--gf-gold) 25%, transparent); }
   small { min-width: 0; color: var(--gf-ink-secondary); font-size: 11px; line-height: 1.8; }
-  button { flex: none; min-height: 44px; padding: 8px 10px; border-radius: 3px; border: 1px solid color-mix(in srgb, var(--gf-gold) 58%, transparent); background: transparent; color: var(--gf-accent-text, var(--gf-seal)); font-size: 13px; }
+  button { flex: none; min-height: 44px; padding: 8px 14px; border-radius: 6px; border: 1px solid color-mix(in srgb, var(--gf-gold) 58%, transparent); background: transparent; color: var(--gf-accent-text, var(--gf-seal)); font-size: 13px; }
 }
 .study-copy-text { box-sizing: border-box; width: 100%; min-height: 130px; padding: 12px; font: inherit; line-height: 1.8; color: var(--gf-ink-primary); background: var(--gf-bg-card); border: 1px solid var(--gf-gold); resize: vertical; }
 [data-theme='dark'] .study-page > .home-ink-wash .home-ink-wash__mist { opacity: .08; }

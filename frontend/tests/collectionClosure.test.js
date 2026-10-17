@@ -248,7 +248,7 @@ test('routed yayan notebook reads home excerpts and preserves original source me
   assert.equal(cards(f).length, 2)
   assert.equal(f.localStorage.getItem('gufeng_yayan_list'), saved, 'invalid rows are not removed from the stored original')
   f.localStorage.setItem('gufeng_yayan_list', JSON.stringify([{ ancient: '新摘录', modern: '重新开卷可见' }]))
-  nodes(f.tree, node => node.type === 'button' && node.props?.className === 'study-page__refresh')[0].props.onClick()
+  f.events.dispatchEvent(new Event('storage'))
   await f.flush()
   assert.match(text(f.tree), /新摘录/)
   assert.doesNotMatch(text(f.tree), /一期一会/)

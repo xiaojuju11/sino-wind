@@ -43,7 +43,7 @@ function YayanNotebook() {
     }
   }
   return <>
-    <div className='study-page__toolbar'><span>共 {notebook.items.length} 则摘录</span><RefreshButton onClick={refresh} /></div>
+    <div className='study-page__toolbar'><span>共 {notebook.items.length} 则摘录</span></div>
     {notebook.error && <p className='study-page__notice' role='status'>{notebook.error}</p>}
     {!notebook.items.length && <EmptyState seal='待题' title={notebook.error ? '摘录暂未展开' : '案头尚虚 · 待君题墨'} desc={notebook.error ? '可重新展卷，存档内容没有被覆盖。' : '在首页完成白话雅译并摘录，便可在此回看。'} actionText={notebook.error ? '重新读取' : '前往雅集'} onAction={notebook.error ? refresh : () => navigate('/home')} />}
     {notebook.items.map(item => <article className='study-note-card' key={item.key}>
