@@ -3,30 +3,8 @@ import { DownlandOutline, CloseOutline } from 'antd-mobile-icons'
 import axios from '../http'
 import { downloadScholarCertificate } from '../utils/scholarCertificate'
 import { rememberGuestGame } from '../utils/scholarAssets'
-import { rhymeGroupOf, toToneArray, identifyPattern, checkTi, TONE_SYMBOL } from '../utils/poemMetre'
+import { analyzeTurnMetre } from '../utils/turnMetre'
 import { playChimeSound } from '../utils/guofengAudio'
-
-function analyzeTurnMetre(rawLine) {
-  if (!rawLine || typeof rawLine !== 'string') return null
-  const clean = rawLine.replace(/[^\u4e00-\u9fa5]/g, '')
-  if (!clean) return null
-  const lastChar = clean.slice(-1)
-  const group = rhymeGroupOf(lastChar)
-  const tones = toToneArray(clean)
-  const pattern = identifyPattern(tones)
-  const ti = checkTi(tones)
-  const toneNotation = tones.map(t => (t.tone === 'level' ? '平' : t.tone === 'oblique' ? '仄' : '？')).join('')
-  const toneSymbols = tones.map(t => TONE_SYMBOL[t.tone] || '△').join('')
-  return {
-    lastChar,
-    rhymeName: group?.name ? `${group.name}韵` : '平水韵通押',
-    rhymeTone: group?.tone === 'level' ? '平声' : '仄声',
-    toneNotation,
-    toneSymbols,
-    patternName: pattern?.name || `${clean.length}言古体句`,
-    tiStatus: ti.ok ? '替节合律' : '拗折特色'
-  }
-}
 
 function archiveGuestSettlement(game, guestKey) {
   if (!guestKey || game.status !== 'finished' || !game.settled) return ''
@@ -128,10 +106,10 @@ export default function FeihuaPanel({ sageId, onClose }) {
           </button>
           {isExpanded && analysis && (
             <div className='feihua-metre-bubble' role='region' aria-label='格律数理推导'>
-              <p>🎯 <b>命中韵部：</b>{analysis.rhymeName}（{analysis.rhymeTone}）</p>
-              <p>🎼 <b>韵脚提取：</b>末字「{analysis.lastChar}」· 平水韵经典收录</p>
-              <p>⚖️ <b>平仄音律：</b><span className='metre-symbols'>{analysis.toneSymbols}</span> {analysis.toneNotation}（{analysis.patternName} · {analysis.tiStatus}）</p>
-              <span className='feihua-metre-badge'>🛡️ 自研纯规则引擎判定通过</span>
+              <p><b>末字韵部：</b>{analysis.rhymeName}（{analysis.rhymeTone}）</p>
+              <p><b>韵脚提取：</b>末字「{analysis.lastChar}」· {analysis.verified ? '字表已覆盖' : '读音需结合语境核对'}</p>
+              <p><b>平仄音律：</b><span className='metre-symbols'>{analysis.toneSymbols}</span> {analysis.toneNotation}（{analysis.patternName} · {analysis.tiStatus}）</p>
+              <span className='feihua-metre-badge'>{analysis.verdict}</span>
             </div>
           )}
         </blockquote>

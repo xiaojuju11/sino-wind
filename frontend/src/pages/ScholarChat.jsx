@@ -200,6 +200,7 @@ function ScholarChatSession() {
     ]
   })
   const [inputText, setInputText] = useState(() => typeof location.state?.scenePrompt === 'string' ? location.state.scenePrompt.slice(0, 1800) : '')
+  const [scenePromptActive, setScenePromptActive] = useState(() => Boolean(location.state?.scenePrompt))
   const [loading, setLoading] = useState(false)
   const [gameOpen, setGameOpen] = useState(false)
   const [hydrating, setHydrating] = useState(true)
@@ -269,6 +270,7 @@ function ScholarChatSession() {
     activeRequest.current = request
     setMessages(prev => [...prev, userMsg, { id: aiId, role: 'ai', content: '', streaming: true, time: getShichenTime() }])
     if (!customContent) setInputText('')
+    setScenePromptActive(false)
     setLoading(true)
     const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
     request.timer = setInterval(() => {
@@ -490,7 +492,22 @@ function ScholarChatSession() {
             </section>
           </div>
         )}
-        {hydrating && <p role='status'>正在展读旧笺…</p>}
+        {!gameOpen && scenePromptActive && (
+          <aside className="scholar-scene-lead-banner" aria-label="实景诗境入席">
+            <div>
+              <strong className="scholar-scene-lead-banner__tag">🏮 携实景诗境入席</strong>
+              <p className="scholar-scene-lead-banner__text">已载入实景意象与相配诗句，点击即可一键向先贤追问诗中微意。</p>
+            </div>
+            <button
+              type="button"
+              className="scholar-scene-lead-banner__btn"
+              disabled={loading}
+              onClick={() => handleSend(inputText)}
+            >
+              一键请教
+            </button>
+          </aside>
+        )}
         {!gameOpen && replyLetter && <aside className='scholar-reply-letter' aria-label='知音回柬'><strong>知音回柬 · {replyLetter.kind}</strong><p>{replyLetter.text}</p><button type='button' onClick={() => setReplyLetter(null)}>收笺续谈</button></aside>}
         {gameOpen && <FeihuaPanel key={sageKey} sageId={sageKey} onClose={() => setGameOpen(false)} />}
         {!gameOpen && messages.map((item) => (

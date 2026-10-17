@@ -20,7 +20,7 @@
     width: 100%; mask-image: none; background-size: cover; background-position: right center;
     opacity: .72; filter: saturate(1.08) contrast(1.04);
   }
-  .home-card-scroll:is(.home-poem-card, .scene-home-card, .frequency-home-card) {
+  .home-card-scroll:is(.home-poem-card, .scene-home-card:not(.is-primary-storyline), .frequency-home-card) {
     box-sizing: border-box; height: 190px; min-height: 190px;
     padding: 12px 14px; display: flex; flex-direction: column;
     > .home-section-header { flex: none; }
@@ -66,5 +66,5 @@
   .home-card-scroll:is(.scene-home-card, .frequency-home-card) > img { opacity: .25; filter: saturate(.8); }
 }
 @media (max-width: 360px) {
-  .reference-polish.home-root .home-card-scroll:is(.home-poem-card, .scene-home-card, .frequency-home-card) { height: 206px; min-height: 206px; }
+  .reference-polish.home-root .home-card-scroll:is(.home-poem-card, .scene-home-card:not(.is-primary-storyline), .frequency-home-card) { height: 206px; min-height: 206px; }
 }

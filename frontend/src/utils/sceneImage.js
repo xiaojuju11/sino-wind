@@ -33,7 +33,7 @@ export function manualRegion(start, end, width, height, tag, label) {
   for (let y = y0; y < y1; y++) runs.push(y * width + x0, x1 - x0)
   return { id: `manual-${crypto.randomUUID()}`, tag, label, source: 'manual', runs, box: [x0 / width, y0 / height, x1 / width, y1 / height], near: null }
 }
-export async function exportScene(scene, poem) {
+export async function createSceneFile(scene, poem) {
   await document.fonts.ready
   const image = await loadImage(scene.image)
   const width = 600, photoHeight = Math.min(660, Math.max(240, width * image.height / image.width))
@@ -51,5 +51,10 @@ export async function exportScene(scene, poem) {
   ctx.fillStyle = '#8a302d'; ctx.fillRect(width / 2 - 18, photoHeight + 240, 36, 46); ctx.fillStyle = '#fff2da'; ctx.font = '18px STKaiti, KaiTi, serif'; ctx.fillText('诗', width / 2, photoHeight + 260); ctx.fillText('境', width / 2, photoHeight + 280)
   const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
   if (!blob) throw new Error('暂未能生成长图，请重试。')
-  const url = URL.createObjectURL(blob), link = document.createElement('a'); link.href = url; link.download = `寻镜入诗-${poem.title}.png`; link.click(); setTimeout(() => URL.revokeObjectURL(url), 30000)
+  return new File([blob], `寻镜入诗-${poem.title}.png`, { type: 'image/png' })
+}
+
+export async function exportScene(scene, poem) {
+  const { downloadSceneFile } = await import('./sceneShare.js')
+  downloadSceneFile(await createSceneFile(scene, poem))
 }

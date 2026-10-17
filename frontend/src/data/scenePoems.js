@@ -1,4 +1,5 @@
 // Curated excerpts. This is an explainable motif index, not a learned poetry model.
+import { poemSource } from './sceneSources.js'
 export const SCENE_TAGS = {
   tree: '树木', plant: '草木', grass: '芳草', water: '水面', mountain: '山峦', sky: '天空',
   flower: '花', rock: '山石', bridge: '桥', boat: '舟', building: '楼阁屋舍',
@@ -34,7 +35,7 @@ export const SCENE_POEMS = [
   { id: 'baijuyi-qiantang', title: '钱塘湖春行', author: '白居易', dynasty: '唐', lines: ['乱花渐欲迷人眼，', '浅草才能没马蹄。'], anchors: [['花', 'flower'], ['草', 'grass']], note: '繁花与浅草交织，适合以花地的色彩和层次体会春行的轻快。' },
   { id: 'caocao-canghai', title: '观沧海', author: '曹操', dynasty: '汉', lines: ['树木丛生，', '百草丰茂。'], anchors: [['树木', 'tree'], ['草', 'grass']], note: '树木与芳草共同构成蓬勃的绿意，由近处草地读向层叠林木。' },
   { id: 'wangwei-shanju', title: '山居秋暝', author: '王维', dynasty: '唐', lines: ['明月松间照，', '清泉石上流。'], anchors: [['月', 'moon'], ['松', 'tree'], ['泉', 'water'], ['石', 'rock']], note: '月色照进林间，清水穿过山石，光与水共同营造幽静的境界。' },
-].map(poem => ({ ...poem, source: `${poem.author}《${poem.title}》`, sourceUrl: `https://zh.wikisource.org/w/index.php?search=${encodeURIComponent(poem.title + ' ' + poem.author)}` }))
+].map(poem => ({ ...poem, source: `${poem.author}《${poem.title}》`, ...poemSource(poem) }))
 
 // Rare motifs must be present; background sky alone is never sufficient evidence of night.
 const REQUIRED = {

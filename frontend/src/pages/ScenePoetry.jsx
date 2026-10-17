@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { CameraOutline, PictureOutline, RightOutline, LeftOutline, RedoOutline, CloseOutline } from 'antd-mobile-icons'
 import { Toast } from 'antd-mobile'
 import axios from 'axios'
@@ -18,7 +18,8 @@ import '../styles/scenePoetry.less'
 const BASE = import.meta.env.BASE_URL
 const sceneApi = axios.create({ baseURL: import.meta.env.VITE_API_BASE_URL || '', timeout: 95000 })
 function SceneEditor({ scope }) {
-  const navigate = useNavigate(), fileRef = useRef(null), request = useRef(null), generation = useRef(0)
+  const navigate = useNavigate(), [searchParams] = useSearchParams()
+  const fileRef = useRef(null), request = useRef(null), generation = useRef(0), handledActionRef = useRef(false)
   const [cameraOpen, setCameraOpen] = useState(false)
   const closeCamera = useCallback(() => setCameraOpen(false), [])
   const [scene, setScene] = useState(null), [selected, setSelected] = useState([]), [poemId, setPoemId] = useState('')
@@ -31,9 +32,22 @@ function SceneEditor({ scope }) {
     getDraft(scope).then(draft => {
       if (active && version === generation.current && draft) {
         setScene(draft); setSelected(draft.selected || []); setPoemId(draft.poemId || '')
+      } else if (active && !handledActionRef.current) {
+        const action = searchParams.get('action')
+        if (action === 'sample') {
+          handledActionRef.current = true
+          example()
+        } else if (action === 'camera') {
+          handledActionRef.current = true
+          setCameraOpen(true)
+        } else if (action === 'upload') {
+          handledActionRef.current = true
+          setTimeout(() => fileRef.current?.click(), 150)
+        }
       }
     }).catch(() => {})
     return () => { active = false }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scope])
   const selectedRegions = useMemo(() => scene?.analysis.regions.filter(row => selected.includes(row.id)) || [], [scene, selected])
   const matches = useMemo(() => matchScenePoems(selectedRegions), [selectedRegions])
@@ -114,7 +128,7 @@ function SceneEditor({ scope }) {
       {notice && <p className='scene-notice' role='status' aria-live='polite'>{busy && <span className='scene-spinner' aria-hidden='true' />}{notice}</p>}
       {scene && !busy && <section className='scene-panel'><ReferenceCorners /><div className='scene-section-title'><div><span className='scene-eyebrow'>第二折 · 指景寻诗</span><h2>为此景，寻一句诗</h2></div><span className='scene-seal'>会心</span></div><p className='scene-muted'>按所选意象匹配原诗节选。点击下方意象词，可在照片中寻其所在。</p>
         {!matches.length && <p className='scene-empty'>先选一处景物，再寻诗中知音。</p>}
-        <div className='scene-poem-list'>{matches.map(poem => <article key={poem.id} className={`scene-poem-option${chosen?.id === poem.id ? ' is-chosen' : ''}`}><label><input type='radio' name='scene-poem' checked={chosen?.id === poem.id} onChange={() => setPoemId(poem.id)} /><span>{poem.dynasty} · {poem.author}《{poem.title}》</span></label><blockquote>{poem.lines.map(line => <p key={line}>{line}</p>)}</blockquote><div className='scene-motif-links'>{poem.matched.map(([word, tag]) => <button type='button' key={`${word}-${tag}`} aria-pressed={highlight === tag} onClick={() => { setHighlight(previous => previous === tag ? '' : tag); document.querySelector('.scene-workspace')?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'center' }) }}>{word} · {SCENE_TAGS[tag]}</button>)}</div></article>)}</div>
+        <div className='scene-poem-list'>{matches.map(poem => <article key={poem.id} className={`scene-poem-option${chosen?.id === poem.id ? ' is-chosen' : ''}`}><label><input type='radio' name='scene-poem' checked={chosen?.id === poem.id} onChange={() => setPoemId(poem.id)} /><span>{poem.dynasty} · {poem.author}《{poem.title}》</span></label><blockquote>{poem.lines.map(line => <p key={line}>{line}</p>)}</blockquote><div className='scene-motif-links'>{poem.matched.map(([word, tag]) => <button type='button' key={`${word}-${tag}`} aria-pressed={highlight === tag} onClick={() => { setHighlight(previous => previous === tag ? '' : tag); document.querySelector('.scene-workspace')?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'center' }) }}>{word} · {SCENE_TAGS[tag]}</button>)}</div><p className='scene-muted'>配诗依据：选景与诗句中的{[...new Set(poem.matched.map(([, tag]) => SCENE_TAGS[tag]))].join('、')}相对应。{poem.note}</p><a className='scene-source-link' href={poem.sourceUrl} target='_blank' rel='noopener noreferrer'>{poem.sourceVerified ? '核对原诗版本' : '检索原文（版本待核）'}</a></article>)}</div>
         <button type='button' className='scene-primary scene-wide' disabled={!chosen || saving} onClick={unfold}>{saving ? '正在铺展…' : '展开我的诗境'}<RightOutline /></button>
       </section>}
       <button type='button' className='scene-text-button scene-library-link' onClick={() => navigate('/mine/scenes')}>前往诗境画阁 <RightOutline /></button>

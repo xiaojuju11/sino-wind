@@ -40,12 +40,25 @@
 }
 
 .object-recognition-error {
-  padding: 0.35rem;
+  margin: 0.36rem 0 0.28rem;
+  padding: 0.35rem 0.32rem;
   background: var(--gf-bg-card, #FAF7F0);
   border: 1px solid var(--gf-gold, @color-gold);
   border-radius: 12px;
-  h2 { margin: 0 0 0.2rem; font-size: 0.4rem; color: var(--gf-ink-primary, @color-text-main); }
-  p { margin: 0 0 0.3rem; line-height: 1.7; color: var(--gf-ink-secondary, @color-text-sub); }
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  text-align: center;
+
+  h2 { margin: 0 0 0.16rem; font-size: 0.4rem; color: var(--gf-ink-primary, @color-text-main); font-weight: 600; }
+  p { margin: 0 0 0.28rem; line-height: 1.6; color: var(--gf-ink-secondary, @color-text-sub); font-size: 0.28rem; }
+
+  .image-capture-btn {
+    width: 100%;
+    max-width: 4rem;
+    margin: 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .object-recognition-result {

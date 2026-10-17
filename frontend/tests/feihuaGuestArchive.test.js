@@ -26,6 +26,9 @@ async function fixture({ restore = false, quotaFails = false } = {}) {
       checkTi: () => ({ ok: true }),
       TONE_SYMBOL: { level: '○', oblique: '●', unknown: '△' }
     },
+    '../utils/turnMetre': {
+      analyzeTurnMetre: () => null
+    },
     '../utils/guofengAudio': {
       playChimeSound: () => {},
       playInkDropSound: () => {},

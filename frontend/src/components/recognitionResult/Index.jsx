@@ -47,6 +47,7 @@ function getScoreRank(score) {
 export default function RecognitionResult({ recognitionResult, pending = false }) {
   const data = recognitionResult?.data || {}
   const degraded = Boolean(recognitionResult?.degraded)
+  const isExample = recognitionResult?.source === 'preset-specimen'
   const notice = recognitionResult?.notice
   const audioRef = useRef(null)
 
@@ -60,11 +61,11 @@ export default function RecognitionResult({ recognitionResult, pending = false }
 
   const { interpretation, flow } = splitDescription(data.description)
   const hasAudioUrl = Boolean(data.audio_url && /^https?:\/\//.test(data.audio_url))
-  const rank = getScoreRank(data.score)
+  const rank = isExample ? { tag: '研习', desc: '内置案例 · 不作识别评分' } : getScoreRank(data.score)
 
   // 收入宝鉴功能
   const saveArtifact = async () => {
-    if (saveLock.current || saved || pending) return
+    if (saveLock.current || saved || pending || isExample) return
     if (!localStorage.getItem('token')) {
       Toast.show({ content: '请先登录，方可收入书斋物溯宝鉴' })
       return
@@ -195,7 +196,7 @@ export default function RecognitionResult({ recognitionResult, pending = false }
 
   return (
     <div className='object-recognition-result'>
-      {(degraded || pending) && (
+      {(degraded || pending || isExample) && (
         <p className='object-recognition-result__notice'>
           {pending ? '仍在等待真实工作流，先行呈现典库文脉推演。' : notice}
         </p>
@@ -217,11 +218,11 @@ export default function RecognitionResult({ recognitionResult, pending = false }
           <div className='scholar-appraise-seal'>
             <div className='scholar-appraise-seal__inner'>
               <div className='scholar-appraise-seal__badge'>
-                <span className='scholar-appraise-seal__label'>品位鉴值</span>
+                <span className='scholar-appraise-seal__label'>{isExample ? '内置案例' : '趣味品评'}</span>
                 <span className='scholar-appraise-seal__value'>
-                  {degraded ? '待考' : `${typeof data.score === 'number' ? data.score : 0}`}
+                  {isExample ? '研习' : degraded ? '待考' : `${typeof data.score === 'number' ? data.score : 0}`}
                 </span>
-                {!degraded && <span className='scholar-appraise-seal__unit'>分</span>}
+                {!degraded && !isExample && <span className='scholar-appraise-seal__unit'>分</span>}
               </div>
               <div className='scholar-appraise-seal__rank'>
                 <div className='scholar-appraise-seal__tag'>{rank.tag}</div>
@@ -326,11 +327,11 @@ export default function RecognitionResult({ recognitionResult, pending = false }
       <button
         type='button'
         className={`object-recognition-result__save-btn ${saved ? 'is-saved' : ''}`}
-        disabled={pending || saving || saved}
+        disabled={pending || saving || saved || isExample}
         onClick={saveArtifact}
       >
         <i className='iconfont icon-shoucang' aria-hidden='true' />
-        <span>{saved ? '已入藏物溯宝鉴' : saving ? '正在镌录入藏…' : pending ? '考释完毕后方可入藏' : '收入物溯宝鉴'}</span>
+        <span>{isExample ? '内置案例不计入个人识物成果' : saved ? '已入藏物溯宝鉴' : saving ? '正在镌录入藏…' : pending ? '考释完毕后方可入藏' : '收入物溯宝鉴'}</span>
       </button>
 
       {hasAudioUrl && (
