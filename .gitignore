@@ -57,3 +57,6 @@ ChatGPT 图像*
 ChatGPT Image*
 DALL·E*
 Midjourney_*
+
+# 交付文档生成时的临时裁剪副本（每次生成都会重建，不入库）
+proof/_fit_*.png

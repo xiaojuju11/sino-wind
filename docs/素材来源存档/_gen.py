@@ -36,17 +36,19 @@ RULES = [
      "无第三方版权（文生图）；需按 AIGC 规范标注", "界面落 AIGC 标识"),
 
     ("frontend/public/assets/guancang/", "AI 生成 + 人工精修", "Midjourney v6 → 人工去噪/抠图/羽化/压缩",
-     "docs/handovers/ai-log-C-literati.md:28（Midjourney v6 提示词）、:40（对 AI 原生生成素材去噪羽化）、:42（工程化裁剪）",
-     "无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一",
-     "统一「AI 生成」表述并删除「真迹」措辞；核实 Midjourney 订阅层级"),
+     "docs/handovers/ai-log-C-literati.md:28（Midjourney v6 提示词）、:40（对 AI 原生生成素材去噪羽化）、:42（工程化裁剪）；"
+     "2026-10-17 团队书面确认定性为「AI 插画」",
+     "无第三方版权（AI 生成 + 人工加工）；需按 AIGC 规范标注",
+     "界面落 AIGC 标识"),
 
     ("frontend/public/assets/shuzhai/", "AI 生成 + 人工精修", "Midjourney v6 → 人工精修",
-     "docs/handovers/ai-log-C-literati.md:28,40,42（与 guancang 同批产出）",
+     "docs/handovers/ai-log-C-literati.md:28,40,42（与 guancang 同批产出）；2026-10-17 团队确认同为 AI 生成",
      "无第三方版权；需按 AIGC 规范标注", "核实 Midjourney 订阅层级"),
 
-    ("frontend/public/assets/home/", "团队提供底图 / 设计稿切图", "GPT Image 生成后人工切图（口径之一）；另有文档称「用户提供的底图」",
-     "docs/handovers/CONTEXT-BRIEF.md:53；docs/handovers/dev-B-home.md（四雅插画记为用户提供的底图）",
-     "⚠️ 权属口径不一致，需团队书面确认原始出处", "统一口径并补原始出处证明"),
+    ("frontend/public/assets/home/", "AI 生成（团队自有）", "AI 生成后人工切图",
+     "2026-10-17 团队书面确认：五张底图与四雅插画均为 AI 生成（此前的「用户提供底图」与「团队 AI 设计稿切图」两种口径已统一为 AI 生成）",
+     "无第三方版权（文生图）；需按 AIGC 规范标注",
+     "界面落 AIGC 标识；核实生成时使用的模型与订阅层级"),
 
     ("frontend/public/assets/auth/", "团队/用户提供画稿", "未记录生成工具",
      "docs/handovers/dev-A-auth.md:67（改用用户提供的登录、注册画稿）；同文自述「原作者、生成工具及使用授权仍需团队确认」",
@@ -258,7 +260,7 @@ def esc(s):
     return (str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;"))
 
 BADGE = {"AI 生成（团队自有）": "b-ai", "AI 生成 + 人工精修": "b-ai",
-         "团队提供底图 / 设计稿切图": "b-team", "团队/用户提供画稿": "b-team",
+         "AI 生成（团队自有）": "b-ai", "团队/用户提供画稿": "b-team",
          "待确认": "b-warn", "待确认（且已停用）": "b-warn",
          "团队自制": "b-own", "团队自制（疑似复制残留）": "b-own",
          "第三方 / 队长提供（不进产品）": "b-ref", "AI 设计稿 / 含古画素材（不进产品）": "b-ref",
@@ -334,7 +336,7 @@ if unused:
         h.append("<tr><td><code>%s</code></td><td>%dKB</td><td>%s</td></tr>" % (esc(r["rel"]), r["kb"], esc(sug)))
     h.append("</table>")
 
-ORDER = ["AI 生成（团队自有）", "AI 生成 + 人工精修", "团队提供底图 / 设计稿切图",
+ORDER = ["AI 生成（团队自有）", "AI 生成 + 人工精修",
          "团队/用户提供画稿", "待确认", "待确认（且已停用）", "团队自制",
          "团队自制（疑似复制残留）", "第三方 / 队长提供（不进产品）",
          "AI 设计稿 / 含古画素材（不进产品）",

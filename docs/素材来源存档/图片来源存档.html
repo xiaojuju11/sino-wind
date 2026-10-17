@@ -44,12 +44,57 @@ tr:nth-child(even) td{background:#FCFAF5}
 <div class='stat'><b>29</b><span>产品素材</span></div>
 <div class='stat warn'><b>0</b><span>零引用（可删）</span></div>
 <div class='stat warn'><b>0.0 MB</b><span>零引用占用</span></div>
-<div class='stat'><b>8</b><span>来源类别</span></div>
+<div class='stat'><b>7</b><span>来源类别</span></div>
 </div>
 <div class='notice'><b>两个关键结论</b><br>① <b>0 张 / 0.0 MB 的图片在产品代码中零引用</b>，其中包含授权未确认的两张登录注册画稿（约 4.2MB）；删除即可同时消除版权不确定与体积浪费。<br>② <b>全站背景已改为纯 CSS 渐变</b>（app.less:6-9），文档中「全站统一使用 bg_guofeng.jpg」的说法已过期，该文件亦零引用。</div>
-<h2>AI 生成（团队自有） · 8 张</h2>
-<table><tr><th style='width:96px'>生成/来源工具</th><td>内置 ImageGen</td></tr><tr><th>证据出处</th><td>frontend/public/assets/scholar-scenes/README.md:3（含逐图提示词）；docs/handovers/ai-log-liuxia-2026-10-14-visual-polish.md:15</td></tr><tr><th>版权判定</th><td>无第三方版权（文生图，未以第三方图片作输入）；需按 AIGC 规范标注</td></tr><tr><th>待办</th><td>界面落 AIGC 标识</td></tr></table>
+<h2>AI 生成（团队自有） · 13 张</h2>
+<table><tr><th style='width:96px'>生成/来源工具</th><td>AI 生成后人工切图</td></tr><tr><th>证据出处</th><td>2026-10-17 团队书面确认：五张底图与四雅插画均为 AI 生成（此前的「用户提供底图」与「团队 AI 设计稿切图」两种口径已统一为 AI 生成）</td></tr><tr><th>版权判定</th><td>无第三方版权（文生图）；需按 AIGC 规范标注</td></tr><tr><th>待办</th><td>界面落 AIGC 标识；核实生成时使用的模型与订阅层级</td></tr></table>
 <div class='grid'>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/home/bg-almanac-ancient.jpg')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成（团队自有）</span>
+<div class='path'>frontend/public/assets/home/bg-almanac-ancient.jpg</div>
+<div class='meta'>800x267 · 45KB</div>
+<div class='use'>静态引用 1 处</div>
+<div class='right'>无第三方版权（文生图）；需按 AIGC 规范标注</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/home/bg-almanac-modern.jpg')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成（团队自有）</span>
+<div class='path'>frontend/public/assets/home/bg-almanac-modern.jpg</div>
+<div class='meta'>800x267 · 43KB</div>
+<div class='use'>静态引用 1 处</div>
+<div class='right'>无第三方版权（文生图）；需按 AIGC 规范标注</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/home/bg-poem.jpg')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成（团队自有）</span>
+<div class='path'>frontend/public/assets/home/bg-poem.jpg</div>
+<div class='meta'>800x267 · 45KB</div>
+<div class='use'>静态引用 3 处</div>
+<div class='right'>无第三方版权（文生图）；需按 AIGC 规范标注</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/home/bg-shiwu.jpg')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成（团队自有）</span>
+<div class='path'>frontend/public/assets/home/bg-shiwu.jpg</div>
+<div class='meta'>800x505 · 54KB</div>
+<div class='use'>静态引用 11 处</div>
+<div class='right'>无第三方版权（文生图）；需按 AIGC 规范标注</div>
+</div></div>
+<div class='card'>
+<div class='thumb' style="background-image:url('../../frontend/public/assets/home/bg-yayan.jpg')"></div>
+<div class='body'>
+<span class='badge b-ai'>AI 生成（团队自有）</span>
+<div class='path'>frontend/public/assets/home/bg-yayan.jpg</div>
+<div class='meta'>800x673 · 92KB</div>
+<div class='use'>静态引用 2 处</div>
+<div class='right'>无第三方版权（文生图）；需按 AIGC 规范标注</div>
+</div></div>
 <div class='card'>
 <div class='thumb' style="background-image:url('../../frontend/public/assets/scholar-scenes/dufu-scene-v1.webp')"></div>
 <div class='body'>
@@ -124,7 +169,7 @@ tr:nth-child(even) td{background:#FCFAF5}
 </div></div>
 </div>
 <h2>AI 生成 + 人工精修 · 15 张</h2>
-<table><tr><th style='width:96px'>生成/来源工具</th><td>Midjourney v6 → 人工去噪/抠图/羽化/压缩</td></tr><tr><th>证据出处</th><td>docs/handovers/ai-log-C-literati.md:28（Midjourney v6 提示词）、:40（对 AI 原生生成素材去噪羽化）、:42（工程化裁剪）</td></tr><tr><th>版权判定</th><td>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</td></tr><tr><th>待办</th><td>统一「AI 生成」表述并删除「真迹」措辞；核实 Midjourney 订阅层级</td></tr></table>
+<table><tr><th style='width:96px'>生成/来源工具</th><td>Midjourney v6 → 人工去噪/抠图/羽化/压缩</td></tr><tr><th>证据出处</th><td>docs/handovers/ai-log-C-literati.md:28（Midjourney v6 提示词）、:40（对 AI 原生生成素材去噪羽化）、:42（工程化裁剪）；2026-10-17 团队书面确认定性为「AI 插画」</td></tr><tr><th>版权判定</th><td>无第三方版权（AI 生成 + 人工加工）；需按 AIGC 规范标注</td></tr><tr><th>待办</th><td>界面落 AIGC 标识</td></tr></table>
 <div class='grid'>
 <div class='card'>
 <div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/sage_libai.jpg')"></div>
@@ -133,7 +178,7 @@ tr:nth-child(even) td{background:#FCFAF5}
 <div class='path'>frontend/public/assets/guancang/sage_libai.jpg</div>
 <div class='meta'>576x1024 · 239KB</div>
 <div class='use'>静态引用 1 处</div>
-<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+<div class='right'>无第三方版权（AI 生成 + 人工加工）；需按 AIGC 规范标注</div>
 </div></div>
 <div class='card'>
 <div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/sage_libai.png')"></div>
@@ -142,7 +187,7 @@ tr:nth-child(even) td{background:#FCFAF5}
 <div class='path'>frontend/public/assets/guancang/sage_libai.png</div>
 <div class='meta'>198x300 · 115KB</div>
 <div class='use'>静态引用 6 处</div>
-<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+<div class='right'>无第三方版权（AI 生成 + 人工加工）；需按 AIGC 规范标注</div>
 </div></div>
 <div class='card'>
 <div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/sage_liqingzhao.jpg')"></div>
@@ -151,7 +196,7 @@ tr:nth-child(even) td{background:#FCFAF5}
 <div class='path'>frontend/public/assets/guancang/sage_liqingzhao.jpg</div>
 <div class='meta'>576x1024 · 218KB</div>
 <div class='use'>静态引用 1 处</div>
-<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+<div class='right'>无第三方版权（AI 生成 + 人工加工）；需按 AIGC 规范标注</div>
 </div></div>
 <div class='card'>
 <div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/sage_liqingzhao.png')"></div>
@@ -160,7 +205,7 @@ tr:nth-child(even) td{background:#FCFAF5}
 <div class='path'>frontend/public/assets/guancang/sage_liqingzhao.png</div>
 <div class='meta'>198x300 · 117KB</div>
 <div class='use'>静态引用 3 处</div>
-<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+<div class='right'>无第三方版权（AI 生成 + 人工加工）；需按 AIGC 规范标注</div>
 </div></div>
 <div class='card'>
 <div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/sage_sushi.jpg')"></div>
@@ -169,7 +214,7 @@ tr:nth-child(even) td{background:#FCFAF5}
 <div class='path'>frontend/public/assets/guancang/sage_sushi.jpg</div>
 <div class='meta'>576x1024 · 248KB</div>
 <div class='use'>静态引用 1 处</div>
-<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+<div class='right'>无第三方版权（AI 生成 + 人工加工）；需按 AIGC 规范标注</div>
 </div></div>
 <div class='card'>
 <div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/sage_sushi.png')"></div>
@@ -178,7 +223,7 @@ tr:nth-child(even) td{background:#FCFAF5}
 <div class='path'>frontend/public/assets/guancang/sage_sushi.png</div>
 <div class='meta'>194x300 · 117KB</div>
 <div class='use'>静态引用 3 处</div>
-<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+<div class='right'>无第三方版权（AI 生成 + 人工加工）；需按 AIGC 规范标注</div>
 </div></div>
 <div class='card'>
 <div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/sage_wangyangming.jpg')"></div>
@@ -187,7 +232,7 @@ tr:nth-child(even) td{background:#FCFAF5}
 <div class='path'>frontend/public/assets/guancang/sage_wangyangming.jpg</div>
 <div class='meta'>576x1024 · 251KB</div>
 <div class='use'>静态引用 1 处</div>
-<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+<div class='right'>无第三方版权（AI 生成 + 人工加工）；需按 AIGC 规范标注</div>
 </div></div>
 <div class='card'>
 <div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/sage_wangyangming.png')"></div>
@@ -196,7 +241,7 @@ tr:nth-child(even) td{background:#FCFAF5}
 <div class='path'>frontend/public/assets/guancang/sage_wangyangming.png</div>
 <div class='meta'>194x300 · 118KB</div>
 <div class='use'>静态引用 8 处</div>
-<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+<div class='right'>无第三方版权（AI 生成 + 人工加工）；需按 AIGC 规范标注</div>
 </div></div>
 <div class='card'>
 <div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/scroll_changhe.jpg')"></div>
@@ -205,7 +250,7 @@ tr:nth-child(even) td{background:#FCFAF5}
 <div class='path'>frontend/public/assets/guancang/scroll_changhe.jpg</div>
 <div class='meta'>1024x341 · 96KB</div>
 <div class='use'>静态引用 1 处</div>
-<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+<div class='right'>无第三方版权（AI 生成 + 人工加工）；需按 AIGC 规范标注</div>
 </div></div>
 <div class='card'>
 <div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/scroll_changhe.png')"></div>
@@ -214,7 +259,7 @@ tr:nth-child(even) td{background:#FCFAF5}
 <div class='path'>frontend/public/assets/guancang/scroll_changhe.png</div>
 <div class='meta'>840x290 · 421KB</div>
 <div class='use'>静态引用 3 处</div>
-<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+<div class='right'>无第三方版权（AI 生成 + 人工加工）；需按 AIGC 规范标注</div>
 </div></div>
 <div class='card'>
 <div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/scroll_lundao.jpg')"></div>
@@ -223,7 +268,7 @@ tr:nth-child(even) td{background:#FCFAF5}
 <div class='path'>frontend/public/assets/guancang/scroll_lundao.jpg</div>
 <div class='meta'>1024x341 · 93KB</div>
 <div class='use'>静态引用 1 处</div>
-<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+<div class='right'>无第三方版权（AI 生成 + 人工加工）；需按 AIGC 规范标注</div>
 </div></div>
 <div class='card'>
 <div class='thumb' style="background-image:url('../../frontend/public/assets/guancang/scroll_tingyin.jpg')"></div>
@@ -232,7 +277,7 @@ tr:nth-child(even) td{background:#FCFAF5}
 <div class='path'>frontend/public/assets/guancang/scroll_tingyin.jpg</div>
 <div class='meta'>1024x341 · 89KB</div>
 <div class='use'>静态引用 1 处</div>
-<div class='right'>无第三方版权；需按 AIGC 标注。⚠️ 另有两处措辞称「高清真迹立绘」（docs/handovers/dev-C-literati.md:18,23），与填报记录矛盾，需统一</div>
+<div class='right'>无第三方版权（AI 生成 + 人工加工）；需按 AIGC 规范标注</div>
 </div></div>
 <div class='card'>
 <div class='thumb' style="background-image:url('../../frontend/public/assets/shuzhai/avatar_yunshan.png')"></div>
@@ -260,55 +305,6 @@ tr:nth-child(even) td{background:#FCFAF5}
 <div class='meta'>260x130 · 69KB</div>
 <div class='use'>静态引用 2 处</div>
 <div class='right'>无第三方版权；需按 AIGC 规范标注</div>
-</div></div>
-</div>
-<h2>团队提供底图 / 设计稿切图 · 5 张</h2>
-<table><tr><th style='width:96px'>生成/来源工具</th><td>GPT Image 生成后人工切图（口径之一）；另有文档称「用户提供的底图」</td></tr><tr><th>证据出处</th><td>docs/handovers/CONTEXT-BRIEF.md:53；docs/handovers/dev-B-home.md（四雅插画记为用户提供的底图）</td></tr><tr><th>版权判定</th><td>⚠️ 权属口径不一致，需团队书面确认原始出处</td></tr><tr><th>待办</th><td>统一口径并补原始出处证明</td></tr></table>
-<div class='grid'>
-<div class='card'>
-<div class='thumb' style="background-image:url('../../frontend/public/assets/home/bg-almanac-ancient.jpg')"></div>
-<div class='body'>
-<span class='badge b-team'>团队提供底图 / 设计稿切图</span>
-<div class='path'>frontend/public/assets/home/bg-almanac-ancient.jpg</div>
-<div class='meta'>800x267 · 45KB</div>
-<div class='use'>静态引用 1 处</div>
-<div class='right'>⚠️ 权属口径不一致，需团队书面确认原始出处</div>
-</div></div>
-<div class='card'>
-<div class='thumb' style="background-image:url('../../frontend/public/assets/home/bg-almanac-modern.jpg')"></div>
-<div class='body'>
-<span class='badge b-team'>团队提供底图 / 设计稿切图</span>
-<div class='path'>frontend/public/assets/home/bg-almanac-modern.jpg</div>
-<div class='meta'>800x267 · 43KB</div>
-<div class='use'>静态引用 1 处</div>
-<div class='right'>⚠️ 权属口径不一致，需团队书面确认原始出处</div>
-</div></div>
-<div class='card'>
-<div class='thumb' style="background-image:url('../../frontend/public/assets/home/bg-poem.jpg')"></div>
-<div class='body'>
-<span class='badge b-team'>团队提供底图 / 设计稿切图</span>
-<div class='path'>frontend/public/assets/home/bg-poem.jpg</div>
-<div class='meta'>800x267 · 45KB</div>
-<div class='use'>静态引用 3 处</div>
-<div class='right'>⚠️ 权属口径不一致，需团队书面确认原始出处</div>
-</div></div>
-<div class='card'>
-<div class='thumb' style="background-image:url('../../frontend/public/assets/home/bg-shiwu.jpg')"></div>
-<div class='body'>
-<span class='badge b-team'>团队提供底图 / 设计稿切图</span>
-<div class='path'>frontend/public/assets/home/bg-shiwu.jpg</div>
-<div class='meta'>800x505 · 54KB</div>
-<div class='use'>静态引用 11 处</div>
-<div class='right'>⚠️ 权属口径不一致，需团队书面确认原始出处</div>
-</div></div>
-<div class='card'>
-<div class='thumb' style="background-image:url('../../frontend/public/assets/home/bg-yayan.jpg')"></div>
-<div class='body'>
-<span class='badge b-team'>团队提供底图 / 设计稿切图</span>
-<div class='path'>frontend/public/assets/home/bg-yayan.jpg</div>
-<div class='meta'>800x673 · 92KB</div>
-<div class='use'>静态引用 2 处</div>
-<div class='right'>⚠️ 权属口径不一致，需团队书面确认原始出处</div>
 </div></div>
 </div>
 <h2>团队自制 · 1 张</h2>
