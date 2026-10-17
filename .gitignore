@@ -51,3 +51,9 @@ coverage/
 backend/uploads_temp/
 backend/public/uploads/avatars/*
 !backend/public/uploads/avatars/.gitkeep
+
+# AI 出图工具的默认导出文件（易误落仓库根目录，非项目素材）
+ChatGPT 图像*
+ChatGPT Image*
+DALL·E*
+Midjourney_*

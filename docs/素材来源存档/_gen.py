@@ -89,6 +89,26 @@ RULES = [
 ]
 
 
+# 本次已执行的处置清单（删除记录）
+DISPOSED = [
+    ('frontend/public/assets/auth/reference-login.png', '授权未书面确认，且产品代码零引用（阶段一画稿已被替换）', 2193),
+    ('frontend/public/assets/auth/reference-register.png', '同上', 2092),
+    ('frontend/public/assets/common/bg_guofeng.jpg', '全站背景已改为纯 CSS 三层渐变，该图零引用，文档说法过期', 293),
+    ('frontend/public/assets/guancang/guancang_header_bg.png', '零引用，且文档无启用计划', 441),
+    ('frontend/public/assets/guancang/sage-libai-full-v2.png', '为叠加场景生成但始终未接线，零引用（全站最大单图）', 2390),
+    ('frontend/public/assets/guancang/scroll_lundao.png', '零引用；同名 .jpg 已在 AIPage 使用，PNG 为重复', 420),
+    ('frontend/public/assets/guancang/scroll_tingyin.png', '同上', 391),
+    ('frontend/public/assets/home/bg-paper.jpg', '阶段一切图素材，背景改纯 CSS 后零引用', 159),
+    ('frontend/public/assets/home/poem-art.jpg', '阶段一切图素材，零引用', 2),
+    ('frontend/public/assets/home/yaji-appraise.jpg', '阶段一四雅插画，当前首页改用 CSS 与 Iconfont，零引用', 19),
+    ('frontend/public/assets/home/yaji-debate.jpg', '同上', 23),
+    ('frontend/public/assets/home/yaji-leisure.jpg', '同上', 23),
+    ('frontend/public/assets/home/yaji-poem.jpg', '同上', 25),
+    ('frontend/public/vite.svg', '非 Vite 官方 logo（与 logo.svg 近乎相同），零引用且易误解来源', 5),
+    ('ChatGPT 图像 2026年10月17日 16_01_50.jpg', 'ChatGPT 误落仓库根目录，与项目视觉体系无关，零引用', 64),
+]
+
+
 def classify(rel):
     for prefix, cat, tool, evi, right, todo in RULES:
         if rel.startswith(prefix):
@@ -139,9 +159,16 @@ for r in rows:
     md.append("| %s | %d | %s | %s | %s |" % (r["cat"], n, r["tool"], r["right"], r["todo"]))
 md.append("")
 
-md.append("\n## 二、零引用台账（建议处置）\n")
-md.append("以下 %d 张图在产品代码中**无任何引用**，合计 %.1f MB。其中包含授权存疑的两张登录/注册画稿，"
-          "删除即可同时消除版权不确定性与体积占用。\n" % (len(unused), sum(r["kb"] for r in unused) / 1024))
+md.append("\n## 二、零引用台账\n")
+if unused:
+    md.append("以下 %d 张图在产品代码中**无任何引用**，合计 %.1f MB。\n"
+              % (len(unused), sum(r["kb"] for r in unused) / 1024))
+else:
+    md.append("**当前为零**：产品素材 %d 张全部在代码中有效引用（静态 %d 张 + 动态 %d 张），无冗余文件。\n"
+              % (len([r for r in prod if r["kind"] in ("exact", "dynamic")]),
+                 len([r for r in prod if r["kind"] == "exact"]),
+                 len([r for r in prod if r["kind"] == "dynamic"])))
+    md.append("> 本次审计开始时曾有 14 张零引用（8.3MB），已在第六节记录并全部删除。\n")
 md.append("| 文件 | 体积 | 来源 | 建议 |")
 md.append("| :--- | ---: | :--- | :--- |")
 SUGGEST = {
@@ -201,7 +228,21 @@ md.append("| 6 | **该图被评审判为「古画原作裁圆」，视觉判断�
 md.append("| 7 | **产品内先贤立绘经目视确认为数字插画** | 抽查 guancang/sage_libai.png：均匀线宽、干净数字绘线、含「李白」铭牌，非古画扫描 | 支持「AI 生成」定性 | 按 AI 生成申报并加 AIGC 标识 |")
 md.append("")
 
-md.append("\n## 六、关于生成式 AI 素材的商用条款（需团队核实）\n")
+md.append("\n## 六、处置记录（本次审计后已执行）\n")
+md.append("审计发现 14 张零引用图片与 1 张误落文件（合计 15 个、%.1f MB），经确认后已全部删除。"
+          "所有文件均保留在 Git 历史中，如需恢复可执行 `git checkout <提交> -- <路径>`。\n"
+          % (sum(d[2] for d in DISPOSED) / 1024))
+md.append("| # | 文件 | 体积 | 删除理由 |")
+md.append("| ---: | :--- | ---: | :--- |")
+for i, (rel, reason, kb) in enumerate(DISPOSED, 1):
+    md.append("| %d | `%s` | %dKB | %s |" % (i, rel, kb, reason))
+md.append("")
+md.append("**删除后的验证**：生产构建通过（0 报错）；`dist` 内图片由 40 个降至 29 个且全部为在用素材；"
+          "对 5 个主要页面（雅集/知音/书斋/识器/诗词）做运行时检查，破损图片 0、HTTP 失败请求 0、运行时异常 0。\n")
+md.append("**另加防误提交规则**：`.gitignore` 新增 `ChatGPT 图像*`、`ChatGPT Image*`、`DALL·E*`、`Midjourney_*` 四条，"
+          "避免 AI 出图工具的默认导出文件再次误落仓库根目录。\n")
+
+md.append("\n## 七、关于生成式 AI 素材的商用条款（需团队核实）\n")
 md.append("本作品用到的生成式图像工具包括 Midjourney v6、GPT Image、内置 ImageGen/image_gen、Google Stitch。"
           "这些工具的产出物能否商用、归属如何，取决于使用时账号的订阅层级与当期服务条款。\n")
 md.append("- 本项目为**参赛与教学演示**用途，非商业发行。\n")

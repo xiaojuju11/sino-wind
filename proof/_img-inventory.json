@@ -1,15 +1,5 @@
 [
   {
-    "rel": "ChatGPT 图像 2026年10月17日 16_01_50.jpg",
-    "base": "ChatGPT 图像 2026年10月17日 16_01_50.jpg",
-    "dir": ".",
-    "bytes": 65284,
-    "kb": 64,
-    "refs": [],
-    "sourceDocs": [],
-    "refCount": 0
-  },
-  {
     "rel": "docs/design/cankao/ref-01-ruxi-login.png",
     "base": "ref-01-ruxi-login.png",
     "dir": "docs/design/cankao",
@@ -238,104 +228,6 @@
     "refCount": 4
   },
   {
-    "rel": "frontend/public/assets/auth/reference-login.png",
-    "base": "reference-login.png",
-    "dir": "frontend/public/assets/auth",
-    "bytes": 2245312,
-    "kb": 2193,
-    "refs": [
-      "docs/handovers/dev-A-auth.md",
-      "docs/handovers/dev-B-home.md",
-      "docs/交付物/gen3_素材与版权.py",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json",
-      "TRD_PHASE3.md"
-    ],
-    "sourceDocs": [
-      "docs/handovers/dev-A-auth.md",
-      "docs/handovers/dev-B-home.md",
-      "docs/素材来源存档/图片来源登记表.md",
-      "TRD_PHASE3.md"
-    ],
-    "refCount": 8
-  },
-  {
-    "rel": "frontend/public/assets/auth/reference-register.png",
-    "base": "reference-register.png",
-    "dir": "frontend/public/assets/auth",
-    "bytes": 2141872,
-    "kb": 2092,
-    "refs": [
-      "docs/handovers/dev-A-auth.md",
-      "docs/交付物/gen3_素材与版权.py",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/handovers/dev-A-auth.md",
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 6
-  },
-  {
-    "rel": "frontend/public/assets/common/bg_guofeng.jpg",
-    "base": "bg_guofeng.jpg",
-    "dir": "frontend/public/assets/common",
-    "bytes": 300214,
-    "kb": 293,
-    "refs": [
-      "docs/handovers/ai-log-xiaoxia-2026-10-12-phase3.md",
-      "docs/handovers/ai-log-陈思卉-2026-10-13-phase3.md",
-      "docs/handovers/CONTEXT-BRIEF.md",
-      "docs/handovers/dev-B-home.md",
-      "docs/handovers/dev-C-literati.md",
-      "docs/handovers/PR-home-phase3.md",
-      "docs/TRD_PHASE3_v3.0.3_任务重分配.md",
-      "docs/交付物/gen3_素材与版权.py",
-      "docs/素材来源存档/_gen.py",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "proof/phase3-result.json",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json",
-      "TRD_PHASE3.md"
-    ],
-    "sourceDocs": [
-      "docs/handovers/ai-log-xiaoxia-2026-10-12-phase3.md",
-      "docs/handovers/ai-log-陈思卉-2026-10-13-phase3.md",
-      "docs/handovers/CONTEXT-BRIEF.md",
-      "docs/handovers/dev-B-home.md",
-      "docs/handovers/dev-C-literati.md",
-      "docs/handovers/PR-home-phase3.md",
-      "docs/TRD_PHASE3_v3.0.3_任务重分配.md",
-      "docs/素材来源存档/图片来源登记表.md",
-      "TRD_PHASE3.md"
-    ],
-    "refCount": 15
-  },
-  {
-    "rel": "frontend/public/assets/guancang/guancang_header_bg.png",
-    "base": "guancang_header_bg.png",
-    "dir": "frontend/public/assets/guancang",
-    "bytes": 451239,
-    "kb": 441,
-    "refs": [
-      "docs/交付物/gen3_素材与版权.py",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 5
-  },
-  {
     "rel": "frontend/public/assets/guancang/sage_libai.jpg",
     "base": "sage_libai.jpg",
     "dir": "frontend/public/assets/guancang",
@@ -497,26 +389,6 @@
     "refCount": 7
   },
   {
-    "rel": "frontend/public/assets/guancang/sage-libai-full-v2.png",
-    "base": "sage-libai-full-v2.png",
-    "dir": "frontend/public/assets/guancang",
-    "bytes": 2447616,
-    "kb": 2390,
-    "refs": [
-      "docs/handovers/ai-log-liuxia-2026-10-14-visual-polish.md",
-      "docs/交付物/gen3_素材与版权.py",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/handovers/ai-log-liuxia-2026-10-14-visual-polish.md",
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 6
-  },
-  {
     "rel": "frontend/public/assets/guancang/scroll_changhe.jpg",
     "base": "scroll_changhe.jpg",
     "dir": "frontend/public/assets/guancang",
@@ -577,24 +449,6 @@
     "refCount": 6
   },
   {
-    "rel": "frontend/public/assets/guancang/scroll_lundao.png",
-    "base": "scroll_lundao.png",
-    "dir": "frontend/public/assets/guancang",
-    "bytes": 429870,
-    "kb": 420,
-    "refs": [
-      "docs/素材来源存档/_gen.py",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 5
-  },
-  {
     "rel": "frontend/public/assets/guancang/scroll_tingyin.jpg",
     "base": "scroll_tingyin.jpg",
     "dir": "frontend/public/assets/guancang",
@@ -613,24 +467,6 @@
       "docs/素材来源存档/图片来源登记表.md"
     ],
     "refCount": 6
-  },
-  {
-    "rel": "frontend/public/assets/guancang/scroll_tingyin.png",
-    "base": "scroll_tingyin.png",
-    "dir": "frontend/public/assets/guancang",
-    "bytes": 400085,
-    "kb": 391,
-    "refs": [
-      "docs/素材来源存档/_gen.py",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 5
   },
   {
     "rel": "frontend/public/assets/home/bg-almanac-ancient.jpg",
@@ -675,32 +511,6 @@
       "docs/素材来源存档/图片来源登记表.md"
     ],
     "refCount": 7
-  },
-  {
-    "rel": "frontend/public/assets/home/bg-paper.jpg",
-    "base": "bg-paper.jpg",
-    "dir": "frontend/public/assets/home",
-    "bytes": 162484,
-    "kb": 159,
-    "refs": [
-      "docs/handovers/CONTEXT-BRIEF.md",
-      "docs/handovers/dev-A-visual-reference-polish.md",
-      "docs/handovers/dev-B-home.md",
-      "docs/handovers/PR-home-phase3.md",
-      "docs/交付物/gen3_素材与版权.py",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/handovers/CONTEXT-BRIEF.md",
-      "docs/handovers/dev-A-visual-reference-polish.md",
-      "docs/handovers/dev-B-home.md",
-      "docs/handovers/PR-home-phase3.md",
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 9
   },
   {
     "rel": "frontend/public/assets/home/bg-poem.jpg",
@@ -770,104 +580,6 @@
       "docs/素材来源存档/图片来源登记表.md"
     ],
     "refCount": 7
-  },
-  {
-    "rel": "frontend/public/assets/home/poem-art.jpg",
-    "base": "poem-art.jpg",
-    "dir": "frontend/public/assets/home",
-    "bytes": 2506,
-    "kb": 2,
-    "refs": [
-      "docs/handovers/dev-B-home.md",
-      "docs/PHASE2_API_CONTRACT.md",
-      "docs/交付物/gen3_素材与版权.py",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/handovers/dev-B-home.md",
-      "docs/PHASE2_API_CONTRACT.md",
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 7
-  },
-  {
-    "rel": "frontend/public/assets/home/yaji-appraise.jpg",
-    "base": "yaji-appraise.jpg",
-    "dir": "frontend/public/assets/home",
-    "bytes": 19312,
-    "kb": 19,
-    "refs": [
-      "docs/handovers/dev-B-home.md",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/handovers/dev-B-home.md",
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 5
-  },
-  {
-    "rel": "frontend/public/assets/home/yaji-debate.jpg",
-    "base": "yaji-debate.jpg",
-    "dir": "frontend/public/assets/home",
-    "bytes": 23907,
-    "kb": 23,
-    "refs": [
-      "docs/handovers/dev-B-home.md",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/handovers/dev-B-home.md",
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 5
-  },
-  {
-    "rel": "frontend/public/assets/home/yaji-leisure.jpg",
-    "base": "yaji-leisure.jpg",
-    "dir": "frontend/public/assets/home",
-    "bytes": 23927,
-    "kb": 23,
-    "refs": [
-      "docs/handovers/dev-B-home.md",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/handovers/dev-B-home.md",
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 5
-  },
-  {
-    "rel": "frontend/public/assets/home/yaji-poem.jpg",
-    "base": "yaji-poem.jpg",
-    "dir": "frontend/public/assets/home",
-    "bytes": 25738,
-    "kb": 25,
-    "refs": [
-      "docs/handovers/dev-B-home.md",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/handovers/dev-B-home.md",
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 5
   },
   {
     "rel": "frontend/public/assets/scholar-scenes/dufu-scene-v1.webp",
@@ -1109,26 +821,6 @@
     "refCount": 9
   },
   {
-    "rel": "frontend/public/vite.svg",
-    "base": "vite.svg",
-    "dir": "frontend/public",
-    "bytes": 5420,
-    "kb": 5,
-    "refs": [
-      "docs/素材来源存档/_gen.py",
-      "docs/素材来源存档/图片来源存档.html",
-      "docs/素材来源存档/图片来源登记表.md",
-      "proof/diag-image-inventory.mjs",
-      "proof/diag-image-sources.mjs",
-      "proof/_img-inventory.json",
-      "proof/_img-usage.json"
-    ],
-    "sourceDocs": [
-      "docs/素材来源存档/图片来源登记表.md"
-    ],
-    "refCount": 7
-  },
-  {
     "rel": "proof/chat-libai-390.png",
     "base": "chat-libai-390.png",
     "dir": "proof",
@@ -1166,9 +858,15 @@
     "dir": "proof",
     "bytes": 845200,
     "kb": 825,
-    "refs": [],
-    "sourceDocs": [],
-    "refCount": 0
+    "refs": [
+      "docs/素材来源存档/图片来源存档.html",
+      "docs/素材来源存档/图片来源登记表.md",
+      "proof/_img-inventory.json"
+    ],
+    "sourceDocs": [
+      "docs/素材来源存档/图片来源登记表.md"
+    ],
+    "refCount": 3
   },
   {
     "rel": "proof/img-archive-page.png",
@@ -1176,9 +874,15 @@
     "dir": "proof",
     "bytes": 713861,
     "kb": 697,
-    "refs": [],
-    "sourceDocs": [],
-    "refCount": 0
+    "refs": [
+      "docs/素材来源存档/图片来源存档.html",
+      "docs/素材来源存档/图片来源登记表.md",
+      "proof/_img-inventory.json"
+    ],
+    "sourceDocs": [
+      "docs/素材来源存档/图片来源登记表.md"
+    ],
+    "refCount": 3
   },
   {
     "rel": "proof/letters-390.png",
