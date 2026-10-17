@@ -6,11 +6,14 @@
  *       cd backend && node ../proof/diag-dirty-data.cjs --fix
  */
 const path = require('node:path')
+const { createRequire } = require('node:module')
 const backendDir = path.resolve(__dirname, '..', 'backend')
 process.chdir(backendDir)
-require('dotenv').config({ path: '.env' })
-require('dotenv').config({ path: '.env.local', override: true })
-const mysql = require('mysql2/promise')
+// ⚠️ process.chdir 不改变模块解析基准；须用 createRequire 以 backend 为基准加载依赖
+const backendRequire = createRequire(path.join(backendDir, 'noop.js'))
+backendRequire('dotenv').config({ path: '.env' })
+backendRequire('dotenv').config({ path: '.env.local', override: true })
+const mysql = backendRequire('mysql2/promise')
 
 const PATTERN = /(^|[^\\])u[0-9a-fA-F]{4}(u[0-9a-fA-F]{4})+/
 const FIX = process.argv.includes('--fix')
