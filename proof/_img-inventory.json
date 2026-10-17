@@ -72,24 +72,29 @@
     "refCount": 4
   },
   {
-    "rel": "docs/design/phase3/assets/portrait_libai_welcome.jpg",
-    "base": "portrait_libai_welcome.jpg",
+    "rel": "docs/design/phase3/assets/portrait_libai_welcome.png",
+    "base": "portrait_libai_welcome.png",
     "dir": "docs/design/phase3/assets",
     "bytes": 1688018,
     "kb": 1648,
     "refs": [
+      "DESIGN.md",
       "docs/design/phase3/REVIEW.md",
       "docs/交付物/gen3_素材与版权.py",
+      "docs/素材来源包/_readme.tpl.md",
       "docs/素材来源存档/_gen.py",
       "docs/素材来源存档/图片来源存档.html",
       "docs/素材来源存档/图片来源登记表.md",
+      "proof/_fix_portrait_refs.py",
       "proof/_img-inventory.json"
     ],
     "sourceDocs": [
+      "DESIGN.md",
       "docs/design/phase3/REVIEW.md",
+      "docs/素材来源包/_readme.tpl.md",
       "docs/素材来源存档/图片来源登记表.md"
     ],
-    "refCount": 6
+    "refCount": 9
   },
   {
     "rel": "docs/design/phase3/P1-yaji.png",
@@ -254,6 +259,8 @@
     "bytes": 117591,
     "kb": 115,
     "refs": [
+      "docs/交付物/gen3_素材与版权.py",
+      "docs/素材来源包/_readme.tpl.md",
       "docs/素材来源存档/_gen.py",
       "docs/素材来源存档/图片来源存档.html",
       "docs/素材来源存档/图片来源登记表.md",
@@ -264,9 +271,10 @@
       "proof/_img-usage.json"
     ],
     "sourceDocs": [
+      "docs/素材来源包/_readme.tpl.md",
       "docs/素材来源存档/图片来源登记表.md"
     ],
-    "refCount": 8
+    "refCount": 10
   },
   {
     "rel": "frontend/public/assets/guancang/sage_liqingzhao.jpg",
@@ -784,6 +792,7 @@
     "refs": [
       "docs/handovers/ai-log-liuxia-2026-10-16-visual-refine.md",
       "docs/交付物/gen3_素材与版权.py",
+      "docs/素材来源包/_pack.py",
       "docs/素材来源存档/_gen.py",
       "docs/素材来源存档/图片来源存档.html",
       "docs/素材来源存档/图片来源登记表.md",
@@ -795,7 +804,7 @@
       "docs/handovers/ai-log-liuxia-2026-10-16-visual-refine.md",
       "docs/素材来源存档/图片来源登记表.md"
     ],
-    "refCount": 8
+    "refCount": 9
   },
   {
     "rel": "frontend/public/logo.svg",
@@ -805,6 +814,9 @@
     "kb": 5,
     "refs": [
       "docs/handovers/dev-郑小君-2026-10-15-ui-closed-loop.md",
+      "docs/交付物/gen3_素材与版权.py",
+      "docs/素材来源包/_pack.py",
+      "docs/素材来源包/_readme.tpl.md",
       "docs/素材来源存档/_gen.py",
       "docs/素材来源存档/图片来源存档.html",
       "docs/素材来源存档/图片来源登记表.md",
@@ -816,9 +828,10 @@
     ],
     "sourceDocs": [
       "docs/handovers/dev-郑小君-2026-10-15-ui-closed-loop.md",
+      "docs/素材来源包/_readme.tpl.md",
       "docs/素材来源存档/图片来源登记表.md"
     ],
-    "refCount": 9
+    "refCount": 12
   },
   {
     "rel": "proof/chat-libai-390.png",
@@ -1124,6 +1137,18 @@
       "docs/素材来源存档/图片来源登记表.md"
     ],
     "refCount": 5
+  },
+  {
+    "rel": "proof/pkg-preview.png",
+    "base": "pkg-preview.png",
+    "dir": "proof",
+    "bytes": 2180006,
+    "kb": 2129,
+    "refs": [
+      "proof/_img-inventory.json"
+    ],
+    "sourceDocs": [],
+    "refCount": 1
   },
   {
     "rel": "proof/poem-metre-dark-390.png",

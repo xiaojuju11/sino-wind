@@ -58,8 +58,9 @@ h2(doc, "1.4 仍需人工确认的事项")
 note(doc, "下列事项在本清单中无法通过仓库证据得出结论，须由团队书面确认后方可定稿。")
 items = [
     "docs/design/phase3/ 目录若进入交付物：其 stitch-export/*.html 含 fonts.googleapis.com 与 Material Symbols 外链；"
-    "assets/portrait_libai_welcome.jpg 被设计评审判为「写实古画原作裁圆」，但该图实为 1024×1024 的 PNG"
-    "（扩展名标为 .jpg 与实际格式不符），尺寸与构图特征更接近 AI 生成，定性需团队确认。",
+    "assets/portrait_libai_welcome.png 被设计评审判为「写实古画原作裁圆」，但该图实为 1024×1024 的 PNG"
+    "（尺寸与构图特征更接近 AI 生成，与「古画原作」的判断存在出入），定性需团队确认。"
+    "（附注：该文件此前因评审误判「实为 JPEG」被改名为 .jpg，已于 2026-10-17 核验文件头为 PNG 签名后恢复为 .png。）",
     "docs/design/cankao/ 四张参考图（约 5.5MB）确认为队长提供的审美基准，但原始来源与授权未书面确认。",
     "作品自身的开源许可证尚未统一：backend/package.json 标注 ISC、readme.md 徽章标注 MIT，"
     "而仓库根目录无 LICENSE 文件。需统一并落盘。",

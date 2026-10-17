@@ -79,11 +79,17 @@
 docs/design/phase3/
 ├── P1-yaji.png  P2-zhiyin.png  P3-zhiyin-chat.png  P4-yingqing.png  P5-shuzhai.png
 ├── REVIEW.md                        本评审记录
-├── assets/portrait_libai_welcome.jpg  P3 立绘素材（该文件实为 JPEG，原扩展名误标为 .png）
+├── assets/portrait_libai_welcome.png  P3 立绘素材（PNG，1024×1024）
 └── stitch-export/                    Stitch 导出物（参考用，禁止直接入库为生产代码）
     ├── design-system-m3.md
     └── code-P1-yaji.html … code-P5-shuzhai.html
 ```
+
+> **文件格式勘误（2026-10-17）**：本文件原记载 `portrait_libai_welcome` 立绘「实为 JPEG，
+> 原扩展名误标为 .png」，据此被改名为 `.jpg`。实际核验文件头字节为 `89 50 4E 47`
+> （PNG 签名），Pillow 识别亦为 PNG（1024×1024 RGB）—— 即该文件**本来就是 PNG**，
+> 原 `.png` 扩展名正确，此前的「实为 JPEG」判断有误。
+> 现已恢复为 `portrait_libai_welcome.png`，与 `DESIGN.md` 立绘清单中的命名一致。
 
 ---
 

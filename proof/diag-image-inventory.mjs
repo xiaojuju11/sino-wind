@@ -5,11 +5,15 @@ import path from 'node:path'
 const ROOT = 'D:/sino-wind-taskB'
 const IMG_EXT = /\.(png|jpe?g|webp|gif|svg|bmp|ico)$/i
 const SKIP = new Set(['node_modules', '.git', 'dist', '.agents'])
+// 分发产物目录不计入仓库图片统计（内含 frontend/public 的副本，会重复计数且污染引用判定）
+const SKIP_PATHS = ['docs/素材来源包/云山竹简-素材来源包-', 'docs/素材来源包/云山竹简-界面截图-']
 
 const walk = (dir, out = []) => {
   for (const n of fs.readdirSync(dir)) {
     if (SKIP.has(n)) continue
     const p = path.join(dir, n)
+    const rel = path.relative(ROOT, p).replace(/\\/g, '/') + (fs.statSync(p).isDirectory() ? '/' : '')
+    if (SKIP_PATHS.some((s) => rel.startsWith(s))) continue
     if (fs.statSync(p).isDirectory()) walk(p, out)
     else if (IMG_EXT.test(n)) out.push(p)
   }
@@ -23,6 +27,8 @@ const walkText = (dir) => {
   for (const n of fs.readdirSync(dir)) {
     if (SKIP.has(n)) continue
     const p = path.join(dir, n)
+    const rel = path.relative(ROOT, p).replace(/\\/g, '/') + (fs.statSync(p).isDirectory() ? '/' : '')
+    if (SKIP_PATHS.some((s) => rel.startsWith(s))) continue
     if (fs.statSync(p).isDirectory()) walkText(p)
     else if (TEXT_EXT.test(n)) textFiles.push(p)
   }

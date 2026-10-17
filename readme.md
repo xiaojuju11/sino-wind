@@ -239,19 +239,34 @@ npm run build
 
 ## 📡 6. 核心 API 接口契约
 
-| 接口路径 | 请求方式 | 鉴权要求 | 功能描述 |
+后端共 **40 条**接口，按 5 个路由模块挂载。下表列出核心接口；完整清单见 `backend/src/routes/` 或运行 `node proof/gen-api-list.mjs` 生成。
+
+**鉴权约定**：需鉴权的接口在 `Authorization` 头携带 Token。Token 缺失或过期时统一返回 **HTTP 416**（前端据此跳转登录页）；标记「可选」的接口允许游客访问，登录后自动关联账号数据。
+
+| 接口路径 | 方法 | 鉴权 | 功能描述 |
 | :--- | :---: | :---: | :--- |
-| `/api/auth/login` | POST | 否 | 用户手机/邮箱密押登录，返回 Token |
+| `/api/auth/login` | POST | 否 | 手机/邮箱密押登录，返回 Token |
 | `/api/auth/register` | POST | 否 | 雅士缔约注册，防重验真 |
-| `/api/auth/info` | GET | 是 | 获取雅士档案与 4 大修持统计数据 |
-| `/api/almanac/dual` | GET | 否 | 获取古今时令、十二时辰与天象雅语对照 |
-| `/api/translation/classical` | POST | 否/可选 | 现代普通话大白话转优雅文言/名篇诗词 |
-| `/api/poem/random` | GET | 否 | 随机获取经典诗词（带三级降级与缓存保护） |
-| `/api/poem/search` | GET | 否 | 关键词检索海量诗篇 |
-| `/api/poem/collect` | POST | 是 | 诗卷/雅言摘录入卷（带行锁与防重事务） |
-| `/api/poem/collection` (别名 `/my-list`)| GET | 是 | 分页查询“我的诗笺”收录列表 |
-| `/api/deepseek/chat` | POST | 否/可选 | 携 `sageId` 人设与知己圈的先贤单聊/群聊对话 |
-| `/api/sage/generate-profile` | POST | 是 | 输入诗人名，AI 一键考释赋魂生成生平与朋友圈 |
+| `/api/auth/captcha` | GET | 否 | 图形验证码（svg-captcha） |
+| `/api/auth/info` | GET | 是 | 雅士档案与修持统计 |
+| `/api/poem/random` | GET | 否 | 随机经典诗词（三级降级 + 缓存） |
+| `/api/poem/search` | GET | 否 | 关键词检索诗篇 |
+| `/api/poem/collect` | POST | 是 | 诗卷摘录入卷（行锁 + 防重事务） |
+| `/api/poem/collection` | GET | 是 | 分页查询「我的诗笺」 |
+| `/api/deepseek/chat` | POST | 可选 | 携 `sageId` 人设的先贤单聊/群聊对话 |
+| `/api/deepseek/chat/stream` | POST | 可选 | 同上，SSE 流式返回 |
+| `/api/deepseek/soul` | POST | 是 | 输入诗人名，AI 考释赋魂生成生平与交游圈 |
+| `/api/deepseek/yayan` | POST | 否 | 现代白话转写文言雅语（含离线兜底） |
+| `/api/deepseek/appreciate` | POST | 否 | 古诗词分级赏析（含离线兜底） |
+| `/api/deepseek/feihua/rules` | GET | 否 | 飞花令令字白名单与规则 |
+| `/api/deepseek/feihua/start` | POST | 可选 | 开局（平水韵校验 + 本地计分） |
+| `/api/deepseek/feihua/turn` | POST | 可选 | 出句校验与应答 |
+| `/api/deepseek/scholar/summary` | GET | 是 | 修持四维统计（鉴宝/论道/诗签/雅言） |
+| `/api/deepseek/scholar/letters` | GET | 是 | 先贤信札列表 |
+| `/api/coze/recognition` | POST | 否 | 拍照识器（多模态识别，上游不可用时返回明确错误码） |
+| `/api/upload/check` `/chunk` `/merge` | POST | 是 | 头像分片上传 |
+
+**已移除的接口**（早期文档曾列出，现已不存在）：`/api/almanac/dual`（古今时令改由前端 `utils/almanac.js` 计算）、`/api/translation/classical`（更名 `/api/deepseek/yayan`）、`/api/sage/generate-profile`（更名 `/api/deepseek/soul`）。
 
 ---
 

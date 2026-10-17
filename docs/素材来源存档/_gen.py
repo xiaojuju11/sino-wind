@@ -70,7 +70,7 @@ RULES = [
      "docs/design/cankao/README.md:1-12（队长提供的审美基准参考图，仅作出图对齐）",
      "⚠️ 原始来源与授权未书面确认；文档已禁止放入 frontend/public/", "补授权说明；确认不进交付包"),
 
-    ("docs/design/phase3/", "AI 设计稿 / 含古画素材（不进产品）", "Google Stitch 导出；portrait_libai_welcome.jpg 被评审判为「古画原作裁圆」",
+    ("docs/design/phase3/", "AI 设计稿 / 含古画素材（不进产品）", "Google Stitch 导出；portrait_libai_welcome.png 被评审判为「古画原作裁圆」",
      "docs/design/phase3/REVIEW.md（判定先贤头像为写实古画原作裁圆、立绘为彩色古画，要求替换为团队自有写意水墨）",
      "⚠️ 古画类若确为扫描件属公有领域（宋画逾千年）但须标出处；Stitch 导出稿含 fonts.googleapis.com 外链",
      "确认不进交付包，或清理外链并标注古画出处"),
@@ -225,7 +225,7 @@ md.append("| 1 | **14 张图 / 8.3MB 在产品代码中零引用** | proof/diag-
 md.append("| 2 | **全站背景已改为纯 CSS 渐变**，文档仍称「全站统一使用 bg_guofeng.jpg」 | frontend/src/styles/app.less:6-9 为三层 gradient，无图片引用 | 文档过期；该图 293KB 亦零引用 | 删图并更正文档 |")
 md.append("| 3 | **guancang 立绘同时存在 .jpg 与 .png 两份** | AIPage.jsx 用 .jpg；InviteDrawer/LetterList/ScholarChat 用 .png；scroll_lundao.png 与 scroll_tingyin.png 零引用 | 冗余 811KB | 删除零引用的两份 PNG |")
 md.append("| 4 | **同一作者两份文档对 guancang 定性矛盾** | ai-log-C-literati.md:28,40 称 Midjourney 生成；dev-C-literati.md:18,23 称「高清真迹立绘」「真迹画卷」 | 申报口径不一致 | 统一为「AI 生成 + 人工精修」，删除「真迹」措辞 |")
-md.append("| 5 | **portrait_libai_welcome.jpg 扩展名与实际格式不符** | 声明 .jpg，实际为 PNG（1024x1024）；本次审计读取时即报错 | 部分工具会读取失败 | 改名或重新编码 |")
+md.append("| 5 | ~~portrait_libai_welcome 扩展名不符~~ **已修复** | 原声明 .jpg，文件头为 PNG 签名（89 50 4E 47）；REVIEW.md 曾误判「实为 JPEG」 | 部分工具读取失败 | ✅ 已恢复为 .png 并加勘误说明 |")
 md.append("| 6 | **该图被评审判为「古画原作裁圆」，视觉判断更可能是 AI 生成** | REVIEW.md 记载 vs 图片为 1024x1024 标准生成尺寸、构图干净、含书法与印章 | 若确为古画需标出处；若为 AI 需标 AIGC | 团队确认后统一口径 |")
 md.append("| 7 | **产品内先贤立绘经目视确认为数字插画** | 抽查 guancang/sage_libai.png：均匀线宽、干净数字绘线、含「李白」铭牌，非古画扫描 | 支持「AI 生成」定性 | 按 AI 生成申报并加 AIGC 标识 |")
 md.append("")
