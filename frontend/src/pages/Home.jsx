@@ -59,8 +59,8 @@ function getDateText(date = new Date()) {
 // 古今识物 · 示例体验（对齐设计稿两条）
 // 图标走 TRD §2.3 第三优先级「CSS 印章」：朱砂印泥 + 单字古称，随主题着色
 const SHIWU_DEMOS = [
-  { seal: '酪', modern: '拍奶茶', ancient: '酪饮 / 酥签' },
-  { seal: '笈', modern: '拍书包', ancient: '筒简 / 书笈' },
+  { id: 'naicha', seal: '酪', modern: '拍奶茶', ancient: '酪饮 / 酥签' },
+  { id: 'shubao', seal: '笈', modern: '拍书包', ancient: '筒简 / 书笈' },
 ]
 
 // 首屏预置的雅译范例（与后端离线典范库口径一致）
@@ -604,7 +604,7 @@ export default function Home() {
                 key={item.modern}
                 type="button"
                 className="home-shiwu-demo__item"
-                onClick={() => navigate('/recognition')}
+                onClick={() => navigate(`/recognition?preset=${item.id}`)}
               >
                 <span className="home-shiwu-demo__seal" aria-hidden="true">{item.seal}</span>
                 <span className="home-shiwu-demo__modern">{item.modern}</span>

@@ -22,6 +22,34 @@ function createPresetSvg(glyph, name, dynasty, color) {
 
 const MUSEUM_PRESETS = [
   {
+    id: 'naicha',
+    name: '酪饮 · 酥签',
+    dynasty: '两宋',
+    category: '临安茶肆乳酪绝品',
+    seal: '今物',
+    bgColor: '#4a3319',
+    tag: '今夕相映 · 现代奶茶雅祖',
+    thumb: '酪',
+    desc: '煎点酥酪芳润，辛弃疾词云“饮罢松萝一盏酪”',
+    description: '宋代临安与汴京茶肆之消暑与冬令雅饮。宋人将初乳精炼为酥酪，辅以松萝清茶或龙脑花露煎点，称为「酪饮」或「酥签」，辛弃疾词云“饮罢松萝一盏酪，清芬留得绕牙香”，实为现代鲜奶茶与奶盖之雅制源头。\n【流变考略】汉魏酥酪浆饮 ➔ 唐代醍醐与酥山（冷冻点心） ➔ 两宋茶肆酥签与酪饮（文人雅饮） ➔ 明清酥油茶与老北京酪香 ➔ 现当代新中式茶饮与鲜萃奶茶。',
+    craft: '古法乳酪提炼与煎茶调和工艺',
+    material: '天然乳脂、松萝茶与龙脑花露'
+  },
+  {
+    id: 'shubao',
+    name: '漆藤书笈 · 简囊',
+    dynasty: '宋代',
+    category: '士子负笈随行重器',
+    seal: '今物',
+    bgColor: '#213028',
+    tag: '士子雅行 · 现代书包之源',
+    thumb: '笈',
+    desc: '负笈求学之重器，多层屉格分储简册文房',
+    description: '古人负笈求学行万里路之随身文器，多以轻质竹木或细藤编织为胎，外髹生漆，内置多层屉格与护角，分别收纳诗卷、简策、砚台与笔墨，兼具防水防蛀与便携之能，苏轼诗云“短褐风霜负笈游”，正为此物。\n【流变考略】战国竹简革囊 ➔ 汉晋漆藤书笈与负箧 ➔ 宋元折叠箱笈（分层收纳体系确立） ➔ 明清硬木文具箱与布夹 ➔ 现当代多功能减负书包与文创双肩包。',
+    craft: '劈篾编织与大漆髹涂工艺',
+    material: '江南紫竹、细藤与熟桐油生漆'
+  },
+  {
     id: 'tianmu-cup',
     name: '曜变天目茶盏',
     dynasty: '宋代',
@@ -65,15 +93,38 @@ const MUSEUM_PRESETS = [
   }
 ]
 
+function getInitialPreset() {
+  if (typeof window === 'undefined' || !window.location?.search) return null
+  try {
+    const params = new URLSearchParams(window.location.search)
+    const id = params.get('preset')
+    return (id && MUSEUM_PRESETS.find(p => p.id === id)) || null
+  } catch {
+    return null
+  }
+}
+
 export default function Recognition() {
-  const [recognitionResult, setRecognitionResult] = useState(null)
+  const initialSpecimen = getInitialPreset()
+  const [recognitionResult, setRecognitionResult] = useState(() => initialSpecimen ? {
+    code: 1,
+    source: 'preset-specimen',
+    notice: '内置研习案例：图示与考释为预先编写的示例，本次未调用图像识别，不作为个人识物成果。',
+    data: {
+      name: initialSpecimen.name,
+      dynasty: initialSpecimen.dynasty,
+      description: initialSpecimen.description,
+      craft: initialSpecimen.craft,
+      material: initialSpecimen.material
+    }
+  } : null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [scene, setScene] = useState(0) // 每次识别递增，用作结果组件的 key，确保新一轮结果从干净状态起渲染
-  const [presetPreview, setPresetPreview] = useState(null)
-  const [activePresetId, setActivePresetId] = useState('')
+  const [presetPreview, setPresetPreview] = useState(() => initialSpecimen ? createPresetSvg(initialSpecimen.thumb, initialSpecimen.name, initialSpecimen.dynasty, initialSpecimen.bgColor) : null)
+  const [activePresetId, setActivePresetId] = useState(() => initialSpecimen ? initialSpecimen.id : '')
   const requestSeq = useRef(0) // 请求序号：旧响应一律丢弃，避免覆盖新一次识别
-  const selectedImage = useRef(null)
+  const selectedImage = useRef(initialSpecimen ? createPresetSvg(initialSpecimen.thumb, initialSpecimen.name, initialSpecimen.dynasty, initialSpecimen.bgColor) : null)
 
   const recognize = useCallback(async (dataUrl) => {
     const seq = ++requestSeq.current

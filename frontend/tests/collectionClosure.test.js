@@ -51,6 +51,7 @@ async function mount(page, { token = 'account-a', saved = null, get, props = {} 
       return helper
     }
     else if (name.includes('scholarAssets')) exports = { guestSummary: () => ({}), guestArchiveCount: () => 0, importGuestArchive: async () => {}, guestGames: () => [] }
+    else if (name.includes('sceneStorage')) exports = { listScenes: async () => [] }
     else if (name.includes('guofengAudio')) exports = { playSilkScrollSound: () => {}, playInkDropSound: () => {}, playChimeSound: () => {} }
     else exports = { default: name.includes('EmptyState') ? 'EmptyState' : 'DecorativeComponent' }
     return new vm.SyntheticModule(Object.keys(exports), function () { for (const [key, value] of Object.entries(exports)) this.setExport(key, value) }, { context })

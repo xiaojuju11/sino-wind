@@ -14,6 +14,7 @@ import { finishStudySession } from '../utils/studyFlow'
 
 import { scholarScope, syncLocalLetters } from '../utils/scholarLetters'
 import { guestSummary, guestArchiveCount, importGuestArchive, guestGames } from '../utils/scholarAssets'
+import { listScenes } from '../utils/sceneStorage'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -21,6 +22,7 @@ function MinePageSession() {
   const navigate = useNavigate()
   const [userInfo, setUserInfo] = useState({})
   const [rankData, setRankData] = useState(null)
+  const [sceneCount, setSceneCount] = useState(0)
   const [guestCount, setGuestCount] = useState(guestArchiveCount)
   const [importing, setImporting] = useState(false)
   const refreshAssets = useRef(() => {})
@@ -35,6 +37,7 @@ function MinePageSession() {
       const current = ++generation, scope = scholarScope()
       const valid = () => alive && current === generation && scope === scholarScope()
       setGuestCount(guestArchiveCount())
+      listScenes(scope).then(rows => { if (valid()) setSceneCount(rows.length) }).catch(() => {})
       if (!scope.startsWith('user:')) {
         setUserInfo(guestSummary()); setRankData(null)
         return
@@ -53,8 +56,8 @@ function MinePageSession() {
     const schedule = () => { clearTimeout(timer); timer = setTimeout(fetchInfo, 100) }
     refreshAssets.current = fetchInfo
     fetchInfo()
-    for (const event of ['userInfoUpdated', 'scholarAssetsUpdated', 'focus', 'storage']) window.addEventListener(event, schedule)
-    return () => { alive = false; generation++; clearTimeout(timer); for (const event of ['userInfoUpdated', 'scholarAssetsUpdated', 'focus', 'storage']) window.removeEventListener(event, schedule) }
+    for (const event of ['userInfoUpdated', 'scholarAssetsUpdated', 'sceneArchiveUpdated', 'focus', 'storage']) window.addEventListener(event, schedule)
+    return () => { alive = false; generation++; clearTimeout(timer); for (const event of ['userInfoUpdated', 'scholarAssetsUpdated', 'sceneArchiveUpdated', 'focus', 'storage']) window.removeEventListener(event, schedule) }
   }, [])
   const importGuest = async () => {
     if (importing) return
@@ -93,8 +96,13 @@ function MinePageSession() {
   // 原先此处还解构了 { theme, toggleTheme, isDark }，但 theme 从未被使用（ESLint 报错），
   // 而 toggleTheme / isDark 仅服务于已删除的「日月交替」重复行 —— 故一并清理。
 
-  // Five asset sources; competitive records and ranks are read-only API results.
+  // Six asset sources; primary storyline 诗境藏卷 at the first position.
   const stats = [
+    {
+      num: sceneCount,
+      label: '诗境藏卷',
+      onClick: () => navigate('/mine/scenes')
+    },
     {
       num: userInfo.appraise_count ?? '—',
       label: '鉴宝印记',
