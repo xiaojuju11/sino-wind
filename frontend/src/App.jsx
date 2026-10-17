@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './styles/app.less'
 import BambooBreeze from './components/BambooBreeze'
+import DesktopStageWings from './components/DesktopStageWings'
 import Layout from './pages/Layout'
 import Home from './pages/Home'
 import MinePage from './pages/MinePage'
@@ -48,6 +49,7 @@ export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <BambooBreeze />
+      <DesktopStageWings />
       <Suspense fallback={<PageFallback />}>
         <Routes>
           <Route path='/login' element={<AuthPage/>}></Route>

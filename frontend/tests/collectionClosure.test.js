@@ -44,13 +44,14 @@ async function mount(page, { token = 'account-a', saved = null, get, props = {} 
     else if (name === 'antd-mobile') exports = { Toast: { show: value => toasts.push(value) }, Modal: { confirm: value => { confirm = value } }, Popup: 'Popup', ActionSheet: 'ActionSheet', ImageViewer: 'ImageViewer' }
     else if (name === 'antd-mobile-icons') exports = Object.fromEntries(['LeftOutline', 'SearchOutline', 'FileOutline', 'RightOutline', 'HeartOutline', 'CloseOutline', 'RedoOutline'].map(key => [key, key]))
     else if (name.includes('useScholarScope')) exports = { useScholarScope: scope }
-    else if (name.includes('scholarLetters')) exports = { scholarScope: scope, syncLocalLetters: async () => {}, cachedLetters: () => [], loadLetters: async () => [], shichen: () => '辰时初刻' }
+    else if (name.includes('scholarLetters')) exports = { scholarScope: scope, syncLocalLetters: async () => {}, cachedLetters: () => [], loadLetters: async () => [], shichen: () => '辰时初刻', markLetterRead: async () => {} }
     else if (name.includes('studyFlow')) {
       const helper = new vm.SourceTextModule(await fs.readFile(new URL('../src/utils/studyFlow.js', import.meta.url), 'utf8'), { context })
       await helper.link(() => { throw new Error('Unexpected study helper dependency') })
       return helper
     }
     else if (name.includes('scholarAssets')) exports = { guestSummary: () => ({}), guestArchiveCount: () => 0, importGuestArchive: async () => {}, guestGames: () => [] }
+    else if (name.includes('guofengAudio')) exports = { playSilkScrollSound: () => {}, playInkDropSound: () => {}, playChimeSound: () => {} }
     else exports = { default: name.includes('EmptyState') ? 'EmptyState' : 'DecorativeComponent' }
     return new vm.SyntheticModule(Object.keys(exports), function () { for (const [key, value] of Object.entries(exports)) this.setExport(key, value) }, { context })
   })
@@ -226,7 +227,7 @@ test('duplicate confirms send only one removal and search still uses real items'
 test('Mine opens real secondary routes instead of a yayan drawer or fake notification toggle', async () => {
   const f = await mount('MinePage', { token: null })
   await f.flush()
-  for (const [label, route] of [['雅译锦囊', '/mine/yayan'], ['藏牒阁', '/mine/archive'], ['物溯宝鉴', '/mine/artifacts'], ['消息通知', '/mine/messages']]) {
+  for (const [label, route] of [['雅译锦囊', '/mine/yayan'], ['藏牒阁', '/mine/archive'], ['物溯宝鉴', '/mine/artifacts'], ['知音回柬', '/mine/messages']]) {
     nodes(f.tree, node => node.type === 'button' && node.props?.className === 'shuzhai-list-item' && text(node).includes(label))[0].props.onClick()
     assert.equal(f.navigations.at(-1)[0], route)
   }
@@ -248,7 +249,7 @@ test('routed yayan notebook reads home excerpts and preserves original source me
   assert.equal(cards(f).length, 2)
   assert.equal(f.localStorage.getItem('gufeng_yayan_list'), saved, 'invalid rows are not removed from the stored original')
   f.localStorage.setItem('gufeng_yayan_list', JSON.stringify([{ ancient: '新摘录', modern: '重新开卷可见' }]))
-  nodes(f.tree, node => node.type === 'button' && node.props?.className === 'study-page__refresh')[0].props.onClick()
+  f.events.dispatchEvent(new Event('storage'))
   await f.flush()
   assert.match(text(f.tree), /新摘录/)
   assert.doesNotMatch(text(f.tree), /一期一会/)

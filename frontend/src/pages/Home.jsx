@@ -2,8 +2,8 @@ import ReferenceCorners from '../components/ReferenceCorners'
 import SceneHomeCard from '../components/SceneHomeCard'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import '../styles/home.less'
-import { Toast, Popup } from 'antd-mobile'
-import { DownOutline, RightOutline, UpOutline, CompassOutline, CheckCircleOutline, StarOutline, SearchOutline } from 'antd-mobile-icons'
+import { Toast, Popup, CenterPopup } from 'antd-mobile'
+import { DownOutline, RightOutline, UpOutline, CheckCircleOutline, StarOutline, SearchOutline } from 'antd-mobile-icons'
 import { CITY_DICT, autoDetectUserCity } from '../utils/ancientCities'   // 郑小君的逐城精编诗文 + IP 感知
 import { useNavigate } from 'react-router-dom'
 import InkParticleField from '../components/InkParticleField.jsx'
@@ -14,13 +14,11 @@ import '../styles/referencePolish.less'
 import { CITIES, searchCities } from '../utils/geoCities.js'
 import { currentTerm, seasonLine, fetchWeather, locate } from '../utils/almanac.js'
 import { SHICHEN, shichenOf } from '../utils/shichen.js'
+import { playInkDropSound } from '../utils/guofengAudio.js'
 // 《九州地名志 · 城邑春秋》已迁到独立二级页面（pages/CityChroniclePage.jsx），
 // 本页不再需要 cityChronicle / NOT_FOUND_TIP / RECOMMEND_CITIES
 
 const BASE = import.meta.env.BASE_URL
-
-// 现代天气日轮图标
-function SunWheelGlyph() { return <CompassOutline aria-hidden="true" /> }
 
 // ════════════════════════════════════════════════════
 //  传统时辰换算（TRD v3.0：动态算法换算十二时辰）
@@ -354,6 +352,7 @@ export default function Home() {
         createdAt: new Date().toLocaleDateString(),
       })
       localStorage.setItem('gufeng_yayan_list', JSON.stringify(saved))
+      playInkDropSound()
       Toast.show({ content: '已摘录入墨隐书斋 · 雅译锦囊', icon: 'success' })
     } catch {
       Toast.show({ content: '摘录未保存，本机存储不可用，请稍后重试', icon: 'fail' })
@@ -485,15 +484,6 @@ export default function Home() {
         <div className="home-section-header">
           <h2 className="home-section-title">古今时令与天象</h2>
           <span className="home-section-seal">时</span>
-          <button
-            type="button"
-            className="home-almanac__roam"
-            onClick={openChronicle}
-            aria-label="漫游古今城邑"
-          >
-            <CompassOutline className="home-almanac__roam-icon" />
-            漫游
-          </button>
         </div>
         <p className="home-section-sub">观天时，知物候，品古今生活之美。</p>
 
@@ -501,10 +491,6 @@ export default function Home() {
           <div className="home-almanac__col">
             <span className="home-almanac__label">现代 · 今日</span>
             <div className="home-almanac__weather">
-              {/* 图标铁律：使用已安装官方库矢量纹样 */}
-              <span className="home-almanac__sun" aria-hidden="true">
-                <SunWheelGlyph />
-              </span>
               {/* 真实气温（Open-Meteo，按选中城邑经纬度取数） */}
               <span className="home-almanac__temp">{wx.temp}</span>
             </div>
@@ -678,14 +664,16 @@ export default function Home() {
         </div>
       </Popup>
 
-      {/* ── 《十二时辰养生与雅事》：滑动体验十二时辰 ── */}
-      <Popup
+      {/* ── 《十二时辰养生与雅事》：居中宣纸画卷弹窗 ── */}
+      <CenterPopup
         visible={shichenOpen}
         onMaskClick={() => setShichenOpen(false)}
         onClose={() => setShichenOpen(false)}
-        bodyStyle={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}
+        showCloseButton={false}
+        className="home-shichen-popup"
       >
-        <div className="home-shichen">
+        <div className="home-shichen home-shichen--modal">
+          <ReferenceCorners />
           <div className="home-shichen__head">
             <strong>十二时辰养生与雅事</strong>
             <button type="button" onClick={() => setShichenOpen(false)} aria-label="收起">收起</button>
@@ -709,9 +697,9 @@ export default function Home() {
               </article>
             ))}
           </div>
-          <p className="home-shichen__foot">左右滑动，遍览十二时辰 · 今人所行，古人亦有节候</p>
+          <p className="home-shichen__foot">左右滑动，遇见十二时辰 · 今人所行，古人亦有节候</p>
         </div>
-      </Popup>
+      </CenterPopup>
     </div>
   )
 }

@@ -2,6 +2,7 @@ import './index.less'
 import { useEffect, useRef, useState } from 'react'
 import { Toast } from 'antd-mobile'
 import axios from '../../http'
+import { playInkDropSound } from '../../utils/guofengAudio'
 
 /**
  * 物溯古今 · 识别结果（郑小君 · 视觉体系与前端雅言吟诵闭环）
@@ -85,6 +86,7 @@ export default function RecognitionResult({ recognitionResult, pending = false }
         { timeout: 10000 }
       )
       setSaved(true)
+      playInkDropSound()
       Toast.show({ content: '已收入书斋物溯宝鉴，可前往知音携物入席', icon: 'success' })
     } catch {
       Toast.show({ content: '尚未保存，请稍候重试' })
