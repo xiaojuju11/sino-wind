@@ -342,7 +342,7 @@ export default function AccountSetting() {
 
       {/* 账号配置列表 */}
       {recoveryOpen ? <section className="account-recovery">
-        {recoveryCode ? <RecoveryCodeCard code={recoveryCode} showSeal={false} onDone={() => { setRecoveryCode(''); setRecoveryOpen(false) }} /> : <>
+        {recoveryCode ? <RecoveryCodeCard code={recoveryCode} onDone={() => { setRecoveryCode(''); setRecoveryOpen(false) }} /> : <>
           <span className="account-recovery__eyebrow">密笺护席</span>
           <h2>留一份凭据，安心归来</h2>
           <p>恢复码可在忘记密码时验证身份。请输入当前密码生成；如已有恢复码，新码生成后将立即替换旧码。</p>
