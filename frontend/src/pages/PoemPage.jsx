@@ -2,7 +2,7 @@ import ReferenceCorners from '../components/ReferenceCorners'
 import '../styles/poem.less'
 import '../styles/poemMetre.less'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { SearchBar, Toast } from 'antd-mobile'
 import {
   LeftOutline,
@@ -110,6 +110,8 @@ function snippetOf(item) {
 
 export default function PoemPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const [searchParams] = useSearchParams()
   const [poem, setPoem] = useState(null)
   const [loading, setLoading] = useState(true)
   const [keyword, setKeyword] = useState('')
@@ -294,12 +296,8 @@ export default function PoemPage() {
     }
   }, [fetchAppreciation])
 
-  useEffect(() => {
-    loadRandom()
-  }, [loadRandom])
-
   // 关键词搜索（支持 DeepSeek 智能搜诗与本地典范库检索）
-  const handleSearch = async (value) => {
+  const handleSearch = useCallback(async (value) => {
     const q = (value !== undefined ? value : keyword || '').trim()
     if (!q) {
       Toast.show({ content: '请先输入想寻访的诗词、名句或先贤' })
@@ -317,7 +315,38 @@ export default function PoemPage() {
     } finally {
       setSearching(false)
     }
-  }
+  }, [keyword])
+
+  useEffect(() => {
+    // 1. 若路由 state 携带指定诗词对象（如来自寻镜入诗/诗境赏析直接带入），立即呈卷
+    if (location.state?.poem) {
+      const p = location.state.poem
+      const nextPoem = {
+        id: p.id || `poem_${Date.now()}`,
+        title: p.title,
+        author: p.author,
+        dynasty: p.dynasty || '古代',
+        paragraphs: toParagraphs(p.paragraphs || p.fullLines || p.content || p.lines),
+        appreciation: p.appreciation || p.note || '',
+      }
+      setPoem(nextPoem)
+      setLoading(false)
+      fetchAppreciation(nextPoem)
+      return
+    }
+
+    // 2. 若带有搜索关键词（路由 state.keyword 或 URL 参数 ?keyword= / ?q= / ?title=）
+    const queryKey = location.state?.keyword || searchParams.get('keyword') || searchParams.get('q') || searchParams.get('title')
+    if (queryKey) {
+      setKeyword(queryKey)
+      handleSearch(queryKey)
+      setLoading(false)
+      return
+    }
+
+    // 3. 正常拉取随机精选古诗词
+    loadRandom()
+  }, [loadRandom, location.state, searchParams, fetchAppreciation, handleSearch])
 
   // 选中搜索结果 → 陈列于诗卷
   const handlePickResult = (item) => {
@@ -406,9 +435,13 @@ export default function PoemPage() {
           className="poem-header__back"
           onClick={() => {
             if (window.speechSynthesis) window.speechSynthesis.cancel()
-            navigate('/home')
+            if (window.history.length > 1) {
+              navigate(-1)
+            } else {
+              navigate('/home')
+            }
           }}
-          title="返回雅集"
+          title="返回"
         >
           <LeftOutline />
         </div>

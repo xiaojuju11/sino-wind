@@ -281,7 +281,7 @@
   .frequency-wordcloud {
     margin: 20px -8px; padding: 10px 0; border-block: 1px solid var(--frequency-line);
     &__toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 0 8px 6px; color: var(--gf-ink-secondary); font-size: 12px;
-      button { min-height: 36px; padding: 4px 10px; background: transparent; border: 1px solid var(--frequency-line); border-radius: 5px; font-size: 12px; }
+      button { min-height: 36px; padding: 4px 10px; background: transparent; border: 1px solid var(--frequency-line); border-radius: 8px; font-size: 12px; }
     }
     &__viewport { width: 100%; aspect-ratio: 1000 / 660; overflow: auto; scrollbar-width: thin; overscroll-behavior: contain; }
     &__svg { display: block; max-width: none; height: auto; }
@@ -299,14 +299,14 @@
     &__track { flex: 1; min-width: 0; height: 7px; border-radius: 3px; background: color-mix(in srgb, var(--gf-gold) 14%, transparent); i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--gf-seal, #7b3430), var(--gf-gold, #b39551)); } }
     &__value { flex: 0 0 72px; text-align: right; font-size: 13px; small { display: block; font-size: 10px; color: var(--gf-ink-secondary); } }
   }
-  .frequency-export { display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; min-height: 44px; border: 1px solid var(--frequency-line); border-radius: 5px; background: var(--gf-bg-paper); margin-top: 18px; }
+  .frequency-export { display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; min-height: 44px; border: 1px solid var(--frequency-line); border-radius: 8px; background: var(--gf-bg-paper); margin-top: 18px; }
   .frequency-context { width: 100%; display: block; text-align: left; border: 0; border-bottom: 1px solid var(--frequency-line); padding: 14px 0; background: transparent; overflow-wrap: anywhere;
     small { color: var(--gf-ink-secondary); } h3 { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 17px; margin: 4px 0; svg { flex: none; } } p { margin: 6px 0; font-size: 14px; line-height: 1.9; }
   }
   #frequency-contexts { scroll-margin-top: 120px; }
   mark { color: var(--gf-accent-text, #8a2b2b); background: color-mix(in srgb, var(--gf-gold) 20%, transparent); padding: 0 1px; }
   .frequency-pagination, .frequency-version { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 16px;
-    button { min-height: 40px; padding: 5px 10px; border: 1px solid var(--frequency-line); border-radius: 5px; background: var(--gf-bg-paper); &[aria-pressed='true'] { color: var(--gf-accent-text); border-color: currentColor; } }
+    button { min-height: 40px; padding: 5px 10px; border: 1px solid var(--frequency-line); border-radius: 8px; background: var(--gf-bg-paper); &[aria-pressed='true'] { color: var(--gf-accent-text); border-color: currentColor; } }
   }
   .frequency-method { font-size: 12px; color: var(--gf-ink-secondary); summary { cursor: pointer; min-height: 30px; } }
   .frequency-results {

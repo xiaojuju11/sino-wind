@@ -67,10 +67,10 @@
   }
   .auth-tabs { position: relative; display: flex; width: 190px; max-width: 100%; gap: 26px; margin: 0 auto 22px;
     &::after { content: ''; position: absolute; top: 25%; bottom: 25%; width: 1px; left: 50%; background: color-mix(in srgb, var(--auth-gold) 45%, transparent); }
-    button { z-index: 1; width: 82px; min-height: 42px; padding: 5px 0; border: 0; background: transparent; color: var(--auth-muted); font-size: 21px; transition: color .25s; }
+    button { z-index: 1; width: 82px; min-height: 42px; padding: 5px 0; border: 0; border-radius: 8px; background: transparent; color: var(--auth-muted); font-size: 21px; transition: color .25s; }
     button[aria-selected='true'] { color: #fff3dc; }
   }
-  .auth-tab-stamp { position: absolute; width: 82px; inset: 0 auto 0 0; border: 3px double var(--auth-gold); border-radius: 8px; background: linear-gradient(135deg, #983636, #7a2424); box-shadow: 0 2px 4px #8a2b2b25; transition: transform .25s; }
+  .auth-tab-stamp { position: absolute; width: 82px; inset: 0 auto 0 0; border: 3px double var(--auth-gold); border-radius: 10px; background: linear-gradient(135deg, #983636, #7a2424); box-shadow: 0 2px 4px #8a2b2b25; transition: transform .25s; }
   .auth-tab-stamp.is-register { transform: translateX(108px); }
   .auth-panel { animation: auth-enter .25s ease both; }
   .auth-field { position: relative; display: flex; align-items: center; gap: 10px; min-height: 49px; padding: 10px 14px; border: 1px solid color-mix(in srgb, var(--auth-gold) 75%, transparent); border-radius: 10px; background: color-mix(in srgb, var(--auth-paper) 85%, transparent); color: var(--auth-muted);
@@ -82,8 +82,8 @@
   .auth-field-icon { width: 20px; color: var(--auth-gold); flex-shrink: 0; display: flex; justify-content: center; svg { width: 100%; height: auto; } }
   .auth-eye { flex-shrink: 0; display: grid; place-items: center; min-width: 30px; min-height: 30px; padding: 0; border: 0; background: transparent; color: var(--auth-ink); svg { width: 21px; height: 21px; } }
   .auth-error { margin: 8px 0; font: 13px/1.6 system-ui, sans-serif; color: var(--gf-accent-text, #a03931); }
-  .auth-submit { position: relative; display: block; width: 100%; min-height: 52px; margin-top: 12px; padding: 10px; border: 3px double var(--auth-gold); border-radius: 10px; background: linear-gradient(110deg, #7e2727, #963535, #7e2727); color: #fff3dc; font-size: 23px; letter-spacing: .13em; box-shadow: 0 3px 7px #8a2b2b20;
-    &::before { content: ''; position: absolute; inset: 4px; border: 1px solid #e8c58a45; border-radius: 5px; pointer-events: none; }
+  .auth-submit { position: relative; display: block; width: 100%; min-height: 52px; margin-top: 12px; padding: 10px; border: 3px double var(--auth-gold); border-radius: 12px; background: linear-gradient(110deg, #7e2727, #963535, #7e2727); color: #fff3dc; font-size: 23px; letter-spacing: .13em; box-shadow: 0 3px 7px #8a2b2b20;
+    &::before { content: ''; position: absolute; inset: 4px; border: 1px solid #e8c58a45; border-radius: 8px; pointer-events: none; }
     &:disabled { opacity: .65; }
   }
   .auth-consent { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 3px; margin: 20px -4px 0; color: var(--auth-muted); font: 12px/1.8 system-ui, sans-serif;

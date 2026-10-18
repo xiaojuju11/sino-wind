@@ -107,3 +107,13 @@ body {
   vertical-align: middle;
   line-height: 1;
 }
+
+/* 🏮 全局按钮统一圆角视觉规范 */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+[role="button"],
+.adm-button {
+  border-radius: 8px;
+}
