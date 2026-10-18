@@ -423,7 +423,7 @@ export default function PoemPage() {
           <SearchBar
             className="poem-search__bar"
             icon={<SearchOutline className="poem-search__leading-icon" />}
-            placeholder="AI 寻诗：搜诗名、名句、先贤或意境…"
+            placeholder="搜诗题、名句、先贤或意境…"
             value={keyword}
             onChange={setKeyword}
             onSearch={handleSearch}
@@ -438,14 +438,13 @@ export default function PoemPage() {
             className={`poem-search__btn ${searching ? 'is-searching' : ''}`}
             onClick={() => handleSearch(keyword)}
             aria-label="寻诗"
-            title="点击发起 DeepSeek 智能寻诗"
+            title="点击寻诗"
           >
             <SearchOutline className="poem-search__btn-icon" />
             <span className="poem-search__btn-text">{searching ? '研墨中' : '寻诗'}</span>
           </button>
         </div>
         <div className="poem-search__hint">
-          <span className="poem-search__badge">AI 智能寻诗</span>
           <span className="poem-search__tips">支持搜诗题、名句、作者或意境（如「明月」「将进酒」「清欢」）</span>
         </div>
       </div>

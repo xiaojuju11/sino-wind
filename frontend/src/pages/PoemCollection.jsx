@@ -226,7 +226,6 @@ function PoemCollectionSession({ scope }) {
       {activePoem && (
         <div className='poem-modal-mask' onClick={() => setActivePoem(null)}>
           <div className='poem-modal-paper' onClick={(e) => e.stopPropagation()}>
-            <span className='poem-modal-roller top' />
             <div className='poem-modal-header'>
               <span className='poem-modal-seal'>{activePoem.dynasty} · {activePoem.seal || '精选'}</span>
               <h2 className='poem-modal-title'>{activePoem.title}</h2>
@@ -260,7 +259,6 @@ function PoemCollectionSession({ scope }) {
                 卷 轴 归 架
               </button>
             </div>
-            <span className='poem-modal-roller bottom' />
           </div>
         </div>
       )}
