@@ -60,9 +60,9 @@ export default function AuthPage() {
         <footer className="auth-footer">
           <div className="auth-consent">
             <label><input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} aria-label="同意用户协议与隐私政策" /><span>我已阅读并同意</span></label>
-            <Link to="/legal/terms" target="_blank" rel="noopener noreferrer">《用户协议》</Link>
+            <Link to="/legal/terms">《用户协议》</Link>
             <span>和</span>
-            <Link to="/legal/privacy" target="_blank" rel="noopener noreferrer">《隐私政策》</Link>
+            <Link to="/legal/privacy">《隐私政策》</Link>
           </div>
         </footer>
         </>}

@@ -175,7 +175,6 @@ function LetterListSession() {
         </button>
         <div className="letter-header__title-wrap">
           <h1 className="letter-header__title">知己信札</h1>
-          <span className="letter-header__seal">华风</span>
         </div>
         <p className="letter-header__subtitle">云笺素字 · 与千载知音烹茶对坐</p>
       </header>
