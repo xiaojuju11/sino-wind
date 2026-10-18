@@ -143,23 +143,96 @@ function SceneEditor({ scope }) {
             <p>{notice || '正在展开西湖山水画卷…'}</p>
           </section>
         ) : (
-          <section className='scene-panel scene-intro'>
-            <ReferenceCorners />
-            <span className='scene-eyebrow'>把寻常一瞥，藏成山河一卷</span>
-            <h2>此刻风景，何句相宜？</h2>
-            <p>一池水，一行树，一座桥。<br />摄下所见，点选意象，与古诗相逢。</p>
-            <div className='scene-actions'>
-              <button type='button' className='scene-primary' disabled={busy} onClick={() => setCameraOpen(true)}>
-                <CameraOutline />拍下眼前
-              </button>
-              <button type='button' disabled={busy} onClick={() => fileRef.current.click()}>
-                <PictureOutline />从相册选取
-              </button>
-            </div>
-            <button type='button' className='scene-text-button' disabled={busy} onClick={example}>
-              先展一幅示例 <RightOutline />
-            </button>
-          </section>
+          <>
+            <section className='scene-panel scene-intro'>
+              <ReferenceCorners />
+              <span className='scene-eyebrow'>把寻常一瞥 · 藏成山河一卷</span>
+              <h2>此刻风景，何句相宜？</h2>
+              <p>一池水，一行树，一座桥。<br />摄下所见，点选意象，与古诗相逢。</p>
+              <div className='scene-actions'>
+                <button type='button' className='scene-primary' disabled={busy} onClick={() => setCameraOpen(true)}>
+                  <CameraOutline />拍下眼前
+                </button>
+                <button type='button' disabled={busy} onClick={() => fileRef.current.click()}>
+                  <PictureOutline />从相册选取
+                </button>
+              </div>
+            </section>
+
+            <section
+              className='scene-panel scene-sample-card'
+              onClick={example}
+              role='button'
+              tabIndex={0}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); example() } }}
+            >
+              <ReferenceCorners />
+              <div className='scene-sample-card__header'>
+                <span className='scene-eyebrow'>西湖晴雨 · 典藏示例</span>
+                <span className='scene-sample-badge'>点击即试</span>
+              </div>
+              <div className='scene-sample-card__body'>
+                <div className='scene-sample-card__media'>
+                  <img src={`${BASE}images/scene/poetic-lake-v1.webp`} alt='西湖水光山色' loading='lazy' />
+                  <span className='scene-sample-seal'>画境</span>
+                </div>
+                <div className='scene-sample-card__info'>
+                  <div className='scene-sample-card__lines'>
+                    <p>水光潋滟晴方好</p>
+                    <p>山色空蒙雨亦奇</p>
+                  </div>
+                  <div className='scene-sample-card__meta'>
+                    <span>宋 · 苏轼</span>
+                    <span>《饮湖上初晴后雨》</span>
+                  </div>
+                </div>
+              </div>
+              <div className='scene-sample-card__footer'>
+                <span className='scene-sample-cta'>展开此示例画卷 <RightOutline /></span>
+              </div>
+            </section>
+
+            <section className='scene-panel scene-guide-panel'>
+              <ReferenceCorners />
+              <div className='scene-section-title'>
+                <div>
+                  <span className='scene-eyebrow'>意境研学 · 创作通途</span>
+                  <h2>寻诗四步 · 步步入境</h2>
+                </div>
+                <span className='scene-seal'>研学</span>
+              </div>
+              <div className='scene-guide-steps'>
+                <div className='scene-guide-item'>
+                  <span className='scene-guide-num'>01</span>
+                  <div className='scene-guide-text'>
+                    <strong>实景采撷</strong>
+                    <p>拍下眼前的湖山草木或生活即景</p>
+                  </div>
+                </div>
+                <div className='scene-guide-item'>
+                  <span className='scene-guide-num'>02</span>
+                  <div className='scene-guide-text'>
+                    <strong>智能识景</strong>
+                    <p>AI多维度识别画面中的山、水、楼台</p>
+                  </div>
+                </div>
+                <div className='scene-guide-item'>
+                  <span className='scene-guide-num'>03</span>
+                  <div className='scene-guide-text'>
+                    <strong>循词观景</strong>
+                    <p>检索典籍诗库，点选意象交互对位</p>
+                  </div>
+                </div>
+                <div className='scene-guide-item'>
+                  <span className='scene-guide-num'>04</span>
+                  <div className='scene-guide-text'>
+                    <strong>向先贤追问</strong>
+                    <p>与历代大家跨时空促膝对话，知其境</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </>
         )
       ) : <section className='scene-panel scene-workspace'><ReferenceCorners />
         <div className='scene-section-title'><div><span className='scene-eyebrow'>第一折 · 取景识境</span><h2>细看眼前山水</h2></div><div className='scene-image-actions'><button type='button' disabled={busy} className='scene-text-button' onClick={() => setCameraOpen(true)}><CameraOutline />再拍一张</button><button type='button' disabled={busy} className='scene-text-button' onClick={() => fileRef.current?.click()}><PictureOutline />换一幅</button><button type='button' disabled={busy} className='scene-text-button' onClick={() => { setScene(null); setSelected([]); setPoemId(''); setHighlight('') }}><RedoOutline />重置</button></div></div>
