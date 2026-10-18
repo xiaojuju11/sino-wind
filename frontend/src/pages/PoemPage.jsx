@@ -18,6 +18,7 @@ import axios from '../http'
 import EmptyState from '../components/EmptyState'
 import RadarChart from '../components/RadarChart.jsx'
 import TonePattern from '../components/TonePattern.jsx'
+import PoemReading from '../components/PoemReading.jsx'
 import InkSpreadZone from '../components/InkSpreadZone.jsx'
 import { buildMetreReport, scoreDimensions } from '../utils/poemMetre.js'
 import InkWashBackground from '../components/InkWashBackground'
@@ -126,6 +127,7 @@ export default function PoemPage() {
   const appreciateRef = useRef(null)
   const scrollRef = useRef(null)
   const scrollInkRef = useRef(null)
+  const searchRequestRef = useRef(null)
 
   // 赏析多维状态
   const [appreciationData, setAppreciationData] = useState(null)
@@ -296,26 +298,48 @@ export default function PoemPage() {
     }
   }, [fetchAppreciation])
 
-  // 关键词搜索（支持 DeepSeek 智能搜诗与本地典范库检索）
-  const handleSearch = useCallback(async (value) => {
-    const q = (value !== undefined ? value : keyword || '').trim()
+  // 搜索只由提交触发；稳定回调避免输入变化重新执行页面初始化。
+  const handleSearch = useCallback(async (value = '') => {
+    const q = value.trim()
     if (!q) {
       Toast.show({ content: '请先输入想寻访的诗词、名句或先贤' })
       return
     }
+    searchRequestRef.current?.abort()
+    const controller = new AbortController()
+    searchRequestRef.current = controller
     setKeyword(q)
     setSearching(true)
     try {
-      const res = await axios.get('/api/poem/search', { params: { q } })
+      const res = await axios.get('/api/poem/search', {
+        params: { q }, signal: controller.signal, timeout: 30000,
+      })
+      if (controller.signal.aborted) return
       const list = res?.data?.data
       setSearchSource(res?.data?.source || '')
       setResults(Array.isArray(list) ? list : [])
     } catch {
-      setResults([])
+      if (!controller.signal.aborted) {
+        Toast.show({ content: '寻诗暂未完成，请稍后重试' })
+      }
     } finally {
-      setSearching(false)
+      if (searchRequestRef.current === controller) {
+        searchRequestRef.current = null
+        setSearching(false)
+      }
     }
-  }, [keyword])
+  }, [])
+
+  const clearSearch = () => {
+    searchRequestRef.current?.abort()
+    searchRequestRef.current = null
+    setSearching(false)
+    setKeyword('')
+    setResults(null)
+    setSearchSource('')
+  }
+
+  useEffect(() => () => searchRequestRef.current?.abort(), [])
 
   useEffect(() => {
     // 1. 若路由 state 携带指定诗词对象（如来自寻镜入诗/诗境赏析直接带入），立即呈卷
@@ -429,7 +453,7 @@ export default function PoemPage() {
   return (
     <div className={`poem-root reference-polish${results !== null ? ' is-searching' : ''}`}>
       <InkWashBackground />
-      {/* 顶部：返回 + 标题 + 日月一键切换 */}
+      {/* 顶部：返回与标题，不显示品牌印章 */}
       <header className="poem-header">
         <div
           className="poem-header__back"
@@ -446,7 +470,7 @@ export default function PoemPage() {
           <LeftOutline />
         </div>
         <h1 className="poem-header__title">古诗词鉴赏</h1>
-        <span className='poem-header__seal'>云山竹简</span>
+
       </header>
       <p className='poem-reference-sub'>读千年风雅 与君共此山河</p>
 
@@ -460,15 +484,12 @@ export default function PoemPage() {
             value={keyword}
             onChange={setKeyword}
             onSearch={handleSearch}
-            onClear={() => {
-              setKeyword('')
-              setResults(null)
-              setSearchSource('')
-            }}
+            onClear={clearSearch}
           />
           <button
             type="button"
             className={`poem-search__btn ${searching ? 'is-searching' : ''}`}
+            disabled={searching}
             onClick={() => handleSearch(keyword)}
             aria-label="寻诗"
             title="点击寻诗"
@@ -573,13 +594,7 @@ export default function PoemPage() {
 
             <div className="poem-scroll__divider" />
 
-            <div className="poem-scroll__body">
-              {lines.map((line, index) => (
-                <span className="poem-scroll__line" key={`${line}-${index}`}>
-                  {line}
-                </span>
-              ))}
-            </div>
+            <PoemReading key={poem.id + lines.join('')} lines={lines} />
 
             {collectTip && <p className="poem-scroll__source">{collectTip}</p>}
           </>
@@ -797,7 +812,7 @@ export default function PoemPage() {
           {/* 平仄声律谱 */}
           <div className="poem-metre__tones">
             <div className="poem-metre__tones-title">平仄声律谱 · 平水韵</div>
-            <TonePattern report={metreReport} />
+            <TonePattern key={poem.id + lines.join('')} report={metreReport} />
           </div>
         </section>
       )}

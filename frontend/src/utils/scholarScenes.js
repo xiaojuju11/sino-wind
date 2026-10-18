@@ -12,7 +12,7 @@ const scenes = {
 }
 
 export function scholarPortraitStyle(scene) {
-  if (!scene?.portrait) return undefined
+  if (!scene?.portrait || scene.portraitSrc) return undefined
   const { x, y, scale } = scene.portrait
   return {
     '--portrait-scale': `${scale * 100}%`,
@@ -23,5 +23,5 @@ export function scholarPortraitStyle(scene) {
 
 export function getScholarScene(sageId, name = '', base = import.meta.env.BASE_URL) {
   const key = Object.hasOwn(scenes, sageId) ? sageId : Object.keys(scenes).find(id => name === scenes[id].name)
-  return key ? { ...scenes[key], src: `${base}assets/scholar-scenes/${key}-scene-v1.webp` } : null
+  return key ? { ...scenes[key], src: `${base}assets/scholar-scenes/${key}-scene-v1.webp`, portraitSrc: key !== 'group_zhulin' ? `${base}images/scholar-portraits/${key}-avatar-v2.webp` : undefined } : null
 }

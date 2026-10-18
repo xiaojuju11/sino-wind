@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
+import PoemPager from './PoemPager'
+import { paginateLines } from '../utils/poemPagination'
 
 /**
  * 平仄声律谱（○ 平 · ● 仄 · △ 字表未收）
@@ -18,10 +20,18 @@ const TONE_CLASS = {
 export default function TonePattern({ report, showConfidence = true }) {
   const [active, setActive] = useState(null) // { line, index }
 
+  const [page, setPage] = useState(0)
+  const pages = useMemo(() => paginateLines(report?.lines || [], {
+    maxRows: 6, maxCharacters: 100, textOf: line => line.tones.map(tone => tone.ch).join(''),
+  }), [report])
+  const current = Math.min(page, pages.length - 1)
+  const visibleLines = pages[current] || []
+  const changePage = next => { setActive(null); setPage(next) }
+
   if (!report?.ok) return null
 
   return (
-    <div className="tone-pattern">
+    <div className={`tone-pattern${pages.length > 1 ? ' tone-pattern--paged' : ''}`}>
       <div className="tone-pattern__legend">
         <span className="tone-pattern__legend-item is-level">○ 平</span>
         <span className="tone-pattern__legend-item is-oblique">● 仄</span>
@@ -30,12 +40,13 @@ export default function TonePattern({ report, showConfidence = true }) {
       </div>
 
       <ol className="tone-pattern__lines">
-        {report.lines.map((line) => {
+        {visibleLines.map((line) => {
           const isRhymeLine = report.rhyme.ends.some((e) => e.lineIndex === line.index && e.group)
           const lastIdx = line.tones.length - 1
           return (
             <li key={line.index} className="tone-pattern__line">
-              <div className="tone-pattern__chars">
+              {pages.length > 1 && <span className="tone-pattern__line-number">{line.index + 1}</span>}
+              <div className="tone-pattern__chars" tabIndex={0} aria-label={`第 ${line.index + 1} 句平仄，长句可左右滑动`}>
                 {line.tones.map((t, i) => {
                   const isActive = active && active.line === line.index && active.index === i
                   return (
@@ -71,6 +82,8 @@ export default function TonePattern({ report, showConfidence = true }) {
           )
         })}
       </ol>
+
+      <PoemPager label="平仄声律翻页" page={current} pages={pages.length} onChange={changePage} />
 
       {active && (() => {
         const t = report.lines[active.line]?.tones[active.index]

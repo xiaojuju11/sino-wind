@@ -1,0 +1,26 @@
+.poem-pager {
+  position: relative; display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  margin: 14px 0 0; padding-top: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--gf-gold, #b39850) 40%, transparent);
+  button, select { min-height: 40px; padding: 6px 10px; border: 1px solid color-mix(in srgb, var(--gf-gold, #b39850) 65%, transparent); border-radius: 8px; background: var(--gf-bg-card, #faf7ef); color: var(--gf-text-main, #38382f); font: inherit; font-size: 13px; cursor: pointer; }
+  button:disabled { opacity: .4; cursor: default; }
+  button:focus-visible, select:focus-visible { outline: 2px solid var(--gf-seal, #813a32); outline-offset: 2px; }
+  label { min-width: 0; } select { max-width: 130px; }
+  &__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+}
+.poem-root.reference-polish .poem-reading--paged {
+  .poem-reading__hint { margin: 0 0 10px; font-size: 12px; color: var(--gf-text-sub, #817a6c); }
+  .poem-scroll__body { min-height: 230px; justify-content: flex-start; gap: 7px; }
+  .poem-scroll__line { font-size: 19px; line-height: 1.7; letter-spacing: .5px; overflow-wrap: anywhere; }
+}
+.tone-pattern {
+  .tone-pattern__chars { flex: 1; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 5px; scrollbar-width: thin; scrollbar-color: var(--gf-gold, #b39850) transparent; }
+  .tone-pattern__char { flex-shrink: 0; }
+  .tone-pattern__meta { flex-shrink: 0; max-width: 110px; }
+  &__line-number { align-self: center; font-size: 11px; color: var(--gf-text-sub, #817a6c); min-width: 15px; }
+}
+.tone-pattern--paged .tone-pattern__line { min-height: 44px; }
+@media (max-width: 360px) {
+  .poem-pager { gap: 5px; button, select { font-size: 12px; padding: 6px 7px; } }
+  .tone-pattern .tone-pattern__meta { max-width: 85px; }
+}

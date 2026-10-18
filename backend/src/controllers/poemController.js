@@ -168,6 +168,12 @@ async function search(ctx) {
   const q = ctx.query.q ?? ctx.query.keyword
   if (typeof q !== 'string' || !q.trim() || q.length > 100) { ctx.status = 400; ctx.body = { code: 0, message: '请输入 1–100 字的关键词' }; return }
   const cleanQ = q.trim()
+  const localMatches = searchFallback(cleanQ)
+  if (localMatches.length) {
+    const exact = localMatches.filter(poem => poem.title === cleanQ)
+    ctx.body = { code: 1, message: '搜索成功', source: 'local-corpus', degraded: false, data: (exact.length ? exact : localMatches).map(present), dataNotice }
+    return
+  }
 
   // 1. 优先调用 DeepSeek 大模型进行全息古诗词智能检索
   try {
@@ -178,7 +184,14 @@ async function search(ctx) {
         message: 'DeepSeek 智能寻诗成功',
         source: 'deepseek-ai',
         degraded: false,
-        data: aiResults.map(present),
+        data: (() => {
+          const normalizeQuery = text => String(text || '').replace(/[\s《》〈〉·，。！？、；：]/g, '')
+          const keyword = normalizeQuery(cleanQ)
+          const exact = aiResults.filter(poem => normalizeQuery(poem.title) === keyword)
+          if (exact.length) return exact.map(present)
+          const literal = aiResults.filter(poem => [poem.title, poem.author, ...(poem.content || [])].some(text => normalizeQuery(text).includes(keyword)))
+          return (literal.length ? literal : aiResults).map(present)
+        })(),
         dataNotice: '由 DeepSeek 智能诗词引擎甄选'
       }
       return

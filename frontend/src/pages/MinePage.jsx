@@ -233,7 +233,7 @@ function MinePageSession() {
             </div>
             <p className='shuzhai-section-sub'>收藏古今器物与诗词珍品，留存风雅墨迹</p>
           </div>
-          <img src={`${BASE}assets/shuzhai/illus_cangpin.png`} alt='插画' className='shuzhai-section-head__illus' />
+          <img src={`${BASE}images/shuzhai/header-cangpin-v2.webp`} alt='插画' className='shuzhai-section-head__illus' />
         </div>
 
         <div className='shuzhai-list'>
@@ -290,7 +290,7 @@ function MinePageSession() {
             </div>
             <p className='shuzhai-section-sub'>管理账号设置与日月墨境，守护文心印记</p>
           </div>
-          <img src={`${BASE}assets/shuzhai/illus_qinggui.png`} alt='插画' className='shuzhai-section-head__illus' />
+          <img src={`${BASE}images/shuzhai/header-qinggui-v2.webp`} alt='插画' className='shuzhai-section-head__illus' />
         </div>
 
         <div className='shuzhai-list'>

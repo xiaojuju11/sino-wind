@@ -19,7 +19,7 @@ const PRESET_CONVERSATIONS = [
     name: '李白',
     title: '谪仙人',
     dynasty: '唐',
-    avatar: `${BASE}assets/guancang/sage_libai.png`,
+    avatar: `${BASE}images/scholar-portraits/libai-avatar-v2.webp`,
     status: '把酒对月中'
   },
   {
@@ -35,7 +35,7 @@ const PRESET_CONVERSATIONS = [
     name: '苏轼',
     title: '东坡居士',
     dynasty: '宋',
-    avatar: `${BASE}assets/guancang/sage_sushi.png`,
+    avatar: `${BASE}images/scholar-portraits/sushi-avatar-v2.webp`,
     status: '烹茶赋词'
   },
   {
@@ -43,7 +43,7 @@ const PRESET_CONVERSATIONS = [
     name: '李清照',
     title: '易安居士',
     dynasty: '宋',
-    avatar: `${BASE}assets/guancang/sage_liqingzhao.png`,
+    avatar: `${BASE}images/scholar-portraits/liqingzhao-avatar-v2.webp`,
     status: '倚栏校词'
   },
   {
@@ -51,19 +51,19 @@ const PRESET_CONVERSATIONS = [
     name: '杜甫',
     title: '少陵野老',
     dynasty: '唐',
-    avatar: `${BASE}assets/guancang/sage_wangyangming.png`,
+    avatar: `${BASE}images/scholar-portraits/dufu-avatar-v2.webp`,
     status: '掩卷沉思'
   },
   {
     id: 'wangyangming', name: '王阳明', title: '阳明先生', dynasty: '明',
-    avatar: `${BASE}assets/guancang/sage_wangyangming.png`, status: '心学悟道中'
+    avatar: `${BASE}images/scholar-portraits/wangyangming-avatar-v2.webp`, status: '心学悟道中'
   },
   {
     id: 'xinqiji',
     name: '辛弃疾',
     title: '稼轩居士',
     dynasty: '宋',
-    avatar: `${BASE}assets/guancang/sage_libai.png`,
+    avatar: `${BASE}images/scholar-portraits/xinqiji-avatar-v2.webp`,
     status: '挑灯看剑'
   }
 ]
@@ -266,7 +266,7 @@ function LetterListSession() {
             >
               <div className="letter-gallery-avatar-box">
                 <span className='letter-portrait-window'>
-                <img src={scene?.src || item.avatar} alt={item.name} className={`letter-gallery-avatar${scene?.portrait ? ' reference-sage-portrait' : ''}`}
+                <img src={scene?.portraitSrc || scene?.src || item.avatar} alt={item.name} className={`letter-gallery-avatar${scene?.portrait && !scene?.portraitSrc ? ' reference-sage-portrait' : ''}`}
                   style={scholarPortraitStyle(scene)} />
                 </span>
                 {item.unread > 0 && (
@@ -299,7 +299,7 @@ function LetterListSession() {
               onClick={() => handleGoChat(item)}
             >
               <div className="letter-card__avatar-wrap">
-                <img src={scene?.src || item.avatar} alt={item.name} loading='lazy' className={`letter-card__avatar${scene?.portrait ? ' reference-sage-portrait' : ''}`}
+                <img src={scene?.portraitSrc || scene?.src || item.avatar} alt={item.name} loading='lazy' className={`letter-card__avatar${scene?.portrait && !scene?.portraitSrc ? ' reference-sage-portrait' : ''}`}
                   style={scholarPortraitStyle(scene)} />
               </div>
 

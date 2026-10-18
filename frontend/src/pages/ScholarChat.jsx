@@ -22,7 +22,7 @@ const SAGE_HERO_MAP = {
     title: '谪仙人',
     motto: '人生得意须尽欢，莫使金樽空对月。',
     status: '把酒对月中',
-    portrait: `${BASE}assets/guancang/sage_libai.png`,
+    portrait: `${BASE}images/scholar-portraits/libai-avatar-v2.webp`,
     welcome: '吾乃青莲居士李太白。天生我材必有用，千金散尽还复来！来者何人，愿与吾金樽对饮否？',
     capsules: ['〔金樽〕太白兄，何以解忧？', '〔邀月〕今夕何夕，对月起舞', '〔联句〕请与我同作五绝', '〔茶道〕唐代煎茶与宋点茶有何异？']
   },
@@ -31,7 +31,7 @@ const SAGE_HERO_MAP = {
     title: '东坡居士',
     motto: '一蓑烟雨任平生，也无风雨也无晴。',
     status: '烹茶赋词中',
-    portrait: `${BASE}assets/guancang/sage_sushi.png`,
+    portrait: `${BASE}images/scholar-portraits/sushi-avatar-v2.webp`,
     welcome: '老夫苏子瞻，今日刚得新茶一瓮，并烹东坡肉。天下名山僧占多，且坐下与老夫闲话平生。',
     capsules: ['〔食经〕东坡肉秘法几何？', '〔处世〕遇逆境如何豁达自适？', '〔西湖〕水光潋滟晴方好何意？', '〔词赋〕黄州赤壁赋有何深意？']
   },
@@ -40,7 +40,7 @@ const SAGE_HERO_MAP = {
     title: '易安居士',
     motto: '何须浅碧深红色，自是花中第一流。',
     status: '倚栏校词中',
-    portrait: `${BASE}assets/guancang/sage_liqingzhao.png`,
+    portrait: `${BASE}images/scholar-portraits/liqingzhao-avatar-v2.webp`,
     welcome: '易安居士见过来客。沉醉不知归路，误入藕花深处——君有新词，愿与妾身切磋一番？',
     capsules: ['〔词韵〕易安词何以字字珠玑？', '〔金石〕金石录后序背后故事', '〔消愁〕三杯两盏淡酒何以销愁？', '〔秋思〕梧桐更兼细雨之境']
   },
@@ -58,7 +58,7 @@ const SAGE_HERO_MAP = {
     title: '阳明先生',
     motto: '知善知恶是良知，为善去恶是格物。',
     status: '心学悟道中',
-    portrait: `${BASE}assets/guancang/sage_wangyangming.png`,
+    portrait: `${BASE}images/scholar-portraits/wangyangming-avatar-v2.webp`,
     welcome: '阳明子见过使君。无善无恶心之体，有善有恶意之动。君今日心中有何凝滞，愿与老夫共参良知本体？',
     capsules: ['〔心学〕何谓知行合一？', '〔格物〕如何格物以致良知？', '〔事上〕何为事上磨炼之道？', '〔良知〕心外无物如何理解？']
   },
@@ -67,7 +67,7 @@ const SAGE_HERO_MAP = {
     title: '少陵野老',
     motto: '安得广厦千万间，大庇天下寒士俱欢颜。',
     status: '掩卷沉思中',
-    portrait: `${BASE}assets/guancang/sage_wangyangming.png`,
+    portrait: `${BASE}images/scholar-portraits/dufu-avatar-v2.webp`,
     welcome: '杜陵野老杜子美向使君致意。感时花溅泪，恨别鸟惊心。老拙虽飘零半生，然心系苍生黎庶，愿与君共话家国文章。',
     capsules: ['〔律诗〕少陵律诗沉郁顿挫之妙', '〔草堂〕浣花溪畔的生活与心境', '〔怀友〕子美太白之交情谊何在？', '〔忧思〕诗史背后的家国悲悯']
   },
@@ -76,7 +76,7 @@ const SAGE_HERO_MAP = {
     title: '稼轩居士',
     motto: '男儿到死心如铁，看试手，补天裂。',
     status: '挑灯看剑中',
-    portrait: `${BASE}assets/guancang/sage_libai.png`,
+    portrait: `${BASE}images/scholar-portraits/xinqiji-avatar-v2.webp`,
     welcome: '稼轩辛幼安来此会君！想当年金戈铁马，气吞万里如虎。天下英雄谁敌手？且与某家倾樽豪饮，畅论天下兴亡！',
     capsules: ['〔看剑〕醉里挑灯看剑之赤诚', '〔归隐〕稻花香里说丰年之淡泊', '〔豪放〕稼轩词之风骨与豪情', '〔破阵〕沙场秋点兵之英雄气概']
   }

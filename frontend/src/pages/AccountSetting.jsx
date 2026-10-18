@@ -357,20 +357,20 @@ export default function AccountSetting() {
         </>}
       </section> : <section className='account-setting__section'>
         <List>
-          <List.Item
+          <List.Item className='account-art-row account-art-row--avatar'
             extra={<Avatar style={{ '--border-radius': '50%' }} src={avatar} size={40} />}
             clickable
             onClick={() => setVisibleActionSheet(true)}
           >
             头像
           </List.Item>
-          <List.Item extra={nickname} clickable onClick={() => setVisiblePopup(true)}>
+          <List.Item className='account-art-row account-art-row--nickname' extra={nickname} clickable onClick={() => setVisiblePopup(true)}>
             昵称
           </List.Item>
-          <List.Item extra={account} clickable>
+          <List.Item className='account-art-row account-art-row--account' extra={account} clickable>
             账号
           </List.Item>
-          <List.Item
+          <List.Item className='account-art-row account-art-row--password'
             extra='修改密码'
             clickable
             onClick={() => {
@@ -381,7 +381,7 @@ export default function AccountSetting() {
           >
             密码
           </List.Item>
-          <List.Item extra='生成 / 换新' clickable onClick={() => { setRecoveryOpen(true); setRecoveryPassword(''); setRecoveryError('') }}>
+          <List.Item className='account-art-row account-art-row--recovery' extra='生成 / 换新' clickable onClick={() => { setRecoveryOpen(true); setRecoveryPassword(''); setRecoveryError('') }}>
             账号恢复码
           </List.Item>
         </List>
