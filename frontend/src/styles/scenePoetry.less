@@ -30,7 +30,7 @@
   button { cursor: pointer; touch-action: manipulation; }
   button:disabled { opacity: .5; cursor: default; }
   button:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid var(--gf-seal); outline-offset: 4px; }
-  button { border: 1px solid var(--scene-line); border-radius: 8px; background: var(--gf-bg-paper); color: var(--gf-ink-primary); padding: 8px 14px; min-height: 42px; }
+  button { border: 1px solid var(--scene-line); border-radius: 18px; background: var(--gf-bg-paper); color: var(--gf-ink-primary); padding: 8px 14px; min-height: 42px; }
   select { min-width: 0; max-width: 150px; padding: 8px; color: var(--gf-ink-primary); background: var(--gf-bg-paper); border: 1px solid var(--scene-line); border-radius: 4px; }
   .scene-primary { color: #fff0d7; background: linear-gradient(120deg, #923d32, #702c28); border: 1px solid #c6a15b; box-shadow: inset 0 0 0 3px #e0b56838, 0 3px 9px #3d20101a; }
 }
@@ -107,11 +107,11 @@
   blockquote { margin: 12px 0; padding: 0; font-size: 21px; line-height: 1.75; p { margin: 0; } }
   > small { display: block; color: var(--scene-quiet); font-size: 11px; line-height: 1.8; margin-top: 10px; }
 }
-.scene-motif-links { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; button, > span { padding: 4px 9px; min-height: 32px; color: var(--scene-quiet); border: 1px solid var(--scene-line); border-radius: 3px; font-size: 12px; background: transparent; } button[aria-pressed='true'], > span.is-grounded { color: var(--gf-seal); background: color-mix(in srgb, var(--gf-gold) 10%, transparent); } }
+.scene-motif-links { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; button, > span { padding: 4px 9px; min-height: 32px; color: var(--scene-quiet); border: 1px solid var(--scene-line); border-radius: 14px; font-size: 12px; background: transparent; } button[aria-pressed='true'], > span.is-grounded { color: var(--gf-seal); background: color-mix(in srgb, var(--gf-gold) 10%, transparent); } }
 .scene-page .scene-wide { display: flex; justify-content: center; align-items: center; gap: 15px; width: 100%; margin-top: 22px; padding: 12px; }
 .scene-privacy { color: var(--scene-quiet); font-size: 11px; line-height: 1.9; margin: 22px 5px 10px; }
 .scene-page .scene-library-link { display: flex; margin: 15px auto; }
-.scene-tabs { display: flex; gap: 8px; margin-bottom: 22px; button { flex: 1; font-size: 14px; padding: 7px 5px; } button[aria-pressed='true'] { background: var(--gf-seal, #8a2b2b); color: #fff2dc; border-color: var(--gf-seal, #8a2b2b); } }
+.scene-tabs { display: flex; gap: 8px; margin-bottom: 22px; button { flex: 1; font-size: 14px; padding: 7px 5px; border-radius: 18px; } button[aria-pressed='true'] { background: var(--gf-seal, #8a2b2b); color: #fff2dc; border-color: var(--gf-seal, #8a2b2b); } }
 .scene-scroll { padding: 8px 8px 14px; text-align: center; .scene-caption { padding: 0 5px; } h2 { font-size: 12px; color: var(--scene-quiet); font-weight: 400; margin: 2px 0 8px; } }
 .scene-scroll__poem { margin: 8px 0 6px; font-size: clamp(16px, 3.3vw, 19px); line-height: 1.5; letter-spacing: .04em;
   p { margin: 0; } button { font: inherit; color: var(--gf-seal); border: 0; border-radius: 0; border-bottom: 1px dashed var(--gf-gold); padding: 0; min-height: 0; background: transparent; } button[aria-pressed='true'] { background: color-mix(in srgb, var(--gf-gold) 18%, transparent); }
@@ -251,7 +251,7 @@
     font-size: 13px;
     background: transparent;
     border: 1px solid var(--scene-line, #ded5c4);
-    border-radius: 6px;
+    border-radius: 18px;
     color: var(--scene-quiet, #777365);
     cursor: pointer;
     min-height: 36px;
