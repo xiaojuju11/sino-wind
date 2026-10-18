@@ -375,36 +375,42 @@
 
 .scene-eyebrow { font-size: 11px; letter-spacing: .2em; color: var(--scene-quiet); }
 .scene-seal { display: inline-flex; writing-mode: vertical-rl; align-items: center; padding: 7px 3px; border: 1px solid var(--gf-seal); border-radius: 2px; color: var(--gf-seal); font-size: 13px; line-height: 1.1; letter-spacing: .12em; }
-.scene-main { position: relative; width: min(100%, 760px); margin: auto; padding: 18px 16px 30px; }
+.scene-main {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 8px 12px 20px;
+}
 
 // ── 墨韵流转式三折研习导引 ──
 .scene-steps {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  padding: 6px 10px 18px;
-  margin: 0 0 16px;
+  gap: 8px;
+  padding: 2px 6px 10px;
+  margin: 0 0 10px;
   list-style: none;
-  border-bottom: 1px dashed color-mix(in srgb, var(--gf-gold) 40%, transparent);
+  border-bottom: 1px dashed color-mix(in srgb, var(--gf-gold) 35%, transparent);
 
   li {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-size: 13px;
+    gap: 4px;
+    font-size: 11.5px;
     color: var(--scene-quiet);
     font-family: 'STKaiti', 'KaiTi', serif;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
     transition: all 0.2s ease;
 
     b {
       display: grid;
       place-items: center;
-      font-size: 11px;
+      font-size: 9.5px;
       font-weight: 500;
-      width: 20px;
-      height: 20px;
+      width: 16px;
+      height: 16px;
       border: 1px solid currentColor;
       border-radius: 50%;
     }
@@ -417,15 +423,16 @@
         background: var(--gf-seal);
         color: #fff0d7;
         border-color: var(--gf-seal);
-        box-shadow: 0 2px 6px rgba(138, 43, 43, 0.25);
+        box-shadow: 0 1px 4px rgba(138, 43, 43, 0.25);
       }
     }
 
     &:not(:last-child)::after {
       content: '—';
       color: var(--gf-gold);
-      margin-left: 10px;
-      opacity: 0.45;
+      margin-left: 6px;
+      opacity: 0.4;
+      font-size: 11px;
     }
   }
 }
@@ -434,15 +441,18 @@
   position: relative;
   isolation: isolate;
   border: 1px solid var(--gf-gold, #b39551);
-  border-radius: 7px;
-  padding: 22px;
-  margin-bottom: 22px;
+  border-radius: 8px;
+  padding: 12px 12px 14px;
+  margin-bottom: 12px;
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
   background: color-mix(in srgb, var(--gf-bg-card, #faf7ed) 94%, transparent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gf-bg-paper) 75%, transparent), 0 0 0 4px var(--scene-line), 0 7px 20px #3b2e1310;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--gf-bg-paper) 75%, transparent), 0 0 0 3px var(--scene-line), 0 4px 14px #3b2e130d;
   animation: panelIn 0.28s ease-out;
 
   > .reference-corners { pointer-events: none; z-index: 3; }
-  h2 { font-size: 23px; line-height: 1.5; letter-spacing: .04em; margin: 2px 0 14px; font-weight: 600; }
+  h2 { font-size: 17px; line-height: 1.4; letter-spacing: .03em; margin: 2px 0 8px; font-weight: 600; }
 }
 
 @keyframes panelIn {
@@ -692,22 +702,29 @@
 
 .scene-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
-  margin: 16px 0;
+  margin: 10px 0;
   > button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
     flex: 1;
     white-space: nowrap;
+    min-height: 36px;
+    font-size: 13px;
+    padding: 6px 10px;
   }
   &--small {
+    margin: 6px 0;
     > button {
       flex: initial;
-      font-size: 13px;
-      padding: 6px 12px;
+      font-size: 11.5px;
+      padding: 3px 8px;
+      min-height: 26px;
+      border-radius: 4px;
+      gap: 3px;
     }
   }
 }
@@ -716,13 +733,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 7px;
+  gap: 4px;
   border: 0;
   background: transparent;
   color: var(--gf-seal);
-  padding: 7px 2px;
+  padding: 2px 4px;
   box-shadow: none;
-  font-size: 14px;
+  font-size: 11.5px;
+  min-height: 22px;
 }
 
 .scene-section-title {
@@ -730,7 +748,35 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  h2 { margin: 0 0 16px; }
+  margin-bottom: 6px;
+  h2 { margin: 0; font-size: 16px; }
+  .scene-eyebrow { font-size: 10px; letter-spacing: .12em; }
+}
+
+.scene-image-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+
+  .scene-text-button {
+    font-size: 11px;
+    padding: 2px 4px;
+    min-height: 22px;
+    gap: 3px;
+  }
+}
+
+@media (max-width: 420px) {
+  .scene-image-actions {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1px;
+    .scene-text-button {
+      font-size: 10.5px;
+      padding: 1px 3px;
+      min-height: 20px;
+    }
+  }
 }
 
 .scene-picture, .scene-depth {
@@ -742,6 +788,17 @@
   isolation: isolate;
   > img, > canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
   > img { pointer-events: none; user-select: none; }
+}
+
+.scene-workspace {
+  .scene-picture {
+    max-height: 210px;
+    width: auto;
+    max-width: 100%;
+    margin: 0 auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(45, 35, 25, 0.08);
+  }
 }
 
 .scene-picture {
@@ -782,36 +839,38 @@
 .scene-region-list {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin: 14px 0;
+  gap: 6px;
+  margin: 6px 0;
 }
 
 .scene-region-row {
   display: flex;
   align-items: center;
-  border-radius: 6px;
+  border-radius: 4px;
   overflow: hidden;
   background: var(--gf-bg-paper, #fbf7ee);
   border: 1px solid rgba(179, 149, 81, 0.35);
-  box-shadow: 0 1px 4px rgba(44, 38, 33, 0.04);
+  box-shadow: 0 1px 3px rgba(44, 38, 33, 0.04);
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  min-height: 30px;
 
   button {
     flex: 1;
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 5px;
     text-align: left;
     min-width: 0;
+    min-height: 28px;
     border: 0;
     border-radius: 0;
     background: transparent;
-    font-size: 14px;
+    font-size: 12px;
     font-family: 'STKaiti', 'KaiTi', serif;
-    padding: 8px 10px;
+    padding: 3px 6px;
     color: var(--gf-ink-primary, #282b27);
     cursor: pointer;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.03em;
     user-select: none;
     touch-action: manipulation;
     transition: color 0.18s ease;
@@ -820,10 +879,10 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 15px;
-      height: 15px;
+      width: 13px;
+      height: 13px;
       border-radius: 50%;
-      font-size: 10px;
+      font-size: 8.5px;
       font-weight: 700;
       border: 1px solid rgba(179, 149, 81, 0.45);
       color: transparent;
@@ -839,16 +898,17 @@
       text-overflow: ellipsis;
     }
 
-    small { display: block; font-size: 10px; color: inherit; opacity: .8; }
+    small { display: block; font-size: 9px; color: inherit; opacity: .8; }
   }
 
   select {
-    width: 66px;
+    width: 56px;
     border: 0;
     border-left: 1px solid rgba(179, 149, 81, 0.28);
     background: transparent;
-    padding: 6px 4px 6px 6px;
-    font-size: 11px;
+    padding: 2px 2px 2px 3px;
+    font-size: 10px;
+    min-height: 28px;
     font-family: 'STKaiti', 'KaiTi', serif;
     color: var(--gf-ink-secondary, #6b675b);
     cursor: pointer;
@@ -860,7 +920,7 @@
   &.is-selected {
     background: color-mix(in srgb, var(--gf-seal, #8a2b2b) 7%, var(--gf-bg-paper, #fbf7ee));
     border: 1.5px solid color-mix(in srgb, var(--gf-seal, #8a2b2b) 52%, var(--gf-gold, #b39551));
-    box-shadow: 0 2px 8px rgba(138, 43, 43, 0.12);
+    box-shadow: 0 1px 4px rgba(138, 43, 43, 0.12);
 
     button {
       color: var(--gf-seal, #8a2b2b);
@@ -869,7 +929,7 @@
         background: var(--gf-seal, #8a2b2b);
         border-color: var(--gf-seal, #8a2b2b);
         color: #fff8eb;
-        box-shadow: 0 1px 3px rgba(138, 43, 43, 0.3);
+        box-shadow: 0 1px 2px rgba(138, 43, 43, 0.3);
       }
 
       .region-label {
@@ -908,12 +968,30 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 6px;
   border-top: 1px dashed var(--scene-line);
-  padding-top: 14px;
-  font-size: 13px;
-  label { display: flex; align-items: center; gap: 10px; }
-  button { font-size: 13px; }
+  padding-top: 8px;
+  margin-top: 4px;
+  font-size: 11.5px;
+  label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    select {
+      min-height: 26px;
+      padding: 2px 4px;
+      font-size: 10.5px;
+      max-width: 80px;
+      border-radius: 4px;
+    }
+  }
+  button {
+    font-size: 11.5px;
+    padding: 3px 8px;
+    min-height: 26px;
+    border-radius: 4px;
+  }
 }
 
 .scene-notice {
@@ -954,14 +1032,14 @@
 
 .scene-poem-list {
   display: grid;
-  gap: 15px;
-  margin-top: 20px;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .scene-poem-option {
   border: 1px solid var(--scene-line);
   border-radius: 4px;
-  padding: 15px;
+  padding: 8px 10px;
   background: var(--gf-bg-paper);
 
   &.is-chosen {
@@ -972,41 +1050,41 @@
   label {
     display: flex;
     align-items: start;
-    gap: 9px;
-    font-size: 12px;
+    gap: 6px;
+    font-size: 11px;
     cursor: pointer;
-    input { margin-top: 5px; accent-color: #8a302d; }
+    input { margin-top: 2px; accent-color: #8a302d; }
   }
 
   blockquote {
-    margin: 12px 0;
+    margin: 6px 0;
     padding: 0;
-    font-size: 21px;
-    line-height: 1.75;
+    font-size: 15px;
+    line-height: 1.6;
     p { margin: 0; }
   }
 
   > small {
     display: block;
     color: var(--scene-quiet);
-    font-size: 11px;
-    line-height: 1.8;
-    margin-top: 10px;
+    font-size: 10px;
+    line-height: 1.5;
+    margin-top: 4px;
   }
 }
 
 .scene-motif-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin: 10px 0;
+  gap: 4px;
+  margin: 5px 0;
   button, > span {
-    padding: 4px 9px;
-    min-height: 32px;
+    padding: 2px 6px;
+    min-height: 24px;
     color: var(--scene-quiet);
     border: 1px solid var(--scene-line);
     border-radius: 3px;
-    font-size: 12px;
+    font-size: 10.5px;
     background: transparent;
   }
   button[aria-pressed='true'], > span.is-grounded {
@@ -1019,10 +1097,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 15px;
+  gap: 8px;
   width: 100%;
-  margin-top: 22px;
-  padding: 12px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  min-height: 36px;
+  font-size: 13px;
 }
 
 .scene-privacy {

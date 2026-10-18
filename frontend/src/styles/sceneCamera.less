@@ -22,5 +22,26 @@
   button.scene-camera__primary { color: #fff0d7; background: linear-gradient(120deg, #923d32, #702c28); border: 3px double #c6a15b; }
 }
 @media (max-width: 360px) { .scene-camera { padding: 14px; footer button { padding: 8px 5px; font-size: 14px; } } }
-.scene-image-actions { display: flex; gap: 10px; align-items: center; }
-@media (max-width: 400px) { .scene-image-actions { flex-direction: column; align-items: flex-end; gap: 0; .scene-text-button { font-size: 12px; } } }
+.scene-image-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  .scene-text-button {
+    font-size: 11px;
+    padding: 2px 4px;
+    min-height: 22px;
+    gap: 3px;
+  }
+}
+@media (max-width: 420px) {
+  .scene-image-actions {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1px;
+    .scene-text-button {
+      font-size: 10.5px;
+      padding: 1px 3px;
+      min-height: 20px;
+    }
+  }
+}
