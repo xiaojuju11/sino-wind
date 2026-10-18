@@ -3,7 +3,7 @@ import { CameraOutline, CloseOutline, RedoOutline } from 'antd-mobile-icons'
 import { cameraErrorMessage, captureCameraFrame, createCameraSession } from '../utils/sceneCamera'
 import '../styles/sceneCamera.less'
 
-export default function SceneCamera({ onClose, onCapture }) {
+export default function SceneCamera({ onClose, onCapture, title = '拍下眼前', eyebrow = '取一镜山河', confirmLabel = '就用此景', captureLabel = '拍照留景' }) {
   const dialogRef = useRef(null), videoRef = useRef(null), active = useRef(false), facingRef = useRef('environment'), deviceRef = useRef(''), previewUrl = useRef(''), captureVersion = useRef(0)
   const [camera] = useState(() => createCameraSession(navigator.mediaDevices))
   const [phase, setPhase] = useState('opening'), [error, setError] = useState(''), [devices, setDevices] = useState([]), [facing, setFacing] = useState(''), [deviceId, setDeviceId] = useState(''), [photo, setPhoto] = useState(null)
@@ -76,15 +76,15 @@ export default function SceneCamera({ onClose, onCapture }) {
     camera.stop(); setPhase('done'); onCapture(file)
   }
   return <dialog ref={dialogRef} className='scene-camera' aria-labelledby='scene-camera-title' onCancel={event => { event.preventDefault(); close() }}>
-    <header><div><small>取一镜山河</small><h2 id='scene-camera-title'>拍下眼前</h2></div><button type='button' className='scene-camera__close' aria-label='关闭相机' onClick={close}><CloseOutline /></button></header>
+    <header><div><small>{eyebrow}</small><h2 id='scene-camera-title'>{title}</h2></div><button type='button' className='scene-camera__close' aria-label='关闭相机' onClick={close}><CloseOutline /></button></header>
     <div className={`scene-camera__view${phase === 'photo' ? ' is-photo' : ''}`} style={{ aspectRatio: frameRatio }}>
       <video ref={videoRef} autoPlay playsInline muted className={facing === 'user' ? 'is-mirrored' : ''} hidden={phase !== 'ready' && phase !== 'opening'} aria-label='相机实时预览' onResize={event => { const video = event.currentTarget; if (video.videoWidth && video.videoHeight) setFrameRatio(`${video.videoWidth} / ${video.videoHeight}`) }} />
       {photo && <img src={photo.url} alt='刚拍摄的照片' />}
       {phase === 'opening' && <p className='scene-camera__status' role='status'>正在连接相机，请允许使用摄像头…</p>}
-      {phase === 'capturing' && <p className='scene-camera__status' role='status'>正在定格山河…</p>}
+      {phase === 'capturing' && <p className='scene-camera__status' role='status'>正在拍摄…</p>}
       {phase === 'error' && <p className='scene-camera__status' role='alert'>{error}</p>}
     </div>
     {!photo && <div className='scene-camera__devices'><span>{facing === 'user' ? '前置取景' : facing === 'environment' ? '后置取景' : '相机取景'}</span>{devices.length > 1 && <select aria-label='选择摄像头' value={deviceId} disabled={phase === 'opening' || phase === 'capturing'} onChange={event => start({ deviceId: event.target.value })}>{devices.map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `摄像头 ${index + 1}`}</option>)}</select>}</div>}
-    <footer>{photo ? <><button type='button' onClick={retake}><RedoOutline />重拍一张</button><button type='button' className='scene-camera__primary' disabled={phase !== 'photo'} onClick={confirm}>就用此景</button></> : <><button type='button' disabled={phase === 'opening' || phase === 'capturing' || (devices.length === 1 && !facing)} title={devices.length === 1 && !facing ? '当前设备只检测到一个摄像头' : ''} onClick={switchCamera}><RedoOutline />切换前后镜头</button>{phase === 'error' ? <button type='button' className='scene-camera__primary' onClick={() => start({ facing: facingRef.current })}>重新连接</button> : <button type='button' className='scene-camera__primary' disabled={phase !== 'ready'} onClick={takePhoto}><CameraOutline />拍照留景</button>}</>}</footer>
+    <footer>{photo ? <><button type='button' onClick={retake}><RedoOutline />重拍一张</button><button type='button' className='scene-camera__primary' disabled={phase !== 'photo'} onClick={confirm}>{confirmLabel}</button></> : <><button type='button' disabled={phase === 'opening' || phase === 'capturing' || (devices.length === 1 && !facing)} title={devices.length === 1 && !facing ? '当前设备只检测到一个摄像头' : ''} onClick={switchCamera}><RedoOutline />切换前后镜头</button>{phase === 'error' ? <button type='button' className='scene-camera__primary' onClick={() => start({ facing: facingRef.current })}>重新连接</button> : <button type='button' className='scene-camera__primary' disabled={phase !== 'ready'} onClick={takePhoto}><CameraOutline />{captureLabel}</button>}</>}</footer>
   </dialog>
 }

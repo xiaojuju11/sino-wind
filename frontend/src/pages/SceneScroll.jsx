@@ -13,6 +13,7 @@ import { SCENE_POEMS, SCENE_TAGS } from '../data/scenePoems'
 import { exportScene } from '../utils/sceneImage'
 import '../styles/studyPages.less'
 import '../styles/scenePoetry.less'
+import '../styles/sceneMobile.less'
 
 function Scroll({ scope }) {
   const { id } = useParams(), navigate = useNavigate(), alive = useRef(true)

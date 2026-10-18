@@ -10,6 +10,7 @@ import { listScenes, deleteScene } from '../utils/sceneStorage'
 import { SCENE_POEMS } from '../data/scenePoems'
 import '../styles/studyPages.less'
 import '../styles/scenePoetry.less'
+import '../styles/sceneMobile.less'
 
 function Archive({ scope }) {
   const navigate = useNavigate(), [records, setRecords] = useState([]), [error, setError] = useState(''), [loading, setLoading] = useState(true), [revision, setRevision] = useState(0)

@@ -1,10 +1,11 @@
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
+import SceneCamera from '../SceneCamera'
 import './index.less'
 import { useNavigate } from 'react-router-dom'
 
 /**
  * 图片采集器（成员 A / TRD v3.0 §2.2）
- * 职责：拍摄或选取现代器物影像 ➔ FileReader 异步转 Base64 ➔ 交给 onRecognition 发起识物请求。
+ * 职责：复用实时相机或从相册选择器物照片，压缩编码后交给 onRecognition 发起识物请求。
  * 约定：本组件只负责采集与编码，不发起网络请求（识物请求统一在 Recognition.jsx 走公共 Axios）。
  */
 
@@ -69,18 +70,10 @@ export default function ImageCaptureAndProcess({ onRecognition, children, previe
   const [internalImage, setInternalImage] = useState(null)
   const selectedImage = previewImage || internalImage
   const [hint, setHint] = useState('')
-  const [capturing, setCapturing] = useState(false)
+  const [cameraOpen, setCameraOpen] = useState(false)
+  const closeCamera = useCallback(() => setCameraOpen(false), [])
   const navigate = useNavigate()
   const fileInputRef = useRef(null)
-  const videoRef = useRef(null)
-  const canvasRef = useRef(null)
-  const streamRef = useRef(null)
-
-  const stopStream = () => {
-    streamRef.current?.getTracks().forEach((track) => track.stop())
-    streamRef.current = null
-  }
-
   const submit = async (file) => {
     setHint('')
     let payload
@@ -99,44 +92,6 @@ export default function ImageCaptureAndProcess({ onRecognition, children, previe
     const file = event.target.files?.[0]
     if (file) submit(file)
     event.target.value = '' // 允许重复选取同一张图
-  }
-
-  // 拍照：取景 1 秒后定格一帧（沿用既有采集节奏），失败一律落到温和提示，不抛红
-  const handleTakePhoto = async () => {
-    setHint('')
-    if (!navigator.mediaDevices?.getUserMedia) {
-      setHint('当前环境无法调用摄像头，请改用「上传图片」。')
-      return
-    }
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-      streamRef.current = stream
-      setCapturing(true)
-      const video = videoRef.current
-      if (!video) throw new Error('取景器不可用')
-      video.srcObject = stream
-      await video.play()
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      const canvas = canvasRef.current
-      const context = canvas.getContext('2d')
-      canvas.width = video.videoWidth
-      canvas.height = video.videoHeight
-      if (!canvas.width || !canvas.height) throw new Error('取景失败')
-      context.drawImage(video, 0, 0, canvas.width, canvas.height)
-      const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.8))
-      if (!blob) throw new Error('取景失败')
-      setCapturing(false)
-      await submit(new File([blob], 'captured-image.jpg', { type: 'image/jpeg' }))
-    } catch (error) {
-      setHint(
-        error?.name === 'NotAllowedError' || error?.name === 'SecurityError'
-          ? '未获得摄像头授权，可在浏览器设置中允许后重试，或改用「上传图片」。'
-          : '摄像头调用失败，请改用「上传图片」。'
-      )
-    } finally {
-      stopStream()
-      setCapturing(false)
-    }
   }
 
   const handleClear = () => {
@@ -159,13 +114,7 @@ export default function ImageCaptureAndProcess({ onRecognition, children, previe
 
       <main className='image-capture-main'>
         <section className='image-capture-preview'>
-          <video
-            ref={videoRef}
-            className={`image-capture-preview__video${capturing ? ' is-live' : ''}`}
-            playsInline
-            muted
-          />
-          {!capturing && (
+          {
             selectedImage ? (
               <div className='image-capture-preview__image-container'>
                 <img src={selectedImage} alt='待考证的器物影像' className='image-capture-preview__image' />
@@ -180,7 +129,7 @@ export default function ImageCaptureAndProcess({ onRecognition, children, previe
                 <span>拍现代之物，溯其古代雅称与千年流变</span>
               </div>
             )
-          )}
+          }
         </section>
 
         {hint && <p className='image-capture-hint'>{hint}</p>}
@@ -189,11 +138,10 @@ export default function ImageCaptureAndProcess({ onRecognition, children, previe
           <button
             type='button'
             className='image-capture-btn image-capture-btn--primary'
-            onClick={handleTakePhoto}
-            disabled={capturing}
+            onClick={() => setCameraOpen(true)}
           >
             <i className='iconfont icon-xiangji' aria-hidden='true' />
-            {capturing ? '取景中…' : '拍照'}
+            拍照
           </button>
           <button
             type='button'
@@ -216,8 +164,7 @@ export default function ImageCaptureAndProcess({ onRecognition, children, previe
         {children}
       </main>
 
-      {/* 定格帧画布，仅用于拍照取样 */}
-      <canvas ref={canvasRef} className='image-capture-canvas' aria-hidden='true' />
+      {cameraOpen && <SceneCamera title='拍下眼前器物' eyebrow='观物识古' confirmLabel='用这张识物' captureLabel='拍照识物' onClose={closeCamera} onCapture={file => { closeCamera(); submit(file) }} />}
     </div>
   )
 }

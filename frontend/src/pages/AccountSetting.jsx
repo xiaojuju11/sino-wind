@@ -537,32 +537,18 @@ export default function AccountSetting() {
       <Popup
         visible={visiblePopupPassword}
         showCloseButton
-        position='right'
+        position='bottom'
+        className='account-password-popup'
         onClose={() => setVisiblePopupPassword(false)}
       >
-        <div className="update-nickname">
-          <div className="update-nickname__title">旧密码:</div>
-          <div className="update-nickname__input-container">
-            <Input
-              placeholder='请输入旧密码'
-              type='password'
-              value={oldPassword}
-              onChange={val => setOldPassword(val)}
-            />
-          </div>
-          <div className="update-nickname__title">新密码:</div>
-          <div className="update-nickname__input-container">
-            <Input
-              placeholder='请输入新密码'
-              type='password'
-              value={newPassword}
-              onChange={val => setNewPassword(val)}
-            />
-          </div>
-        </div>
-        <Button type='primary' block className='update-nickname__confirm' onClick={updatePassword}>
-          确认
-        </Button>
+        <form className='account-password-form' onSubmit={event => { event.preventDefault(); updatePassword() }}>
+          <header><span>守护一席风雅</span><h2>修改密码</h2></header>
+          <label htmlFor='account-old-password'>当前密码</label>
+          <input id='account-old-password' type='password' autoComplete='current-password' placeholder='请输入当前密码' value={oldPassword} onChange={event => setOldPassword(event.target.value)} required />
+          <label htmlFor='account-new-password'>新密码</label>
+          <input id='account-new-password' type='password' autoComplete='new-password' placeholder='设置 6–20 位新密码' minLength={6} maxLength={20} value={newPassword} onChange={event => setNewPassword(event.target.value)} required />
+          <button type='submit'>确认修改</button>
+        </form>
       </Popup>
     </div>
   )

@@ -18,3 +18,34 @@
   // The shared page's generic button rule must not override the saved-code CTA.
   .recovery-code .recovery-code__done { color: #fff7e9; }
 }
+
+// Portal content owns a single paper surface from title to submit button.
+.account-password-popup {
+  .adm-popup-body {
+    width: min(100vw, 480px); left: 0; right: 0; margin-inline: auto;
+    max-height: 88dvh; overflow-y: auto;
+    border: 1px solid var(--gf-gold, #b39551); border-bottom: 0;
+    border-radius: 18px 18px 0 0;
+    background: var(--gf-bg-paper, #f7f4eb); color: var(--gf-ink-primary);
+  }
+  .adm-popup-close-icon { color: var(--gf-ink-secondary); }
+  .account-password-form {
+    display: flex; flex-direction: column; margin: 0;
+    padding: 26px 22px max(26px, env(safe-area-inset-bottom));
+    font-family: STKaiti, KaiTi, serif;
+    header { padding-right: 26px; margin-bottom: 20px; span { color: var(--gf-ink-secondary); font-size: 12px; letter-spacing: .12em; } h2 { margin: 5px 0 0; font-size: 25px; font-weight: 600; } }
+    label { font-size: 15px; margin-bottom: 7px; }
+    input {
+      width: 100%; min-height: 46px; box-sizing: border-box; margin-bottom: 18px;
+      border: 1px solid color-mix(in srgb, var(--gf-gold) 65%, transparent); border-radius: 7px;
+      background: var(--gf-bg-card); color: var(--gf-ink-primary); padding: 10px 12px; font: inherit; font-size: 16px; line-height: 1.5;
+      &::placeholder { color: var(--gf-ink-secondary); }
+      &:focus-visible { outline: 2px solid var(--gf-gold); outline-offset: 2px; }
+    }
+    button {
+      margin-top: 6px; width: 100%; min-height: 46px; border: 3px double var(--gf-gold);
+      border-radius: 7px; background: var(--gf-seal, #7b3430); color: #fff1d6;
+      font: inherit; font-size: 17px; cursor: pointer;
+    }
+  }
+}

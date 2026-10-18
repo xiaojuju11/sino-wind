@@ -1,0 +1,24 @@
+.shuzhai-root.reference-polish .shuzhai-section-card .shuzhai-list .shuzhai-list-item {
+  position: relative; isolation: isolate; overflow: hidden;
+  min-height: 44px; padding: 3px 10px; background: var(--gf-bg-paper);
+  &::before {
+    content: ''; position: absolute; inset: 0 0 0 32%; z-index: -1; pointer-events: none;
+    background: var(--shuzhai-row-art) right 65% / 100% auto no-repeat;
+    opacity: .65; mix-blend-mode: multiply;
+    mask-image: linear-gradient(to right, transparent, #000 70%);
+  }
+  &[data-art='archive'] { --shuzhai-row-art: url('/images/shuzhai/row-archive-v1.webp'); }
+  &[data-art='artifacts'] { --shuzhai-row-art: url('/images/shuzhai/row-artifacts-v1.webp'); }
+  &[data-art='gallery'] { --shuzhai-row-art: url('/images/shuzhai/row-gallery-v1.webp'); }
+  &[data-art='notebook'] { --shuzhai-row-art: url('/images/shuzhai/row-notebook-v1.webp'); }
+  &[data-art='letters'] { --shuzhai-row-art: url('/images/shuzhai/row-letters-v1.webp'); }
+  &[data-art='translation'] { --shuzhai-row-art: url('/images/shuzhai/row-translation-v1.webp'); }
+  &[data-art='account'] { --shuzhai-row-art: url('/images/shuzhai/row-account-v1.webp'); }
+  &[data-art='theme'] { --shuzhai-row-art: url('/images/shuzhai/row-theme-v1.webp'); }
+  &[data-art='about'] { --shuzhai-row-art: url('/images/shuzhai/row-about-v1.webp'); }
+  .shuzhai-list-item__title { text-shadow: 0 1px 3px var(--gf-bg-paper); }
+  .shuzhai-list-item__arrow { color: var(--gf-accent-text, var(--gf-seal)); }
+}
+[data-theme='dark'] .shuzhai-root.reference-polish .shuzhai-section-card .shuzhai-list .shuzhai-list-item::before {
+  opacity: .18; mix-blend-mode: screen;
+}

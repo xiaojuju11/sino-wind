@@ -10,6 +10,7 @@ import axios from '../http'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
 import '../styles/studyPages.less'
+import '../styles/shuzhaiRefinement.less'
 import { finishStudySession } from '../utils/studyFlow'
 
 import { scholarScope, syncLocalLetters } from '../utils/scholarLetters'
@@ -241,14 +242,14 @@ function MinePageSession() {
         </div>
 
         <div className='shuzhai-list'>
-          <button type='button' className='shuzhai-list-item' onClick={() => navigate('/mine/archive')}>
+          <button type='button' className='shuzhai-list-item' data-art='archive' onClick={() => navigate('/mine/archive')}>
             <i className='iconfont icon-shuben' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>藏牒阁</span>
             </div>
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
-          <button type='button' className='shuzhai-list-item' onClick={() => navigate('/mine/artifacts')}>
+          <button type='button' className='shuzhai-list-item' data-art='artifacts' onClick={() => navigate('/mine/artifacts')}>
             <i className='iconfont icon-zhanpin' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>物溯宝鉴</span>
@@ -256,7 +257,7 @@ function MinePageSession() {
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
 
-          <button type='button' className='shuzhai-list-item' onClick={() => navigate('/mine/scenes')}>
+          <button type='button' className='shuzhai-list-item' data-art='gallery' onClick={() => navigate('/mine/scenes')}>
             <i className='iconfont icon-xiangji' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>诗境画阁</span>
@@ -264,7 +265,7 @@ function MinePageSession() {
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
 
-          <button type='button' className='shuzhai-list-item' onClick={() => navigate('/poem-collection')}>
+          <button type='button' className='shuzhai-list-item' data-art='notebook' onClick={() => navigate('/poem-collection')}>
             <i className='iconfont icon-shoucang' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>我的诗笺</span>
@@ -272,7 +273,7 @@ function MinePageSession() {
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
 
-          <button type='button' className='shuzhai-list-item' onClick={() => navigate('/mine/messages')}>
+          <button type='button' className='shuzhai-list-item' data-art='letters' onClick={() => navigate('/mine/messages')}>
             <i className='iconfont icon-message' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>知音回柬</span>
@@ -280,7 +281,7 @@ function MinePageSession() {
             <RightOutline className='shuzhai-list-item__arrow' />
           </button>
 
-          <button type='button' className='shuzhai-list-item' onClick={() => navigate('/mine/yayan')}>
+          <button type='button' className='shuzhai-list-item' data-art='translation' onClick={() => navigate('/mine/yayan')}>
             <i className='iconfont icon-ziliao' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>雅译锦囊</span>
@@ -305,7 +306,7 @@ function MinePageSession() {
         </div>
 
         <div className='shuzhai-list'>
-          <button type='button' className='shuzhai-list-item' onClick={() => navigate(signedIn ? '/accountSetting' : '/login')}>
+          <button type='button' className='shuzhai-list-item' data-art='account' onClick={() => navigate(signedIn ? '/accountSetting' : '/login')}>
             <i className='iconfont icon-zhanghao' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>账号设置</span>
@@ -314,7 +315,7 @@ function MinePageSession() {
           </button>
 
           {/* 墨色雅意：日月主题切换的唯一入口 */}
-          <div className='shuzhai-list-item shuzhai-list-item--theme'>
+          <div className='shuzhai-list-item shuzhai-list-item--theme' data-art='theme'>
             <i className='iconfont icon-shezhi' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>墨色雅意</span>
@@ -322,7 +323,7 @@ function MinePageSession() {
             <ThemeToggle className='shuzhai-theme-toggle' />
           </div>
 
-          <button type='button' className='shuzhai-list-item' onClick={handleShowAbout}>
+          <button type='button' className='shuzhai-list-item' data-art='about' onClick={handleShowAbout}>
             <i className='iconfont icon-zhinan' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
               <span className='shuzhai-list-item__title'>关于云山竹简</span>
@@ -340,9 +341,6 @@ function MinePageSession() {
           onClick={() => signedIn ? setVisibleLogout(true) : navigate('/login')}
           aria-label={signedIn ? '整装离席' : '登录入席'}
         >
-          <span className='shuzhai-logout-btn__ornaments' aria-hidden='true'>
-            <span /><span /><span /><span />
-          </span>
           <span className='shuzhai-logout-btn__text'>{signedIn ? '整装离席' : '登录入席'}<small>{signedIn ? '束卷归隐 · 期君再聚' : '落座留名 · 共此山河'}</small></span>
         </button>
         <p className='shuzhai-logout-sub'>{signedIn ? '藏卷仍在，风雅长留' : '入席后，可留存自己的风雅藏卷'}</p>

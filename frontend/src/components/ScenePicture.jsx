@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { decodeRuns, manualRegion } from '../utils/sceneImage'
 import { SCENE_TAGS } from '../data/scenePoems'
 
-export default function ScenePicture({ scene, selected = [], highlight, onToggle, drawing, onDraw }) {
+export default function ScenePicture({ scene, selected = [], highlight, onToggle, drawing, onDraw, maxHeight }) {
   const canvasRef = useRef(null), startRef = useRef(null)
   const [drag, setDrag] = useState(null)
   const { width, height, regions } = scene.analysis
@@ -38,7 +38,7 @@ export default function ScenePicture({ scene, selected = [], highlight, onToggle
       if (region) onToggle?.(region.id)
     }
   }
-  return <div className={`scene-picture${drawing ? ' is-drawing' : ''}`} style={{ aspectRatio: `${width}/${height}` }}
+  return <div className={`scene-picture${drawing ? ' is-drawing' : ''}`} style={{ aspectRatio: `${width}/${height}`, maxWidth: maxHeight ? `${maxHeight * width / height}px` : undefined, marginInline: maxHeight ? 'auto' : undefined }}
     onPointerDown={event => { if (!onToggle && !onDraw) return; startRef.current = position(event); if (drawing) { event.currentTarget.setPointerCapture(event.pointerId); setDrag({ start: startRef.current, end: startRef.current }) } }}
     onPointerMove={event => { if (drawing && startRef.current) setDrag({ start: startRef.current, end: position(event) }) }}
     onPointerUp={finish} onPointerCancel={() => { startRef.current = null; setDrag(null) }}>

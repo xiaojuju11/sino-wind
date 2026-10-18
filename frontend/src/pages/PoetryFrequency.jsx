@@ -57,16 +57,16 @@ export default function PoetryFrequency() {
   const names = [...new Set(authors.map(a => a.name))]
   return <FrequencyFrame title='诗海字衡' subtitle='从一字一词，读万卷风华' onBack={() => navigate('/home')}>
     <section className='frequency-panel frequency-intro'><ReferenceCorners /><p className='frequency-eyebrow'>一字有声 · 万卷成章</p><h2>唐风宋韵，皆可细数</h2><p>选一部诗集，寻一位诗人，看看哪些字词在笔下反复回响。</p>{meta.data && <small>唐诗 {fmt(meta.data.counts.tang)} 篇 · 宋词 {fmt(meta.data.counts.song)} 篇</small>}</section>
-    <section className='frequency-panel'><ReferenceCorners /><h2>第一折 · 选卷定衡</h2><ResourceNotice resource={meta} /><form key={query} onSubmit={submit} className='frequency-form'>
+    <section className='frequency-panel frequency-filter-panel'><ReferenceCorners /><h2>第一折 · 选卷定衡</h2><ResourceNotice resource={meta} /><form key={query} onSubmit={submit} className='frequency-form'>
       <label>诗集<select name='corpus' defaultValue={filters.corpus}><option value=''>唐诗与宋词</option><option value='tang'>唐诗</option><option value='song'>宋词</option></select></label>
       <label>统计方式<select name='mode' defaultValue={filters.mode}><option value='char'>逐字统计</option><option value='word'>分词统计</option></select></label>
-      <label className='frequency-wide'>诗人<input name='author' list='frequency-authors' placeholder='全部诗人，或输入姓名' maxLength={40} defaultValue={filters.author} /><datalist id='frequency-authors'>{names.map(name => <option key={name} value={name} />)}</datalist></label>
-      <label className='frequency-wide'>篇目<input name='title' placeholder='全部篇目，或输入标题关键词' maxLength={80} defaultValue={filters.title} /></label>
+      <label>诗人<input name='author' list='frequency-authors' placeholder='全部诗人 / 姓名' maxLength={40} defaultValue={filters.author} /><datalist id='frequency-authors'>{names.map(name => <option key={name} value={name} />)}</datalist></label>
+      <label>篇目<input name='title' placeholder='全部篇目 / 关键词' maxLength={80} defaultValue={filters.title} /></label>
       <label className='frequency-wide frequency-checkbox'><input name='stop' type='checkbox' value='1' defaultChecked={filters.stop === '1'} />略去常用字词</label>
       <button className='frequency-primary frequency-wide' type='submit'>展卷观频</button>
     </form></section>
     <ResourceNotice resource={stats} />
-    {stats.data && <><section className='frequency-panel'><ReferenceCorners /><h2>第二折 · 字词回响</h2><div className='frequency-metrics'><div><strong>{fmt(stats.data.poems)}</strong><span>篇诗词</span></div><div><strong>{fmt(stats.data.authors)}</strong><span>位诗人</span></div><div><strong>{fmt(stats.data.distinct)}</strong><span>种{filters.mode === 'word' ? '词语' : '汉字'}</span></div></div>
+    {stats.data && <><section className='frequency-panel frequency-results'><ReferenceCorners /><h2>第二折 · 字词回响</h2><div className='frequency-metrics'><div><strong>{fmt(stats.data.poems)}</strong><span>篇诗词</span></div><div><strong>{fmt(stats.data.authors)}</strong><span>位诗人</span></div><div><strong>{fmt(stats.data.distinct)}</strong><span>种{filters.mode === 'word' ? '词语' : '汉字'}</span></div></div>
       <p className='frequency-quiet'>正文共 {fmt(stats.data.total)} {filters.mode === 'word' ? '个二字及以上分词' : '字'}{filters.stop === '1' ? `，略去常用字词后 ${fmt(stats.data.included)} 个统计单位` : ''}</p>
       {!stats.data.terms.length ? <p className='frequency-notice'>此范围暂无可统计的正文，请调整诗集、诗人或篇目。</p> : <><FrequencyWordCloud key={query} terms={stats.data.cloudTerms || stats.data.terms} selected={term} onSelect={choose} />
       <p className='frequency-quiet'>点选字词，展开原诗。以下为出现次数前 30 项。</p><div className='frequency-bars'>{stats.data.terms.map((t, i) => <button type='button' key={t.term} aria-pressed={term === t.term} className='frequency-bar' onClick={() => choose(t.term)}><span className='frequency-bar__label'><small>{i + 1}</small>{t.term}</span><span className='frequency-bar__track'><i style={{ width: `${t.count / stats.data.terms[0].count * 100}%` }} /></span><span className='frequency-bar__value'>{fmt(t.count)}<small>每万 {t.per10k}</small></span></button>)}</div><button type='button' className='frequency-export' onClick={() => exportStats(stats.data, filters)}><DownlandOutline /> 导出统计</button></>}

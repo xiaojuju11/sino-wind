@@ -68,22 +68,6 @@
         border: 1px solid var(--logout-frame); border-radius: 6px; inset: 3px;
       }
       &::after { inset: 6px; border-color: #d2b16e44; border-radius: 3px; }
-      &__ornaments {
-        position: absolute; inset: 2px; pointer-events: none;
-        > span {
-          position: absolute; width: 11px; height: 11px; box-sizing: border-box;
-          border: 1.5px solid var(--logout-frame); border-right: 0; border-bottom: 0;
-          border-radius: 3px 0 0 0;
-          &::after {
-            content: ''; position: absolute; top: 2px; left: 2px; width: 4px; height: 4px;
-            border: 1px solid var(--logout-frame); border-left: 0; border-top: 0;
-          }
-          &:nth-child(1) { top: 0; left: 0; }
-          &:nth-child(2) { top: 0; right: 0; transform: rotate(90deg); }
-          &:nth-child(3) { bottom: 0; right: 0; transform: rotate(180deg); }
-          &:nth-child(4) { bottom: 0; left: 0; transform: rotate(270deg); }
-        }
-      }
       &__seal {
         display: flex; flex-direction: column; align-items: center; justify-content: center;
         flex: 0 0 24px; width: 24px; height: 32px; position: relative; z-index: 1;
