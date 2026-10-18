@@ -11,6 +11,13 @@
   box-sizing: border-box;
   animation: empty-fade-in 0.35s ease;
 
+  // 调用方传 seal={null} 时不保留空心圆环占位
+  &.is-seal-less {
+    padding-top: 24px;
+
+    .empty-state__aura { display: none; }
+  }
+
   // 1. 水墨微澜光晕
   .empty-state__aura {
     position: relative;
