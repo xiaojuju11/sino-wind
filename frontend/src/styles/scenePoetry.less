@@ -50,8 +50,10 @@
   > .reference-corners { pointer-events: none; z-index: 3; }
   h2 { font-size: 23px; line-height: 1.5; letter-spacing: .04em; margin: 2px 0 14px; font-weight: 600; }
 }
-.scene-intro { padding: 34px 25px 170px; overflow: hidden; min-height: 490px;
-  &::before { content: ''; position: absolute; inset: 0; z-index: -1; background: url('/images/scene/poetic-lake-v1.webp') bottom right / cover no-repeat; opacity: .65; }
+.scene-intro {
+  padding: 30px 24px 22px;
+  overflow: hidden;
+  &::before { content: ''; position: absolute; inset: 0; z-index: -1; background: url('/images/scene/poetic-lake-v1.webp') bottom right / cover no-repeat; opacity: .38; }
   > p { font-size: 16px; color: var(--scene-quiet); margin: 16px 0 24px; }
   > small { display: block; font-size: 11px; color: var(--scene-quiet); margin-top: 8px; max-width: 82%; }
 }
@@ -94,7 +96,6 @@
   p { margin: 0; } button { font: inherit; color: var(--gf-seal); border: 0; border-radius: 0; border-bottom: 1px dashed var(--gf-gold); padding: 0; min-height: 0; background: transparent; } button[aria-pressed='true'] { background: color-mix(in srgb, var(--gf-gold) 18%, transparent); }
 }
 .scene-scroll__author { font-size: 14px; color: var(--scene-quiet); margin: 0; }
-.scene-page .scene-scroll__stamp { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-width: 38px; min-height: 56px; border: 3px double #b47a58; border-radius: 2px; background: #8a302d; color: #f8e6cc; padding: 6px; font-size: 16px; line-height: 1.3; letter-spacing: 0; transform: rotate(-4deg); box-shadow: 1px 2px 4px #54251c20; transition: transform .18s, box-shadow .18s; &:hover { transform: rotate(0deg); box-shadow: 1px 3px 7px #54251c30; } &:active { transform: rotate(0deg) scale(.96); } }
 .scene-interpretation > p { line-height: 1.9; font-size: 15px; }
 .scene-source-link { color: var(--gf-seal); font-size: 12px; text-decoration: underline; text-underline-offset: 4px; }
 .scene-centered { text-align: center; }
@@ -106,6 +107,6 @@
   footer { display: flex; justify-content: space-between; align-items: center; padding: 0 15px; border-top: 1px solid var(--scene-line); small { font-size: 11px; color: var(--scene-quiet); } }
 }
 [data-theme='dark'] .scene-home-card::before, [data-theme='dark'] .scene-intro::before { opacity: .2; }
-@media (min-width: 650px) { .scene-archive-grid { grid-template-columns: 1fr 1fr; } .scene-intro { padding-bottom: 190px; } }
+@media (min-width: 650px) { .scene-archive-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 360px) { .scene-main { padding: 18px 12px; } .scene-panel { padding: 16px; } .scene-scroll { padding: 8px 8px 24px; } .scene-header { padding-left: 45px; padding-right: 45px; h1 { font-size: 28px; } p { font-size: 11px; } } .scene-region-list { grid-template-columns: 1fr; } .scene-actions > button { font-size: 14px; padding: 9px; } .scene-poem-option blockquote { font-size: 19px; } }
-@media (prefers-reduced-motion: reduce) { .scene-spinner { animation: none; } .scene-page .scene-scroll__stamp { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .scene-spinner { animation: none; } }

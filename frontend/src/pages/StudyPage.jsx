@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { LeftOutline, RedoOutline } from 'antd-mobile-icons'
 import { Toast, Modal } from 'antd-mobile'
 import InkWashBackground from '../components/InkWashBackground'
-import ScholarArchive from '../components/ScholarArchive'
 import ScholarArtifactDrawer from '../components/ScholarArtifactDrawer'
 import EmptyState from '../components/EmptyState'
 import { useScholarScope } from '../utils/useScholarScope'
@@ -13,7 +12,6 @@ import { playSilkScrollSound } from '../utils/guofengAudio'
 import '../styles/studyPages.less'
 
 const SECTIONS = {
-  archive: { title: '藏牒阁', seal: '修持存卷', subtitle: '历局唱和，皆有回响' },
   artifacts: { title: '物溯宝鉴', seal: '器以载道', subtitle: '藏一物，见一段风雅' },
   yayan: { title: '雅译锦囊', seal: '本机摘录', subtitle: '寻常言语，亦可成章' },
   messages: { title: '知音回柬', seal: '尺素传情', subtitle: '山水相逢，墨香不散' },
@@ -370,7 +368,7 @@ export default function StudyPage({ section }) {
       <span className='study-page__seal'>{info.seal}</span>
     </header>
     <main className='study-page__body' key={`${section}:${scope}`}>
-      {section === 'archive' ? <ScholarArchive presentation='page' /> : section === 'artifacts' ? <ScholarArtifactDrawer presentation='page' /> : section === 'messages' ? <Messages scope={scope} /> : <YayanNotebook />}
+      {section === 'artifacts' ? <ScholarArtifactDrawer presentation='page' /> : section === 'messages' ? <Messages scope={scope} /> : <YayanNotebook />}
     </main>
   </div>
 }

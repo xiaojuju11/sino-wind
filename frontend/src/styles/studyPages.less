@@ -127,6 +127,7 @@
   button:focus-visible, summary:focus-visible { outline: 2px solid var(--gf-accent-text, var(--gf-seal)); outline-offset: 3px; }
   .study-page__back { width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: transparent; font-size: 23px; }
   &__seal { justify-self: end; writing-mode: vertical-rl; font-size: 11px; letter-spacing: 2px; line-height: 1.5; padding: 4px 3px; border: 1px solid currentColor; border-radius: 2px; color: var(--gf-accent-text, var(--gf-seal)); }
+  &__placeholder { width: 44px; height: 44px; justify-self: end; pointer-events: none; visibility: hidden; }
   &__body { position: relative; padding: 20px 16px 32px; }
   &__toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 13px; color: var(--gf-ink-secondary); }
   &__refresh { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 6px 10px; border: 1px solid color-mix(in srgb, var(--gf-gold) 55%, transparent); background: var(--gf-bg-card); border-radius: 4px; }

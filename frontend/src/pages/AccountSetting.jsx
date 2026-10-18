@@ -337,7 +337,7 @@ export default function AccountSetting() {
           <h1>{recoveryOpen ? '账号恢复密笺' : '账号设置'}</h1>
           <p>{recoveryOpen ? '留一份凭据，安心归来' : '守一席清雅，护一卷风华'}</p>
         </div>
-        <span className='study-page__seal'>{recoveryOpen ? '密笺护席' : '雅席清规'}</span>
+        <span className='study-page__placeholder' aria-hidden='true' />
       </header>
 
       {/* 账号配置列表 */}

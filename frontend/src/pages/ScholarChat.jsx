@@ -547,6 +547,14 @@ function ScholarChatSession() {
             <EditSOutline className="scholar-tool-icon" />
             邀诗一首
           </button>
+          <button
+            type="button"
+            className="scholar-tool-btn"
+            onClick={() => chatScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
+            <CompassOutline className="scholar-tool-icon" />
+            论道锦囊
+          </button>
         </div>
 
         <div className="scholar-input-bar">

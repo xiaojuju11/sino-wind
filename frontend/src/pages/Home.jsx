@@ -117,22 +117,9 @@ export default function Home() {
   const navigate = useNavigate()
   // 题头元素引用：水墨粒子引擎的手势监听直接挂在这里（不新增遮挡层）
   const heroRef = useRef(null)
-  const heroInkZoneRef = useRef(null)
   // 是否已由「留驻此时空」等手动操作接管城邑 —— 定位链路见到此标记即不再自动写入，
   // 避免 IP 定位稍后返回把用户刚选的城市覆盖掉（实测踩过）
   const manualPickRef = useRef(false)
-
-  // 点击题头「华风」朱砂印章：激荡朱砂印泥水墨晕染
-  const handleSealClick = (e) => {
-    e.stopPropagation()
-    if (!heroRef.current || !heroInkZoneRef.current) return
-    const heroRect = heroRef.current.getBoundingClientRect()
-    const sealRect = e.currentTarget.getBoundingClientRect()
-    const x = sealRect.left - heroRect.left + sealRect.width / 2
-    const y = sealRect.top - heroRect.top + sealRect.height / 2
-    heroInkZoneRef.current.triggerBleed(x, y, 'cinnabar', 1.8)
-    Toast.show({ content: '朱砂落印 · 雅意自生', duration: 1200 })
-  }
 
   // ① 白话雅译
   const [inputText, setInputText] = useState('')
@@ -371,7 +358,7 @@ export default function Home() {
       {/* ── 题头：云山竹简 + 朱砂印「华风」+ 副标 + 右上角日月/设置 ── */}
       <header className="home-hero is-ink-zone" ref={heroRef}>
         {/* 题头局部宣纸水墨晕染层 */}
-        <InkSpreadZone ref={heroInkZoneRef} targetRef={heroRef} color="ink" />
+        <InkSpreadZone targetRef={heroRef} color="ink" />
 
         <div className="home-hero__actions">
           <button
@@ -387,15 +374,6 @@ export default function Home() {
 
         <div className="home-hero__title-row">
           <h1 className="home-hero__title">云山竹简</h1>
-          <span
-            className="home-hero__seal"
-            onClick={handleSealClick}
-            title="点击落印 · 激荡朱砂印泥"
-            role="button"
-            tabIndex={0}
-          >
-            华风
-          </span>
         </div>
         <p className="home-hero__sub">—— 读千年风雅 与君共此山河 ——</p>
       </header>

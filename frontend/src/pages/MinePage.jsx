@@ -14,14 +14,13 @@ import '../styles/shuzhaiRefinement.less'
 import { finishStudySession } from '../utils/studyFlow'
 
 import { scholarScope, syncLocalLetters } from '../utils/scholarLetters'
-import { guestSummary, guestArchiveCount, importGuestArchive, guestGames } from '../utils/scholarAssets'
+import { guestSummary, guestArchiveCount, importGuestArchive } from '../utils/scholarAssets'
 
 const BASE = import.meta.env.BASE_URL
 
 function MinePageSession() {
   const navigate = useNavigate()
   const [userInfo, setUserInfo] = useState({})
-  const [rankData, setRankData] = useState(null)
   const [guestCount, setGuestCount] = useState(guestArchiveCount)
   const [importing, setImporting] = useState(false)
   const refreshAssets = useRef(() => {})
@@ -37,18 +36,19 @@ function MinePageSession() {
       const valid = () => alive && current === generation && scope === scholarScope()
       setGuestCount(guestArchiveCount())
       if (!scope.startsWith('user:')) {
-        setUserInfo(guestSummary()); setRankData(null)
+        setUserInfo(guestSummary())
         return
       }
       try { await syncLocalLetters() } catch { /* The summary may still be readable; local pending originals are retained. */ }
       if (!valid()) return
-      const results = await Promise.allSettled([
-        axios.get('/api/deepseek/scholar/summary', { timeout: 10000 }),
-        axios.get('/api/deepseek/feihua/records', { params: { page: 1, pageSize: 1 }, timeout: 10000 })
-      ])
-      if (!valid()) return
-      setUserInfo(results[0].status === 'fulfilled' ? results[0].value.data.data : {})
-      setRankData(results[1].status === 'fulfilled' ? results[1].value.data.data : null)
+      try {
+        const res = await axios.get('/api/deepseek/scholar/summary', { timeout: 10000 })
+        if (!valid()) return
+        setUserInfo(res.data?.data || {})
+      } catch {
+        if (!valid()) return
+        setUserInfo({})
+      }
       setGuestCount(guestArchiveCount())
     }
     const schedule = () => { clearTimeout(timer); timer = setTimeout(fetchInfo, 100) }
@@ -117,8 +117,6 @@ function MinePageSession() {
       onClick: () => navigate('/mine/yayan')
     },
   ]
-
-  stats.push({ num: rankData?.total ?? (scholarScope() === 'guest' ? guestGames().length : '—'), label: '飞花归档', onClick: () => navigate('/mine/archive') })
 
   // 关于弹窗
   // 说明：原用 Modal.alert，但其 ModalAlertProps 只接受 confirmText，无法给确认按钮传样式；
@@ -196,10 +194,7 @@ function MinePageSession() {
               <h2 className='scholar-name'>{userInfo.nickname || '云山居士'}</h2>
               <span className='scholar-badge'>
                 <i className='iconfont icon-wode scholar-badge__icon'></i>
-                {rankData?.rank || (scholarScope() === 'guest' ? '游客研习' : '文阶待载入')}
-                {rankData?.meritPoints !== undefined && (
-                  <span className='scholar-badge__points'>· {rankData.meritPoints}分</span>
-                )}
+                {scholarScope() === 'guest' ? '游客研习' : '雅士'}
               </span>
             </div>
             <p className='scholar-motto'>读千年风雅 与君共此山河</p>
@@ -216,7 +211,7 @@ function MinePageSession() {
           </div>
         )}
 
-        {/* 五列修持数据看板（支持快捷下钻） */}
+        {/* 四列修持数据看板（支持快捷下钻） */}
         <div className='scholar-stats'>
           {stats.map((item) => (
             <button key={item.label} type='button' className='scholar-stats__item' onClick={item.onClick}>
@@ -227,7 +222,7 @@ function MinePageSession() {
         </div>
       </section>
 
-      {/* 3. 列表卡片 1：五大藏品墨卷 */}
+      {/* 3. 列表卡片 1：藏品墨卷 */}
       <section className='shuzhai-section-card'>
         <ReferenceCorners />
         <div className='shuzhai-section-head'>
@@ -242,13 +237,6 @@ function MinePageSession() {
         </div>
 
         <div className='shuzhai-list'>
-          <button type='button' className='shuzhai-list-item' data-art='archive' onClick={() => navigate('/mine/archive')}>
-            <i className='iconfont icon-shuben' aria-hidden='true' />
-            <div className='shuzhai-list-item__content'>
-              <span className='shuzhai-list-item__title'>藏牒阁</span>
-            </div>
-            <RightOutline className='shuzhai-list-item__arrow' />
-          </button>
           <button type='button' className='shuzhai-list-item' data-art='artifacts' onClick={() => navigate('/mine/artifacts')}>
             <i className='iconfont icon-zhanpin' aria-hidden='true' />
             <div className='shuzhai-list-item__content'>
