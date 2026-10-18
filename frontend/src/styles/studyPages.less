@@ -124,8 +124,28 @@
   }
   button { font: inherit; cursor: pointer; color: var(--gf-ink-primary); }
   button:disabled { opacity: .5; cursor: default; }
-  button:focus-visible, summary:focus-visible { outline: 2px solid var(--gf-accent-text, var(--gf-seal)); outline-offset: 3px; }
-  .study-page__back { width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: transparent; font-size: 23px; }
+  .study-page__back {
+    justify-self: center;
+    align-self: center;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--gf-gold) 40%, transparent);
+    background: linear-gradient(115deg, color-mix(in srgb, var(--gf-bg-card) 35%, var(--gf-bg-paper)), var(--gf-bg-paper));
+    box-shadow: 0 2px 6px color-mix(in srgb, var(--gf-ink-primary) 8%, transparent);
+    color: var(--gf-ink-primary);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+    &:active:not(:disabled) {
+      transform: scale(0.93);
+      border-color: var(--gf-gold);
+    }
+  }
   &__seal { justify-self: end; writing-mode: vertical-rl; font-size: 11px; letter-spacing: 2px; line-height: 1.5; padding: 4px 3px; border: 1px solid currentColor; border-radius: 2px; color: var(--gf-accent-text, var(--gf-seal)); }
   &__placeholder { width: 44px; height: 44px; justify-self: end; pointer-events: none; visibility: hidden; }
   &__body { position: relative; padding: 20px 16px 32px; }

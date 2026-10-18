@@ -108,12 +108,126 @@ body {
   line-height: 1;
 }
 
-/* 🏮 全局按钮统一圆角视觉规范 */
+/* 🏮 全局按钮统一圆角视觉规范 (优雅国风微圆角 8px~10px) */
+:root {
+  --gf-radius-btn: 10px;
+  --gf-radius-btn-sm: 8px;
+  --adm-button-border-radius: 10px;
+  --adm-radius-s: 8px;
+  --adm-radius-m: 10px;
+}
+
 button,
 input[type="button"],
 input[type="submit"],
 input[type="reset"],
 [role="button"],
 .adm-button {
-  border-radius: 8px;
+  --border-radius: 10px;
+  border-radius: 10px;
+}
+
+/* 保持纯圆图标与头像类按钮的原生几何 */
+button:is(.is-circle, .is-round, .scholar-nav__back, .scholar-nav__action, .scholar-mic-btn, .poem-header__back),
+button[class*="circle"],
+button[class*="round"],
+button[class*="avatar"] {
+  border-radius: 50% !important;
+}
+
+/* 🏮 全局统一返回上一级圆形国风按钮规范 (PoemPage 同款) */
+.gf-back-btn,
+.poem-header__back,
+.study-page__back,
+.scene-back,
+.scholar-nav__back,
+.collection-header__back,
+.chronicle-header__back,
+.image-capture-header__back,
+.not-found-header__back,
+.legal-page__back {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  max-width: 38px !important;
+  max-height: 38px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  border: 1px solid color-mix(in srgb, var(--gf-gold, #c59b27) 40%, transparent) !important;
+  background: linear-gradient(115deg, color-mix(in srgb, var(--gf-bg-card, #ffffff) 35%, var(--gf-bg-paper, #f7f4eb)), var(--gf-bg-paper, #f7f4eb)) !important;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--gf-ink-primary, #2b2b2b) 8%, transparent) !important;
+  color: var(--gf-ink-primary, #2b2b2b) !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+  flex: none !important;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gf-back-btn svg,
+.poem-header__back svg,
+.study-page__back svg,
+.scene-back svg,
+.scholar-nav__back svg,
+.collection-header__back svg,
+.chronicle-header__back svg,
+.image-capture-header__back svg,
+.not-found-header__back svg,
+.legal-page__back svg {
+  font-size: 18px !important;
+  width: 1em !important;
+  height: 1em !important;
+  display: block !important;
+}
+
+.gf-back-btn:active,
+.poem-header__back:active,
+.study-page__back:active:not(:disabled),
+.scholar-nav__back:active,
+.collection-header__back:active,
+.chronicle-header__back:active,
+.image-capture-header__back:active:not(:disabled),
+.not-found-header__back:active,
+.legal-page__back:active {
+  transform: scale(0.93) !important;
+  border-color: var(--gf-gold, #c59b27) !important;
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--gf-ink-primary, #2b2b2b) 12%, transparent) !important;
+}
+
+.scene-back:active {
+  transform: translateY(-50%) scale(0.93) !important;
+  border-color: var(--gf-gold, #c59b27) !important;
+}
+
+.study-page__back:disabled,
+.image-capture-header__back:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+.gf-back-btn:focus-visible,
+.poem-header__back:focus-visible,
+.study-page__back:focus-visible,
+.scene-back:focus-visible,
+.scholar-nav__back:focus-visible,
+.collection-header__back:focus-visible,
+.chronicle-header__back:focus-visible,
+.image-capture-header__back:focus-visible,
+.not-found-header__back:focus-visible,
+.legal-page__back:focus-visible {
+  outline: 2px solid var(--gf-seal, #8a2b2b) !important;
+  outline-offset: 2px !important;
+}
+
+/* 纯链接/画卷项等无边框布局保持自适应 */
+button.letter-gallery-item,
+button.scene-archive-open {
+  border-radius: 0;
 }
