@@ -1,3 +1,7 @@
+try {
+  const dns = require('node:dns')
+  dns?.setDefaultResultOrder?.('ipv4first')
+} catch {}
 const axios = require('axios')
 const db = require('../config/db')
 require('dotenv').config({ path: ['.env.local', '.env'] })
