@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { LeftOutline, RedoOutline } from 'antd-mobile-icons'
 import { Toast, Modal } from 'antd-mobile'
@@ -14,7 +14,7 @@ import '../styles/studyPages.less'
 const SECTIONS = {
   artifacts: { title: '物溯宝鉴', subtitle: '藏一物，见一段风雅' },
   yayan: { title: '雅译锦囊', subtitle: '寻常言语，亦可成章' },
-  messages: { title: '知音回柬', seal: '尺素传情', subtitle: '山水相逢，墨香不散' },
+  messages: { title: '知音回柬', subtitle: '山水相逢，墨香不散' },
 }
 
 const SAGE_METAS = {
@@ -208,7 +208,6 @@ function Messages({ scope }) {
   const [letters, setLetters] = useState(() => cachedLetters(scope))
   const [busy, setBusy] = useState(false)
   const [notice, setNotice] = useState('')
-  const refreshRef = useRef(() => {})
 
   useEffect(() => {
     let alive = true, generation = 0
@@ -232,7 +231,6 @@ function Messages({ scope }) {
     const readCache = () => {
       if (alive && scope === scholarScope()) setLetters(cachedLetters(scope))
     }
-    refreshRef.current = refresh
     refresh()
     window.addEventListener('focus', refresh)
     window.addEventListener('storage', refresh)
@@ -264,15 +262,6 @@ function Messages({ scope }) {
           onClick={() => navigate('/letters')}
         >
           入席拜访知音
-        </button>
-        <button
-          type='button'
-          className='scholar-icon-refresh-btn'
-          disabled={busy}
-          onClick={() => refreshRef.current()}
-          aria-label='重新展卷'
-        >
-          <RedoOutline className={busy ? 'is-spinning' : ''} />
         </button>
       </div>
     </div>

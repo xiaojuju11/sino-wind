@@ -19,20 +19,22 @@ export default function EmptyState({
   className = ''
 }) {
   return (
-    <div className={`empty-state-root ${className}`} role='status'>
+    <div className={`empty-state-root ${seal ? '' : 'is-seal-less'} ${className}`} role='status'>
       {/* 1. 水墨微澜光晕背底 */}
       <div className='empty-state__aura' aria-hidden='true'>
         <span className='empty-state__ripple ripple-1' />
         <span className='empty-state__ripple ripple-2' />
         <span className='empty-state__cloud' />
         {/* 印章以圆环为定位容器，文案换行也不会改变印章的位置。 */}
-        <div className='empty-state__seal-wrap'>
-          <div className='empty-state__seal'>
-            <span className='empty-state__seal-border-outer' />
-            <span className='empty-state__seal-border-inner' />
-            <span className='empty-state__seal-text'>{seal}</span>
+        {seal && (
+          <div className='empty-state__seal-wrap'>
+            <div className='empty-state__seal'>
+              <span className='empty-state__seal-border-outer' />
+              <span className='empty-state__seal-border-inner' />
+              <span className='empty-state__seal-text'>{seal}</span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* 3. 诗意文辞 */}

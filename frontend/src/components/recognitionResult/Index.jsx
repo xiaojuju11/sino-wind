@@ -52,7 +52,7 @@ export default function RecognitionResult({ recognitionResult, pending = false }
 
   // 语音播放控制状态
   const [isPlaying, setIsPlaying] = useState(false)
-  const [voiceMode, setVoiceMode] = useState('male') // 'male' (名士雅韵) | 'female' (清词婉约)
+  const voiceMode = 'male' // 固定音色：名士雅韵（原先的男女双音色切换已移除）
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const artifactId = useRef(null)
@@ -110,7 +110,7 @@ export default function RecognitionResult({ recognitionResult, pending = false }
   }, [])
 
   // Web Speech 雅言吟诵引擎（调校中文字符、语速、音调）
-  const playWithSpeechSynthesis = (targetVoiceMode = voiceMode) => {
+  const playWithSpeechSynthesis = () => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
       Toast.show({ content: '当前浏览器未开启语音合成能力' })
       setIsPlaying(false)
@@ -131,19 +131,11 @@ export default function RecognitionResult({ recognitionResult, pending = false }
     const voices = window.speechSynthesis.getVoices()
     const zhVoices = voices.filter(v => v.lang.includes('zh') || v.lang.includes('cmn') || v.lang.includes('CN'))
 
-    if (targetVoiceMode === 'male') {
-      // 名士雅韵：沉雄从容、语速稍缓、抑扬顿挫
-      utter.rate = 0.84
-      utter.pitch = 0.90
-      const maleVoice = zhVoices.find(v => /Yunxi|Kangkang|Danny|Male|男/i.test(v.name)) || zhVoices[0]
-      if (maleVoice) utter.voice = maleVoice
-    } else {
-      // 清词婉约：温润空灵、轻柔徐缓
-      utter.rate = 0.88
-      utter.pitch = 1.06
-      const femaleVoice = zhVoices.find(v => /Xiaoxiao|Yaoyao|Huihui|Female|女/i.test(v.name)) || zhVoices[0]
-      if (femaleVoice) utter.voice = femaleVoice
-    }
+    // 名士雅韵：沉雄从容、语速稍缓、抑扬顿挫
+    utter.rate = 0.84
+    utter.pitch = 0.90
+    const maleVoice = zhVoices.find(v => /Yunxi|Kangkang|Danny|Male|男/i.test(v.name)) || zhVoices[0]
+    if (maleVoice) utter.voice = maleVoice
 
     utter.onstart = () => setIsPlaying(true)
     utter.onend = () => setIsPlaying(false)
@@ -182,14 +174,6 @@ export default function RecognitionResult({ recognitionResult, pending = false }
       }
     } else {
       playWithSpeechSynthesis()
-    }
-  }
-
-  // 切换音色模式
-  const handleToggleVoiceMode = (mode) => {
-    setVoiceMode(mode)
-    if (isPlaying) {
-      playWithSpeechSynthesis(mode)
     }
   }
 
@@ -260,23 +244,6 @@ export default function RecognitionResult({ recognitionResult, pending = false }
               <div className='scholar-voice-deck__title-wrap'>
                 <i className='iconfont icon-yinliang-F' aria-hidden='true' />
                 <span className='scholar-voice-deck__title'>先贤雅音吟诵</span>
-              </div>
-              {/* 音色切换 */}
-              <div className='scholar-voice-deck__timbre-toggle'>
-                <button
-                  type='button'
-                  className={`scholar-voice-deck__timbre-btn ${voiceMode === 'male' ? 'is-active' : ''}`}
-                  onClick={() => handleToggleVoiceMode('male')}
-                >
-                  名士雅韵
-                </button>
-                <button
-                  type='button'
-                  className={`scholar-voice-deck__timbre-btn ${voiceMode === 'female' ? 'is-active' : ''}`}
-                  onClick={() => handleToggleVoiceMode('female')}
-                >
-                  清词婉约
-                </button>
               </div>
             </div>
 
