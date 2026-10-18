@@ -196,7 +196,6 @@ export default function InviteDrawer({ visible, onClose, onInviteSuccess }) {
         {/* 顶部标题栏 */}
         <div className="invite-drawer__header">
           <div className="invite-drawer__title-wrap">
-            <span className="invite-drawer__seal">华风</span>
             <h3 className="invite-drawer__title">迎请故友 · 自定知己</h3>
           </div>
           <button type="button" className="invite-drawer__close" aria-label="离席，关闭邀请" onClick={handleClose}>
@@ -226,7 +225,7 @@ export default function InviteDrawer({ visible, onClose, onInviteSuccess }) {
               <div className="invite-drawer__avatar-meta">
                 <span className="invite-drawer__quick-label">知己印相 · 头像定制</span>
                 <p className="invite-drawer__avatar-hint">
-                  支持上传自定义头像（现代好友/虚拟人物/挚友照片皆可），或点选水墨立绘
+                  支持上传自定义头像（现代好友/虚拟人物/挚友照片皆可）
                 </p>
                 <button
                   type="button"

@@ -129,12 +129,15 @@
       font-size: 0.42rem;
     }
 
-    // 已入藏：转为竹青实底（双色里的第二色，仅完成态出现）
+    // 已入藏：米色宣纸底 + 泥金细边（完成态不再使用竹青绿）
     &.is-saved {
-      .btn-success();
+      background-color: color-mix(in srgb, var(--gf-gold, #b39551) 18%, var(--gf-bg-card, #faf7ed));
+      border-color: color-mix(in srgb, var(--gf-gold, #b39551) 55%, transparent);
+      color: var(--gf-ink-primary, @color-text-main);
+      box-shadow: none;
 
       .iconfont {
-        color: #C5E0C7;
+        color: color-mix(in srgb, var(--gf-gold, #b39551) 85%, var(--gf-ink-primary, @color-text-main));
       }
     }
 

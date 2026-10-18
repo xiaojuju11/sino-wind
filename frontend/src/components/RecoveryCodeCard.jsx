@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { FileOutline, DownlandOutline } from 'antd-mobile-icons'
 import '../styles/recoveryCode.less'
 
-export default function RecoveryCodeCard({ code, title = '请收好账号恢复码', onDone }) {
+export default function RecoveryCodeCard({ code, title = '请收好账号恢复码', onDone, showSeal = true }) {
   const [saved, setSaved] = useState(false)
   const [notice, setNotice] = useState('')
   useEffect(() => {
@@ -30,7 +30,7 @@ export default function RecoveryCodeCard({ code, title = '请收好账号恢复�
     setNotice('已发起下载，请确认文件保存成功后再继续。')
   }
   return <section className="recovery-code" aria-labelledby="recovery-code-title">
-    <span className="recovery-code__seal" aria-hidden="true">密笺</span>
+    {showSeal && <span className="recovery-code__seal" aria-hidden="true">密笺</span>}
     <h2 id="recovery-code-title">{title}</h2>
     <p>恢复码仅在本次显示。遗忘密码时，可凭账号与此码找回；每次使用或重新生成后，旧码立即失效。</p>
     <label className="recovery-code__label" htmlFor="account-recovery-code">账号恢复码</label>
