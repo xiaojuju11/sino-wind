@@ -89,15 +89,6 @@ function ScholarArtifactDrawerSession({ onClose, onPick, presentation }) {
         >
           <ScanningOutline /> 识辨新器
         </button>
-        <button
-          type='button'
-          className='scholar-icon-refresh-btn'
-          disabled={busy}
-          onClick={() => setRevision(n => n + 1)}
-          aria-label='重新展卷'
-        >
-          <RedoOutline className={busy ? 'is-spinning' : ''} />
-        </button>
       </div>
     </div>
 

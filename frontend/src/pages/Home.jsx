@@ -384,7 +384,6 @@ export default function Home() {
         <ReferenceCorners />
         <div className="home-section-header">
           <h2 className="home-section-title">白话雅译</h2>
-          <span className="home-section-seal">简</span>
         </div>
 
         <div className="home-yayan-scroll">
@@ -462,7 +461,6 @@ export default function Home() {
       <section className="home-card-scroll home-almanac">
         <div className="home-section-header">
           <h2 className="home-section-title">古今时令与天象</h2>
-          <span className="home-section-seal">时</span>
         </div>
         <p className="home-section-sub">观天时，知物候，品古今生活之美。</p>
 
@@ -524,7 +522,6 @@ export default function Home() {
         <ReferenceCorners />
         <div className="home-section-header">
           <h2 className="home-section-title">古今识物</h2>
-          <span className="home-section-seal">物</span>
         </div>
         <p className="home-section-sub">拍一物，识古名，探寻器物背后的风雅渊源。</p>
 
@@ -574,7 +571,6 @@ export default function Home() {
         <ReferenceCorners />
         <div className="home-section-header">
           <h2 className="home-section-title">古诗词赏析</h2>
-          <span className="home-section-seal">词</span>
         </div>
         <p className="home-section-sub">品读千古名篇，感受诗词中的人生境界。</p>
 
