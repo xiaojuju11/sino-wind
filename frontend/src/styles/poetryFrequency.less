@@ -23,7 +23,7 @@
     > .reference-corners { position: absolute; pointer-events: none; z-index: 2; }
     h2 { font: 600 23px/1.5 STKaiti, KaiTi, serif; margin: 0 0 16px; }
   }
-  .frequency-intro { padding: 24px 20px 70px; overflow: hidden;
+  .frequency-intro { padding: 24px 20px; overflow: hidden;
     &::before { content: ''; position: absolute; z-index: -1; inset: 0; background: url('/images/frequency/poetry-desk-v1.webp') center / cover; opacity: .52; }
     p:not(.frequency-eyebrow) { max-width: 85%; }
     small { font-size: 12px; }
@@ -293,7 +293,7 @@
       &--0 { color: #ac4d45; } &--1 { color: #3f785e; } &--2 { color: #496a9a; } &--3 { color: #a16d38; } &--4 { color: #77618e; } &--5 { color: #3b8c8c; } &--6 { color: #936578; }
     }
   }
-  .frequency-bar { display: flex; width: 100%; min-height: 49px; align-items: center; gap: 8px; padding: 5px 0; border: 0; border-bottom: 1px solid var(--frequency-line); background: transparent; text-align: left;
+  .frequency-bar { display: flex; width: 100%; min-height: 49px; align-items: center; gap: 8px; padding: 5px 10px; box-sizing: border-box; border: 0; border-bottom: 1px solid var(--frequency-line); background: transparent; text-align: left;
     &[aria-pressed='true'] { background: color-mix(in srgb, var(--gf-gold) 10%, transparent); }
     &__label { display: flex; align-items: center; gap: 6px; flex: 0 0 68px; overflow-wrap: anywhere; font-size: 13px; small { font-size: 10px; color: var(--gf-ink-secondary); } }
     &__track { flex: 1; min-width: 0; height: 7px; border-radius: 3px; background: color-mix(in srgb, var(--gf-gold) 14%, transparent); i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--gf-seal, #7b3430), var(--gf-gold, #b39551)); } }
@@ -313,10 +313,10 @@
     > h2 { font-size: 20px; margin-bottom: 10px; }
     .frequency-metrics { gap: 6px; strong { font-size: 22px; line-height: 1.25; } span { font-size: 11px; } }
     > .frequency-quiet { margin: 8px 0; line-height: 1.5; }
-    .frequency-bar { min-height: 36px; padding: 3px 0; gap: 6px; }
+    .frequency-bar { min-height: 36px; padding: 4px 10px; gap: 6px; }
     .frequency-bar__label { font-size: 12px; flex-basis: 61px; }
     .frequency-bar__track { height: 6px; }
-    .frequency-bar__value { flex-basis: 105px; font-size: 12px; white-space: nowrap; small { display: inline; margin-left: 5px; font-size: 9px; } }
+    .frequency-bar__value { flex: 0 0 auto; min-width: 0; font-size: 12px; white-space: nowrap; small { display: inline; margin-left: 5px; font-size: 9px; } }
     .frequency-export { min-height: 40px; margin-top: 12px; }
   }
   #frequency-contexts {
@@ -358,4 +358,4 @@
     color: #e39284;
   }
 }
-@media (max-width: 360px) { .frequency-page { .frequency-main { padding-inline: 12px; } .frequency-panel { padding: 16px; } .frequency-bar__label { flex-basis: 60px; } .frequency-bar__value { flex-basis: 65px; } } }
+@media (max-width: 360px) { .frequency-page { .frequency-main { padding-inline: 12px; } .frequency-panel { padding: 16px; } .frequency-bar { padding-inline: 8px; } .frequency-bar__label { flex-basis: 60px; } .frequency-bar__value { font-size: 11px; small { margin-left: 3px; font-size: 8.5px; } } } }
