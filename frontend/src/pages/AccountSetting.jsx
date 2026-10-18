@@ -515,6 +515,7 @@ export default function AccountSetting() {
         visible={visiblePopup}
         showCloseButton
         position='right'
+        className='account-nickname-popup'
         onClose={() => setVisiblePopup(false)}
         afterShow={() => setNewNickname(nickname)}
       >
