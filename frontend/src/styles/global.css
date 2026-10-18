@@ -108,13 +108,13 @@ body {
   line-height: 1;
 }
 
-/* 🏮 全局按钮统一圆角视觉规范 (优雅国风微圆角 8px~10px) */
+/* 🏮 全局按钮统一圆角视觉规范 (温润亲和·人文雅致大圆角 18px~22px) */
 :root {
-  --gf-radius-btn: 10px;
-  --gf-radius-btn-sm: 8px;
-  --adm-button-border-radius: 10px;
-  --adm-radius-s: 8px;
-  --adm-radius-m: 10px;
+  --gf-radius-btn: 20px;
+  --gf-radius-btn-sm: 14px;
+  --adm-button-border-radius: 20px;
+  --adm-radius-s: 12px;
+  --adm-radius-m: 18px;
 }
 
 button,
@@ -123,16 +123,63 @@ input[type="submit"],
 input[type="reset"],
 [role="button"],
 .adm-button {
-  --border-radius: 10px;
-  border-radius: 10px;
+  --border-radius: 20px;
+  border-radius: 20px;
+}
+
+/* 核心行动与胶囊按钮的温润人文圆角 */
+.home-yayan-submit-btn,
+.home-yayan-collect-btn,
+.scholar-send-btn,
+.shuzhai-logout-btn,
+.invite-drawer__confirm-btn,
+.scene-camera__primary,
+.poem-search__btn {
+  border-radius: 22px;
+}
+
+.poem-action,
+.scholar-tool-btn,
+.scholar-capsule-btn,
+.scholar-btn-action,
+.scholar-action-btn,
+.scholar-return-btn,
+.empty-state__action-btn,
+.invite-drawer__upload-btn,
+.invite-drawer__ai-btn {
+  border-radius: 18px;
+}
+
+.scholar-capsule,
+.scholar-msg-sound-btn,
+.scene-motif-links button {
+  border-radius: 14px;
 }
 
 /* 保持纯圆图标与头像类按钮的原生几何 */
-button:is(.is-circle, .is-round, .scholar-nav__back, .scholar-nav__action, .scholar-mic-btn, .poem-header__back),
+button:is(
+  .is-circle,
+  .is-round,
+  .scholar-nav__back,
+  .scholar-nav__action,
+  .scholar-mic-btn,
+  .poem-header__back,
+  .gf-back-btn,
+  .scene-back,
+  .collection-header__back,
+  .chronicle-header__back,
+  .image-capture-header__back,
+  .not-found-header__back,
+  .legal-page__back,
+  .scholar-icon-refresh-btn,
+  .scene-camera__close,
+  .invite-drawer__close,
+  .image-capture-preview__clear
+),
 button[class*="circle"],
 button[class*="round"],
 button[class*="avatar"] {
-  border-radius: 50% !important;
+  border-radius: 50%;
 }
 
 /* 🏮 全局统一返回上一级圆形国风按钮规范 (PoemPage 同款) */
@@ -146,27 +193,27 @@ button[class*="avatar"] {
 .image-capture-header__back,
 .not-found-header__back,
 .legal-page__back {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 38px !important;
-  height: 38px !important;
-  min-width: 38px !important;
-  min-height: 38px !important;
-  max-width: 38px !important;
-  max-height: 38px !important;
-  padding: 0 !important;
-  border-radius: 50% !important;
-  border: 1px solid color-mix(in srgb, var(--gf-gold, #c59b27) 40%, transparent) !important;
-  background: linear-gradient(115deg, color-mix(in srgb, var(--gf-bg-card, #ffffff) 35%, var(--gf-bg-paper, #f7f4eb)), var(--gf-bg-paper, #f7f4eb)) !important;
-  box-shadow: 0 2px 6px color-mix(in srgb, var(--gf-ink-primary, #2b2b2b) 8%, transparent) !important;
-  color: var(--gf-ink-primary, #2b2b2b) !important;
-  font-size: 18px !important;
-  line-height: 1 !important;
-  cursor: pointer !important;
-  box-sizing: border-box !important;
-  flex: none !important;
-  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  max-width: 38px;
+  max-height: 38px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--gf-gold, #c59b27) 40%, transparent);
+  background: linear-gradient(115deg, color-mix(in srgb, var(--gf-bg-card, #ffffff) 35%, var(--gf-bg-paper, #f7f4eb)), var(--gf-bg-paper, #f7f4eb));
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--gf-ink-primary, #2b2b2b) 8%, transparent);
+  color: var(--gf-ink-primary, #2b2b2b);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  box-sizing: border-box;
+  flex: none;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -180,10 +227,10 @@ button[class*="avatar"] {
 .image-capture-header__back svg,
 .not-found-header__back svg,
 .legal-page__back svg {
-  font-size: 18px !important;
-  width: 1em !important;
-  height: 1em !important;
-  display: block !important;
+  font-size: 18px;
+  width: 1em;
+  height: 1em;
+  display: block;
 }
 
 .gf-back-btn:active,
@@ -195,21 +242,21 @@ button[class*="avatar"] {
 .image-capture-header__back:active:not(:disabled),
 .not-found-header__back:active,
 .legal-page__back:active {
-  transform: scale(0.93) !important;
-  border-color: var(--gf-gold, #c59b27) !important;
-  box-shadow: 0 1px 3px color-mix(in srgb, var(--gf-ink-primary, #2b2b2b) 12%, transparent) !important;
+  transform: scale(0.93);
+  border-color: var(--gf-gold, #c59b27);
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--gf-ink-primary, #2b2b2b) 12%, transparent);
 }
 
 .scene-back:active {
-  transform: translateY(-50%) scale(0.93) !important;
-  border-color: var(--gf-gold, #c59b27) !important;
+  transform: translateY(-50%) scale(0.93);
+  border-color: var(--gf-gold, #c59b27);
 }
 
 .study-page__back:disabled,
 .image-capture-header__back:disabled {
-  opacity: 0.45 !important;
-  cursor: not-allowed !important;
-  transform: none !important;
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .gf-back-btn:focus-visible,
@@ -222,8 +269,8 @@ button[class*="avatar"] {
 .image-capture-header__back:focus-visible,
 .not-found-header__back:focus-visible,
 .legal-page__back:focus-visible {
-  outline: 2px solid var(--gf-seal, #8a2b2b) !important;
-  outline-offset: 2px !important;
+  outline: 2px solid var(--gf-seal, #8a2b2b);
+  outline-offset: 2px;
 }
 
 /* 纯链接/画卷项等无边框布局保持自适应 */

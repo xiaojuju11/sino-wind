@@ -227,10 +227,6 @@ export default function RecognitionResult({ recognitionResult, pending = false }
                 <div className='scholar-appraise-seal__tag'>{rank.tag}</div>
                 <div className='scholar-appraise-seal__desc'>{rank.desc}</div>
               </div>
-              <div className='scholar-appraise-seal__stamp'>
-                <span>博古</span>
-                <span>珍赏</span>
-              </div>
             </div>
           </div>
         </div>

@@ -107,9 +107,7 @@ export default function ImageCaptureAndProcess({ onRecognition, children, previe
           <i className='iconfont icon-fanhui' aria-hidden='true' />
         </button>
         <h1 className='image-capture-header__title'>物溯古今 · 拍照识器</h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.12rem' }}>
-          <i className='image-capture-header__seal' aria-hidden='true'>华风</i>
-        </div>
+        <span style={{ width: '38px', flex: 'none' }} aria-hidden='true' />
       </header>
 
       <main className='image-capture-main'>
