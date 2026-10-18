@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { loadImage } from '../utils/sceneImage'
 
 // Small depth-guided image displacement. This is 2.5D, not unseen geometry reconstruction.
-export default function SceneDepth({ scene, active }) {
+export default function SceneDepth({ scene, active, maxHeight }) {
   const ref = useRef(null), move = useRef(() => {}), [failed, setFailed] = useState(false)
   const { width, height, depth } = scene.analysis
   useEffect(() => {
@@ -46,7 +46,7 @@ export default function SceneDepth({ scene, active }) {
     setup().catch(() => { if (alive) setFailed(true) })
     return () => { alive = false; cancelAnimationFrame(frame); move.current = () => {}; if (gl) { textures.forEach(t => gl.deleteTexture(t)); shaders.forEach(s => gl.deleteShader(s)); if (buffer) gl.deleteBuffer(buffer); if (program) gl.deleteProgram(program) } }
   }, [scene.image, width, height, depth, active])
-  return <div className='scene-depth' style={{ aspectRatio: `${width}/${height}` }} onPointerMove={event => { const rect = event.currentTarget.getBoundingClientRect(); move.current((event.clientX - rect.left) / rect.width - .5, (event.clientY - rect.top) / rect.height - .5) }} onPointerLeave={() => move.current(0, 0)}>
+  return <div className='scene-depth' style={{ aspectRatio: `${width}/${height}`, maxWidth: maxHeight ? `${maxHeight * width / height}px` : undefined, marginInline: maxHeight ? 'auto' : undefined }} onPointerMove={event => { const rect = event.currentTarget.getBoundingClientRect(); move.current((event.clientX - rect.left) / rect.width - .5, (event.clientY - rect.top) / rect.height - .5) }} onPointerLeave={() => move.current(0, 0)}>
     <img src={scene.image} alt='诗境原图' />
     {active && depth && !failed && <canvas ref={ref} aria-label='轻移指尖，观赏景物远近层次' />}
     {failed && <span className='scene-picture__hint'>此设备暂不支持层次展示，已展开原图</span>}

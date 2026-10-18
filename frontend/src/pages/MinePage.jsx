@@ -339,7 +339,7 @@ function MinePageSession() {
         visible={visibleLogout}
         actions={logoutActions}
         cancelText='留步细品'
-        extra='仅退出当前登录；藏品、信札、本机摘录与日月偏好均会保留。'
+        extra='仅退出当前登录；藏品、信札与日月偏好均会保留。'
         onClose={() => setVisibleLogout(false)}
         onAction={handleLogoutAction}
       />

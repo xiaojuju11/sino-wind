@@ -13,7 +13,7 @@ import '../styles/studyPages.less'
 
 const SECTIONS = {
   artifacts: { title: '物溯宝鉴', seal: '器以载道', subtitle: '藏一物，见一段风雅' },
-  yayan: { title: '雅译锦囊', seal: '本机摘录', subtitle: '寻常言语，亦可成章' },
+  yayan: { title: '雅译锦囊', subtitle: '寻常言语，亦可成章' },
   messages: { title: '知音回柬', seal: '尺素传情', subtitle: '山水相逢，墨香不散' },
 }
 
@@ -365,7 +365,7 @@ export default function StudyPage({ section }) {
     <header className='study-page__header'>
       <button type='button' className='study-page__back' aria-label='返回书斋' onClick={() => navigate('/mine')}><LeftOutline /></button>
       <div><h1>{info.title}</h1><p>{info.subtitle}</p></div>
-      <span className='study-page__seal'>{info.seal}</span>
+      {info.seal ? <span className='study-page__seal'>{info.seal}</span> : <span className='study-page__placeholder' aria-hidden='true' />}
     </header>
     <main className='study-page__body' key={`${section}:${scope}`}>
       {section === 'artifacts' ? <ScholarArtifactDrawer presentation='page' /> : section === 'messages' ? <Messages scope={scope} /> : <YayanNotebook />}

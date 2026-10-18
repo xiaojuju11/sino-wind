@@ -37,11 +37,56 @@
     overflow: hidden;
     &::before { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--scene-panel-art) right bottom / cover no-repeat; opacity: .52; pointer-events: none; }
   }
-  .scene-scroll { --scene-panel-art: url('/images/scene/scroll-original-v1.webp'); padding: 9px 9px 18px; }
-  .scene-scroll__poem { font-size: 22px; line-height: 1.65; margin: 18px 0 10px; }
-  .scene-scroll__author { font-size: 13px; }
-  .scene-scroll h2 { font-size: 13px; font-weight: 400; margin: 4px 0 12px; }
-  .scene-caption { margin: 7px 0; font-size: 11px; }
+  .scene-scroll {
+    --scene-panel-art: url('/images/scene/scroll-original-v1.webp');
+    padding: 8px 8px 12px;
+    margin-bottom: 12px;
+  }
+  .scene-scroll__picture {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  .scene-scroll .scene-picture,
+  .scene-scroll .scene-depth {
+    max-height: 175px;
+    max-width: 100%;
+    margin-inline: auto;
+  }
+  .scene-caption { margin: 5px 0 3px; font-size: 11px; line-height: 1.35; color: var(--scene-quiet); }
+  .scene-scroll__poem {
+    font-size: 17px;
+    line-height: 1.48;
+    margin: 8px 0 6px;
+    letter-spacing: .06em;
+    p { margin: 1px 0; }
+  }
+  .scene-scroll__author { font-size: 12px; line-height: 1.3; color: var(--scene-quiet); margin: 0; }
+  .scene-scroll h2 { font-size: 12px; font-weight: 400; line-height: 1.3; margin: 2px 0 8px; color: var(--scene-quiet); }
+  .scene-scroll__stamp {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-height: 28px;
+    padding: 2px 14px;
+    font-size: 12px;
+    line-height: 1.2;
+    letter-spacing: 2px;
+    border: 1px solid color-mix(in srgb, var(--gf-gold) 75%, transparent);
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--gf-bg-paper) 80%, var(--gf-gold));
+    color: var(--gf-seal);
+    font-family: STKaiti, KaiTi, serif;
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    cursor: pointer;
+    transition: transform .15s ease, background-color .15s ease;
+    &:active {
+      transform: scale(0.96);
+    }
+  }
   .scene-interpretation { --scene-panel-art: url('/images/scene/scroll-interpretation-v1.webp'); > p { font-size: 14px; line-height: 1.75; margin: 8px 0; } }
   .scene-dialogue { --scene-panel-art: url('/images/scene/scroll-dialogue-v1.webp'); h2 { font-size: 18px; } p { margin: 8px 0; font-size: 12px; } .scene-actions { margin-bottom: 0; } }
   .scene-interpretation .scene-motif-links { margin: 8px 0; }
@@ -69,7 +114,8 @@
     .scene-header h1 { font-size: 27px; }
     .scene-poem-option { padding: 8px; blockquote { font-size: 16px; } }
     .scene-archive-card { padding: 8px; }
-    .scene-scroll { padding: 8px 8px 16px; }
-    .scene-scroll__poem { font-size: 20px; }
+    .scene-scroll { padding: 6px 6px 10px; }
+    .scene-scroll .scene-picture, .scene-scroll .scene-depth { max-height: 150px; }
+    .scene-scroll__poem { font-size: 15px; margin: 6px 0 4px; }
   }
 }

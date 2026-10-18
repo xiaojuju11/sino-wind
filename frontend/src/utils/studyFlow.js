@@ -13,7 +13,7 @@ export function readYayanNotebook(storage = localStorage) {
       error: valid.length === rows.length ? '' : '部分摘录暂不可读，原稿已保留。',
     }
   } catch {
-    return { items: [], error: '未能读取本机摘录，原稿已保留，请稍后重试。' }
+    return { items: [], error: '未能读取雅言记录，原稿已保留，请稍后重试。' }
   }
 }
 

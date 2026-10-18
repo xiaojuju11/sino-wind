@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { LeftOutline, DownlandOutline as DownloadOutline, AddOutline, MessageOutline, RightOutline } from 'antd-mobile-icons'
-import { Toast } from 'antd-mobile'
+import { Toast, CenterPopup } from 'antd-mobile'
 import InkWashBackground from '../components/InkWashBackground'
 import ReferenceCorners from '../components/ReferenceCorners'
 import ScenePicture from '../components/ScenePicture'
@@ -20,6 +20,7 @@ function Scroll({ scope }) {
   const initialDraft = id === 'draft' ? location.state?.draft : null
   const [scene, setScene] = useState(initialDraft || null), [error, setError] = useState(''), [saving, setSaving] = useState(false), [exporting, setExporting] = useState(false)
   const [mode, setMode] = useState('poetry'), [highlight, setHighlight] = useState('')
+  const [showPoemModal, setShowPoemModal] = useState(false)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -72,11 +73,49 @@ function Scroll({ scope }) {
     <header className='scene-header'><button type='button' className='scene-back' aria-label={id === 'draft' ? '返回寻镜入诗' : '返回诗境画阁'} onClick={() => navigate(id === 'draft' ? '/scene-poetry' : '/mine/scenes')}><LeftOutline /></button><div><span className='scene-eyebrow'>把一刻风景，留作此生诗意</span><h1>我的诗境</h1><p>山水入镜，诗意入心</p></div></header>
     <main className='scene-main'>{error ? <section className='scene-panel'><p role='alert'>{error}</p><button type='button' className='scene-primary' onClick={() => navigate('/scene-poetry')}>重新摄景</button></section> : !scene ? <p role='status'>正在展开诗境…</p> : !poem ? <p role='alert'>这幅藏卷的诗句暂未找到，请重新选诗。</p> : <>
       <div className='scene-tabs' aria-label='诗境展示方式'>{[['poetry', '原景'], ['regions', '循诗观景'], ...(scene?.analysis?.depth ? [['depth', '山水层次']] : [])].map(([key, label]) => <button type='button' key={key} aria-pressed={mode === key} onClick={() => { setMode(key); setHighlight('') }}>{label}</button>)}</div>
-      <article className='scene-panel scene-scroll'><ReferenceCorners /><div className='scene-scroll__picture'>{mode === 'regions' ? <ScenePicture scene={scene} selected={scene?.selected || []} highlight={highlight} onToggle={regionId => { const region = scene?.analysis?.regions?.find(row => row.id === regionId); setHighlight(previous => previous === region?.tag ? '' : region?.tag || '') }} /> : <SceneDepth scene={scene} active={mode === 'depth'} />}</div>
+      <article className='scene-panel scene-scroll'><ReferenceCorners /><div className='scene-scroll__picture'>{mode === 'regions' ? <ScenePicture maxHeight={175} scene={scene} selected={scene?.selected || []} highlight={highlight} onToggle={regionId => { const region = scene?.analysis?.regions?.find(row => row.id === regionId); setHighlight(previous => previous === region?.tag ? '' : region?.tag || '') }} /> : <SceneDepth maxHeight={175} scene={scene} active={mode === 'depth'} />}</div>
         <p className='scene-caption'>{mode === 'depth' ? '轻移指尖 · 以估计深度呈现轻微视差' : mode === 'regions' ? '点击诗句中有描线的字，查看对应景物' : scene?.example ? '山水画示例' : '取自眼前 · 题以古诗'}</p>
         <div className='scene-scroll__poem'>{poem.lines.map(line => <p key={line}>{highlightedLine(line)}</p>)}</div><p className='scene-scroll__author'>{poem.dynasty} · {poem.author}</p><h2>《{poem.title}》</h2><button type='button' className='scene-scroll__stamp' aria-label={scene?.saved ? '已藏，打开诗境画阁' : saving ? '正在收入诗境画阁' : '入诗，收入诗境画阁'} disabled={saving} onClick={scene?.saved ? () => navigate('/mine/scenes') : save}><span>{saving ? '藏' : scene?.saved ? '已' : '入'}</span><span>{saving ? '卷' : scene?.saved ? '藏' : '诗'}</span></button>
       </article>
-      <section className='scene-panel scene-interpretation'><ReferenceCorners /><span className='scene-eyebrow'>景有所见 · 诗有所思</span><h2>此景与此诗</h2><p>{poem.note}</p><div className='scene-motif-links'>{poem.anchors.map(([word, tag]) => <span key={`${word}-${tag}`} className={tags.has(tag) ? 'is-grounded' : ''}>{word} · {tags.has(tag) ? '有选景对应' : '诗中联想'}</span>)}</div><a className='scene-source-link' href={poem.sourceUrl} target='_blank' rel='noopener noreferrer'>原诗出处：{poem.source} · 检索原文</a></section>
+      <section className='scene-panel scene-interpretation'><ReferenceCorners /><span className='scene-eyebrow'>景有所见 · 诗有所思</span><h2>此景与此诗</h2><p>{poem.note}</p><div className='scene-motif-links'>{poem.anchors.map(([word, tag]) => <span key={`${word}-${tag}`} className={tags.has(tag) ? 'is-grounded' : ''}>{word} · {tags.has(tag) ? '有选景对应' : '诗中联想'}</span>)}</div><button type='button' className='scene-source-link' onClick={() => setShowPoemModal(true)} title='展开原诗全貌与详注'>原诗出处：{poem.source} · 展卷品读全诗</button></section>
+      <CenterPopup visible={showPoemModal} onMaskClick={() => setShowPoemModal(false)} onClose={() => setShowPoemModal(false)} showCloseButton={false} className='scene-poem-modal'>
+        <div className='scene-poem-modal__content'>
+          <ReferenceCorners />
+          <div className='scene-poem-modal__header'>
+            <span className='scene-eyebrow'>原诗全貌 · 典范雅存</span>
+            <h2>《{poem.title}》</h2>
+            <p className='scene-poem-modal__author'>{poem.dynasty} · {poem.author}</p>
+          </div>
+          <div className='scene-poem-modal__scroll'>
+            <div className='scene-poem-modal__lines'>
+              {(poem.fullLines || poem.lines).map(line => <p key={line}>{line}</p>)}
+            </div>
+            <div className='scene-poem-modal__note'>
+              <h4>【诗境释析】</h4>
+              <p>{poem.note}</p>
+            </div>
+          </div>
+          <div className='scene-poem-modal__actions'>
+            <button type='button' className='scene-primary' onClick={() => {
+              setShowPoemModal(false)
+              navigate('/poem', {
+                state: {
+                  keyword: poem.title,
+                  poem: {
+                    id: poem.id,
+                    title: poem.title,
+                    author: poem.author,
+                    dynasty: poem.dynasty,
+                    paragraphs: poem.fullLines || poem.lines,
+                    appreciation: poem.note,
+                  }
+                }
+              })
+            }}>前往古诗词鉴赏卷（听琴·读律） <RightOutline /></button>
+            <button type='button' className='scene-poem-modal__close-btn' onClick={() => setShowPoemModal(false)}>收起长卷</button>
+          </div>
+        </div>
+      </CenterPopup>
       <div className='scene-actions'><button type='button' className='scene-primary' disabled={saving || scene?.saved} onClick={save}><AddOutline />{scene?.saved ? '已收入画阁' : saving ? '正在藏卷…' : '收入诗境画阁'}</button><button type='button' disabled={exporting} onClick={download}><DownloadOutline />{exporting ? '正在制笺…' : '保存高清长图'}</button></div>
       <section className='scene-panel scene-dialogue'><h2>携景，与先贤一席清谈</h2><p>将选景与诗句带入对席，待你确认后发送。</p><div className='scene-actions'><button type='button' onClick={() => discuss('libai')}><MessageOutline />请教李白</button><button type='button' onClick={() => discuss('sushi')}><MessageOutline />请教苏轼</button></div></section><button type='button' className='scene-text-button scene-library-link' onClick={() => navigate('/mine/scenes')}>展开诗境画阁 <RightOutline /></button>
     </>}</main></div>

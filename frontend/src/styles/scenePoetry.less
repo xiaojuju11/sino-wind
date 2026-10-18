@@ -91,13 +91,154 @@
 .scene-privacy { color: var(--scene-quiet); font-size: 11px; line-height: 1.9; margin: 22px 5px 10px; }
 .scene-page .scene-library-link { display: flex; margin: 15px auto; }
 .scene-tabs { display: flex; gap: 8px; margin-bottom: 22px; button { flex: 1; font-size: 14px; padding: 7px 5px; } button[aria-pressed='true'] { background: var(--gf-seal, #8a2b2b); color: #fff2dc; border-color: var(--gf-seal, #8a2b2b); } }
-.scene-scroll { padding: 10px 10px 30px; text-align: center; .scene-caption { padding: 0 5px; } h2 { font-size: 14px; color: var(--scene-quiet); font-weight: 400; margin: 5px 0 18px; } }
-.scene-scroll__poem { margin: 28px 0 18px; font-size: clamp(21px, 3.3vw, 29px); line-height: 1.85; letter-spacing: .04em;
+.scene-scroll { padding: 8px 8px 14px; text-align: center; .scene-caption { padding: 0 5px; } h2 { font-size: 12px; color: var(--scene-quiet); font-weight: 400; margin: 2px 0 8px; } }
+.scene-scroll__poem { margin: 8px 0 6px; font-size: clamp(16px, 3.3vw, 19px); line-height: 1.5; letter-spacing: .04em;
   p { margin: 0; } button { font: inherit; color: var(--gf-seal); border: 0; border-radius: 0; border-bottom: 1px dashed var(--gf-gold); padding: 0; min-height: 0; background: transparent; } button[aria-pressed='true'] { background: color-mix(in srgb, var(--gf-gold) 18%, transparent); }
 }
-.scene-scroll__author { font-size: 14px; color: var(--scene-quiet); margin: 0; }
+.scene-scroll__author { font-size: 12px; color: var(--scene-quiet); margin: 0; }
 .scene-interpretation > p { line-height: 1.9; font-size: 15px; }
-.scene-source-link { color: var(--gf-seal); font-size: 12px; text-decoration: underline; text-underline-offset: 4px; }
+.scene-source-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--gf-seal, #8a2b2b);
+  font-size: 13px;
+  font-family: inherit;
+  background: color-mix(in srgb, var(--gf-seal, #8a2b2b) 6%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--gf-seal, #8a2b2b) 45%, transparent);
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 12px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  min-height: 34px;
+  &:hover, &:active {
+    background: color-mix(in srgb, var(--gf-seal, #8a2b2b) 12%, transparent);
+    border-color: var(--gf-seal, #8a2b2b);
+  }
+}
+
+.scene-poem-modal {
+  width: min(92vw, 440px);
+  border-radius: 12px;
+  background: var(--gf-bg-paper, #f4efdf);
+  color: var(--gf-ink-primary, #282b27);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+  border: 1px solid var(--scene-line, #ded5c4);
+  padding: 0;
+  overflow: hidden;
+  font-family: STKaiti, KaiTi, 'Noto Serif SC', serif;
+  --scene-line: color-mix(in srgb, var(--gf-gold, #b39551) 54%, transparent);
+  --scene-quiet: var(--gf-ink-secondary, #777365);
+}
+
+.scene-poem-modal__content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: 84vh;
+  padding: 24px 20px 20px;
+  box-sizing: border-box;
+}
+
+.scene-poem-modal__header {
+  text-align: center;
+  margin-bottom: 12px;
+  .scene-eyebrow {
+    display: inline-block;
+    color: var(--gf-seal, #8a2b2b);
+    font-size: 11px;
+    letter-spacing: .2em;
+    margin-bottom: 4px;
+  }
+  h2 {
+    font-size: 22px;
+    margin: 4px 0 2px;
+    font-weight: 600;
+    color: var(--gf-seal, #8a2b2b);
+    letter-spacing: .08em;
+  }
+  .scene-poem-modal__author {
+    font-size: 13px;
+    color: var(--scene-quiet, #777365);
+    margin: 0;
+  }
+}
+
+.scene-poem-modal__scroll {
+  overflow-y: auto;
+  max-height: 48vh;
+  padding: 8px 6px;
+  margin-bottom: 14px;
+  border-top: 1px solid var(--scene-line, #ded5c4);
+  border-bottom: 1px solid var(--scene-line, #ded5c4);
+}
+
+.scene-poem-modal__lines {
+  text-align: center;
+  margin: 10px 0 14px;
+  p {
+    margin: 6px 0;
+    font-size: clamp(17px, 2.6vw, 20px);
+    line-height: 1.85;
+    letter-spacing: 0.08em;
+    color: var(--gf-ink-primary, #282b27);
+  }
+}
+
+.scene-poem-modal__note {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: color-mix(in srgb, var(--gf-gold, #b39551) 12%, transparent);
+  border-radius: 6px;
+  border-left: 3px solid var(--gf-seal, #8a2b2b);
+  text-align: left;
+  h4 {
+    margin: 0 0 4px;
+    font-size: 13px;
+    color: var(--gf-seal, #8a2b2b);
+    font-weight: 600;
+  }
+  p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--gf-ink-primary, #282b27);
+  }
+}
+
+.scene-poem-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+  .scene-primary {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px;
+    font-size: 14px;
+    min-height: 40px;
+  }
+  .scene-poem-modal__close-btn {
+    width: 100%;
+    padding: 8px;
+    font-size: 13px;
+    background: transparent;
+    border: 1px solid var(--scene-line, #ded5c4);
+    border-radius: 6px;
+    color: var(--scene-quiet, #777365);
+    cursor: pointer;
+    min-height: 36px;
+    &:hover {
+      background: color-mix(in srgb, var(--scene-line) 15%, transparent);
+    }
+  }
+}
 .scene-centered { text-align: center; }
 .scene-dialogue { h2 { font-size: 20px; } p { font-size: 13px; color: var(--scene-quiet); } }
 .scene-archive-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 24px; font-size: 13px; button { display: flex; gap: 7px; align-items: center; font-size: 14px; } }
