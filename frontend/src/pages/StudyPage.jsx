@@ -12,7 +12,7 @@ import { playSilkScrollSound } from '../utils/guofengAudio'
 import '../styles/studyPages.less'
 
 const SECTIONS = {
-  artifacts: { title: '物溯宝鉴', seal: '器以载道', subtitle: '藏一物，见一段风雅' },
+  artifacts: { title: '物溯宝鉴', subtitle: '藏一物，见一段风雅' },
   yayan: { title: '雅译锦囊', subtitle: '寻常言语，亦可成章' },
   messages: { title: '知音回柬', seal: '尺素传情', subtitle: '山水相逢，墨香不散' },
 }

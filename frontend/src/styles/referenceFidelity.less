@@ -130,6 +130,7 @@
     min-height: 37px;
     font-size: 14px;
     padding: 4px;
+    border-radius: 22px;
     background: var(--gf-seal);
     color: #fff;
     border: 1px solid color-mix(in srgb, var(--gf-seal) 80%, transparent);
@@ -139,6 +140,7 @@
     min-height: 37px;
     font-size: 14px;
     padding: 4px;
+    border-radius: 22px;
     background: transparent;
     color: var(--gf-seal);
     border: 1px solid var(--gf-seal);
@@ -324,7 +326,7 @@
   .poem-scroll__meta { font-size: 13px; }
   .poem-scroll__line { font-size: 20px; line-height: 1.9; }
   .poem-actions { display: grid; gap: 8px; margin: 0 0 14px; }
-  .poem-action { font-size: 13px; flex-direction: row; justify-content: center; min-height: 42px; }
+  .poem-action { font-size: 13px; flex-direction: row; justify-content: center; min-height: 42px; border-radius: 18px; }
   .poem-action:nth-child(n+4) { min-height: 30px; font-size: 12px; border-width: 1px; background: transparent; color: var(--gf-ink-secondary); }
   .poem-appreciation { padding: 12px 15px; }
   .poem-appreciation__head { font-size: 22px; font-family: 'STKaiti','KaiTi',serif; color: var(--gf-accent-text,var(--gf-seal)); }
@@ -346,7 +348,7 @@
   .scholar-msg-bubble--ai,.scholar-msg-bubble--user { font-size: 16px; line-height: 1.9; }
   .scholar-msg-bubble--ai { border-radius: 7px; box-shadow: 0 1px 4px #00000012; }
   .scholar-footer { padding: 7px 10px max(8px,env(safe-area-inset-bottom)); border-radius: 8px 8px 0 0; }
-  .scholar-send-btn { min-height: 42px; font-family: 'STKaiti','KaiTi',serif; font-size: 17px; }
+  .scholar-send-btn { min-height: 42px; font-family: 'STKaiti','KaiTi',serif; font-size: 17px; border-radius: 22px; }
 }
 .reference-invite.invite-drawer {
   .invite-drawer__header { padding: 10px 15px 13px; justify-content: center; position: relative; }
@@ -358,13 +360,13 @@
   .invite-drawer__sub { font-size: 11px; line-height: 1.6; margin: 0 0 5px; }
   .invite-drawer__label { font-size: 16px; font-family: 'STKaiti','KaiTi',serif; }
   .invite-drawer__input,.invite-drawer__textarea,.invite-drawer__dynasty-select { font-size: 14px; padding: 9px 12px; background: color-mix(in srgb,var(--gf-bg-sunk) 76%,var(--ref-paper)); }
-  .invite-drawer__ai-btn { min-height: 76px; font-size: 20px; border-radius: 7px; box-shadow: none; }
+  .invite-drawer__ai-btn { min-height: 76px; font-size: 20px; border-radius: 18px; box-shadow: none; }
   .invite-drawer__ai-btn small { font-size: 11px; line-height: 1.7; }
   .invite-drawer__soul-card { border: 0; background: transparent; padding: 0; box-shadow: none; }
   .invite-drawer__soul-tags { gap: 6px; }
   .invite-drawer__soul-tag { padding: 6px 10px; border: 1px solid var(--ref-gold); border-radius: 20px; font-size: 13px; }
   .invite-drawer__footer { padding: 10px 18px max(12px,env(safe-area-inset-bottom)); }
-  .invite-drawer__confirm-btn { border-radius: 6px; min-height: 45px; font-size: 18px; }
+  .invite-drawer__confirm-btn { border-radius: 22px; min-height: 45px; font-size: 18px; }
 }
 .layout:has(.reference-polish) .bottom-nav {
   bottom: 0; height: 60px; max-width: 480px; padding: 6px 24px max(6px,env(safe-area-inset-bottom));
