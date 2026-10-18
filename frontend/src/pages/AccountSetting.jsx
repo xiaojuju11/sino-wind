@@ -294,7 +294,7 @@ export default function AccountSetting() {
         }
       })
     } catch (err) {
-      Toast.show({ content: err.message || '修改昵称失败', icon: 'fail' })
+      Toast.show({ content: err.response?.data?.message || err.message || '修改昵称失败', icon: 'fail' })
     }
   }
 
@@ -316,7 +316,7 @@ export default function AccountSetting() {
         }
       })
     } catch (err) {
-      Toast.show({ content: err.message || '修改密码失败', icon: 'fail' })
+      Toast.show({ content: err.response?.data?.message || err.message || '修改密码失败', icon: 'fail' })
     }
   }
 

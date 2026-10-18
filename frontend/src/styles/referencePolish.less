@@ -142,6 +142,11 @@
       cursor: pointer;
       flex-shrink: 0;
       transition: all .15s ease;
+      touch-action: manipulation;
+
+      svg {
+        pointer-events: none;
+      }
 
       &:hover, &:active {
         background: color-mix(in srgb, var(--gf-seal) 20%, transparent);
@@ -153,22 +158,31 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 44px;
-      min-height: 38px;
-      padding: 4px 8px;
-      margin-left: 2px;
+      min-width: 48px;
+      align-self: stretch;
+      margin: -.12rem -.18rem -.12rem 2px;
+      padding: .12rem .16rem;
       border: 0;
       border-left: 1px solid color-mix(in srgb, var(--gf-gold) 35%, transparent);
+      border-radius: 0 7px 7px 0;
       background: transparent;
       color: var(--gf-ink-secondary);
       font-size: 20px;
       cursor: pointer;
       flex-shrink: 0;
       transition: all .18s ease;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+
+      svg {
+        pointer-events: none;
+      }
 
       &:hover, &:active {
         color: var(--gf-accent-text, var(--gf-seal));
-        transform: scale(0.92);
+        background: color-mix(in srgb, var(--gf-gold) 12%, transparent);
+        transform: scale(0.96);
       }
     }
 

@@ -91,8 +91,9 @@ function SceneEditor({ scope }) {
     if (!chosen || saving || scope !== scholarScope()) return
     setSaving(true)
     try {
-      await putDraft(scope, { ...scene, selected, poemId: chosen.id })
-      if (scope === scholarScope()) navigate('/scene-poetry/view/draft')
+      const draftData = { ...scene, selected, poemId: chosen.id }
+      await putDraft(scope, draftData)
+      if (scope === scholarScope()) navigate('/scene-poetry/view/draft', { state: { draft: draftData } })
     } catch (error) { Toast.show({ content: error.message }) }
     finally { setSaving(false) }
   }

@@ -52,7 +52,7 @@ export function playInkDropSound() {
 }
 
 /**
- * 2. 编钟清磬之声（金石清越，飞花合律与先贤应令）
+ * 2. 编钟清磬之声（金石清越，诗韵清朗）
  */
 export function playChimeSound() {
   try {

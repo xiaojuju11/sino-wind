@@ -1,5 +1,5 @@
-import { lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { lazy, Suspense, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import './styles/app.less'
 import BambooBreeze from './components/BambooBreeze'
 import Layout from './pages/Layout'
@@ -46,9 +46,18 @@ function PageFallback() {
   )
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+  return null
+}
+
 export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <ScrollToTop />
       <BambooBreeze />
       <Suspense fallback={<PageFallback />}>
         <Routes>
@@ -73,7 +82,6 @@ export default function App() {
           <Route path='/poem-collection' element={<PoemCollection/>}></Route>
           {/* 九州地名志 · 城邑春秋：独立全屏页（原为首页底部弹窗，2026-10-16 改为二级页面） */}
           <Route path='/city-chronicle' element={<CityChroniclePage/>}></Route>
-          <Route path='/mine/archive' element={<StudyPage section='archive'/>}></Route>
           <Route path='/mine/artifacts' element={<StudyPage section='artifacts'/>}></Route>
           <Route path='/mine/yayan' element={<StudyPage section='yayan'/>}></Route>
           <Route path='/mine/messages' element={<StudyPage section='messages'/>}></Route>

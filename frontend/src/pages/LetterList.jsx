@@ -201,7 +201,16 @@ function LetterListSession() {
               type='button'
               className='letter-reference-search__clear'
               aria-label='清空检索内容'
-              onClick={() => setSearchText('')}
+              onMouseDown={e => e.preventDefault()}
+              onPointerDown={e => {
+                e.preventDefault()
+                setSearchText('')
+              }}
+              onClick={e => {
+                e.preventDefault()
+                e.stopPropagation()
+                setSearchText('')
+              }}
               title='清空'
             >
               <CloseOutline />
@@ -211,7 +220,15 @@ function LetterListSession() {
             type='button'
             className='letter-reference-search__close'
             aria-label='收起检索'
-            onClick={() => {
+            onMouseDown={e => e.preventDefault()}
+            onPointerDown={e => {
+              e.preventDefault()
+              setSearchText('')
+              setSearchOpen(false)
+            }}
+            onClick={e => {
+              e.preventDefault()
+              e.stopPropagation()
               setSearchText('')
               setSearchOpen(false)
             }}
