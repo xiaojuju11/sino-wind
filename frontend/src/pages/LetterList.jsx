@@ -161,14 +161,66 @@ function LetterListSession() {
       <InkWashBackground atmosphereOnly={true} />
       {/* 1. 顶部水墨意境题头 */}
       <header className="letter-header">
-        <button className='letter-header__search' type='button' onClick={() => { setSearchOpen(v => !v); setSearchText('') }} aria-label='检索知音' aria-expanded={searchOpen}><SearchOutline /></button>
+        <button
+          className='letter-header__search'
+          type='button'
+          onClick={() => {
+            setSearchOpen(v => !v)
+            if (searchOpen) setSearchText('')
+          }}
+          aria-label='检索知音'
+          aria-expanded={searchOpen}
+        >
+          <SearchOutline />
+        </button>
         <div className="letter-header__title-wrap">
           <h1 className="letter-header__title">知己信札</h1>
           <span className="letter-header__seal">华风</span>
         </div>
         <p className="letter-header__subtitle">云笺素字 · 与千载知音烹茶对坐</p>
       </header>
-      {searchOpen && <div className='letter-reference-search'><input aria-label='检索知音姓名或信札' value={searchText} onChange={e => setSearchText(e.target.value)} placeholder='检索知音姓名或信札' /><button type='button' aria-label='清空检索' onClick={() => setSearchText('')}><CloseOutline /></button></div>}
+      {searchOpen && (
+        <div className='letter-reference-search'>
+          <SearchOutline className='letter-reference-search__icon' />
+          <input
+            type='text'
+            aria-label='检索知音姓名或信札'
+            value={searchText}
+            onChange={e => setSearchText(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Escape') {
+                setSearchText('')
+                setSearchOpen(false)
+              }
+            }}
+            placeholder='检索知音姓名或信札'
+            autoFocus
+          />
+          {searchText && (
+            <button
+              type='button'
+              className='letter-reference-search__clear'
+              aria-label='清空检索内容'
+              onClick={() => setSearchText('')}
+              title='清空'
+            >
+              <CloseOutline />
+            </button>
+          )}
+          <button
+            type='button'
+            className='letter-reference-search__close'
+            aria-label='收起检索'
+            onClick={() => {
+              setSearchText('')
+              setSearchOpen(false)
+            }}
+            title='收起检索'
+          >
+            <CloseOutline />
+          </button>
+        </div>
+      )}
 
       {/* 2. 顶部水平知己画卷（迎请新友置于最左侧首位 + 横向滑动知己） */}
       <section className="letter-gallery-section">
