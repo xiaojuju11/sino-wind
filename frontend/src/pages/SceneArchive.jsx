@@ -26,7 +26,7 @@ function Archive({ scope }) {
     if (!confirmed) return
     try { await deleteScene(scope, record.id); Toast.show({ content: '已移出画阁' }) } catch (e) { Toast.show({ content: e.message }) }
   }
-  return <div className='study-page scene-page'><InkWashBackground /><header className='study-page__header'><button type='button' className='study-page__back' aria-label='返回书斋' onClick={() => navigate('/mine')}><LeftOutline /></button><div><h1>诗境画阁</h1><p>收藏眼前山水，重逢旧日诗心</p></div><span className='study-page__seal'>藏境</span></header><main className='scene-main'><div className='scene-archive-toolbar'><span>共 {records.length} 幅</span><button type='button' className='scene-primary' onClick={() => navigate('/scene-poetry')}><AddOutline />再寻一境</button></div>
+  return <div className='study-page scene-page'><InkWashBackground /><header className='study-page__header'><button type='button' className='study-page__back' aria-label='返回书斋' onClick={() => navigate('/mine')}><LeftOutline /></button><div><h1>诗境画阁</h1><p>收藏眼前山水，重逢旧日诗心</p></div></header><main className='scene-main'><div className='scene-archive-toolbar'><span>共 {records.length} 幅</span><button type='button' className='scene-primary' onClick={() => navigate('/scene-poetry')}><AddOutline />再寻一境</button></div>
     {loading && <p role='status'>正在启阁…</p>}
     {error && <section className='scene-panel'><p role='alert'>{error}</p><button type='button' onClick={() => setRevision(value => value + 1)}>重新读取</button></section>}
     {!loading && !error && !records.length && <EmptyState seal='待景' title='画阁尚静 · 待君藏景' desc='拍下眼前风景，寻一句会心的诗，便可留在此处。' actionText='前往寻镜入诗' onAction={() => navigate('/scene-poetry')} />}

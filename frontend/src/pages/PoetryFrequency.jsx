@@ -10,7 +10,7 @@ import '../styles/poetryFrequency.less'
 
 const fmt = value => Number(value || 0).toLocaleString('zh-CN')
 export function FrequencyFrame({ title, subtitle, onBack, children }) {
-  return <div className='study-page frequency-page'><InkWashBackground /><header className='study-page__header'><button type='button' className='study-page__back' aria-label='返回' onClick={onBack}><LeftOutline /></button><div><h1>{title}</h1><p>{subtitle}</p></div><span className='study-page__seal'>字衡</span></header><main className='frequency-main'>{children}</main></div>
+  return <div className='study-page frequency-page'><InkWashBackground /><header className='study-page__header'><button type='button' className='study-page__back' aria-label='返回' onClick={onBack}><LeftOutline /></button><div><h1>{title}</h1><p>{subtitle}</p></div></header><main className='frequency-main'>{children}</main></div>
 }
 export function ResourceNotice({ resource }) {
   if (resource.loading) return <p role='status' className='frequency-notice'>正在展卷，细数诗中字词…</p>
