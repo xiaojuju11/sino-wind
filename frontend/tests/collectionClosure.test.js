@@ -236,6 +236,21 @@ test('Mine opens real secondary routes instead of a yayan drawer or fake notific
   f.unmount()
 })
 
+test('clicking avatar or nickname in Mine jumps directly to account settings', async () => {
+  const f = await mount('MinePage', { token: 'mock-jwt-token' })
+  await f.flush()
+  const avatar = nodes(f.tree, node => node.props?.className === 'scholar-avatar')[0]
+  assert.ok(avatar, 'avatar exists')
+  avatar.props.onClick({ stopPropagation() {} })
+  assert.equal(f.navigations.at(-1)[0], '/accountSetting', 'avatar click navigates to account setting')
+
+  const details = nodes(f.tree, node => node.props?.className === 'scholar-details')[0]
+  assert.ok(details, 'details exists')
+  details.props.onClick({ stopPropagation() {} })
+  assert.equal(f.navigations.at(-1)[0], '/accountSetting', 'nickname/details click navigates to account setting')
+  f.unmount()
+})
+
 test('routed yayan notebook reads home excerpts and preserves original source metadata', async () => {
   const saved = JSON.stringify([
     { id: 1, ancient: '一期一会', modern: '珍惜相遇', author: '雅译署名', explanation: '此次相逢尤可珍重', offline: false, createdAt: '2026/10/16' },

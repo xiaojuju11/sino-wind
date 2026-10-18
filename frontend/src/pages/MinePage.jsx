@@ -2,7 +2,7 @@ import { useScholarScope } from '../utils/useScholarScope'
 import ReferenceCorners from '../components/ReferenceCorners'
 import React, { useState, useEffect, useRef } from 'react'
 import '../styles/minePage.less'
-import { ActionSheet, Toast, ImageViewer, Modal } from 'antd-mobile'
+import { ActionSheet, Toast, Modal } from 'antd-mobile'
 import { RightOutline } from 'antd-mobile-icons'
 import { useNavigate } from 'react-router-dom'
 import ThemeToggle from '../context/ThemeToggle.jsx'
@@ -25,7 +25,6 @@ function MinePageSession() {
   const [importing, setImporting] = useState(false)
   const refreshAssets = useRef(() => {})
   const [visibleLogout, setVisibleLogout] = useState(false)
-  const [visibleAvatarViewer, setVisibleAvatarViewer] = useState(false)
   const signedIn = scholarScope().startsWith('user:')
 
   // Display real assets only. A failed request never becomes a mock statistic.
@@ -173,7 +172,6 @@ function MinePageSession() {
       <header className='shuzhai-header'>
         <div className='shuzhai-header__title-wrap'>
           <h1 className='shuzhai-header__title'>墨隐书斋</h1>
-          <span className='shuzhai-header__seal'>两宋</span>
         </div>
         <p className='shuzhai-header__subtitle'>一卷诗书藏风雅 半窗山水养心性</p>
       </header>
@@ -181,17 +179,45 @@ function MinePageSession() {
       {/* 2. 雅士身份大卡片 */}
       <section className='scholar-card'>
         <ReferenceCorners />
-        <div className='scholar-card__profile'>
-          <div className='scholar-avatar' onClick={() => setVisibleAvatarViewer(true)}>
+        <div
+          className='scholar-card__profile'
+          onClick={() => navigate(signedIn ? '/accountSetting' : '/login')}
+          role='button'
+          tabIndex={0}
+          title={signedIn ? '前往账号设置' : '登录入席'}
+          aria-label={signedIn ? '前往账号设置' : '登录入席'}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              navigate(signedIn ? '/accountSetting' : '/login')
+            }
+          }}
+        >
+          <div
+            className='scholar-avatar'
+            onClick={(e) => {
+              e.stopPropagation()
+              navigate(signedIn ? '/accountSetting' : '/login')
+            }}
+            title={signedIn ? '更换头像 / 账号设置' : '登录入席'}
+          >
             <img
               src={userInfo.avatar || `${BASE}assets/shuzhai/avatar_yunshan.png`}
               alt='雅士头像'
               className='scholar-avatar__img'
             />
           </div>
-          <div className='scholar-details'>
+          <div
+            className='scholar-details'
+            onClick={(e) => {
+              e.stopPropagation()
+              navigate(signedIn ? '/accountSetting' : '/login')
+            }}
+          >
             <div className='scholar-details__name-row'>
-              <h2 className='scholar-name'>{userInfo.nickname || '云山居士'}</h2>
+              <h2 className='scholar-name' title={signedIn ? '编辑昵称 / 账号设置' : '登录入席'}>
+                {userInfo.nickname || '云山居士'}
+              </h2>
               <span className='scholar-badge'>
                 <i className='iconfont icon-wode scholar-badge__icon'></i>
                 {scholarScope() === 'guest' ? '游客研习' : '雅士'}
@@ -286,7 +312,6 @@ function MinePageSession() {
           <div className='shuzhai-section-head__text'>
             <div className='shuzhai-section-head__title-wrap'>
               <h3 className='shuzhai-section-title'>书斋清规</h3>
-              <span className='shuzhai-seal'>永兴</span>
             </div>
             <p className='shuzhai-section-sub'>管理账号设置与日月墨境，守护文心印记</p>
           </div>
@@ -343,14 +368,6 @@ function MinePageSession() {
         onClose={() => setVisibleLogout(false)}
         onAction={handleLogoutAction}
       />
-
-      {/* 头像大图查看器 */}
-      <ImageViewer
-        image={userInfo.avatar || `${BASE}assets/shuzhai/avatar_yunshan.png`}
-        visible={visibleAvatarViewer}
-        onClose={() => setVisibleAvatarViewer(false)}
-      />
-
     </div>
   )
 }

@@ -79,6 +79,30 @@
       gap: 16px;
       padding-bottom: 16px;
       border-bottom: 1px dashed @color-border;
+      cursor: pointer;
+      user-select: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+
+      &:hover {
+        .scholar-avatar {
+          transform: scale(1.02);
+          box-shadow: 0 4px 12px rgba(181, 139, 72, 0.25);
+        }
+        .scholar-name {
+          color: var(--gf-accent-text, @color-seal);
+        }
+      }
+
+      &:active {
+        opacity: 0.88;
+        transform: scale(0.99);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--gf-seal);
+        outline-offset: 4px;
+        border-radius: 6px;
+      }
     }
 
     .scholar-avatar {
