@@ -32,17 +32,21 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 0.62rem;
-    height: 0.62rem;
-    font-size: 0.34rem;
-    color: var(--gf-ink-secondary);
-    background: color-mix(in srgb, var(--gf-bg-paper) 88%, transparent);
-    border: 1px solid color-mix(in srgb, var(--gf-gold) 45%, transparent);
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+    color: var(--gf-ink-primary);
+    background: linear-gradient(115deg, color-mix(in srgb, var(--gf-bg-card) 35%, var(--gf-bg-paper)), var(--gf-bg-paper));
+    border: 1px solid color-mix(in srgb, var(--gf-gold) 40%, transparent);
     border-radius: 50%;
+    box-shadow: 0 2px 6px color-mix(in srgb, var(--gf-ink-primary) 8%, transparent);
     cursor: pointer;
+    padding: 0;
+    transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
 
     &:active {
-      transform: translateY(1px);
+      transform: scale(0.93);
+      border-color: var(--gf-gold);
     }
   }
 

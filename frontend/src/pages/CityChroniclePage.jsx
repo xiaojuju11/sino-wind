@@ -46,9 +46,9 @@ export default function CityChroniclePage() {
       <InkWashBackground />
 
       <header className="chronicle-header">
-        <div className="chronicle-header__back" onClick={goBack} title="返回雅集">
+        <button type="button" className="chronicle-header__back" onClick={goBack} aria-label="返回雅集" title="返回雅集">
           <LeftOutline />
-        </div>
+        </button>
         <h1 className="chronicle-header__title">九州地名志</h1>
         <span className="chronicle-header__seal">城邑春秋</span>
       </header>

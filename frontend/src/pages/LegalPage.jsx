@@ -39,7 +39,15 @@ export default function LegalPage() {
     <main className="legal-page">
       <InkWashBackground />
       <header className="legal-page__bar">
-        <button type="button" onClick={() => window.history.state?.idx > 0 ? navigate(-1) : navigate('/login', { replace: true })}><LeftOutline aria-hidden="true" />返回</button>
+        <button
+          type="button"
+          className="legal-page__back"
+          onClick={() => window.history.state?.idx > 0 ? navigate(-1) : navigate('/login', { replace: true })}
+          aria-label="返回"
+          title="返回"
+        >
+          <LeftOutline aria-hidden="true" />
+        </button>
         <span>云山竹简 · 文书</span>
       </header>
       <article className="legal-page__paper">
