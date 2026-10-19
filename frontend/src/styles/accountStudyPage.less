@@ -73,17 +73,106 @@
       content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
       background: var(--account-row-art) right center / cover no-repeat;
       mask-image: none;
-      opacity: 1; mix-blend-mode: normal;
+      opacity: 0.22;
+      mix-blend-mode: multiply;
+      transition: opacity 0.2s ease;
     }
     .adm-list-item-content { position: relative; border: 0; min-height: 68px; padding: 9px 0; box-sizing: border-box; }
-    .adm-list-item-content-main { font-family: STKaiti, KaiTi, serif; font-size: 17px; font-weight: 600; padding: 0; }
-    .adm-list-item-content-extra { max-width: 58%; margin-left: 10px; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; color: #34352d; font-size: 13px; font-weight: 500; }
+    .adm-list-item-content-main {
+      font-family: 'STKaiti', 'KaiTi', serif;
+      font-size: 17px;
+      font-weight: 600;
+      padding: 0;
+      color: var(--gf-ink-primary, #2b2b2b);
+      text-shadow: 0 1px 2px color-mix(in srgb, var(--gf-bg-paper, #f7f4eb) 85%, transparent);
+    }
+    .adm-list-item-content-extra {
+      max-width: 62%;
+      margin-left: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: color-mix(in srgb, var(--gf-bg-paper, #f7f4eb) 90%, transparent);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid color-mix(in srgb, var(--gf-gold, #b8954e) 38%, transparent);
+      box-shadow: 0 1px 4px color-mix(in srgb, var(--gf-ink-primary, #2b2b2b) 6%, transparent);
+      color: var(--gf-ink-primary, #2b2b2b);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    }
     .adm-list-item-content-arrow { color: var(--gf-accent-text, #823a32); font-size: 16px; }
-    &--avatar { --account-row-art: url('/images/account/avatar-row-v1.webp'); }
+
+    &--avatar {
+      --account-row-art: url('/images/account/avatar-row-v1.webp');
+      .adm-list-item-content-extra {
+        padding: 0;
+        border: none;
+        background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+      .adm-avatar {
+        border: 2px solid color-mix(in srgb, var(--gf-gold, #b8954e) 65%, transparent);
+        box-shadow: 0 2px 8px color-mix(in srgb, var(--gf-ink-primary, #2b2b2b) 15%, transparent);
+      }
+    }
     &--nickname { --account-row-art: url('/images/account/nickname-row-v1.webp'); }
     &--account { --account-row-art: url('/images/account/account-row-v1.webp'); }
-    &--password { --account-row-art: url('/images/account/password-row-v1.webp'); }
-    &--recovery { --account-row-art: url('/images/account/recovery-row-v1.webp'); }
+    &--password {
+      --account-row-art: url('/images/account/password-row-v1.webp');
+      .adm-list-item-content-extra {
+        color: var(--gf-accent-text, #8a2b2b);
+        font-family: 'STKaiti', 'KaiTi', serif;
+        font-weight: 600;
+        font-size: 14px;
+        background: color-mix(in srgb, var(--gf-bg-paper, #f7f4eb) 92%, #ffffff);
+        border-color: color-mix(in srgb, var(--gf-seal, #8a2b2b) 45%, transparent);
+        box-shadow: 0 1px 4px color-mix(in srgb, var(--gf-seal, #8a2b2b) 12%, transparent);
+      }
+    }
+    &--recovery {
+      --account-row-art: url('/images/account/recovery-row-v1.webp');
+      .adm-list-item-content-extra {
+        color: var(--gf-accent-text, #8a2b2b);
+        font-family: 'STKaiti', 'KaiTi', serif;
+        font-weight: 600;
+        font-size: 14px;
+        background: color-mix(in srgb, var(--gf-bg-paper, #f7f4eb) 92%, #ffffff);
+        border-color: color-mix(in srgb, var(--gf-seal, #8a2b2b) 45%, transparent);
+        box-shadow: 0 1px 4px color-mix(in srgb, var(--gf-seal, #8a2b2b) 12%, transparent);
+      }
+    }
   }
 }
-[data-theme='dark'] .account-setting.study-page .account-art-row::before { opacity: 1; mix-blend-mode: normal; }
+[data-theme='dark'] .account-setting.study-page {
+  .account-art-row {
+    background: var(--gf-bg-card, #23221e);
+    &::before {
+      opacity: 0.16;
+      mix-blend-mode: screen;
+      filter: brightness(0.85);
+    }
+    .adm-list-item-content-main {
+      color: var(--gf-text-main, #e8e2d5);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    }
+    .adm-list-item-content-extra {
+      background: color-mix(in srgb, var(--gf-bg-card, #23221e) 90%, transparent);
+      border-color: color-mix(in srgb, var(--gf-gold, #c59b27) 35%, transparent);
+      color: var(--gf-text-main, #e8e2d5);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+    }
+    &--password .adm-list-item-content-extra,
+    &--recovery .adm-list-item-content-extra {
+      color: #df7a72;
+      background: color-mix(in srgb, var(--gf-bg-card, #23221e) 92%, #381a17);
+      border-color: color-mix(in srgb, #df7a72 50%, transparent);
+    }
+  }
+}
