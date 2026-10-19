@@ -318,6 +318,12 @@
   > i::before { content: ''; position: absolute; top: 3px; left: 3px; width: 9px; height: 9px; border: 1px solid var(--ref-gold,var(--gf-gold)); border-right: 0; border-bottom: 0; }
   > i:nth-child(1) { top: 0; left: 0; }> i:nth-child(2) { top: 0; right: 0; transform: rotate(90deg); }> i:nth-child(3) { bottom: 0; right: 0; transform: rotate(180deg); }> i:nth-child(4) { bottom: 0; left: 0; transform: rotate(270deg); }
 }
+// 首页六张大卡：四角描边要像「知己信札」那样露在卡片外侧，
+// 故取消卡片自身裁切，改由各背景图层按圆角裁切，避免方角外露。
+.reference-polish.home-root .home-card-scroll { overflow: visible !important; }
+.reference-polish.home-root .home-card-scroll > img { border-radius: inherit; }
+.reference-polish.home-root .home-shiwu-section::before,
+.reference-polish.home-root .home-poem-card::before { border-radius: inherit; }
 // Keep body text readable on the project's 320–480px mobile canvas.
 .reference-polish.home-root {
   .home-yayan-textarea,.home-yayan-explain { font-size: max(13px,.32rem); }

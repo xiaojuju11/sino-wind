@@ -459,6 +459,7 @@ export default function Home() {
 
       {/* ── 区块② 古今时令与天象 ── */}
       <section className="home-card-scroll home-almanac">
+        <ReferenceCorners />
         <div className="home-section-header">
           <h2 className="home-section-title">古今时令与天象</h2>
         </div>
