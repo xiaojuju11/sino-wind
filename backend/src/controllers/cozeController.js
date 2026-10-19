@@ -1,6 +1,9 @@
+let cozeHttpsAgent
 try {
   const dns = require('node:dns')
   dns?.setDefaultResultOrder?.('ipv4first')
+  const https = require('node:https')
+  cozeHttpsAgent = new https.Agent({ family: 4, keepAlive: true })
 } catch {}
 const axios = require('axios')
 const db = require('../config/db')
@@ -58,10 +61,14 @@ async function recognition(ctx) {
   let data
   let receivedResponse = false
   try {
-    const response = await axios.post(COZE_ENDPOINT, { image: img }, {
+    const requestConfig = {
       headers: { Authorization: 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
       timeout: COZE_TIMEOUT, signal: AbortSignal.timeout(COZE_TIMEOUT), maxContentLength: 10 * 1024 * 1024
-    })
+    }
+    if (cozeHttpsAgent) {
+      requestConfig.httpsAgent = cozeHttpsAgent
+    }
+    const response = await axios.post(COZE_ENDPOINT, { image: img }, requestConfig)
     receivedResponse = true
     data = parseResult(response.data)
   } catch (err) {
