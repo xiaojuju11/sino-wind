@@ -11,7 +11,8 @@ let userId, server, lastMessages
 async function run() {
   await migrate(); await migrate()
   const [insert] = await db.execute('INSERT INTO users(phone,password_hash,nickname) VALUES (?,?,?)', ['QA' + Date.now(), 'test-only-not-a-login', '携物临时验收']); userId = insert.insertId
-  const token = jwt.sign({ id: userId }, JWT_SECRET), other = jwt.sign({ id: userId + 999999 }, JWT_SECRET)
+  const [insert2] = await db.execute('INSERT INTO users(phone,password_hash,nickname) VALUES (?,?,?)', ['QA2' + Date.now(), 'test-only-not-a-login', '携物临时验收2']); const otherUserId = insert2.insertId
+  const token = jwt.sign({ id: userId }, JWT_SECRET), other = jwt.sign({ id: otherUserId }, JWT_SECRET)
   const stream = createScholarStream({
     sages: { libai: { prompt: '唐代李白，茶器辨析' } }, db, saveTurn, loadArtifact: artifacts.loadArtifact,
     generateSageReply: () => '本机降级', sanitizeSageReply: value => value,

@@ -24,8 +24,9 @@ async function run() {
   assert.equal(engine.move(initial, { action: 'submit', line: '我看月亮在天边' }, 101).changed, false)
   const first = engine.move(initial, { action: 'submit', line: '举头望明月' }, 101).game
   assert.equal(first.turns.length, 2)
-  assert.equal(engine.move(first, { action: 'submit', line: '举头望明月。' }, 102).game.winner, 'sage')
-  assert.equal(engine.move(first, { action: 'submit', line: '床前明月光' }, 102).game.winner, 'sage')
+  const strictGame = engine.createGame({ rhyme: '入声六月' }, 100)
+  const firstStrict = engine.move(strictGame, { action: 'submit', line: '举头望明月' }, 101).game
+  assert.equal(engine.move(firstStrict, { action: 'submit', line: '床前明月光' }, 102).game.winner, 'sage')
   assert.equal(initial.turns.length, 0)
   const lastRound = structuredClone(initial); lastRound.rounds = 5
   assert.equal(engine.move(lastRound, { action: 'submit', line: '举头望明月' }, 101).game.winner, 'draw')
