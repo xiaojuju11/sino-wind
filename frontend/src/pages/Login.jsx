@@ -54,6 +54,16 @@ export default function Login({ user = {}, agreed = false }) {
       <div className="auth-forgot"><Link to="/recover">忘记密码？</Link></div>
       {error && <p className="auth-error" id="login-error" role="alert">{error}</p>}
       <button className="auth-submit" disabled={loading} type="submit">{loading ? '正在入席…' : '落座入席'}</button>
+      <div className="auth-demo-fill" style={{ marginTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '12px', color: '#8c7b6c' }}>
+        <span>体验账号：15779889503 · 密押：123456</span>
+        <button
+          type="button"
+          style={{ padding: '2px 8px', fontSize: '12px', color: '#8A2B2B', border: '1px solid rgba(138,43,43,0.3)', borderRadius: '4px', background: 'rgba(255,255,255,0.6)', cursor: 'pointer' }}
+          onClick={() => { setPhone('15779889503'); setPassword('123456'); setError(''); }}
+        >
+          一键填入
+        </button>
+      </div>
     </form>
   )
 }

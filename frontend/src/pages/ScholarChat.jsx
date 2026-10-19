@@ -235,7 +235,21 @@ function ScholarChatSession() {
       restored = true
     }
     const cached = cachedLetters().find(l => l.sageId === sageKey)
-    loadLetterDetail(sageKey).then(restore).catch(() => { restore(cached); if (current) Toast.show({ content: '云端旧笺暂未载入，本机原稿保留' }) })
+    loadLetterDetail(sageKey)
+      .then(restore)
+      .catch(() => {
+        if (!current) return
+        if (cached?.turns?.length) {
+          setMessages([{ id: 'msg_welcome', role: 'ai', content: welcome, time: getShichenTime() }, ...cached.turns.flatMap(t => [
+            { id: `${t.id}:user`, role: 'user', content: t.question, time: shichen(t.at) },
+            { id: `${t.id}:ai`, role: 'ai', content: t.answer, degraded: t.degraded, time: shichen(t.at) }
+          ])])
+        }
+        if (current) Toast.show({ content: '云端旧笺暂未载入，本机原稿保留' })
+      })
+      .finally(() => {
+        if (current) setHydrating(false)
+      })
     const leave = () => { if (restored && scope === scholarScope()) leaveScholar(sageKey) }
     window.addEventListener('pagehide', leave)
     return () => { current = false; stopRequest(); window.removeEventListener('pagehide', leave); leave() }

@@ -101,5 +101,16 @@ CREATE TABLE IF NOT EXISTS `user_poems` (
   `appreciation` text,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户诗签收藏表';
+
+-- 8. 预置演示与评审账号 (密码均为: 123456)
+INSERT INTO `users` (`id`, `phone`, `password_hash`, `nickname`, `rank_level`, `merit_points`, `auth_version`)
+VALUES 
+  (1, '15779889503', '$2b$10$a8X/myQdk0eLtHBIXNry4.4RMA6PspFq/nqFJWjlcrrR9fhqx6Wtm', '小橘宝宝', '玖阶', 100, 0),
+  (2, '13800000000', '$2b$10$a8X/myQdk0eLtHBIXNry4.4RMA6PspFq/nqFJWjlcrrR9fhqx6Wtm', '墨韵雅士', '玖阶', 100, 0)
+ON DUPLICATE KEY UPDATE 
+  `password_hash` = VALUES(`password_hash`),
+  `nickname` = VALUES(`nickname`),
+  `rank_level` = VALUES(`rank_level`),
+  `auth_version` = 0;
+

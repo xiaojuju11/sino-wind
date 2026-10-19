@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import '../styles/layout.less'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 
@@ -12,7 +13,18 @@ const tabs = [
 export default function Layout() {
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const token = localStorage.getItem('token')
   const activeTab = tabs.find((tab) => pathname.startsWith(tab.path))?.id || 'home'
+
+  useEffect(() => {
+    if (!token) {
+      navigate('/login', { replace: true })
+    }
+  }, [token, navigate])
+
+  if (!token) {
+    return null
+  }
 
   return (
     <div className="layout">

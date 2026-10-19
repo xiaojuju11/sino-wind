@@ -54,6 +54,11 @@ function ScrollToTop() {
   return null
 }
 
+function RootRedirect() {
+  const token = localStorage.getItem('token')
+  return token ? <Navigate to='/home' replace /> : <Navigate to='/login' replace />
+}
+
 export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
@@ -64,9 +69,8 @@ export default function App() {
           <Route path='/login' element={<AuthPage/>}></Route>
           <Route path='/recover' element={<ForgotPassword/>}></Route>
           <Route path='/legal/:kind' element={<LegalPage/>}></Route>
-          <Route path='/' element={<Layout/>}>
-            {/* 默认重定向 */}
-            <Route path='' element={<Navigate to='/home' />}></Route>
+          <Route path='/' element={<RootRedirect />}></Route>
+          <Route element={<Layout/>}>
             <Route path='/home' element={<Home/>}></Route>
             <Route path='/letters' element={<LetterList/>}></Route>
             <Route path='/ai' element={<Navigate to='/letters' replace />}></Route>
