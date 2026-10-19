@@ -69,7 +69,8 @@ export default function App() {
           <Route path='/login' element={<AuthPage/>}></Route>
           <Route path='/recover' element={<ForgotPassword/>}></Route>
           <Route path='/legal/:kind' element={<LegalPage/>}></Route>
-          <Route path='/' element={<RootRedirect />}></Route>
+          {/* 默认首页入口：首屏一律直达登录注册页（华风雅集入席/缔约） */}
+          <Route path='/' element={<Navigate to='/login' replace />}></Route>
           <Route element={<Layout/>}>
             <Route path='/home' element={<Home/>}></Route>
             <Route path='/letters' element={<LetterList/>}></Route>
