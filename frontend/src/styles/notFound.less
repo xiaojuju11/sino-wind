@@ -11,6 +11,16 @@
   color: var(--gf-ink-primary, @color-text-main);
   overflow-x: hidden;
   padding: 0 16px 32px;
+
+  // 水墨背景必须脱离文档流：其它页面都在各自的 root 里声明了这条，
+  // 404 页原先漏了，导致背景块占据 236px 版面、标题被顶到屏幕中部。
+  > .home-ink-wash {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
 }
 
 .not-found-header {
