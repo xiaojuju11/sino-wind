@@ -215,26 +215,6 @@ function LetterListSession() {
               <CloseOutline />
             </button>
           )}
-          <button
-            type='button'
-            className='letter-reference-search__close'
-            aria-label='收起检索'
-            onMouseDown={e => e.preventDefault()}
-            onPointerDown={e => {
-              e.preventDefault()
-              setSearchText('')
-              setSearchOpen(false)
-            }}
-            onClick={e => {
-              e.preventDefault()
-              e.stopPropagation()
-              setSearchText('')
-              setSearchOpen(false)
-            }}
-            title='收起检索'
-          >
-            <CloseOutline />
-          </button>
         </div>
       )}
 
