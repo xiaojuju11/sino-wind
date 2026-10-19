@@ -27,7 +27,7 @@ export function createCameraSession(mediaDevices) {
 }
 
 export function cameraErrorMessage(error, secure = true) {
-  if (!secure) return '当前网址无法启用实时相机，请通过 HTTPS 打开此页；电脑本机可使用 localhost。'
+  if (!secure) return '当前网址未采用 HTTPS 协议，受浏览器安全限制无法开启实时取景；请点击下方按钮直接调用系统相机拍照。'
   switch (error?.name) {
     case 'NotAllowedError': case 'SecurityError': return '相机权限未开启，请在浏览器的网站设置中允许使用摄像头后重新连接。'
     case 'NotFoundError': case 'OverconstrainedError': return '未找到所选摄像头，请选择其他镜头或重新连接。'

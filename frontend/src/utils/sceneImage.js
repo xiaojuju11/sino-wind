@@ -1,3 +1,5 @@
+import { safeUUID } from './uuid'
+
 export async function readSceneImage(file) {
   if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 12 * 1024 * 1024) throw new Error('请选择 12MB 以内的 JPG、PNG 或 WebP 照片。')
   const url = URL.createObjectURL(file)
@@ -31,7 +33,7 @@ export function manualRegion(start, end, width, height, tag, label) {
   if (x1 - x0 < 3 || y1 - y0 < 3) return null
   const runs = []
   for (let y = y0; y < y1; y++) runs.push(y * width + x0, x1 - x0)
-  return { id: `manual-${crypto.randomUUID()}`, tag, label, source: 'manual', runs, box: [x0 / width, y0 / height, x1 / width, y1 / height], near: null }
+  return { id: `manual-${safeUUID()}`, tag, label, source: 'manual', runs, box: [x0 / width, y0 / height, x1 / width, y1 / height], near: null }
 }
 export async function exportScene(scene, poem) {
   await document.fonts.ready

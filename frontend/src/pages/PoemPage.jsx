@@ -421,7 +421,7 @@ export default function PoemPage() {
       })
       const count = res?.data?.newPoemCount
       setCollectTip(count ? `已摘录入卷 · 诗笺共 ${count} 篇` : '已摘录入卷')
-      Toast.show({ icon: 'success', content: res?.data?.message || '已成功摘录入卷' })
+      Toast.show({ content: res?.data?.message || '已成功摘录入卷', position: 'bottom' })
     } catch {
       // 错误拦截器统一处理
     } finally {

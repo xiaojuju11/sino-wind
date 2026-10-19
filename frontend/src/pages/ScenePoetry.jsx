@@ -11,6 +11,7 @@ import { useScholarScope } from '../utils/useScholarScope'
 import { scholarScope } from '../utils/scholarLetters'
 import { getDraft, putDraft } from '../utils/sceneStorage'
 import { readSceneImage } from '../utils/sceneImage'
+import { safeUUID } from '../utils/uuid'
 import { SCENE_TAGS, matchScenePoems } from '../data/scenePoems'
 import '../styles/studyPages.less'
 import '../styles/scenePoetry.less'
@@ -63,7 +64,7 @@ function SceneEditor({ scope }) {
       if (!valid(version)) return
       const bitmap = new Image(); bitmap.src = image; await bitmap.decode()
       const ratio = bitmap.width / bitmap.height, width = ratio >= 1 ? 384 : Math.round(384 * ratio), height = ratio >= 1 ? Math.round(384 / ratio) : 384
-      const prepared = { id: crypto.randomUUID(), image, createdAt: Date.now(), example, analysis: { width, height, regions: [], depth: null } }
+      const prepared = { id: safeUUID(), image, createdAt: Date.now(), example, analysis: { width, height, regions: [], depth: null } }
       setScene(prepared); setSelected([]); setPoemId('')
       await analyze(prepared, version)
     } catch (error) { if (valid(version)) { setNotice(error.message); setBusy(false) } }

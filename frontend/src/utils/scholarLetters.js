@@ -105,7 +105,8 @@ export function leaveScholar(sageId) {
   }
   const row = cachedLetters(scope).find(l => l.sageId === sageId)
   if (!row || row.rounds < 4 || row.rounds - (row.leaveRounds || 0) < 4) return
-  cacheLetter({ ...row, leaveRounds: row.rounds, reply: { id: crypto.randomUUID(), text: '山水相逢，墨香不散。四番清谈尚有余韵，愿足下珍重，改日续叙。', at: Date.now(), unread: true, kind: '本机规则回柬' } }, scope)
+  const replyId = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : r & 3 | 8).toString(16) })
+  cacheLetter({ ...row, leaveRounds: row.rounds, reply: { id: replyId, text: '山水相逢，墨香不散。四番清谈尚有余韵，愿足下珍重，改日续叙。', at: Date.now(), unread: true, kind: '本机规则回柬' } }, scope)
 }
 // Only an explicit action may move this browser's guest material to an account.
 export async function importGuestLetters() {

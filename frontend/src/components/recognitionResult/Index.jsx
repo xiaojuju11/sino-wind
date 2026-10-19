@@ -2,7 +2,8 @@ import './index.less'
 import { useEffect, useRef, useState } from 'react'
 import { Toast } from 'antd-mobile'
 import axios from '../../http'
-import { playInkDropSound } from '../../utils/guofengAudio'
+import { playInkDropSound, playGuqinArpeggio } from '../../utils/guofengAudio'
+import { safeUUID } from '../../utils/uuid'
 
 /**
  * 物溯古今 · 识别结果（郑小君 · 视觉体系与前端雅言吟诵闭环）
@@ -71,7 +72,7 @@ export default function RecognitionResult({ recognitionResult, pending = false }
     }
     saveLock.current = true
     setSaving(true)
-    artifactId.current ||= crypto.randomUUID()
+    artifactId.current ||= safeUUID()
     try {
       await axios.post(
         '/api/deepseek/scholar/artifacts',
@@ -112,7 +113,8 @@ export default function RecognitionResult({ recognitionResult, pending = false }
   // Web Speech 雅言吟诵引擎（调校中文字符、语速、音调）
   const playWithSpeechSynthesis = () => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-      Toast.show({ content: '当前浏览器未开启语音合成能力' })
+      playGuqinArpeggio()
+      Toast.show({ content: '浏览器内置环境未开启语音合成，且听古琴绕梁' })
       setIsPlaying(false)
       return
     }

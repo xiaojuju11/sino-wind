@@ -75,6 +75,18 @@ export default function SceneCamera({ onClose, onCapture, title = '拍下眼前'
     const file = new File([photo.blob], `寻镜-${Date.now()}.jpg`, { type: 'image/jpeg' })
     camera.stop(); setPhase('done'); onCapture(file)
   }
+  const fileInputRef = useRef(null)
+  function handleNativeFile(e) {
+    const file = e.target.files?.[0]
+    if (file) {
+      if (previewUrl.current) URL.revokeObjectURL(previewUrl.current)
+      const url = URL.createObjectURL(file)
+      previewUrl.current = url
+      setPhoto({ blob: file, url })
+      setPhase('photo')
+    }
+    e.target.value = ''
+  }
   return <dialog ref={dialogRef} className='scene-camera' aria-labelledby='scene-camera-title' onCancel={event => { event.preventDefault(); close() }}>
     <header><div><small>{eyebrow}</small><h2 id='scene-camera-title'>{title}</h2></div><button type='button' className='scene-camera__close' aria-label='关闭相机' onClick={close}><CloseOutline /></button></header>
     <div className={`scene-camera__view${phase === 'photo' ? ' is-photo' : ''}`} style={{ aspectRatio: frameRatio }}>
@@ -85,6 +97,42 @@ export default function SceneCamera({ onClose, onCapture, title = '拍下眼前'
       {phase === 'error' && <p className='scene-camera__status' role='alert'>{error}</p>}
     </div>
     {!photo && <div className='scene-camera__devices'><span>{facing === 'user' ? '前置取景' : facing === 'environment' ? '后置取景' : '相机取景'}</span>{devices.length > 1 && <select aria-label='选择摄像头' value={deviceId} disabled={phase === 'opening' || phase === 'capturing'} onChange={event => start({ deviceId: event.target.value })}>{devices.map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `摄像头 ${index + 1}`}</option>)}</select>}</div>}
-    <footer>{photo ? <><button type='button' onClick={retake}><RedoOutline />重拍一张</button><button type='button' className='scene-camera__primary' disabled={phase !== 'photo'} onClick={confirm}>{confirmLabel}</button></> : <><button type='button' disabled={phase === 'opening' || phase === 'capturing' || (devices.length === 1 && !facing)} title={devices.length === 1 && !facing ? '当前设备只检测到一个摄像头' : ''} onClick={switchCamera}><RedoOutline />切换前后镜头</button>{phase === 'error' ? <button type='button' className='scene-camera__primary' onClick={() => start({ facing: facingRef.current })}>重新连接</button> : <button type='button' className='scene-camera__primary' disabled={phase !== 'ready'} onClick={takePhoto}><CameraOutline />{captureLabel}</button>}</>}</footer>
+    <footer>
+      {photo ? (
+        <>
+          <button type='button' onClick={retake}><RedoOutline />重拍一张</button>
+          <button type='button' className='scene-camera__primary' disabled={phase !== 'photo'} onClick={confirm}>{confirmLabel}</button>
+        </>
+      ) : (
+        <>
+          <button type='button' disabled={phase === 'opening' || phase === 'capturing' || (devices.length === 1 && !facing)} title={devices.length === 1 && !facing ? '当前设备只检测到一个摄像头' : ''} onClick={switchCamera}>
+            <RedoOutline />切换前后镜头
+          </button>
+          {phase === 'error' ? (
+            <>
+              <input
+                ref={fileInputRef}
+                type='file'
+                accept='image/*'
+                capture='environment'
+                style={{ display: 'none' }}
+                onChange={handleNativeFile}
+              />
+              <button
+                type='button'
+                className='scene-camera__primary'
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <CameraOutline />调用系统相机拍照
+              </button>
+            </>
+          ) : (
+            <button type='button' className='scene-camera__primary' disabled={phase !== 'ready'} onClick={takePhoto}>
+              <CameraOutline />{captureLabel}
+            </button>
+          )}
+        </>
+      )}
+    </footer>
   </dialog>
 }

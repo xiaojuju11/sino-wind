@@ -12,6 +12,17 @@ import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
 import { getScholarScene } from '../utils/scholarScenes'
 
+function safeUUID() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0
+    const v = c === 'x' ? r : ((r & 0x3) | 0x8)
+    return v.toString(16)
+  })
+}
+
 const BASE = import.meta.env.BASE_URL
 const CAPSULE_ICONS = [FileOutline, EditSOutline, MessageOutline, CompassOutline]
 
@@ -272,8 +283,8 @@ function ScholarChatSession() {
     if (!text || activeRequest.current || hydrating) return
     if (text.length > 2000) { Toast.show({ content: '请将论道内容控制在两千字以内' }); return }
     if (sageKey.startsWith('sage_') && !customSage) { Toast.show({ content: '自定先贤资料缺失或超出字数限制，请回知音殿重新迎请' }); return }
-    const userMsg = { id: crypto.randomUUID(), role: 'user', content: text, time: getShichenTime() }
-    const aiId = crypto.randomUUID()
+    const userMsg = { id: safeUUID(), role: 'user', content: text, time: getShichenTime() }
+    const aiId = safeUUID()
     const scope = scholarScope()
     const request = { controller: new AbortController(), queue: [], position: 0, finished: false, timer: null, resolve: null }
     const painted = new Promise(resolve => { request.resolve = resolve })

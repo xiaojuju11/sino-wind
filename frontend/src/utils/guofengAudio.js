@@ -128,3 +128,32 @@ export function playSilkScrollSound() {
     // 降级静音处理
   }
 }
+
+/**
+ * 4. 雅乐聆音：古琴五声音阶纯浏览器算法合成（宫商角徵羽）
+ */
+export function playGuqinArpeggio() {
+  try {
+    const ctx = getAudioContext()
+    if (!ctx) return
+    const now = ctx.currentTime
+    const notes = [261.63, 329.63, 392.00, 440.00, 523.25, 392.00]
+    notes.forEach((freq, i) => {
+      const startAt = now + i * 0.35
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = 'triangle'
+      osc.frequency.setValueAtTime(freq, startAt)
+      gain.gain.setValueAtTime(0, startAt)
+      gain.gain.linearRampToValueAtTime(0.22, startAt + 0.05)
+      gain.gain.exponentialRampToValueAtTime(0.001, startAt + 1.2)
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start(startAt)
+      osc.stop(startAt + 1.2)
+    })
+  } catch {
+    // 降级静音处理
+  }
+}
+
