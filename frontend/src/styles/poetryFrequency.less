@@ -30,6 +30,10 @@
   }
   .frequency-eyebrow { color: var(--gf-ink-secondary); letter-spacing: .12em; font-size: 12px; }
   .frequency-filter-panel {
+    // 诗人下拉浮层需要盖住下一个面板：面板自身 isolation 会形成独立层叠上下文，
+    // 仅给浮层加 z-index 无效，必须抬高整个筛选面板
+    position: relative;
+    z-index: 2;
     padding: 16px;
     h2 { font-size: 20px; margin-bottom: 10px; }
     .frequency-form { gap: 8px 10px; label { gap: 3px; } input:not([type='checkbox']), select { min-height: 40px; padding: 6px 8px; } }
