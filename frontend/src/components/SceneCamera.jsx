@@ -94,7 +94,32 @@ export default function SceneCamera({ onClose, onCapture, title = '拍下眼前'
       {photo && <img src={photo.url} alt='刚拍摄的照片' />}
       {phase === 'opening' && <p className='scene-camera__status' role='status'>正在连接相机，请允许使用摄像头…</p>}
       {phase === 'capturing' && <p className='scene-camera__status' role='status'>正在拍摄…</p>}
-      {phase === 'error' && <p className='scene-camera__status' role='alert'>{error}</p>}
+      {phase === 'error' && (
+        <div className='scene-camera__status' role='alert' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '12px', padding: '20px', textAlign: 'center' }}>
+          <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.6, color: 'rgba(255, 255, 255, 0.9)' }}>{error}</p>
+          <button
+            type='button'
+            style={{
+              marginTop: '8px',
+              background: 'linear-gradient(135deg, #A13838 0%, #8A2B2B 100%)',
+              color: '#fff',
+              border: '1px solid #d2b16e',
+              borderRadius: '22px',
+              padding: '10px 22px',
+              fontSize: '15px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <CameraOutline /> 点击调用系统相机拍照
+          </button>
+        </div>
+      )}
     </div>
     {!photo && <div className='scene-camera__devices'><span>{facing === 'user' ? '前置取景' : facing === 'environment' ? '后置取景' : '相机取景'}</span>{devices.length > 1 && <select aria-label='选择摄像头' value={deviceId} disabled={phase === 'opening' || phase === 'capturing'} onChange={event => start({ deviceId: event.target.value })}>{devices.map((device, index) => <option key={device.deviceId} value={device.deviceId}>{device.label || `摄像头 ${index + 1}`}</option>)}</select>}</div>}
     <footer>
@@ -103,34 +128,35 @@ export default function SceneCamera({ onClose, onCapture, title = '拍下眼前'
           <button type='button' onClick={retake}><RedoOutline />重拍一张</button>
           <button type='button' className='scene-camera__primary' disabled={phase !== 'photo'} onClick={confirm}>{confirmLabel}</button>
         </>
+      ) : phase === 'error' ? (
+        <>
+          <input
+            ref={fileInputRef}
+            type='file'
+            accept='image/*'
+            capture='environment'
+            style={{ display: 'none' }}
+            onChange={handleNativeFile}
+          />
+          <button type='button' onClick={close}>
+            <CloseOutline />关闭
+          </button>
+          <button
+            type='button'
+            className='scene-camera__primary'
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <CameraOutline />调用系统相机拍照
+          </button>
+        </>
       ) : (
         <>
           <button type='button' disabled={phase === 'opening' || phase === 'capturing' || (devices.length === 1 && !facing)} title={devices.length === 1 && !facing ? '当前设备只检测到一个摄像头' : ''} onClick={switchCamera}>
             <RedoOutline />切换前后镜头
           </button>
-          {phase === 'error' ? (
-            <>
-              <input
-                ref={fileInputRef}
-                type='file'
-                accept='image/*'
-                capture='environment'
-                style={{ display: 'none' }}
-                onChange={handleNativeFile}
-              />
-              <button
-                type='button'
-                className='scene-camera__primary'
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <CameraOutline />调用系统相机拍照
-              </button>
-            </>
-          ) : (
-            <button type='button' className='scene-camera__primary' disabled={phase !== 'ready'} onClick={takePhoto}>
-              <CameraOutline />{captureLabel}
-            </button>
-          )}
+          <button type='button' className='scene-camera__primary' disabled={phase !== 'ready'} onClick={takePhoto}>
+            <CameraOutline />{captureLabel}
+          </button>
         </>
       )}
     </footer>

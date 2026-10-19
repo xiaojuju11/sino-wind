@@ -74,6 +74,15 @@ export default function ImageCaptureAndProcess({ onRecognition, children, previe
   const closeCamera = useCallback(() => setCameraOpen(false), [])
   const navigate = useNavigate()
   const fileInputRef = useRef(null)
+  const cameraInputRef = useRef(null)
+  const handleCameraClick = useCallback(() => {
+    const isSecure = typeof window !== 'undefined' && window.isSecureContext && Boolean(navigator.mediaDevices?.getUserMedia)
+    if (isSecure) {
+      setCameraOpen(true)
+    } else {
+      cameraInputRef.current?.click()
+    }
+  }, [])
   const submit = async (file) => {
     setHint('')
     let payload
@@ -136,7 +145,7 @@ export default function ImageCaptureAndProcess({ onRecognition, children, previe
           <button
             type='button'
             className='image-capture-btn image-capture-btn--primary'
-            onClick={() => setCameraOpen(true)}
+            onClick={handleCameraClick}
           >
             <i className='iconfont icon-xiangji' aria-hidden='true' />
             拍照
@@ -149,6 +158,15 @@ export default function ImageCaptureAndProcess({ onRecognition, children, previe
             <i className='iconfont icon-shangchuan' aria-hidden='true' />
             上传图片
           </button>
+
+          <input
+            type='file'
+            accept='image/*'
+            capture='environment'
+            ref={cameraInputRef}
+            onChange={handleImageUpload}
+            hidden
+          />
 
           <input
             type='file'
