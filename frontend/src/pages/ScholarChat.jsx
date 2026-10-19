@@ -2,7 +2,7 @@ import { useScholarScope } from '../utils/useScholarScope'
 import React, { useState, useRef, useEffect } from 'react'
 import '../styles/scholarChat.less'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { LeftOutline, SoundOutline, EditSOutline, FileOutline, MessageOutline, CompassOutline, RightOutline } from 'antd-mobile-icons'
+import { LeftOutline, EditSOutline, FileOutline, MessageOutline, CompassOutline, RightOutline } from 'antd-mobile-icons'
 import { Toast, DotLoading } from 'antd-mobile'
 import axios from '../http'
 import { receiveScholarStream } from '../utils/scholarStream'
@@ -440,19 +440,7 @@ function ScholarChatSession() {
           </div>
           <span className="scholar-nav__status"><span className='scholar-status-dot' aria-hidden='true' />{sageInfo.status}</span>
         </div>
-        <div className="scholar-nav__right">
-          <button
-            type="button"
-            className={`scholar-nav__action ${isSpeaking ? 'is-speaking' : ''}`}
-            onClick={() => {
-              const lastAiMsg = [...messages].reverse().find(m => m.role === 'ai')
-              playVoice(lastAiMsg ? lastAiMsg.content : sageInfo.welcome)
-            }}
-            aria-label={isSpeaking ? '停止诵音' : '聆听诵音'}
-          >
-            <SoundOutline />
-          </button>
-        </div>
+        <div className="scholar-nav__right" style={{ width: '40px', minWidth: '40px' }} />
       </header>
 
       {/* 2. 消息流区域：先贤入席名帖与论道发语随对话自然滚动，彻底解除对长谈消息的遮挡 */}
