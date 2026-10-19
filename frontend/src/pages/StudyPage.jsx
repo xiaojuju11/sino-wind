@@ -119,14 +119,6 @@ function YayanNotebook() {
         >
           去雅集题新辞
         </button>
-        <button
-          type='button'
-          className='scholar-icon-refresh-btn'
-          onClick={refresh}
-          aria-label='重新展卷'
-        >
-          <RedoOutline />
-        </button>
       </div>
     </div>
 
