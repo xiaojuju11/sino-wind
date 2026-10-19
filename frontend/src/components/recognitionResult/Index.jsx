@@ -4,6 +4,7 @@ import { Toast } from 'antd-mobile'
 import axios from '../../http'
 import { playInkDropSound, playGuqinArpeggio } from '../../utils/guofengAudio'
 import { safeUUID } from '../../utils/uuid'
+import { speakGuofeng, stopGuofengSpeech, voiceForSage } from '../../utils/guofengSpeech'
 
 /**
  * 物溯古今 · 识别结果（郑小君 · 视觉体系与前端雅言吟诵闭环）
@@ -101,6 +102,7 @@ export default function RecognitionResult({ recognitionResult, pending = false }
   useEffect(() => {
     const audioEl = audioRef.current
     return () => {
+      stopGuofengSpeech()
       if (audioEl) {
         audioEl.pause()
       }
@@ -150,8 +152,9 @@ export default function RecognitionResult({ recognitionResult, pending = false }
   }
 
   // 播放/暂停总控
-  const handleVoicePlay = () => {
+  const handleVoicePlay = async () => {
     if (isPlaying) {
+      stopGuofengSpeech()
       if (audioRef.current) audioRef.current.pause()
       if (typeof window !== 'undefined' && window.speechSynthesis) {
         window.speechSynthesis.cancel()
@@ -160,22 +163,26 @@ export default function RecognitionResult({ recognitionResult, pending = false }
       return
     }
 
-    // 若有上游外部音频直链，优先播放音频直链；否则 100% 呼起 Web Speech 雅音引擎
-    if (hasAudioUrl && audioRef.current) {
-      audioRef.current.currentTime = 0
-      const playPromise = audioRef.current.play()
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => setIsPlaying(true))
-          .catch((err) => {
-            console.warn('[Audio Play blocked, fallback to Web Speech]:', err)
-            playWithSpeechSynthesis()
-          })
-      } else {
-        setIsPlaying(true)
-      }
-    } else {
-      playWithSpeechSynthesis()
+    const textToRead = `${data.name || '此物'}，源自${data.dynasty || '古代'}。${interpretation || ''}。文人流变脉络：${flow || ''}`
+    setIsPlaying(true)
+    try {
+      const result = await speakGuofeng({
+        text: textToRead,
+        voice: voiceForSage('苏轼'),
+        fallback: () => new Promise(resolve => {
+          playWithSpeechSynthesis()
+          const timer = window.setInterval(() => {
+            if (!window.speechSynthesis?.speaking) {
+              window.clearInterval(timer)
+              resolve()
+            }
+          }, 100)
+        })
+      })
+      if (result?.mode === 'audio') setIsPlaying(false)
+    } catch {
+      setIsPlaying(false)
+      Toast.show({ content: '语音暂未就绪，请稍后重试' })
     }
   }
 

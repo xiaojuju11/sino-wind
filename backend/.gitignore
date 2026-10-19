@@ -18,3 +18,9 @@ yarn-error.log*
 Thumbs.db
 .idea/
 .vscode/
+
+# TTS Generated Audio Cache
+public/tts-cache/*.mp3
+public/tts-cache/*.tmp
+public/tts-cache/temp_*
+!public/tts-cache/.gitkeep

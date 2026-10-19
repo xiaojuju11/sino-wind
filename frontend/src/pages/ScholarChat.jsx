@@ -11,6 +11,7 @@ import '../styles/scholarEcosystem.less'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
 import { getScholarScene } from '../utils/scholarScenes'
+import { speakGuofeng, stopGuofengSpeech, voiceForSage } from '../utils/guofengSpeech'
 
 function safeUUID() {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -347,6 +348,7 @@ function ScholarChatSession() {
 
   const [isSpeaking, setIsSpeaking] = useState(false)
   const stopVoice = () => {
+    stopGuofengSpeech()
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel()
     }
@@ -368,7 +370,7 @@ function ScholarChatSession() {
   }, [sageKey])
 
   // 雅乐与先贤诵音：纯浏览器古琴合成 + 沉稳名士语调
-  const playVoice = (text) => {
+  const playVoice = async (text) => {
     if (isSpeaking) {
       stopVoice()
       Toast.show({ content: '诵音已止' })
@@ -395,18 +397,26 @@ function ScholarChatSession() {
       }
       if ('speechSynthesis' in window && text) {
         window.speechSynthesis.cancel()
-        const clean = text.replace(/〔.+?〕/g, '').replace(/[“”"']/g, '')
-        const utterance = new SpeechSynthesisUtterance(clean.slice(0, 120))
-        utterance.lang = 'zh-CN'
-        utterance.rate = 0.85
-        utterance.pitch = 0.9
-        utterance.onend = () => setIsSpeaking(false)
-        utterance.onerror = () => setIsSpeaking(false)
-        setIsSpeaking(true)
-        window.speechSynthesis.speak(utterance)
+      }
+      const result = await speakGuofeng({
+        text,
+        voice: voiceForSage(SAGE_HERO_MAP[sageKey]?.name || sageKey),
+        fallback: cleanText => new Promise(resolve => {
+          if (!('speechSynthesis' in window)) { resolve(); return }
+          const utterance = new SpeechSynthesisUtterance(cleanText.replace(/〔.+?〕/g, '').replace(/[“”"']/g, '').slice(0, 160))
+          utterance.lang = 'zh-CN'
+          utterance.rate = 0.85
+          utterance.pitch = 0.9
+          utterance.onend = () => { setIsSpeaking(false); resolve() }
+          utterance.onerror = () => { setIsSpeaking(false); resolve() }
+          setIsSpeaking(true)
+          window.speechSynthesis.speak(utterance)
+          Toast.show({ content: '先贤诵音绕梁…' })
+        })
+      })
+      if (result?.mode === 'audio') {
+        setIsSpeaking(false)
         Toast.show({ content: '先贤诵音绕梁…' })
-      } else {
-        Toast.show({ content: '琴韵已绕梁' })
       }
     } catch {
       setIsSpeaking(false)
@@ -522,6 +532,11 @@ function ScholarChatSession() {
                   {item.degraded && <small className="scholar-stream-note">离线情境对答</small>}
                   {item.error && <small className="scholar-stream-note" role="status">{item.error}</small>}
                 </div>
+                {item.role === 'ai' && !item.streaming && item.content && (
+                  <button type="button" className="scholar-msg-voice" onClick={() => playVoice(item.content)} aria-label="朗读先贤回柬">
+                    {isSpeaking ? '停止诵读' : '朗读回柬'}
+                  </button>
+                )}
               </div>
 
               {item.role === 'user' && (
