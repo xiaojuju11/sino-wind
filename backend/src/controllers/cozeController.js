@@ -14,7 +14,8 @@ require('dotenv').config({ path: ['.env.local', '.env'] })
  * 请求失败时返回明确错误；不把固定示例作为本次图像的识别结果。
  */
 
-const COZE_ENDPOINT = process.env.COZE_ENDPOINT || 'https://r85vf8qf77.coze.site/run'
+// 默认指向团队「工作流 1」；旧地址 r85vf8qf77 已 404，请通过 COZE_ENDPOINT 覆盖而不必改代码
+const COZE_ENDPOINT = process.env.COZE_ENDPOINT || 'https://6xqyp2kf72.coze.site/run'
 const COZE_TIMEOUT = parseInt(process.env.COZE_TIMEOUT, 10) || 60000
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024
 
