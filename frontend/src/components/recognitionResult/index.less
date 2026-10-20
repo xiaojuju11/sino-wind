@@ -54,6 +54,29 @@
   gap: 0.32rem;
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
 
+  // 顶部入藏横幅提示
+  &__saved-badge {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.18rem 0.28rem;
+    background: color-mix(in srgb, var(--gf-gold, #b39551) 16%, var(--gf-bg-card, #faf7ed));
+    border: 1px solid color-mix(in srgb, var(--gf-gold, #b39551) 45%, transparent);
+    border-radius: 8px;
+    font-size: 0.28rem;
+    color: var(--gf-seal, @color-seal);
+    font-family: 'STKaiti', 'KaiTi', serif;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: transform 0.15s ease, background-color 0.15s ease;
+
+    &:active {
+      transform: scale(0.98);
+      background: color-mix(in srgb, var(--gf-gold, #b39551) 24%, var(--gf-bg-card, #faf7ed));
+    }
+  }
+
   // 兜底提示：只说明降级事实，不做恐吓式红色报错
   &__notice {
     margin: 0;
@@ -135,6 +158,7 @@
       border-color: color-mix(in srgb, var(--gf-gold, #b39551) 55%, transparent);
       color: var(--gf-ink-primary, @color-text-main);
       box-shadow: none;
+      cursor: pointer;
 
       .iconfont {
         color: color-mix(in srgb, var(--gf-gold, #b39551) 85%, var(--gf-ink-primary, @color-text-main));

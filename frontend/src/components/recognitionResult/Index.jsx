@@ -1,9 +1,10 @@
 import './index.less'
 import { useRef, useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Toast } from 'antd-mobile'
-import axios from '../../http'
 import { playInkDropSound } from '../../utils/guofengAudio'
 import { safeUUID } from '../../utils/uuid'
+import { saveScholarArtifact } from '../../utils/scholarAssets'
 
 /**
  * 物溯古今 · 识别结果
@@ -46,6 +47,7 @@ function getScoreRank(score) {
 }
 
 export default function RecognitionResult({ recognitionResult, pending = false }) {
+  const navigate = useNavigate()
   const data = recognitionResult?.data || {}
   const degraded = Boolean(recognitionResult?.degraded)
   const notice = recognitionResult?.notice
@@ -58,42 +60,62 @@ export default function RecognitionResult({ recognitionResult, pending = false }
   const { interpretation, flow } = splitDescription(data.description)
   const rank = getScoreRank(data.score)
 
-  // 收入宝鉴功能
-  const saveArtifact = async () => {
+  // 收入宝鉴功能（统一走 saveScholarArtifact：兼顾游客本地暂存与登录用户云端存储）
+  const saveArtifact = async (silent = false) => {
     if (saveLock.current || saved || pending) return
-    if (!localStorage.getItem('token')) {
-      Toast.show({ content: '请先登录，方可收入书斋物溯宝鉴' })
-      return
-    }
     saveLock.current = true
     setSaving(true)
     artifactId.current ||= safeUUID()
     try {
-      await axios.post(
-        '/api/deepseek/scholar/artifacts',
-        {
-          id: artifactId.current,
-          name: data.name || '待考器物',
-          dynasty: data.dynasty || '',
-          description: data.description || '本次记录未附考释。',
-          score: data.score,
-          degraded
-        },
-        { timeout: 10000 }
-      )
+      const validScore = typeof data.score === 'number' && Number.isFinite(data.score)
+        ? Math.max(0, Math.min(100, Math.round(data.score)))
+        : 80
+      await saveScholarArtifact({
+        id: artifactId.current,
+        name: (data.name || '待考器物').trim().slice(0, 100),
+        dynasty: (data.dynasty || '').trim().slice(0, 80),
+        description: (data.description || '本次记录未附考释。').trim().slice(0, 8000),
+        score: validScore,
+        degraded
+      })
       setSaved(true)
       playInkDropSound()
-      Toast.show({ content: '已收入书斋物溯宝鉴，可前往知音携物入席', icon: 'success' })
-    } catch {
-      Toast.show({ content: '尚未保存，请稍候重试' })
+      if (!silent) {
+        Toast.show({ content: '已收入书斋物溯宝鉴，可前往知音携物入席', icon: 'success' })
+      }
+    } catch (err) {
+      if (!silent) {
+        Toast.show({ content: err?.response?.data?.message || err?.message || '尚未保存，请稍候重试' })
+      }
     } finally {
       saveLock.current = false
       setSaving(false)
     }
   }
 
+  // 识别成功后自动收录入宝鉴，无需用户滑到底部手动操作
+  useEffect(() => {
+    if (!pending && data?.name && !saved && !saveLock.current) {
+      saveArtifact(true)
+    }
+  }, [data?.name, pending])
+
   return (
     <div className='object-recognition-result'>
+      {/* 顶部醒目入藏状态标签：点击可直接穿梭前往物溯宝鉴 */}
+      {saved && (
+        <div
+          className='object-recognition-result__saved-badge'
+          onClick={() => navigate('/mine/artifacts')}
+          role='button'
+          tabIndex={0}
+          title='点击前往书斋物溯宝鉴'
+        >
+          <span>✦ 已收录入【物溯宝鉴】</span>
+          <span>前往查验 ➔</span>
+        </div>
+      )}
+
       {(degraded || pending) && (
         <p className='object-recognition-result__notice'>
           {pending ? '仍在等待真实工作流，先行呈现典库文脉推演。' : notice}
@@ -163,11 +185,11 @@ export default function RecognitionResult({ recognitionResult, pending = false }
       <button
         type='button'
         className={`object-recognition-result__save-btn ${saved ? 'is-saved' : ''}`}
-        disabled={pending || saving || saved}
-        onClick={saveArtifact}
+        disabled={pending || saving}
+        onClick={saved ? () => navigate('/mine/artifacts') : () => saveArtifact(false)}
       >
-        <i className='iconfont icon-shoucang' aria-hidden='true' />
-        <span>{saved ? '已入藏物溯宝鉴' : saving ? '正在镌录入藏…' : pending ? '考释完毕后方可入藏' : '收入物溯宝鉴'}</span>
+        <i className={`iconfont ${saved ? 'icon-zhanpin' : 'icon-shoucang'}`} aria-hidden='true' />
+        <span>{saved ? '已入藏物溯宝鉴 · 前往查验' : saving ? '正在镌录入藏…' : pending ? '考释完毕后方可入藏' : '收入物溯宝鉴'}</span>
       </button>
     </div>
   )

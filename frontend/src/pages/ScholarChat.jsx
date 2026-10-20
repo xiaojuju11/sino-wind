@@ -7,6 +7,7 @@ import { Toast, DotLoading } from 'antd-mobile'
 import axios from '../http'
 import { receiveScholarStream } from '../utils/scholarStream'
 import { cachedLetters, loadLetterDetail, markLetterRead, saveLocalTurn, leaveScholar, shichen, scholarScope } from '../utils/scholarLetters'
+import { getCustomSages } from '../utils/customSages'
 import '../styles/scholarEcosystem.less'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
@@ -121,7 +122,7 @@ function resolveCustomSage(sageKey, navSage) {
   if (!/^sage_\d{1,20}$/.test(sageKey)) return null
   if (navSage?.id === sageKey && customSageData(navSage)) return navSage
   try {
-    const saved = JSON.parse(localStorage.getItem('gufeng_custom_sages') || '[]')
+    const saved = getCustomSages()
     return Array.isArray(saved) ? saved.find(sage => sage?.id === sageKey && customSageData(sage)) || null : null
   } catch { return null }
 }

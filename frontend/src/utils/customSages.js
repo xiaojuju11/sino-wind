@@ -17,7 +17,7 @@ export function customSagesKey(scope = scholarScope()) {
  * 5. 最后移除全局键 'gufeng_custom_sages'。
  */
 function migrateLegacyCustomSages(currentScope) {
-  if (typeof window === 'undefined' || !window.localStorage) return
+  if (typeof localStorage === 'undefined') return
   try {
     const legacyRaw = localStorage.getItem('gufeng_custom_sages')
     if (!legacyRaw) return
@@ -44,8 +44,9 @@ function migrateLegacyCustomSages(currentScope) {
     // 对于不属于当前账号的人物（例如上一账号创建的人物）：
     if (others.length > 0) {
       const allKeys = []
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i)
+      const len = typeof localStorage.length === 'number' ? localStorage.length : 0
+      for (let i = 0; i < len; i++) {
+        const k = typeof localStorage.key === 'function' ? localStorage.key(i) : null
         if (k && (k.startsWith('scholar-letters:v1:') || k.startsWith('scholar-profile:v1:'))) {
           const s = k.replace(/^scholar-(?:letters|profile):v1:/, '')
           if (s && s !== currentScope && !allKeys.includes(s)) allKeys.push(s)
@@ -71,7 +72,7 @@ function migrateLegacyCustomSages(currentScope) {
  * 获取当前账户作用域下的自定知音
  */
 export function getCustomSages(scope = scholarScope()) {
-  if (typeof window === 'undefined' || !window.localStorage) return []
+  if (typeof localStorage === 'undefined') return []
   try {
     const key = customSagesKey(scope)
     const raw = localStorage.getItem(key)
@@ -99,7 +100,7 @@ export function getCustomSages(scope = scholarScope()) {
  * 迎请/保存自定知音到当前账户
  */
 export function saveCustomSage(newSage, scope = scholarScope()) {
-  if (!newSage?.id || typeof window === 'undefined' || !window.localStorage) return false
+  if (!newSage?.id || typeof localStorage === 'undefined') return false
   try {
     const key = customSagesKey(scope)
     const list = getCustomSages(scope).filter(s => s?.id !== newSage.id)
@@ -107,7 +108,9 @@ export function saveCustomSage(newSage, scope = scholarScope()) {
     localStorage.setItem(key, JSON.stringify(list))
     // 确保旧全局 key 不复存在
     try { localStorage.removeItem('gufeng_custom_sages') } catch {}
-    window.dispatchEvent(new CustomEvent('customSagesUpdated', { detail: { scope, sageId: newSage.id } }))
+    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+      window.dispatchEvent(new CustomEvent('customSagesUpdated', { detail: { scope, sageId: newSage.id } }))
+    }
     return true
   } catch {
     return false
@@ -118,12 +121,14 @@ export function saveCustomSage(newSage, scope = scholarScope()) {
  * 从当前账户移出自定知音
  */
 export function removeCustomSage(sageId, scope = scholarScope()) {
-  if (!sageId || typeof window === 'undefined' || !window.localStorage) return false
+  if (!sageId || typeof localStorage === 'undefined') return false
   try {
     const key = customSagesKey(scope)
     const list = getCustomSages(scope).filter(s => s?.id !== sageId)
     localStorage.setItem(key, JSON.stringify(list))
-    window.dispatchEvent(new CustomEvent('customSagesUpdated', { detail: { scope, sageId } }))
+    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+      window.dispatchEvent(new CustomEvent('customSagesUpdated', { detail: { scope, sageId } }))
+    }
     return true
   } catch {
     return false
