@@ -1,17 +1,16 @@
 import './index.less'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Toast } from 'antd-mobile'
 import axios from '../../http'
-import { playInkDropSound, playGuqinArpeggio } from '../../utils/guofengAudio'
+import { playInkDropSound } from '../../utils/guofengAudio'
 import { safeUUID } from '../../utils/uuid'
-import { speakGuofeng, stopGuofengSpeech, voiceForSage } from '../../utils/guofengSpeech'
 
 /**
- * 物溯古今 · 识别结果（郑小君 · 视觉体系与前端雅言吟诵闭环）
+ * 物溯古今 · 识别结果
  * 核心卡片：
  *   1. 金石鉴赏：古物名称 / 朝代印章 / 专属博古鉴藏朱批印章（品位分值与雅级）
  *   2. 器物考释：详释今物名称 ➔ 古代器物原型
- *   3. 文人品鉴心得：流变路线 + 【先贤雅音吟诵器】（Web Speech API 毫秒级原生驱动，水墨声波微澜动效）
+ *   3. 文人品鉴心得：流变路线考略
  *   4. 收入宝鉴：一键收入文士个人书斋物溯宝鉴
  */
 
@@ -50,18 +49,13 @@ export default function RecognitionResult({ recognitionResult, pending = false }
   const data = recognitionResult?.data || {}
   const degraded = Boolean(recognitionResult?.degraded)
   const notice = recognitionResult?.notice
-  const audioRef = useRef(null)
 
-  // 语音播放控制状态
-  const [isPlaying, setIsPlaying] = useState(false)
-  const voiceMode = 'male' // 固定音色：名士雅韵（原先的男女双音色切换已移除）
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const artifactId = useRef(null)
   const saveLock = useRef(false)
 
   const { interpretation, flow } = splitDescription(data.description)
-  const hasAudioUrl = Boolean(data.audio_url && /^https?:\/\//.test(data.audio_url))
   const rank = getScoreRank(data.score)
 
   // 收入宝鉴功能
@@ -95,94 +89,6 @@ export default function RecognitionResult({ recognitionResult, pending = false }
     } finally {
       saveLock.current = false
       setSaving(false)
-    }
-  }
-
-  // 页面离开时彻底停止所有音频与合成语音
-  useEffect(() => {
-    const audioEl = audioRef.current
-    return () => {
-      stopGuofengSpeech()
-      if (audioEl) {
-        audioEl.pause()
-      }
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel()
-      }
-    }
-  }, [])
-
-  // Web Speech 雅言吟诵引擎（调校中文字符、语速、音调）
-  const playWithSpeechSynthesis = () => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-      playGuqinArpeggio()
-      Toast.show({ content: '浏览器内置环境未开启语音合成，且听古琴绕梁' })
-      setIsPlaying(false)
-      return
-    }
-
-    window.speechSynthesis.cancel()
-
-    // 剔除技术符号与标记，确保吟诵宛如名士当面徐徐道来
-    const cleanInterp = (interpretation || '').replace(/[【】[\]➔→-]/g, ' ')
-    const cleanFlow = (flow || '').replace(/[➔→-]/g, '，流变为：')
-    const textToRead = `${data.name || '此物'}，源自${data.dynasty || '古代'}。${cleanInterp}。文人流变脉络：${cleanFlow}`
-
-    const utter = new SpeechSynthesisUtterance(textToRead)
-    utter.lang = 'zh-CN'
-
-    // 获取系统已安装的中文配音
-    const voices = window.speechSynthesis.getVoices()
-    const zhVoices = voices.filter(v => v.lang.includes('zh') || v.lang.includes('cmn') || v.lang.includes('CN'))
-
-    // 名士雅韵：沉雄从容、语速稍缓、抑扬顿挫
-    utter.rate = 0.84
-    utter.pitch = 0.90
-    const maleVoice = zhVoices.find(v => /Yunxi|Kangkang|Danny|Male|男/i.test(v.name)) || zhVoices[0]
-    if (maleVoice) utter.voice = maleVoice
-
-    utter.onstart = () => setIsPlaying(true)
-    utter.onend = () => setIsPlaying(false)
-    utter.onerror = (e) => {
-      console.warn('[Web Speech synthesis error]:', e)
-      setIsPlaying(false)
-    }
-
-    window.speechSynthesis.speak(utter)
-  }
-
-  // 播放/暂停总控
-  const handleVoicePlay = async () => {
-    if (isPlaying) {
-      stopGuofengSpeech()
-      if (audioRef.current) audioRef.current.pause()
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel()
-      }
-      setIsPlaying(false)
-      return
-    }
-
-    const textToRead = `${data.name || '此物'}，源自${data.dynasty || '古代'}。${interpretation || ''}。文人流变脉络：${flow || ''}`
-    setIsPlaying(true)
-    try {
-      const result = await speakGuofeng({
-        text: textToRead,
-        voice: voiceForSage('苏轼'),
-        fallback: () => new Promise(resolve => {
-          playWithSpeechSynthesis()
-          const timer = window.setInterval(() => {
-            if (!window.speechSynthesis?.speaking) {
-              window.clearInterval(timer)
-              resolve()
-            }
-          }, 100)
-        })
-      })
-      if (result?.mode === 'audio') setIsPlaying(false)
-    } catch {
-      setIsPlaying(false)
-      Toast.show({ content: '语音暂未就绪，请稍后重试' })
     }
   }
 
@@ -236,7 +142,7 @@ export default function RecognitionResult({ recognitionResult, pending = false }
         </div>
       </section>
 
-      {/* ── ③ 文人品鉴心得：流变脉络 + 【先贤雅音吟诵器】 ── */}
+      {/* ── ③ 文人品鉴心得：流变脉络 ── */}
       <section className='object-recognition-card'>
         <h2 className='object-recognition-card__title'>
           <i className='iconfont icon-zhinan' aria-hidden='true' />
@@ -246,47 +152,6 @@ export default function RecognitionResult({ recognitionResult, pending = false }
           <p className='object-recognition-result__text'>
             {flow || '本次考释未附流变路线。'}
           </p>
-
-          {/* 先贤雅音吟诵模块（全中文原生 Web Speech，水墨声波微澜动效） */}
-          <div className='scholar-voice-deck'>
-            <div className='scholar-voice-deck__header'>
-              <div className='scholar-voice-deck__title-wrap'>
-                <i className='iconfont icon-yinliang-F' aria-hidden='true' />
-                <span className='scholar-voice-deck__title'>先贤雅音吟诵</span>
-              </div>
-            </div>
-
-            <div className='scholar-voice-deck__player-row'>
-              <button
-                type='button'
-                className={`scholar-voice-btn ${isPlaying ? 'is-playing' : ''}`}
-                onClick={handleVoicePlay}
-                aria-label='播放古风文人讲解语音'
-                title='点击播放或暂停'
-              >
-                <span className='scholar-voice-btn__ink-ring' aria-hidden='true' />
-                <i className={`iconfont ${isPlaying ? 'icon-jieshu' : 'icon-yinliang-F'}`} aria-hidden='true' />
-                <span className='scholar-voice-btn__text'>
-                  {isPlaying ? '暂停吟诵' : '听先贤雅诵'}
-                </span>
-              </button>
-
-              {/* 水墨声波律动动态频谱 */}
-              <div className={`ink-soundwave ${isPlaying ? 'is-animating' : ''}`} aria-hidden='true'>
-                <span className='ink-soundwave__bar bar-1' />
-                <span className='ink-soundwave__bar bar-2' />
-                <span className='ink-soundwave__bar bar-3' />
-                <span className='ink-soundwave__bar bar-4' />
-                <span className='ink-soundwave__bar bar-5' />
-              </div>
-
-              <span className='scholar-voice-deck__status'>
-                {isPlaying
-                  ? `【${voiceMode === 'male' ? '先贤沉雄' : '清词空灵'}】徐徐道来…`
-                  : '以器载道 · 名士亲解'}
-              </span>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -304,19 +169,6 @@ export default function RecognitionResult({ recognitionResult, pending = false }
         <i className='iconfont icon-shoucang' aria-hidden='true' />
         <span>{saved ? '已入藏物溯宝鉴' : saving ? '正在镌录入藏…' : pending ? '考释完毕后方可入藏' : '收入物溯宝鉴'}</span>
       </button>
-
-      {hasAudioUrl && (
-        <audio
-          ref={audioRef}
-          src={data.audio_url}
-          preload='auto'
-          crossOrigin='anonymous'
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-          onEnded={() => setIsPlaying(false)}
-          onError={() => setIsPlaying(false)}
-        />
-      )}
     </div>
   )
 }
@@ -325,7 +177,7 @@ const RECOGNITION_SKELETON_STEPS = [
   '【1/4 辨物】文博大模型正在考释画卷器形与金石材质…',
   '【2/4 溯源】文史算法翻阅《广韵》《考工记》，推演唐宋明流变…',
   '【3/4 赋词】两宋先贤拟文人品鉴长文，评定雅士品位…',
-  '【4/4 雅诵】以器载道，先贤雅音赋魂吟诵…',
+  '【4/4 毕功】以器载道，物脉考释落卷…',
 ]
 
 /** 加载态：两宋宣纸灰骨架占位 + 动态考释阶段提示 */

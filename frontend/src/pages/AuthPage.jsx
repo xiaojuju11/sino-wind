@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Login from './Login'
 import Register from './Register'
 import InkWashBackground from '../components/InkWashBackground'
@@ -7,8 +7,6 @@ import RecoveryCodeCard from '../components/RecoveryCodeCard'
 import '../styles/authPage.less'
 
 export default function AuthPage() {
-  const navigate = useNavigate()
-  const [hasToken] = useState(() => Boolean(typeof window !== 'undefined' && localStorage.getItem('token')))
   const [activeTab, setActiveTab] = useState('login')
   const [user, setUser] = useState({ phone: '', password: '' })
   const [agreed, setAgreed] = useState(false)
@@ -38,27 +36,6 @@ export default function AuthPage() {
           setRecovery(null)
           setActiveTab('login')
         }} /> : <>
-        {hasToken && (
-          <div style={{ textAlign: 'center', marginBottom: '14px' }}>
-            <button
-              type="button"
-              onClick={() => navigate('/home')}
-              style={{
-                background: 'rgba(138, 43, 43, 0.08)',
-                border: '1px solid rgba(138, 43, 43, 0.28)',
-                borderRadius: '16px',
-                padding: '4px 14px',
-                color: '#8A2B2B',
-                fontSize: '13px',
-                fontFamily: "'STKaiti', 'KaiTi', serif",
-                cursor: 'pointer',
-                letterSpacing: '0.08em'
-              }}
-            >
-              已在席中，点击直接进入雅集 ➔
-            </button>
-          </div>
-        )}
         <div className="auth-tabs" role="tablist" aria-label="登录或注册">
           <span className={'auth-tab-stamp ' + (activeTab === 'register' ? 'is-register' : '')} aria-hidden="true" />
           {['login', 'register'].map((tab, i) => (
