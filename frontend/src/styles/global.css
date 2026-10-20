@@ -93,6 +93,10 @@ body {
   font-family: var(--gf-font-serif);
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
 }
 
 /* 🏮 全局 Iconfont 矢量国风渲染规范 */
