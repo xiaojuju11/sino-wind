@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CameraOutline, PictureOutline, RightOutline, LeftOutline, RedoOutline, CloseOutline } from 'antd-mobile-icons'
+import { PictureOutline, RightOutline, LeftOutline, RedoOutline, CloseOutline } from 'antd-mobile-icons'
 import { Toast } from 'antd-mobile'
 import axios from 'axios'
 import InkWashBackground from '../components/InkWashBackground'
 import ReferenceCorners from '../components/ReferenceCorners'
 import ScenePicture from '../components/ScenePicture'
-import SceneCamera from '../components/SceneCamera'
 import { useScholarScope } from '../utils/useScholarScope'
 import { scholarScope } from '../utils/scholarLetters'
 import { getDraft, putDraft } from '../utils/sceneStorage'
@@ -20,17 +19,7 @@ import '../styles/sceneMobile.less'
 const BASE = import.meta.env.BASE_URL
 const sceneApi = axios.create({ baseURL: import.meta.env.VITE_API_BASE_URL || '', timeout: 95000 })
 function SceneEditor({ scope }) {
-  const navigate = useNavigate(), fileRef = useRef(null), nativeCameraRef = useRef(null), request = useRef(null), generation = useRef(0)
-  const [cameraOpen, setCameraOpen] = useState(false)
-  const closeCamera = useCallback(() => setCameraOpen(false), [])
-  const handleTakePhoto = useCallback(() => {
-    const isSecure = typeof window !== 'undefined' && window.isSecureContext && Boolean(navigator.mediaDevices?.getUserMedia)
-    if (isSecure) {
-      setCameraOpen(true)
-    } else {
-      nativeCameraRef.current?.click()
-    }
-  }, [])
+  const navigate = useNavigate(), fileRef = useRef(null), request = useRef(null), generation = useRef(0)
   const [scene, setScene] = useState(null), [selected, setSelected] = useState([]), [poemId, setPoemId] = useState('')
   const [busy, setBusy] = useState(false), [saving, setSaving] = useState(false), [notice, setNotice] = useState(''), [highlight, setHighlight] = useState('')
   const [manualTag, setManualTag] = useState('tree'), [drawing, setDrawing] = useState(false)
@@ -113,11 +102,10 @@ function SceneEditor({ scope }) {
       <div><span className='scene-eyebrow'>一镜山河 · 一卷诗意</span><h1>寻镜入诗</h1><p>眼前的风景，也曾落在古人的诗里</p></div>
     </header>
     <main className='scene-main'>
-      <ol className='scene-steps' aria-label='寻诗步骤'><li className='is-current'><b>一</b>取景识境</li><li className={scene ? 'is-current' : ''}><b>二</b>指景寻诗</li><li className={chosen ? 'is-current' : ''}><b>三</b>展开诗境</li></ol>
+      <ol className='scene-steps' aria-label='寻诗步骤'><li className='is-current'><b>一</b>选景识境</li><li className={scene ? 'is-current' : ''}><b>二</b>指景寻诗</li><li className={chosen ? 'is-current' : ''}><b>三</b>展开诗境</li></ol>
       <input ref={fileRef} hidden type='file' accept='image/jpeg,image/png,image/webp' onChange={event => { receive(event.target.files?.[0]); event.target.value = '' }} />
-      <input ref={nativeCameraRef} hidden type='file' accept='image/*' capture='environment' onChange={event => { receive(event.target.files?.[0]); event.target.value = '' }} />
-      {!scene ? <section className='scene-panel scene-intro'><ReferenceCorners /><span className='scene-eyebrow'>把寻常一瞥，藏成山河一卷</span><h2>此刻风景，何句相宜？</h2><p>一池水，一行树，一座桥。<br />摄下所见，点选意象，与古诗相逢。</p><div className='scene-actions'><button type='button' className='scene-primary' disabled={busy} onClick={handleTakePhoto}><CameraOutline />拍下眼前</button><button type='button' disabled={busy} onClick={() => fileRef.current.click()}><PictureOutline />从相册选取</button></div><button type='button' className='scene-text-button' disabled={busy} onClick={example}>先展一幅示例 <RightOutline /></button></section> : <section className='scene-panel scene-workspace'><ReferenceCorners />
-        <div className='scene-section-title'><div><span className='scene-eyebrow'>第一折 · 取景识境</span><h2>细看眼前山水</h2></div><div className='scene-image-actions'><button type='button' disabled={busy} className='scene-text-button' onClick={handleTakePhoto}><CameraOutline />再拍一张</button><button type='button' disabled={busy} className='scene-text-button' onClick={() => fileRef.current.click()}><PictureOutline />换一幅</button></div></div>
+      {!scene ? <section className='scene-panel scene-intro'><ReferenceCorners /><span className='scene-eyebrow'>把寻常一瞥，藏成山河一卷</span><h2>此刻风景，何句相宜？</h2><p>一池水，一行树，一座桥。<br />选取所见，点选意象，与古诗相逢。</p><div className='scene-actions'><button type='button' className='scene-primary' disabled={busy} onClick={() => fileRef.current.click()}><PictureOutline />从相册选取风景</button></div><button type='button' className='scene-text-button' disabled={busy} onClick={example}>先展一幅示例 <RightOutline /></button></section> : <section className='scene-panel scene-workspace'><ReferenceCorners />
+        <div className='scene-section-title'><div><span className='scene-eyebrow'>第一折 · 选景识境</span><h2>细看眼前山水</h2></div><div className='scene-image-actions'><button type='button' disabled={busy} className='scene-text-button' onClick={() => fileRef.current.click()}><PictureOutline />更换图片</button></div></div>
         <ScenePicture maxHeight={180} scene={scene} selected={selected} highlight={highlight} onToggle={busy ? undefined : toggle} drawing={drawing ? manualTag : ''} onDraw={addRegion} />
         {scene.example && <p className='scene-caption'>山水画示例</p>}
         <div className='scene-actions scene-actions--small'><button type='button' disabled={busy} onClick={() => { const version = ++generation.current; setDrawing(false); analyze(scene, version) }}><RedoOutline />重新识景</button>{busy && <button type='button' onClick={() => request.current?.abort()}><CloseOutline />停止识景</button>}</div>
@@ -131,7 +119,6 @@ function SceneEditor({ scope }) {
       </section>}
       <button type='button' className='scene-text-button scene-library-link' onClick={() => navigate('/mine/scenes')}>前往诗境画阁 <RightOutline /></button>
     </main>
-    {cameraOpen && <SceneCamera onClose={closeCamera} onCapture={file => { closeCamera(); receive(file) }} />}
   </div>
 }
 export default function ScenePoetry() { const scope = useScholarScope(); return <SceneEditor key={scope} scope={scope} /> }

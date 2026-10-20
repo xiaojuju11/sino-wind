@@ -1,11 +1,10 @@
-import { useCallback, useRef, useState } from 'react'
-import SceneCamera from '../SceneCamera'
+import { useRef, useState } from 'react'
 import './index.less'
 import { useNavigate } from 'react-router-dom'
 
 /**
  * 图片采集器（成员 A / TRD v3.0 §2.2）
- * 职责：复用实时相机或从相册选择器物照片，压缩编码后交给 onRecognition 发起识物请求。
+ * 职责：从相册选择器物照片，压缩编码后交给 onRecognition 发起识物请求。
  * 约定：本组件只负责采集与编码，不发起网络请求（识物请求统一在 Recognition.jsx 走公共 Axios）。
  */
 
@@ -70,19 +69,9 @@ export default function ImageCaptureAndProcess({ onRecognition, children, previe
   const [internalImage, setInternalImage] = useState(null)
   const selectedImage = previewImage || internalImage
   const [hint, setHint] = useState('')
-  const [cameraOpen, setCameraOpen] = useState(false)
-  const closeCamera = useCallback(() => setCameraOpen(false), [])
   const navigate = useNavigate()
   const fileInputRef = useRef(null)
-  const cameraInputRef = useRef(null)
-  const handleCameraClick = useCallback(() => {
-    const isSecure = typeof window !== 'undefined' && window.isSecureContext && Boolean(navigator.mediaDevices?.getUserMedia)
-    if (isSecure) {
-      setCameraOpen(true)
-    } else {
-      cameraInputRef.current?.click()
-    }
-  }, [])
+
   const submit = async (file) => {
     setHint('')
     let payload
@@ -115,7 +104,7 @@ export default function ImageCaptureAndProcess({ onRecognition, children, previe
         <button type='button' className='image-capture-header__back' onClick={() => navigate(-1)} aria-label='返回'>
           <i className='iconfont icon-fanhui' aria-hidden='true' />
         </button>
-        <h1 className='image-capture-header__title'>物溯古今 · 拍照识器</h1>
+        <h1 className='image-capture-header__title'>物溯古今 · 器物识真</h1>
         <span style={{ width: '38px', flex: 'none' }} aria-hidden='true' />
       </header>
 
@@ -132,8 +121,8 @@ export default function ImageCaptureAndProcess({ onRecognition, children, previe
             ) : (
               <div className='image-capture-preview__placeholder'>
                 <i className='iconfont icon-image image-capture-preview__placeholder-icon' aria-hidden='true' />
-                <p>轻触下方按钮，拍摄或上传器物影像</p>
-                <span>拍现代之物，溯其古代雅称与千年流变</span>
+                <p>轻触下方按钮，从相册选择器物影像</p>
+                <span>选现代之物，溯其古代雅称与千年流变</span>
               </div>
             )
           }
@@ -145,28 +134,11 @@ export default function ImageCaptureAndProcess({ onRecognition, children, previe
           <button
             type='button'
             className='image-capture-btn image-capture-btn--primary'
-            onClick={handleCameraClick}
-          >
-            <i className='iconfont icon-xiangji' aria-hidden='true' />
-            拍照
-          </button>
-          <button
-            type='button'
-            className='image-capture-btn image-capture-btn--secondary'
             onClick={() => fileInputRef.current?.click()}
           >
             <i className='iconfont icon-shangchuan' aria-hidden='true' />
-            上传图片
+            从相册上传图片
           </button>
-
-          <input
-            type='file'
-            accept='image/*'
-            capture='environment'
-            ref={cameraInputRef}
-            onChange={handleImageUpload}
-            hidden
-          />
 
           <input
             type='file'
@@ -179,8 +151,6 @@ export default function ImageCaptureAndProcess({ onRecognition, children, previe
 
         {children}
       </main>
-
-      {cameraOpen && <SceneCamera title='拍下眼前器物' eyebrow='观物识古' confirmLabel='用这张识物' captureLabel='拍照识物' onClose={closeCamera} onCapture={file => { closeCamera(); submit(file) }} />}
     </div>
   )
 }
