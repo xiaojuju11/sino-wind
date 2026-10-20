@@ -187,15 +187,24 @@ async function pageHarness({ state, saved = [profile], rawStorage, storageError 
   const executable = source.slice(0, boundary).replace(/^import .*\n/gm, '').replace('import.meta.env.BASE_URL', "'/'") + '\n return { sageKey, sageInfo, handleSend };\n}\n'
   const values = [], refs = [], effects = [], payloads = [], notices = []
   let cursor = 0, refCursor = 0, mounted = false
-  const storage = new Map([['gufeng_custom_sages', rawStorage ?? JSON.stringify(saved.map(s => s && typeof s === 'object' ? { id: sageId, ...s } : s))]])
+  const serialized = rawStorage ?? JSON.stringify(saved.map(s => s && typeof s === 'object' ? { id: sageId, ...s } : s))
+  const storage = new Map([['scholar-custom-sages:v1:guest', serialized], ['gufeng_custom_sages', serialized]])
   const sandbox = {
     crypto: { randomUUID }, AbortController, setInterval, clearInterval, setTimeout, clearTimeout,
-    localStorage: { getItem(key) { if (storageError && key === 'gufeng_custom_sages') throw new Error('Storage unavailable'); return storage.get(key) ?? null } },
+    localStorage: {
+      getItem(key) {
+        if (storageError && (key === 'gufeng_custom_sages' || key.startsWith('scholar-custom-sages:'))) throw new Error('Storage unavailable');
+        return storage.get(key) ?? null;
+      },
+      setItem(key, val) { storage.set(key, String(val)); },
+      removeItem(key) { storage.delete(key); }
+    },
     useParams: () => ({ id }), useLocation: () => ({ state }), useNavigate: () => () => {},
     useState(initial) { const i = cursor++; if (!(i in values)) values[i] = typeof initial === 'function' ? initial() : initial; return [values[i], next => { values[i] = typeof next === 'function' ? next(values[i]) : next }] },
     useRef(initial) { const i = refCursor++; return refs[i] ||= { current: initial } },
     useEffect(effect) { if (!mounted) effects.push(effect) },
     scholarScope: () => 'guest', getScholarScene: () => null,
+    getCustomSages: () => { try { const raw = sandbox.localStorage.getItem('scholar-custom-sages:v1:guest') || sandbox.localStorage.getItem('gufeng_custom_sages'); return raw ? JSON.parse(raw) : []; } catch { return []; } },
     cachedLetters: () => [], loadLetterDetail: async () => undefined,
     markLetterRead: async () => {}, saveLocalTurn: () => true, leaveScholar: () => {}, shichen: () => '子时',
     axios: { getUri: () => '/api/deepseek/chat/stream' }, Toast: { show: value => notices.push(value) },
