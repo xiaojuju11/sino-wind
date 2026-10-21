@@ -371,7 +371,7 @@ async function deepseekChat(ctx) {
         { role: "system", content: "你是一个专业的知识助手" },
         { role: "user", content: message }
       ],
-      model: "deepseek-chat"
+      model: "deepseek-flash"
     })
 
     ctx.body = {
