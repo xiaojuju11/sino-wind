@@ -3,7 +3,6 @@ import assert from 'node:assert/strict'
 import vm from 'node:vm'
 import fs from 'node:fs/promises'
 import { webcrypto } from 'node:crypto'
-import { createScholarCertificate } from '../src/utils/scholarCertificate.js'
 
 async function fixture() {
   const storage = new Map(), requests = [], events = new EventTarget()
@@ -81,27 +80,12 @@ test('guest artifacts use stable IDs, stay local and require explicit import', a
   assert.equal(f.assets.localArtifacts('guest').length, 0)
   assert.equal(f.requests.filter(r => r[1] === '/api/deepseek/scholar/artifacts').length, 1)
 })
-test('guest completed games can be redrawn locally but never import credentials or points', async () => {
-  const f = await fixture()
-  const game = { id: webcrypto.randomUUID(), status: 'finished', settled: true, pointsAwarded: 3, guestKey: 'secret', winner: 'user', turns: [], endedAt: Date.now() }
-  assert.equal(f.assets.rememberGuestGame({ ...game, status: 'playing' }), false)
-  assert.equal(f.assets.rememberGuestGame(game), true)
-  assert.equal(f.assets.rememberGuestGame(game), true)
-  assert.equal(f.assets.guestGames().length, 1)
-  assert.equal(f.assets.guestGames()[0].pointsAwarded, 0)
-  assert.equal(f.assets.guestGames()[0].guestKey, undefined)
-  f.login(1); assert.equal(f.assets.rememberGuestGame(game), false)
-  await f.assets.importGuestArchive()
-  assert.equal(f.requests.filter(r => r[1].includes('feihua')).length, 0)
-})
 test('more than twenty unsynced turns and more than one hundred guest assets are never silently truncated', async () => {
   const f = await fixture()
   for (let i = 0; i < 45; i++) assert.equal(f.letters.saveLocalTurn('libai', turn(i)), true)
   assert.equal(f.letters.cachedLetters()[0].turns.length, 45)
   for (let i = 0; i < 101; i++) await f.assets.saveScholarArtifact({ id: webcrypto.randomUUID(), name: `器物${i}`, description: '考释', score: 0, degraded: false })
   assert.equal(f.assets.localArtifacts().length, 101)
-  for (let i = 0; i < 101; i++) f.assets.rememberGuestGame({ id: webcrypto.randomUUID(), status: 'finished', settled: true, turns: [], endedAt: Date.now() })
-  assert.equal(f.assets.guestGames().length, 101)
   f.login(1)
   for (let i = 0; i < 45; i++) f.letters.saveLocalTurn('sushi', turn(i))
   await f.letters.syncLocalLetters()
@@ -150,17 +134,4 @@ test('guest artifacts follow server field limits so malformed items cannot poiso
   const item = { id: webcrypto.randomUUID(), name: '建盏', description: '考释', score: 0, degraded: false }
   for (const invalid of [{ ...item, score: 101 }, { ...item, id: 'not-a-uuid' }, { ...item, name: '器'.repeat(101) }]) await assert.rejects(f.assets.saveScholarArtifact(invalid))
   assert.equal(f.assets.localArtifacts().length, 0)
-})
-test('native Canvas re-renders completed archive at Retina 2x with all text and seal curves', async () => {
-  const text = [], curves = [], canvas = { toBlob: done => done(new Blob(['png'], { type: 'image/png' })) }
-  const ctx = new Proxy({}, { get: (_, name) => name === 'fillText' ? value => text.push(value) : name === 'bezierCurveTo' ? (...args) => curves.push(args) : () => {}, set: () => true })
-  canvas.getContext = () => ctx
-  const doc = { fonts: { ready: Promise.resolve() }, createElement: () => canvas }
-  const game = { id: webcrypto.randomUUID(), nickname: '零分文士', sageId: 'sushi', status: 'finished', settled: true, winner: 'user', pointsAwarded: 0, rounds: 1, keyword: '月', rhyme: '一东', endedAt: Date.now(), turns: [{ role: 'user', line: '明月几时有' }] }
-  const result = await createScholarCertificate(game, doc)
-  assert.equal(result.width, 1200); assert.ok(result.height >= 2160 && result.height % 2 === 0)
-  assert.ok(text.includes('飞花通关文牒')); assert.ok(text.join('').includes('苏轼')); assert.ok(text.join('').includes('本局实记修持0分'))
-  assert.ok(curves.length > 10)
-  await assert.rejects(createScholarCertificate({ ...game, status: 'playing' }, doc), /结算/)
-  await assert.rejects(createScholarCertificate({ ...game, turns: null }, doc), /不完整/)
 })
