@@ -2,20 +2,6 @@ import axios from '../http'
 import { cachedLetters, importGuestLetters, scholarScope } from './scholarLetters'
 
 const key = scope => `scholar-artifacts:v1:${scope}`
-const gamesKey = 'scholar-games:v1:guest'
-export function guestGames() {
-  try { const value = JSON.parse(localStorage.getItem(gamesKey) || '[]'); return Array.isArray(value) ? value.filter(g => g?.status === 'finished' && g.settled) : [] } catch { return [] }
-}
-// Called by the FeihuaPanel owner only after the server confirms a guest settlement.
-// This material is local practice; credentials and competitive points are excluded.
-export function rememberGuestGame(game) {
-  if (scholarScope() !== 'guest' || game?.status !== 'finished' || !game.settled || typeof game.id !== 'string' || !Array.isArray(game.turns)) return false
-  const { id, sageId, keyword, rhyme, nickname, rounds, turns, winner, endedAt } = game
-  const record = { id, sageId, keyword, rhyme, nickname, rounds, turns, winner, endedAt, status: 'finished', settled: true, pointsAwarded: 0 }
-  localStorage.setItem(gamesKey, JSON.stringify([record, ...guestGames().filter(row => row.id !== id)]))
-  window.dispatchEvent(new Event('scholarAssetsUpdated'))
-  return true
-}
 export function localArtifacts(scope = scholarScope()) {
   try { const rows = JSON.parse(localStorage.getItem(key(scope)) || '[]'); return Array.isArray(rows) ? rows : [] } catch { return [] }
 }

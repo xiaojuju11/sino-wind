@@ -19,12 +19,6 @@ router.post('/soul', soulScholar)
 // 4. 古诗词深度雅析与先贤亲解
 router.post('/appreciate', optionalToken(), appreciatePoem)
 
-const feihua = require('../controllers/feihuaController')
-router.get('/feihua/rules', feihua.rules)
-router.post('/feihua/start', optionalToken(), feihua.start)
-router.post('/feihua/turn', optionalToken(), feihua.turn)
-router.get('/feihua/records', verifyToken(), feihua.records)
-router.get('/feihua/records/:id', verifyToken(), feihua.record)
 const ecosystem = require('../controllers/scholarEcosystemController')
 router.get('/scholar/summary', verifyToken(), ecosystem.summary)
 router.post('/scholar/sync', verifyToken(), ecosystem.sync)
@@ -37,4 +31,4 @@ router.get('/scholar/artifacts', verifyToken(), artifacts.list)
 router.post('/scholar/artifacts', verifyToken(), artifacts.save)
 router.delete('/scholar/artifacts/:id', verifyToken(), artifacts.remove)
 
-module.exports = router
+module.exports = router

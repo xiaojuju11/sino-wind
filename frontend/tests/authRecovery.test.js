@@ -1,4 +1,4 @@
-import test from 'node:test'
+﻿import test from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'node:fs/promises'
 import vm from 'node:vm'
@@ -87,8 +87,9 @@ async function mount(page, { token = 'account-a', post, props = {} } = {}) {
     await module.link(async name => {
       if (name === 'react') return synthetic({ ...react, default: react })
       if (name === 'react/jsx-runtime') return synthetic({ jsx: (type, props) => ({ type, props }), jsxs: (type, props) => ({ type, props }), Fragment: 'Fragment' })
-      if (name === 'react-router-dom') return synthetic({ Link: 'Link', useNavigate: () => (...args) => navigations.push(args) })
+      if (name === 'react-router-dom') return synthetic({ Link: 'Link', Navigate: 'Navigate', useLocation: () => ({ pathname: '/', search: '', state: null }), useNavigate: () => (...args) => navigations.push(args) })
       if (name === '../http') return synthetic({ default: axios })
+      if (name === '../utils/session') return load('utils/session.js')
       if (name === 'antd-mobile-icons') return synthetic(icons)
       if (name === 'antd-mobile') return synthetic({ Toast: { show: value => toasts.push(value) }, List: { Item: 'List.Item' }, Avatar: 'Avatar', ActionSheet: 'ActionSheet', Popup: 'Popup', Button: 'Button', Input: 'Input' })
       if (name.includes('chunkUpload')) return synthetic({ uploadFileChunks: async () => {}, DEFAULT_CHUNK_SIZE: 1024 })
