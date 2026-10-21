@@ -1,7 +1,9 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import './styles/app.less'
+import { resolveAuthEntry } from './utils/session'
 import BambooBreeze from './components/BambooBreeze'
+import SwipeBack from './components/SwipeBack'
 import Layout from './pages/Layout'
 import Home from './pages/Home'
 import MinePage from './pages/MinePage'
@@ -85,8 +87,8 @@ function ScrollToTop() {
 }
 
 function RootRedirect() {
-  const token = localStorage.getItem('token')
-  return token ? <Navigate to='/home' replace /> : <Navigate to='/login' replace />
+  // 会话未过期就直接入席；过期/损坏的 token 在这里顺手清掉，避免进首页再被 416 踢回来
+  return resolveAuthEntry() === 'home' ? <Navigate to='/home' replace /> : <Navigate to='/login' replace />
 }
 
 export default function App() {
@@ -94,13 +96,15 @@ export default function App() {
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <ScrollToTop />
       <BambooBreeze />
+      <SwipeBack />
       <Suspense fallback={<PageFallback />}>
         <Routes>
           <Route path='/login' element={<AuthPage/>}></Route>
           <Route path='/recover' element={<ForgotPassword/>}></Route>
           <Route path='/legal/:kind' element={<LegalPage/>}></Route>
-          {/* 默认首页入口：首屏一律直达登录注册页（华风雅集入席/缔约） */}
-          <Route path='/' element={<Navigate to='/login' replace />}></Route>
+
+          {/* 默认首页入口：已登录用户直达首页，未登录进入认证页 */}
+          <Route path='/' element={<RootRedirect />}></Route>
           <Route element={<Layout/>}>
             <Route path='/home' element={<Home/>}></Route>
             <Route path='/letters' element={<LetterList/>}></Route>

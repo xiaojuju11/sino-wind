@@ -2,7 +2,9 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <!-- 键盘弹起时压缩布局视口（Chrome 108+ 默认值，此处显式声明以固定行为）：
+         输入框始终留在键盘上方，底栏由 utils/keyboardViewport.js 判定后收起 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content" />
     <title>云山竹简 · 华风雅集</title>
 
     <!-- 🏮 国风专属 App 图标与 PWA 清单 -->
