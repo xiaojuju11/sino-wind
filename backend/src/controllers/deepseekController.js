@@ -1,6 +1,7 @@
 const OpenAI = require('openai')
 const db = require('../config/db')
 require('dotenv').config({ path: ['.env.local', '.env'] })
+const { DEEPSEEK_MODEL, DEEPSEEK_THINKING } = require('../utils/deepseekModel')
 
 // 先贤人设库（第一人称强约束人设，彻底杜绝 AI 助手味）
 const sages = Object.freeze({
@@ -58,7 +59,7 @@ function getClient() {
   })
 }
 
-// 严密反出戏过滤与清洗器（TRD AC-C2 零出戏铁律保障）
+// 严密反出戏过滤与清洗器
 function sanitizeSageReply(text, sageId) {
   if (!text || typeof text !== 'string') return text
   // 识别并拦截模型潜在的“出戏”元话语
@@ -88,7 +89,7 @@ function sanitizeSageReply(text, sageId) {
 function generateSageReply(sageId, message) {
   const query = (message || '').trim().toLowerCase()
 
-  // 1. 针对身份质疑 / 机器人 / AI / 伪造 / 出戏提问的深度反击与强防御（TRD AC-C2）
+  // 1. 针对身份质疑或出戏提问的防御与名士风格回应
   if (/(不是|ai|机器人|模型|假|助手|教育|程序|代码|虚拟|演的|骗子|算力|真人|算法|现代|电脑|软件|硅基|deepseek|openai|gpt)/i.test(query)) {
     const defensePool = {
       libai: [
@@ -180,7 +181,8 @@ async function deepseekChat(ctx) {
 
   try {
     const completion = await client.chat.completions.create({
-      model: 'deepseek-chat',
+      model: DEEPSEEK_MODEL,
+      thinking: DEEPSEEK_THINKING,
       messages: [
         {
           role: 'system',
@@ -204,7 +206,7 @@ ${systemPrompt}
     ctx.body = { code: 1, message: reply }
   }
 
-  // 登录用户自动闭环沉淀知音论道修持看板数据（TRD 四维修持数据打通）
+  // 登录用户累计论道修持数据
   if (ctx.userId) {
     try {
       await db.execute('UPDATE users SET debate_count = COALESCE(debate_count, 0) + 1 WHERE id = ?', [ctx.userId])
@@ -379,7 +381,8 @@ async function translateYayan(ctx) {
 
   try {
     const completion = await client.chat.completions.create({
-      model: 'deepseek-chat',
+      model: DEEPSEEK_MODEL,
+      thinking: DEEPSEEK_THINKING,
       response_format: { type: 'json_object' },
       messages: [
         {
@@ -489,7 +492,8 @@ async function soulScholar(ctx) {
 
   try {
     const completion = await client.chat.completions.create({
-      model: 'deepseek-chat',
+      model: DEEPSEEK_MODEL,
+      thinking: DEEPSEEK_THINKING,
       response_format: { type: 'json_object' },
       messages: [
         {
@@ -528,7 +532,7 @@ async function soulScholar(ctx) {
   }
 }
 
-// 4. 古诗词深度雅析与先贤亲解接口 (TRD v3.0 / 借鉴 zyai-fullstack 并升华)
+// 4. 古诗词深度雅析与先贤亲解接口
 const CLASSIC_APPRECIATIONS = {
   '水调歌头·明月几时有': {
     overview: '此词作于中秋，东坡兼怀子由。全词以月起兴，把出世与入世的彷徨化作「千里共婵娟」的旷达，豪放与深情兼备，为咏月千古绝唱。',
@@ -616,7 +620,8 @@ async function appreciatePoem(ctx) {
   if (client) {
     try {
       const completion = await client.chat.completions.create({
-        model: 'deepseek-chat',
+        model: DEEPSEEK_MODEL,
+        thinking: DEEPSEEK_THINKING,
         response_format: { type: 'json_object' },
         messages: [
           {
@@ -682,7 +687,8 @@ async function searchPoemsDeepSeek(keyword) {
   if (!client || !keyword || !keyword.trim()) return null
   try {
     const completion = await client.chat.completions.create({
-      model: 'deepseek-chat',
+      model: DEEPSEEK_MODEL,
+      thinking: DEEPSEEK_THINKING,
       response_format: { type: 'json_object' },
       messages: [
         {
