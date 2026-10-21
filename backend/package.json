@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "npx nodemon src/index.js",
     "db:init": "node scripts/init-db.js",
-    "test": "node --test tests/*.test.cjs scripts/test-scholar-custom-sse.cjs"
+    "test": "node --test tests/*.test.cjs scripts/test-scholar-custom-sse.cjs",
+    "models:prepare": "node scripts/prepare-scene-models.js"
   },
   "keywords": [],
   "author": "",

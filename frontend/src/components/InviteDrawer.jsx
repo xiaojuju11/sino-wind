@@ -3,6 +3,7 @@ import { Popup, Toast } from 'antd-mobile'
 import { CloseOutline, StarOutline, PictureOutline, AddOutline } from 'antd-mobile-icons'
 import axios from '../http'
 import '../styles/referencePolish.less'
+import { saveCustomSage } from '../utils/customSages'
 
 const BASE = import.meta.env.BASE_URL
 
@@ -155,10 +156,10 @@ export default function InviteDrawer({ visible, onClose, onInviteSuccess }) {
     }
 
     try {
-      const saved = JSON.parse(localStorage.getItem('gufeng_custom_sages') || '[]')
-      const filtered = Array.isArray(saved) ? saved.filter((item) => item && item.id !== id) : []
-      filtered.unshift(newSage)
-      localStorage.setItem('gufeng_custom_sages', JSON.stringify(filtered))
+      saveCustomSage(newSage)
+
+
+
       Toast.show({ content: `已迎请【${name.trim()}】入席知音殿`, icon: 'success' })
       if (onInviteSuccess) onInviteSuccess(newSage)
       handleClose()

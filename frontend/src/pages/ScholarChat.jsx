@@ -2,15 +2,27 @@ import { useScholarScope } from '../utils/useScholarScope'
 import React, { useState, useRef, useEffect } from 'react'
 import '../styles/scholarChat.less'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { LeftOutline, SoundOutline, EditSOutline, FileOutline, MessageOutline, CompassOutline, RightOutline } from 'antd-mobile-icons'
+import { LeftOutline, EditSOutline, FileOutline, MessageOutline, CompassOutline, RightOutline } from 'antd-mobile-icons'
 import { Toast, DotLoading } from 'antd-mobile'
 import axios from '../http'
 import { receiveScholarStream } from '../utils/scholarStream'
 import { cachedLetters, loadLetterDetail, markLetterRead, saveLocalTurn, leaveScholar, shichen, scholarScope } from '../utils/scholarLetters'
+import { getCustomSages } from '../utils/customSages'
 import '../styles/scholarEcosystem.less'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
 import { getScholarScene } from '../utils/scholarScenes'
+
+function safeUUID() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0
+    const v = c === 'x' ? r : ((r & 0x3) | 0x8)
+    return v.toString(16)
+  })
+}
 
 const BASE = import.meta.env.BASE_URL
 const CAPSULE_ICONS = [FileOutline, EditSOutline, MessageOutline, CompassOutline]
@@ -110,7 +122,7 @@ function resolveCustomSage(sageKey, navSage) {
   if (!/^sage_\d{1,20}$/.test(sageKey)) return null
   if (navSage?.id === sageKey && customSageData(navSage)) return navSage
   try {
-    const saved = JSON.parse(localStorage.getItem('gufeng_custom_sages') || '[]')
+    const saved = getCustomSages()
     return Array.isArray(saved) ? saved.find(sage => sage?.id === sageKey && customSageData(sage)) || null : null
   } catch { return null }
 }
@@ -235,7 +247,21 @@ function ScholarChatSession() {
       restored = true
     }
     const cached = cachedLetters().find(l => l.sageId === sageKey)
-    loadLetterDetail(sageKey).then(restore).catch(() => { restore(cached); if (current) Toast.show({ content: '云端旧笺暂未载入，本机原稿保留' }) })
+    loadLetterDetail(sageKey)
+      .then(restore)
+      .catch(() => {
+        if (!current) return
+        if (cached?.turns?.length) {
+          setMessages([{ id: 'msg_welcome', role: 'ai', content: welcome, time: getShichenTime() }, ...cached.turns.flatMap(t => [
+            { id: `${t.id}:user`, role: 'user', content: t.question, time: shichen(t.at) },
+            { id: `${t.id}:ai`, role: 'ai', content: t.answer, degraded: t.degraded, time: shichen(t.at) }
+          ])])
+        }
+        if (current) Toast.show({ content: '云端旧笺暂未载入，本机原稿保留' })
+      })
+      .finally(() => {
+        if (current) setHydrating(false)
+      })
     const leave = () => { if (restored && scope === scholarScope()) leaveScholar(sageKey) }
     window.addEventListener('pagehide', leave)
     return () => { current = false; stopRequest(); window.removeEventListener('pagehide', leave); leave() }
@@ -258,8 +284,8 @@ function ScholarChatSession() {
     if (!text || activeRequest.current || hydrating) return
     if (text.length > 2000) { Toast.show({ content: '请将论道内容控制在两千字以内' }); return }
     if (sageKey.startsWith('sage_') && !customSage) { Toast.show({ content: '自定先贤资料缺失或超出字数限制，请回知音殿重新迎请' }); return }
-    const userMsg = { id: crypto.randomUUID(), role: 'user', content: text, time: getShichenTime() }
-    const aiId = crypto.randomUUID()
+    const userMsg = { id: safeUUID(), role: 'user', content: text, time: getShichenTime() }
+    const aiId = safeUUID()
     const scope = scholarScope()
     const request = { controller: new AbortController(), queue: [], position: 0, finished: false, timer: null, resolve: null }
     const painted = new Promise(resolve => { request.resolve = resolve })
@@ -320,74 +346,7 @@ function ScholarChatSession() {
     }
   }
 
-  const [isSpeaking, setIsSpeaking] = useState(false)
-  const stopVoice = () => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel()
-    }
-    setIsSpeaking(false)
-  }
 
-  // 离开页面、切换先贤、或者页面隐藏时彻底停止先贤诵音
-  useEffect(() => {
-    const handleVisibility = () => {
-      if (document.hidden) stopVoice()
-    }
-    window.addEventListener('pagehide', stopVoice)
-    document.addEventListener('visibilitychange', handleVisibility)
-    return () => {
-      stopVoice()
-      window.removeEventListener('pagehide', stopVoice)
-      document.removeEventListener('visibilitychange', handleVisibility)
-    }
-  }, [sageKey])
-
-  // 雅乐与先贤诵音：纯浏览器古琴合成 + 沉稳名士语调
-  const playVoice = (text) => {
-    if (isSpeaking) {
-      stopVoice()
-      Toast.show({ content: '诵音已止' })
-      return
-    }
-    try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext
-      if (AudioCtx) {
-        const ctx = new AudioCtx()
-        const notes = [261.63, 329.63, 392.00]
-        notes.forEach((freq, i) => {
-          const osc = ctx.createOscillator()
-          const gain = ctx.createGain()
-          osc.type = 'triangle'
-          osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.15)
-          gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.15)
-          gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + i * 0.15 + 0.03)
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.8)
-          osc.connect(gain)
-          gain.connect(ctx.destination)
-          osc.start(ctx.currentTime + i * 0.15)
-          osc.stop(ctx.currentTime + i * 0.15 + 0.9)
-        })
-      }
-      if ('speechSynthesis' in window && text) {
-        window.speechSynthesis.cancel()
-        const clean = text.replace(/〔.+?〕/g, '').replace(/[“”"']/g, '')
-        const utterance = new SpeechSynthesisUtterance(clean.slice(0, 120))
-        utterance.lang = 'zh-CN'
-        utterance.rate = 0.85
-        utterance.pitch = 0.9
-        utterance.onend = () => setIsSpeaking(false)
-        utterance.onerror = () => setIsSpeaking(false)
-        setIsSpeaking(true)
-        window.speechSynthesis.speak(utterance)
-        Toast.show({ content: '先贤诵音绕梁…' })
-      } else {
-        Toast.show({ content: '琴韵已绕梁' })
-      }
-    } catch {
-      setIsSpeaking(false)
-      Toast.show({ content: '琴韵已绕梁' })
-    }
-  }
 
   return (
     <div className={`scholar-chat-root reference-polish${hasScene ? ' has-sage-scene' : ''}`}>
@@ -402,7 +361,6 @@ function ScholarChatSession() {
           type="button"
           className="scholar-nav__back"
           onClick={() => {
-            stopVoice()
             navigate(-1)
           }}
         >
@@ -415,19 +373,7 @@ function ScholarChatSession() {
           </div>
           <span className="scholar-nav__status"><span className='scholar-status-dot' aria-hidden='true' />{sageInfo.status}</span>
         </div>
-        <div className="scholar-nav__right">
-          <button
-            type="button"
-            className={`scholar-nav__action ${isSpeaking ? 'is-speaking' : ''}`}
-            onClick={() => {
-              const lastAiMsg = [...messages].reverse().find(m => m.role === 'ai')
-              playVoice(lastAiMsg ? lastAiMsg.content : sageInfo.welcome)
-            }}
-            aria-label={isSpeaking ? '停止诵音' : '聆听诵音'}
-          >
-            <SoundOutline />
-          </button>
-        </div>
+        <div className="scholar-nav__right" style={{ width: '40px', minWidth: '40px' }} />
       </header>
 
       {/* 2. 消息流区域：先贤入席名帖与论道发语随对话自然滚动，彻底解除对长谈消息的遮挡 */}
@@ -583,12 +529,5 @@ function ScholarChatSession() {
 
 export default function ScholarChat() {
   const scope = useScholarScope()
-  useEffect(() => {
-    return () => {
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel()
-      }
-    }
-  }, [])
   return <ScholarChatSession key={scope} />
 }

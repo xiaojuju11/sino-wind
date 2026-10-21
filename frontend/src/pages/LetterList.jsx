@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { AddOutline, SearchOutline, CloseOutline } from 'antd-mobile-icons'
 import InviteDrawer from '../components/InviteDrawer'
 import { cachedLetters, loadLetters, shichen } from '../utils/scholarLetters'
+import { getCustomSages } from '../utils/customSages'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
 import { getScholarScene, scholarPortraitStyle } from '../utils/scholarScenes'
@@ -103,7 +104,7 @@ function LetterListSession() {
   const navigate = useNavigate()
   const [conversations, setConversations] = useState(() => {
     try {
-      const saved = JSON.parse(localStorage.getItem('gufeng_custom_sages') || '[]')
+      const saved = getCustomSages()
       return [...(Array.isArray(saved) ? saved.filter(item => !PRESET_CONVERSATIONS.some(p => p.id === item.id)).map(item => ({ ...item, avatar: item.avatar || `${BASE}assets/guancang/sage_wangyangming.png`, status: item.status || '神游相候' })) : []), ...PRESET_CONVERSATIONS]
     } catch { return PRESET_CONVERSATIONS }
   })
@@ -117,8 +118,14 @@ function LetterListSession() {
     const local = () => { if (current) setLetters(cachedLetters()) }
     refresh()
     const timer = setTimeout(refresh, 1200)
-    window.addEventListener('focus', refresh); window.addEventListener('storage', local); window.addEventListener('scholarLettersUpdated', local)
-    return () => { current = false; clearTimeout(timer); window.removeEventListener('focus', refresh); window.removeEventListener('storage', local); window.removeEventListener('scholarLettersUpdated', local) }
+    const refreshSages = () => {
+      try {
+        const saved = getCustomSages()
+        if (current) setConversations([...(Array.isArray(saved) ? saved.filter(item => !PRESET_CONVERSATIONS.some(p => p.id === item.id)).map(item => ({ ...item, avatar: item.avatar || `${BASE}assets/guancang/sage_wangyangming.png`, status: item.status || '神游相候' })) : []), ...PRESET_CONVERSATIONS])
+      } catch {}
+    }
+    window.addEventListener('focus', refresh); window.addEventListener('storage', local); window.addEventListener('scholarLettersUpdated', local); window.addEventListener('customSagesUpdated', refreshSages)
+    return () => { current = false; clearTimeout(timer); window.removeEventListener('focus', refresh); window.removeEventListener('storage', local); window.removeEventListener('scholarLettersUpdated', local); window.removeEventListener('customSagesUpdated', refreshSages) }
   }, [])
   const historical = letters.filter(row => !conversations.some(item => item.id === row.sageId) && (row.rounds > 0 || row.lastMsg)).map(row => ({ id: row.sageId, name: '自定知音', title: row.sageId, dynasty: '旧', avatar: `${BASE}assets/guancang/sage_wangyangming.png` }))
   const displayed = [...conversations, ...historical].map(item => {

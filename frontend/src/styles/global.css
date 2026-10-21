@@ -93,6 +93,17 @@ body {
   font-family: var(--gf-font-serif);
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* 👈👉 水平方向的手势交给页面自己处理（边缘横滑 = 返回上一级，见 components/SwipeBack.jsx），
+   关掉 Chrome / Android WebView 的「侧滑前进后退」，避免停在历史首层时一划就把整个项目退出 */
+html,
+body {
+  overscroll-behavior-x: none;
 }
 
 /* 🏮 全局 Iconfont 矢量国风渲染规范 */

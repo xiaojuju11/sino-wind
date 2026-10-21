@@ -1,12 +1,15 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import Login from './Login'
 import Register from './Register'
 import InkWashBackground from '../components/InkWashBackground'
 import RecoveryCodeCard from '../components/RecoveryCodeCard'
+import { resolveAuthEntry } from '../utils/session'
 import '../styles/authPage.less'
 
 export default function AuthPage() {
+  // 本机会话仍在有效期 → 免密直接入席（微信/浏览器回到 /login 也不再要求重输密码）
+  const [entry] = useState(() => resolveAuthEntry())
   const [activeTab, setActiveTab] = useState('login')
   const [user, setUser] = useState({ phone: '', password: '' })
   const [agreed, setAgreed] = useState(false)
@@ -16,6 +19,8 @@ export default function AuthPage() {
     setActiveTab(tab)
   }
   const selectTab = (tab) => { setUser({ phone: '', password: '' }); setActiveTab(tab) }
+
+  if (entry === 'home') return <Navigate to="/home" replace />
 
   return (
     <main className={"auth-page-root " + (activeTab === "register" ? "is-register" : "is-login")}>

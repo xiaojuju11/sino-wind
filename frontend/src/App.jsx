@@ -1,7 +1,9 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import './styles/app.less'
+import { resolveAuthEntry } from './utils/session'
 import BambooBreeze from './components/BambooBreeze'
+import SwipeBack from './components/SwipeBack'
 import Layout from './pages/Layout'
 import Home from './pages/Home'
 import MinePage from './pages/MinePage'
@@ -46,12 +48,47 @@ function PageFallback() {
   )
 }
 
+const ROUTE_TITLES = {
+  '/': '华风雅集',
+  '/home': '华风雅集 · 首页',
+  '/login': '入席 · 华风雅集',
+  '/recognition': '物溯古今 · 华风雅集',
+  '/scene-poetry': '寻境入诗 · 华风雅集',
+  '/scene-poetry/view/draft': '诗境品鉴 · 华风雅集',
+  '/poetry-frequency': '诗海字衡 · 华风雅集',
+  '/mine': '墨隐书斋 · 华风雅集',
+  '/mine/setting': '雅士修持 · 华风雅集',
+  '/mine/scenes': '诗境画阁 · 华风雅集',
+  '/poem': '诗词大厅 · 华风雅集',
+  '/collection': '藏牒阁 · 华风雅集',
+  '/letters': '知音信札 · 华风雅集',
+  '/city': '城邑志 · 华风雅集',
+  '/legal/terms': '用户协议 · 华风雅集',
+  '/legal/privacy': '隐私政策 · 华风雅集',
+  '/recover': '重设密押 · 华风雅集',
+}
+
 function ScrollToTop() {
   const { pathname } = useLocation()
   useEffect(() => {
     window.scrollTo(0, 0)
+    let title = ROUTE_TITLES[pathname]
+    if (!title) {
+      if (pathname.startsWith('/chat/')) title = '先贤论道 · 华风雅集'
+      else if (pathname.startsWith('/scene-poetry/view/')) title = '诗境品鉴 · 华风雅集'
+      else if (pathname.startsWith('/poetry-frequency/poem/')) title = '诗文细读 · 华风雅集'
+      else title = '云山竹简 · 华风雅集'
+    }
+    if (typeof document !== 'undefined') {
+      document.title = title
+    }
   }, [pathname])
   return null
+}
+
+function RootRedirect() {
+  // 会话未过期就直接入席；过期/损坏的 token 在这里顺手清掉，避免进首页再被 416 踢回来
+  return resolveAuthEntry() === 'home' ? <Navigate to='/home' replace /> : <Navigate to='/login' replace />
 }
 
 export default function App() {
@@ -59,14 +96,16 @@ export default function App() {
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <ScrollToTop />
       <BambooBreeze />
+      <SwipeBack />
       <Suspense fallback={<PageFallback />}>
         <Routes>
           <Route path='/login' element={<AuthPage/>}></Route>
           <Route path='/recover' element={<ForgotPassword/>}></Route>
           <Route path='/legal/:kind' element={<LegalPage/>}></Route>
-          <Route path='/' element={<Layout/>}>
-            {/* 默认重定向 */}
-            <Route path='' element={<Navigate to='/home' />}></Route>
+
+          {/* 默认首页入口：已登录用户直达首页，未登录进入认证页 */}
+          <Route path='/' element={<RootRedirect />}></Route>
+          <Route element={<Layout/>}>
             <Route path='/home' element={<Home/>}></Route>
             <Route path='/letters' element={<LetterList/>}></Route>
             <Route path='/ai' element={<Navigate to='/letters' replace />}></Route>

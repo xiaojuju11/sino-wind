@@ -34,6 +34,14 @@ async function init() {
   } finally {
     await connection.end()
   }
+
+  // 自动填充/重置演示账号
+  try {
+    const { seed } = require('./seed-demo-users')
+    await seed()
+  } catch (seedErr) {
+    console.warn('[Seed] 演示账号初始化警告：', seedErr.message)
+  }
 }
 
 init()

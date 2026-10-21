@@ -32,7 +32,7 @@ export default function Recognition() {
       if (body && body.code === 1 && body.data && !body.degraded && body.source !== 'local-fallback') {
         // 真实识别结果直接上屏
         setRecognitionResult(body)
-        Toast.show({ content: '考释完毕 · 雅文已著', icon: 'success' })
+        Toast.show({ content: '考释完毕 · 已收录入宝鉴', icon: 'success' })
       } else {
         setError(body?.degraded || body?.source === 'local-fallback'
           ? '本次未能完成图片识别，服务返回了离线示例，请重试或联系管理员。'

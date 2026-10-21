@@ -2,7 +2,9 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <!-- 键盘弹起时压缩布局视口（Chrome 108+ 默认值，此处显式声明以固定行为）：
+         输入框始终留在键盘上方，底栏由 utils/keyboardViewport.js 判定后收起 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content" />
     <title>云山竹简 · 华风雅集</title>
 
     <!-- 🏮 国风专属 App 图标与 PWA 清单 -->
@@ -22,6 +24,11 @@
     <link rel="stylesheet" href="https://at.alicdn.com/t/c/font_5104647_jepi4y0iy5.css">
     <!-- 专属定制国风图标库（雅集/知音/书斋/展品/书卷/文房/安全/指南等） -->
     <link rel="stylesheet" href="https://at.alicdn.com/t/c/font_5241957_rgqdox4q9h.css" />
+
+    <!-- 禁用移动端与微信网页旧版本激进缓存 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
   </head>
   <body>
     <div id="root"></div>

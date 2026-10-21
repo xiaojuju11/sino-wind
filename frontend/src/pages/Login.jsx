@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import { EyeOutline, EyeInvisibleOutline } from 'antd-mobile-icons'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from '../http'
+import { readRememberedAccount, rememberAccount } from '../utils/session'
 import '../styles/login.less'
 
 export default function Login({ user = {}, agreed = false }) {
-  const [phone, setPhone] = useState(user.phone || '')
+  const [phone, setPhone] = useState(user.phone || readRememberedAccount())
   const [password, setPassword] = useState(user.password || '')
   const [visible, setVisible] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -34,6 +35,7 @@ export default function Login({ user = {}, agreed = false }) {
       if (!mounted.current) return
       if (typeof data?.token !== 'string' || !data.token.trim()) throw new Error('登录响应缺少凭证，请稍后重试')
       localStorage.setItem('token', data.token)
+      rememberAccount(account)
       setPassword('')
       navigate('/home', { replace: true })
     } catch (failure) {
@@ -54,6 +56,7 @@ export default function Login({ user = {}, agreed = false }) {
       <div className="auth-forgot"><Link to="/recover">忘记密码？</Link></div>
       {error && <p className="auth-error" id="login-error" role="alert">{error}</p>}
       <button className="auth-submit" disabled={loading} type="submit">{loading ? '正在入席…' : '落座入席'}</button>
+      <p className="auth-session-hint">本机会记住登录状态，七日内再次打开将直接入席</p>
     </form>
   )
 }

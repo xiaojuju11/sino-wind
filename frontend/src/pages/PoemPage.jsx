@@ -12,7 +12,6 @@ import {
   HeartOutline,
   ContentOutline,
   DownOutline,
-  SoundOutline,
 } from 'antd-mobile-icons'
 import axios from '../http'
 import EmptyState from '../components/EmptyState'
@@ -123,7 +122,6 @@ export default function PoemPage() {
   const [stamp, setStamp] = useState(false)
   const [collecting, setCollecting] = useState(false)
   const [collectTip, setCollectTip] = useState('')
-  const [reciting, setReciting] = useState(false)
   const appreciateRef = useRef(null)
   const scrollRef = useRef(null)
   const scrollInkRef = useRef(null)
@@ -133,40 +131,6 @@ export default function PoemPage() {
   const [appreciationData, setAppreciationData] = useState(null)
   const [appreciationTab, setAppreciationTab] = useState('overview')
   const [loadingAppreciation, setLoadingAppreciation] = useState(false)
-
-  // 离开页面时停止所有朗读语音
-  useEffect(() => {
-    return () => {
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
-        window.speechSynthesis.cancel()
-      }
-    }
-  }, [])
-
-  // 雅乐聆音：古琴五声音阶纯浏览器合成（宫商角徵羽）
-  const playGuqinArpeggio = () => {
-    try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext
-      if (!AudioCtx) return
-      const ctx = new AudioCtx()
-      const notes = [261.63, 329.63, 392.00, 440.00, 523.25, 392.00]
-      notes.forEach((freq, i) => {
-        const osc = ctx.createOscillator()
-        const gain = ctx.createGain()
-        osc.type = 'triangle'
-        osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.4)
-        gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.4)
-        gain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + i * 0.4 + 0.05)
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.4 + 1.2)
-        osc.connect(gain)
-        gain.connect(ctx.destination)
-        osc.start(ctx.currentTime + i * 0.4)
-        osc.stop(ctx.currentTime + i * 0.4 + 1.2)
-      })
-    } catch {
-      // 容错兜底
-    }
-  }
 
   // 获取诗词多维深度赏析（AI 雅析 + 本地经典文库）
   const fetchAppreciation = useCallback(async (currentPoem) => {
@@ -201,41 +165,6 @@ export default function PoemPage() {
     setLoadingAppreciation(false)
   }, [])
 
-  // 雅韵吟诵（Web Speech API TTS 沉稳慢读 + 古琴轻泛起兴）
-  const handleToggleRecitation = () => {
-    if (!poem) return
-    if (!('speechSynthesis' in window)) {
-      playGuqinArpeggio()
-      Toast.show({ content: '浏览器未开启语音合成，且听古琴绕梁' })
-      return
-    }
-
-    if (reciting) {
-      window.speechSynthesis.cancel()
-      setReciting(false)
-      Toast.show({ content: '吟诵已止' })
-      return
-    }
-
-    window.speechSynthesis.cancel()
-    playGuqinArpeggio()
-
-    const text = `《${poem.title}》。${poem.author}。${(poem.paragraphs || []).join('，')}`
-    const utter = new SpeechSynthesisUtterance(text)
-    utter.lang = 'zh-CN'
-    utter.rate = 0.82
-    utter.pitch = 0.96
-
-    utter.onstart = () => {
-      setReciting(true)
-      Toast.show({ content: '雅韵清吟，静听诗声' })
-    }
-    utter.onend = () => setReciting(false)
-    utter.onerror = () => setReciting(false)
-
-    window.speechSynthesis.speak(utter)
-  }
-
   // 底部「诗意赏析」按钮：展开并滚动到赏析面板
   const toggleAppreciation = () => {
     setShowAppreciation((open) => {
@@ -253,7 +182,6 @@ export default function PoemPage() {
   // 携诗问道：带入当前诗篇上下文跳转至先贤对席
   const handleChatWithSage = () => {
     if (!appreciationData?.sageId) return
-    if (window.speechSynthesis) window.speechSynthesis.cancel()
     navigate(`/scholar-chat/${appreciationData.sageId}`, {
       state: {
         sageId: appreciationData.sageId,
@@ -264,8 +192,6 @@ export default function PoemPage() {
 
   // 拉取随机诗词
   const loadRandom = useCallback(async () => {
-    if (window.speechSynthesis) window.speechSynthesis.cancel()
-    setReciting(false)
     setLoading(true)
     setAppreciationData(null)
     setAppreciationTab('overview')
@@ -374,8 +300,6 @@ export default function PoemPage() {
 
   // 选中搜索结果 → 陈列于诗卷
   const handlePickResult = (item) => {
-    if (window.speechSynthesis) window.speechSynthesis.cancel()
-    setReciting(false)
     const nextPoem = {
       id: item.id || `poem_${Date.now()}`,
       title: item.title,
@@ -421,7 +345,7 @@ export default function PoemPage() {
       })
       const count = res?.data?.newPoemCount
       setCollectTip(count ? `已摘录入卷 · 诗笺共 ${count} 篇` : '已摘录入卷')
-      Toast.show({ icon: 'success', content: res?.data?.message || '已成功摘录入卷' })
+      Toast.show({ content: res?.data?.message || '已成功摘录入卷', position: 'bottom' })
     } catch {
       // 错误拦截器统一处理
     } finally {
@@ -458,7 +382,6 @@ export default function PoemPage() {
         <div
           className="poem-header__back"
           onClick={() => {
-            if (window.speechSynthesis) window.speechSynthesis.cancel()
             if (window.history.length > 1) {
               navigate(-1)
             } else {
@@ -613,15 +536,6 @@ export default function PoemPage() {
         </button>
 
         <button
-          className={`poem-action ${reciting ? 'poem-action--primary' : 'poem-action--ghost'}`}
-          type="button"
-          onClick={handleToggleRecitation}
-        >
-          <SoundOutline />
-          {reciting ? '吟诵中 (按此停止)' : '雅韵吟诵'}
-        </button>
-
-        <button
           className={`poem-action ${showAppreciation ? 'poem-action--primary' : 'poem-action--ghost'}`}
           type="button"
           onClick={toggleAppreciation}
@@ -633,10 +547,7 @@ export default function PoemPage() {
         <button
           className="poem-action poem-action--ghost"
           type="button"
-          onClick={() => {
-            if (window.speechSynthesis) window.speechSynthesis.cancel()
-            navigate('/home')
-          }}
+          onClick={() => navigate('/home')}
         >
           <LeftOutline />
           返回雅集

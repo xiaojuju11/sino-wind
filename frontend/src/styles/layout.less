@@ -141,3 +141,19 @@
     transition: opacity 0.2s ease, transform 0.2s ease;
   }
 }
+
+// ⌨️ 软键盘弹起时收起底栏。
+// 起因：Android WebView（微信 / QQ / Chrome）在键盘弹起时压缩 layout viewport，
+// `position: fixed; bottom: 0` 的底栏被顶到键盘上方，浮在正文中间遮住内容；
+// iOS 则 layout viewport 不动、整条底栏被键盘盖住。
+// 键盘开合由 utils/keyboardViewport.js 判定并写到 <html class="is-keyboard-open">，
+// 这里只补位移与淡出，落键盘后由同一个 class 复原。
+// 注意：referencePolish / referenceFidelity 两层给 .bottom-nav 定过 bottom / height / 圆角等，
+// 但都【没有】定义 opacity / transform / pointer-events，因此这里不会与精修层打架。
+.bottom-nav.is-keyboard-hidden,
+html.is-keyboard-open .bottom-nav {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(120%);
+}
+

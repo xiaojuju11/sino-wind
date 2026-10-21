@@ -524,7 +524,7 @@ export default function Home() {
         <div className="home-section-header">
           <h2 className="home-section-title">古今识物</h2>
         </div>
-        <p className="home-section-sub">拍一物，识古名，探寻器物背后的风雅渊源。</p>
+        <p className="home-section-sub">识一物，辨古名，探寻器物背后的风雅渊源。</p>
 
         <div className="home-shiwu-body">
           <button
@@ -532,9 +532,8 @@ export default function Home() {
             className="home-shiwu-upload"
             onClick={() => navigate('/recognition')}
           >
-            {/* 图标铁律：iconfont 基础库「相机」图标 */}
-            <i className="iconfont icon-xiangji home-shiwu-upload__icon" aria-hidden="true"></i>
-            <span className="home-shiwu-upload__title">上传/拍摄现代物品</span>
+            <i className="iconfont icon-shangchuan home-shiwu-upload__icon" aria-hidden="true"></i>
+            <span className="home-shiwu-upload__title">上传现代物品</span>
             <span className="home-shiwu-upload__desc">探索现代物品古代雅称</span>
           </button>
 

@@ -54,6 +54,29 @@
   gap: 0.32rem;
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
 
+  // 顶部入藏横幅提示
+  &__saved-badge {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.18rem 0.28rem;
+    background: color-mix(in srgb, var(--gf-gold, #b39551) 16%, var(--gf-bg-card, #faf7ed));
+    border: 1px solid color-mix(in srgb, var(--gf-gold, #b39551) 45%, transparent);
+    border-radius: 8px;
+    font-size: 0.28rem;
+    color: var(--gf-seal, @color-seal);
+    font-family: 'STKaiti', 'KaiTi', serif;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: transform 0.15s ease, background-color 0.15s ease;
+
+    &:active {
+      transform: scale(0.98);
+      background: color-mix(in srgb, var(--gf-gold, #b39551) 24%, var(--gf-bg-card, #faf7ed));
+    }
+  }
+
   // 兜底提示：只说明降级事实，不做恐吓式红色报错
   &__notice {
     margin: 0;
@@ -135,6 +158,7 @@
       border-color: color-mix(in srgb, var(--gf-gold, #b39551) 55%, transparent);
       color: var(--gf-ink-primary, @color-text-main);
       box-shadow: none;
+      cursor: pointer;
 
       .iconfont {
         color: color-mix(in srgb, var(--gf-gold, #b39551) 85%, var(--gf-ink-primary, @color-text-main));
@@ -247,118 +271,6 @@
   }
 }
 
-// ── 先贤雅音吟诵器 (Web Speech + 水墨声波) ─────────────
-.scholar-voice-deck {
-  margin-top: 0.32rem;
-  padding: 0.24rem 0.28rem;
-  border-radius: 0.14rem;
-  border: 1px solid fade(@color-gold, 45%);
-  background: color-mix(in srgb, var(--gf-bg-sunk, #F3EFE6) 65%, transparent);
-
-  &__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.22rem;
-    padding-bottom: 0.14rem;
-    border-bottom: 1px dashed fade(@color-gold, 35%);
-  }
-
-  &__title-wrap {
-    display: flex;
-    align-items: center;
-    gap: 0.12rem;
-    color: var(--gf-accent-text, @color-seal);
-
-    .iconfont {
-      font-size: 0.34rem;
-    }
-  }
-
-  &__title {
-    font-family: 'STKaiti', 'KaiTi', serif;
-    font-size: 0.34rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-  }
-
-  &__player-row {
-    display: flex;
-    align-items: center;
-    gap: 0.22rem;
-    flex-wrap: wrap;
-  }
-
-  &__status {
-    font-size: 0.26rem;
-    color: var(--gf-text-sub, @color-text-sub);
-    font-family: 'STKaiti', 'KaiTi', serif;
-  }
-}
-
-// 雅音主按钮
-.scholar-voice-btn {
-  .btn-base();
-  .btn-primary();
-
-  height: 0.84rem;
-  padding: 0 0.28rem;
-  font-size: 0.32rem;
-  font-family: 'STKaiti', 'KaiTi', serif;
-
-  .iconfont {
-    font-size: 0.34rem;
-  }
-
-  &.is-playing {
-    background-color: #6E1B1B;
-
-    .scholar-voice-btn__ink-ring {
-      position: absolute;
-      inset: -4px;
-      border-radius: inherit;
-      border: 1.5px solid fade(@color-seal, 60%);
-      animation: ink-pulse-ring 1.8s cubic-bezier(0.24, 0, 0.38, 1) infinite;
-      pointer-events: none;
-    }
-  }
-}
-
-// 水墨声波律动动画
-.ink-soundwave {
-  display: flex;
-  align-items: flex-end;
-  gap: 0.08rem;
-  height: 0.5rem;
-  padding: 0 0.08rem;
-
-  &__bar {
-    width: 0.06rem;
-    height: 0.16rem;
-    border-radius: 0.04rem;
-    background-color: var(--gf-accent-text, @color-seal);
-    transition: height 0.2s ease;
-  }
-
-  &.is-animating {
-    .bar-1 { animation: ink-wave-dance 1.1s ease-in-out infinite alternate; }
-    .bar-2 { animation: ink-wave-dance 0.9s ease-in-out infinite alternate 0.2s; }
-    .bar-3 { animation: ink-wave-dance 1.3s ease-in-out infinite alternate 0.4s; }
-    .bar-4 { animation: ink-wave-dance 0.8s ease-in-out infinite alternate 0.1s; }
-    .bar-5 { animation: ink-wave-dance 1.0s ease-in-out infinite alternate 0.3s; }
-  }
-}
-
-@keyframes ink-wave-dance {
-  0% { height: 0.14rem; opacity: 0.5; }
-  50% { height: 0.46rem; opacity: 1; }
-  100% { height: 0.22rem; opacity: 0.7; }
-}
-
-@keyframes ink-pulse-ring {
-  0% { transform: scale(0.98); opacity: 0.8; }
-  100% { transform: scale(1.18); opacity: 0; }
-}
 
 // ── 三大卡片 ─────────────────────────────────────────
 .object-recognition-card {
