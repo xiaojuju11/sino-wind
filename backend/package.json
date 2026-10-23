@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "start": "node src/index.js",
     "dev": "npx nodemon src/index.js",
     "db:init": "node scripts/init-db.js",
     "test": "node --test tests/*.test.cjs scripts/test-scholar-custom-sse.cjs",

@@ -2,7 +2,6 @@ const Router = require('koa-router')
 const { Worker } = require('node:worker_threads')
 const path = require('node:path')
 const fs = require('node:fs')
-const sharp = require('sharp')
 const { root, segmentationModel } = require('../utils/sceneModelConfig')
 const router = new Router({ prefix: '/api/scene' })
 let worker = null, busy = false
@@ -21,6 +20,13 @@ router.post('/analyze', async ctx => {
   if (busy) { ctx.status = 429; ctx.body = { code: 0, message: '正在展读另一幅风景，请稍后再试。' }; return }
   busy = true
   try {
+    let sharp
+    try {
+      // 原生图像依赖按需加载，部署平台缺少对应二进制时不阻断登录、验证码等接口启动。
+      sharp = require('sharp')
+    } catch {
+      ctx.status = 503; ctx.body = { code: 0, message: '识景服务暂不可用，请稍后重试或手动圈选景物。' }; return
+    }
     try {
       const meta = await sharp(Buffer.from(image.split(',')[1], 'base64'), { limitInputPixels: 16000000 }).metadata()
       if (!meta.width || !meta.height || !['jpeg', 'png', 'webp'].includes(meta.format)) throw new Error('Invalid image')

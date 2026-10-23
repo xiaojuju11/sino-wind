@@ -32,7 +32,12 @@ axios.interceptors.response.use(
   },
   (error) => {
     const status = error.response?.status
-    const message = error.response?.data?.message || error.message || '服务响应异常'
+    const gatewayMessages = {
+      502: '暂时无法连接服务器，请稍后重试',
+      503: '服务暂不可用，请稍后重试',
+      504: '服务器响应超时，请稍后重试',
+    }
+    const message = error.response?.data?.message || gatewayMessages[status] || error.message || '服务响应异常'
 
     Toast.show({
       icon: 'fail',
