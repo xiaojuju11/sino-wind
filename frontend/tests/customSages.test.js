@@ -104,3 +104,43 @@ test('legacy unscoped custom sages are not leaked into a new user account', asyn
   assert.equal(user1Sages.length, 1)
   assert.equal(user1Sages[0].name, '小橘')
 })
+
+test('prepending a custom sage is idempotent after the storage refresh event', async () => {
+  const f = await fixture()
+  const { prependUniqueSage } = f.customSages
+  const existing = { id: 'sage_1001', name: '林徽因', title: '一代才女' }
+
+  const refreshed = [existing, { id: 'libai', name: '李白' }]
+  const next = prependUniqueSage(refreshed, { ...existing, status: '新交对席' })
+
+  assert.equal(Array.from(next, item => item.id).join(','), 'sage_1001,libai')
+  assert.equal(next.filter(item => item.id === 'sage_1001').length, 1)
+  assert.equal(next[0].status, '新交对席')
+})
+
+test('saving the same custom sage name replaces the previous generated id', async () => {
+  const f = await fixture()
+  f.login(1)
+  f.customSages.saveCustomSage({ id: 'sage_old', name: '林徽因', title: '一代才女' })
+  f.customSages.saveCustomSage({ id: 'sage_new', name: ' 林徽因 ', title: '建筑学家' })
+
+  const saved = f.customSages.getCustomSages()
+  assert.equal(saved.length, 1)
+  assert.equal(saved[0].id, 'sage_new')
+  assert.equal(saved[0].title, '建筑学家')
+})
+
+test('loading custom sages cleans duplicate names left by older versions', async () => {
+  const f = await fixture()
+  f.login(1)
+  f.localStorage.setItem('scholar-custom-sages:v1:user:1', JSON.stringify([
+    { id: 'sage_a', name: '林徽因', title: '旧记录' },
+    { id: 'sage_b', name: ' 林徽因 ', title: '新记录' },
+    { id: 'sage_c', name: '李白', title: '太白' }
+  ]))
+
+  const saved = f.customSages.getCustomSages()
+  assert.equal(saved.length, 2)
+  assert.equal(saved[0].id, 'sage_a')
+  assert.equal(JSON.parse(f.localStorage.getItem('scholar-custom-sages:v1:user:1')).length, 2)
+})

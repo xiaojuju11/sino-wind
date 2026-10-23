@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { AddOutline, SearchOutline, CloseOutline } from 'antd-mobile-icons'
 import InviteDrawer from '../components/InviteDrawer'
 import { cachedLetters, loadLetters, shichen } from '../utils/scholarLetters'
-import { getCustomSages } from '../utils/customSages'
+import { getCustomSages, prependUniqueSage } from '../utils/customSages'
 import InkWashBackground from '../components/InkWashBackground'
 import '../styles/referencePolish.less'
 import { getScholarScene, scholarPortraitStyle } from '../utils/scholarScenes'
@@ -122,7 +122,7 @@ function LetterListSession() {
       try {
         const saved = getCustomSages()
         if (current) setConversations([...(Array.isArray(saved) ? saved.filter(item => !PRESET_CONVERSATIONS.some(p => p.id === item.id)).map(item => ({ ...item, avatar: item.avatar || `${BASE}assets/guancang/sage_wangyangming.png`, status: item.status || '神游相候' })) : []), ...PRESET_CONVERSATIONS])
-      } catch {}
+      } catch { /* local storage may be unavailable */ }
     }
     window.addEventListener('focus', refresh); window.addEventListener('storage', local); window.addEventListener('scholarLettersUpdated', local); window.addEventListener('customSagesUpdated', refreshSages)
     return () => { current = false; clearTimeout(timer); window.removeEventListener('focus', refresh); window.removeEventListener('storage', local); window.removeEventListener('scholarLettersUpdated', local); window.removeEventListener('customSagesUpdated', refreshSages) }
@@ -155,7 +155,7 @@ function LetterListSession() {
       avatar: newSage.avatar || `${BASE}assets/guancang/sage_wangyangming.png`,
       status: '新交对席'
     }
-    setConversations((prev) => [formatted, ...prev])
+    setConversations((prev) => prependUniqueSage(prev, formatted))
   }
 
   // 点击知己进入沉浸对话

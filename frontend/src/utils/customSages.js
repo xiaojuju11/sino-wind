@@ -2,6 +2,31 @@ import { cachedLetters, scholarScope } from './scholarLetters'
 
 const PREFIX = 'scholar-custom-sages:v1:'
 
+function normalizedSageName(sage) {
+  return String(sage?.name || '').trim().replace(/\s+/g, '')
+}
+
+function sameCustomSage(item, sage) {
+  if (!item?.id || !sage?.id) return false
+  if (item.id === sage.id) return true
+  return item.id.startsWith('sage_') && sage.id.startsWith('sage_') && normalizedSageName(item) === normalizedSageName(sage)
+}
+
+function dedupeCustomSages(list) {
+  return (Array.isArray(list) ? list : []).filter((item, index, rows) => (
+    item?.id && rows.findIndex(candidate => sameCustomSage(candidate, item)) === index
+  ))
+}
+
+/**
+ * 将自定知音置于列表首位，并确保同一知音只保留一席。
+ * 事件刷新与创建回调可能连续到达；同名自定知音也应复用同一席位。
+ */
+export function prependUniqueSage(list, sage) {
+  if (!sage?.id) return Array.isArray(list) ? list : []
+  return [sage, ...(Array.isArray(list) ? list.filter(item => !sameCustomSage(item, sage)) : [])]
+}
+
 export function customSagesKey(scope = scholarScope()) {
   return `${PREFIX}${scope}`
 }
@@ -78,7 +103,9 @@ export function getCustomSages(scope = scholarScope()) {
     const raw = localStorage.getItem(key)
     if (raw !== null) {
       const parsed = JSON.parse(raw)
-      return Array.isArray(parsed) ? parsed : []
+      const clean = dedupeCustomSages(parsed)
+      if (Array.isArray(parsed) && clean.length !== parsed.length) localStorage.setItem(key, JSON.stringify(clean))
+      return clean
     }
 
     // 尝试做一次 legacy 兼容迁移
@@ -87,7 +114,7 @@ export function getCustomSages(scope = scholarScope()) {
     const afterMigration = localStorage.getItem(key)
     if (afterMigration !== null) {
       const parsed = JSON.parse(afterMigration)
-      return Array.isArray(parsed) ? parsed : []
+      return dedupeCustomSages(parsed)
     }
 
     return []
@@ -103,11 +130,11 @@ export function saveCustomSage(newSage, scope = scholarScope()) {
   if (!newSage?.id || typeof localStorage === 'undefined') return false
   try {
     const key = customSagesKey(scope)
-    const list = getCustomSages(scope).filter(s => s?.id !== newSage.id)
+    const list = getCustomSages(scope).filter(s => !sameCustomSage(s, newSage))
     list.unshift(newSage)
     localStorage.setItem(key, JSON.stringify(list))
     // 确保旧全局 key 不复存在
-    try { localStorage.removeItem('gufeng_custom_sages') } catch {}
+    try { localStorage.removeItem('gufeng_custom_sages') } catch { /* optional legacy cleanup */ }
     if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
       window.dispatchEvent(new CustomEvent('customSagesUpdated', { detail: { scope, sageId: newSage.id } }))
     }
