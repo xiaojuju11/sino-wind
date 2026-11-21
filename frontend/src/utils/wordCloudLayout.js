@@ -3,9 +3,17 @@
 export function layoutWordCloud(terms, measure) {
   const width = 1000, height = 660, cx = width / 2, cy = height / 2
   const placed = [], bins = new Map(), cell = 60
-  const maximum = Math.max(1, ...terms.map(t => t.count))
+  // Validate once, before the aggregates: `maximum`, `area` and `scale` used to
+  // read the raw array, so a single malformed term turned every size into NaN
+  // (blank cloud) or threw on `[...entry.term]`, even though the placement loop
+  // below already skipped such entries. Filtering up front keeps every surviving
+  // term at its original index, so well-formed input is unchanged.
+  const entries = (Array.isArray(terms) ? terms : []).filter(entry => entry &&
+    typeof entry.term === 'string' && entry.term.length > 0 &&
+    Number.isFinite(entry.count) && entry.count > 0)
+  const maximum = entries.reduce((max, entry) => Math.max(max, entry.count), 1)
   const baseSize = entry => Math.min(135, 420 / Math.max(1, [...entry.term].length), 14 + 121 * (entry.count / maximum) ** 3.2)
-  const area = terms.slice(0, 150).reduce((sum, entry) => sum + (baseSize(entry) ** 2 * Math.max(1, [...entry.term].length) * 1.3), 0)
+  const area = entries.slice(0, 150).reduce((sum, entry) => sum + (baseSize(entry) ** 2 * Math.max(1, [...entry.term].length) * 1.3), 0)
   const scale = Math.min(1, Math.sqrt(300000 / Math.max(1, area)))
   const keysFor = box => {
     const keys = []
@@ -16,8 +24,7 @@ export function layoutWordCloud(terms, measure) {
   }
   const inside = box => [box.x, box.x + box.w].every(x => [box.y, box.y + box.h].every(y => ((x - cx) / 492) ** 2 + ((y - cy) / 322) ** 2 <= 1))
   const intersects = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y
-  terms.slice(0, 150).forEach((entry, index) => {
-    if (!entry.term || !Number.isFinite(entry.count) || entry.count <= 0) return
+  entries.slice(0, 150).forEach((entry, index) => {
     const base = baseSize(entry) * scale
     const angle = index > 7 && index % 11 === 0 ? -90 : 0
     for (let shrink = 0; shrink < 5; shrink++) {
